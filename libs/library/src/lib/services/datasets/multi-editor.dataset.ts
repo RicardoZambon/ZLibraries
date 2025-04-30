@@ -1,9 +1,9 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { IBatchUpdate } from '../../models/batch-update';
 import { IMultiEditorChanges } from '../../models/multi-editor-changes';
-import { DataGridDataset } from './data-grid.dataset';
 import { BaseDataset } from './base.dataset';
+import { DataGridDataset } from './data-grid.dataset';
 
 @Injectable()
 export abstract class MultiEditorDataset extends BaseDataset {
@@ -12,6 +12,7 @@ export abstract class MultiEditorDataset extends BaseDataset {
   //#endregion
 
   //#region Variables
+  protected readonly dataGridDataset: DataGridDataset;
   private fakeIDsGenerated: any[] = [];
   private modifiedValues: IMultiEditorChanges = {
     changed: {},
@@ -23,8 +24,10 @@ export abstract class MultiEditorDataset extends BaseDataset {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(protected dataGridDataset: DataGridDataset) {
+  constructor() {
     super();
+
+    this.dataGridDataset = inject(DataGridDataset);
   }
   //#endregion
 

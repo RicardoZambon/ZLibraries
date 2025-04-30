@@ -2,7 +2,7 @@ import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 import { Component, Input, OnInit, Optional, TemplateRef } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { takeUntil } from 'rxjs';
+import { filter, takeUntil } from 'rxjs';
 import { FormService } from '../../services';
 import { BaseComponent } from '../base.component';
 import { FormInputComponent } from '../form-input/form-input.component';
@@ -90,6 +90,16 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.loadingField = false;
+        this.recalculateErrors();
+      });
+
+    this.formService.fieldRefreshed
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((field: { fieldName?: string, value?: any, loading?: boolean }) => field.fieldName === this.controlName),
+      )
+      .subscribe((field: { fieldName?: string, value?: any, loading?: boolean }) => {
+        this.loadingField = field.loading ?? false;
         this.recalculateErrors();
       });
   }

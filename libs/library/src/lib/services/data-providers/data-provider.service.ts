@@ -1,5 +1,5 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Observable, ReplaySubject, Subject, take, takeUntil } from 'rxjs';
 
 @Injectable()
@@ -9,8 +9,8 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
 
   //#region Variables
   private _entityID?: number;
-  private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
-  private destroy$: Subject<boolean> = new Subject<boolean>();
+  protected activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  protected destroy$: Subject<boolean> = new Subject<boolean>();
   private isLoading: boolean = false;
   private isModelLoaded: boolean = false;
   private modelCache: ReplaySubject<TEntityModel | null> = new ReplaySubject<TEntityModel | null>(1);
@@ -30,7 +30,7 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   constructor() {
     this.activatedRoute.paramMap
       .pipe(takeUntil(this.destroy$))
-      .subscribe((paramMap) => {
+      .subscribe((paramMap: ParamMap) => {
         const newID: number = Number(paramMap.get('id'));
         if (newID !== this.entityID) {
           this._entityID = newID;

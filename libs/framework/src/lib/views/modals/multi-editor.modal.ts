@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataGridDataset, DataProviderService, FormService, MultiEditorComponent, MultiEditorDataset } from '@library';
 import { takeUntil } from 'rxjs';
@@ -7,9 +7,11 @@ import { ModalBase } from './modal-base';
 @Component({ template: '' })
 export abstract class MultiEditorModal<TEntityModel> extends ModalBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Output() public savedChanges: EventEmitter<any> = new EventEmitter();
+  @ViewChild(MultiEditorComponent) protected multiEditor!: MultiEditorComponent;
 
-  @ViewChild(MultiEditorComponent) private multiEditor!: MultiEditorComponent;
+  @Input() public overrideParentID?: number;
+
+  @Output() public savedChanges: EventEmitter<any> = new EventEmitter();
   //#endregion
 
   //#region Variables
@@ -46,10 +48,7 @@ export abstract class MultiEditorModal<TEntityModel> extends ModalBase implement
         this.savedChanges.emit();
       });
 
-    if (this.dataProvider?.hasEntityID) {
-      this.dataGridDataset.parentEntityId = this.dataProvider.entityID;
-      this.multiEditorDataset.parentEntityId = this.dataProvider?.entityID;
-    }
+    this.updateParentID();
   }
   //#endregion
 
@@ -58,11 +57,27 @@ export abstract class MultiEditorModal<TEntityModel> extends ModalBase implement
 
   //#region Public methods
   public toggle(): void {
+    if (!this.multiEditor.show) {
+      this.updateParentID();
+    }
+
     this.multiEditor.toggleModal();
   }
   //#endregion
 
   //#region Private methods
   protected abstract formSetup(): FormGroup;
+
+  private updateParentID(): void {
+    let parentID: number | undefined = this.dataProvider?.entityID;
+    if (this.overrideParentID) {
+      parentID = this.overrideParentID;
+    }
+
+    if (parentID) {
+      this.dataGridDataset.parentEntityId = parentID;
+      this.multiEditorDataset.parentEntityId = parentID;
+    }
+  }
   //#endregion
 }

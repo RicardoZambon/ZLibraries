@@ -1,7 +1,7 @@
 import { NgFor, NgIf, NgStyle } from '@angular/common';
 import { Component, DoCheck, ElementRef, HostListener, Input, KeyValueChanges, KeyValueDiffer, KeyValueDiffers, OnInit, Optional, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
-import { catchError, debounceTime, Observable, of, pairwise, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { catchError, debounceTime, Observable, of, pairwise, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ICatalogEntry, ICatalogResult } from '../../models';
 import { CatalogService, DataGridDataset } from '../../services';
 import { BaseComponent } from '../base.component';
@@ -222,6 +222,7 @@ export class CatalogSelectComponent extends BaseComponent implements DoCheck, On
       .pipe(
         debounceTime(500),
         takeUntil(this.destroy$),
+        startWith(null),
         pairwise(),
       )
       .subscribe(([ previous, current ]: string[]) => {

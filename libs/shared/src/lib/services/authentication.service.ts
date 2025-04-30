@@ -42,7 +42,7 @@ export class AuthenticationService extends AuthService {
       .post<IAuthResponse>(`${this.BASE_URL}/SignIn`, model)
       .pipe(
         map((res: IAuthResponse) => {
-          this.setStorage('username', res.userName, model.rememberMe);
+          this.setStorage('username', res.username, model.rememberMe);
           this.setStorage('token', res.token, model.rememberMe);
           this.setStorage('refreshToken', res.refreshToken, model.rememberMe);
           this.setStorage('userInfo',  window.btoa(JSON.stringify(res as ICurrentUserInfo)), model.rememberMe);

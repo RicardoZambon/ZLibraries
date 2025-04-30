@@ -18,7 +18,6 @@ export abstract class RouterFormatter {
 
   //#region Public methods
   public static getURL(route: ActivatedRouteSnapshot): string {
-    console.log('getURL', route);
     let parentRoute = '';
     if (route.parent) {
       parentRoute = this.getURL(route.parent);

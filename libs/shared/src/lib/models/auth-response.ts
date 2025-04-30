@@ -4,5 +4,5 @@ export interface IAuthResponse extends ICurrentUserInfo {
   refreshToken: string;
   refreshTokenExpiration: string;
   token: string;
-  userName: string;
+  username: string;
 }

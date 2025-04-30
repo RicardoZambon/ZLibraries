@@ -107,7 +107,6 @@ export abstract class MultiSelectResultDataset extends GridDataset {
 
     this.displayedRows = loadedKeys.map((key: string) => this.getRowData(key));
     this.displayedRows.push(...this.addedRowData);
-    console.log(this.displayedRows, this.displayedIDs, 'toAdd', this._idsToAdd, 'toRemove', this._idsToRemove, loadedKeys);
   }
   //#endregion
 

@@ -1,7 +1,7 @@
 /* @use 'tailwindcss'; */
 
 :host-context {
-    @apply flex flex-grow relative overflow-hidden max-h-full;
+    @apply flex flex-grow relative overflow-hidden max-h-full h-full min-h-full;
 }
 
 .content {

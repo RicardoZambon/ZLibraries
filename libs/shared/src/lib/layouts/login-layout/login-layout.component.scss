@@ -4,6 +4,6 @@
     @apply flex items-center justify-center h-screen mx-auto grow;
     
     .background {
-        @include fixed-background('/background.jpeg', 'bg-white/30');
+        @include fixed-background('/background.jpg', 'bg-white/30');
     }
 }
