@@ -1,0 +1,5 @@
+<i class="fa-solid fa-angles-right"></i>
+
+<a *ngFor="let history of tabHistory" (click)="onTitleClick(history)">
+    {{ (history.title ?? '') | translate }}
+</a>

@@ -1,0 +1,56 @@
+{
+  "Loading": "Carregando",
+
+
+  "//": "Buttons",
+  "Button-Cancel-Edit": "Cancelar",
+  "Button-Delete": "Excluir",
+  "Button-Edit": "Editar",
+  "Button-Export": "Exportar",
+  "Button-Filters": "Filtrar",
+  "Button-Filters-Clear": "Limpar filtros",
+  "Button-Filters-Modal-Confirm": "Confirmar filtros",
+  "Button-Modal-Cancel": "Cancelar",
+  "Button-Modal-Close": "Fechar",
+  "Button-Modal-MultiEditor-Confirm": "Confirmar alterações",
+  "Button-Modal-MultiSelect-Confirm": "Confirmar alterações",
+  "Button-New": "Novo",
+  "Button-Open-Record": "Abrir",
+  "Button-Refresh": "Atualizar",
+  "Button-Save": "Salvar",
+  "Button-Views": "Visões",
+  "Button-Views-Details": "Detalhes",
+  "Button-Views-History": "Histórico",
+
+
+  "//": "Grids",
+  "Grid-Loading": "Carregando...",
+  "Grid-Message-Empty": "Nenhum registro encontrado.",
+
+
+  "//": "i18n",
+  "Date-Format": "dd/MM/yyyy",
+  "Date-Time-Format": "dd/MM/yyyy HH:mm",
+  "Format-Currency": "1.2",
+  "MonthYear-Format": "MM/yyyy",
+  "locale": "pt-BR",
+
+
+  "//": "Modals",
+  "Modal-Delete-Confirm": "Confirmar exclusão",
+  "Modal-Delete-Message": "Você está prestes a excluir registros do sistema, não é possível reverter esta ação. Tem certeza que deseja continuar?",
+  "Modal-Delete-Title": "Confirmação da exclusão do registro",
+  "Modal-Failed-Administrator": "Se o problema persistir, por favor, entre em contato com o administrador.",
+  "Modal-Failed-DefaultMessage": "Ocorreu um erro no servidor. Por favor, tente novamente mais tarde.",
+  "Modal-Failed-Title": "Ocorreu um erro",
+
+
+  "//": "Ribbon And Details",
+  "EditSection-Details": "Detalhes",
+  "RibbonGroup-Actions": "Ações",
+  "RibbonGroup-Entity": "Entidade",
+  "RibbonGroup-General": "Geral",
+  "RibbonGroup-Page": "Página",
+
+  "": ""
+}

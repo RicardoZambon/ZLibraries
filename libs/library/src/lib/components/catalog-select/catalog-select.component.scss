@@ -1,0 +1,60 @@
+/* @use 'tailwindcss'; */
+
+:host-context {
+    @apply grid grid-cols-subgrid col-span-2;
+}
+
+div {
+    lib-form-input {
+        &.fixed-content ::ng-deep input {
+            @apply cursor-pointer;
+        }
+
+        ::ng-deep input {
+            @apply pr-9 text-ellipsis bg-no-repeat bg-[right_0.5625rem_center] bg-[length:1.125rem_1.125rem];
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%239ca3af' d='M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z'/%3e%3c/svg%3e");
+        }
+    }
+
+    .dropdown-container {
+        @apply sticky select-none z-10;
+
+        .dropdown {
+            @apply rounded-md border overflow-y-auto overscroll-none border-gray-400 bg-white shadow;
+            @apply max-h-52;
+            @apply transition-[display] duration-1000;
+            
+            &:not(.visible) {
+                @apply hidden;
+            }
+
+            &.right {
+                @apply right-0;
+            }
+
+            li {
+                @apply px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis;
+
+                &.dropdown-item {
+                    @apply cursor-pointer;
+
+                    &:nth-child(even) {
+                        @apply bg-stone-100/70;
+                    }
+
+                    &.selected {
+                        @apply bg-primary-200/20 font-bold;
+                    }
+
+                    &, &:nth-child(even), &.selected {
+                        @apply hover:bg-primary-200/50;
+                    }
+                }
+            }
+        }
+    }
+}
+
+lib-form-input-group {
+    @apply basis-full;
+}

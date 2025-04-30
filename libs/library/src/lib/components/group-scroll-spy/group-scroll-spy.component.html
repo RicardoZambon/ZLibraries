@@ -1,0 +1,14 @@
+<div class="scroll-spy">
+    <a *ngFor="let title of titles; let i = index"
+        class="item" [class.active]="i === activeSection"
+        (click)="scrollTo(i)"
+    >{{ title }}</a>
+</div>
+
+<div class="content" libScrollSpy
+[class.no-scroll-spy]="titles.length === 0"
+[spiedTags]="['lib-group-accordion']"
+(activeSectionChange)="activeSectionChanged($event)"
+>
+    <ng-content></ng-content>
+</div>

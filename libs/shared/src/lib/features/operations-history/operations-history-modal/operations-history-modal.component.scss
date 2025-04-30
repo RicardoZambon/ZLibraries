@@ -1,0 +1,9 @@
+/* @use 'tailwindcss'; */
+
+div[body] {
+    @apply flex flex-row;
+    
+    pre {
+        @apply flex-grow overflow-x-auto w-1/2 text-sm;
+    }
+}

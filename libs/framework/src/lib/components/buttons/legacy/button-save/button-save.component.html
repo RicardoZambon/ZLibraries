@@ -1,0 +1,11 @@
+<lib-ribbon-button *ngIf="visible"
+label="Button-Save"
+icon="fa-save"
+[defaultOption]="defaultOption"
+[disabled]="disabled || (form?.viewMode !== 'edit') || (form?.loading ?? false)"
+[loading]="loading"
+[options]="options"
+(action)="onButtonClick($event)">
+</lib-ribbon-button>
+
+<framework-error-modal></framework-error-modal>

@@ -1,0 +1,41 @@
+<label *ngIf="showLabel"
+[attr.for]="controlName">
+    {{ label | translate }}:
+</label>
+
+<div class="field"
+[class.col-span-2]="!showLabel">
+    <div class="loading" *ngIf="(loadingField || (formService.loading && formService.model === null)); else content">
+        <div></div>
+    </div>
+
+    <ng-template #content>
+        <ng-container *ngTemplateOutlet="template ? template : defaultTemplate">
+        </ng-container>
+        
+        <div class="validations" [class.show]="formControl?.invalid" *ngIf="formControl?.touched">
+            <ng-container *ngFor="let error of errors">
+                <span>{{ validations[error] | translate }}</span>
+            </ng-container>
+        </div>
+        
+        <ng-template #defaultTemplate>
+            <lib-form-input
+            [autofocus]="autofocus"
+            [controlName]="controlName"
+            [fixedValue]="fixedValue"
+            [format]="format"
+            [maxLength]="maxLength"
+            [readOnly]="readOnly"
+            [rows]="rows"
+            [step]="step"
+            [type]="type"
+            ></lib-form-input>
+        </ng-template>
+        
+        <span class="text-sm italic" *ngIf="hasNotes">
+            *{{ notes | translate }}
+        </span>
+    </ng-template>
+
+</div>

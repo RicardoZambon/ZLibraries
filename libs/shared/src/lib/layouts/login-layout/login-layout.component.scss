@@ -1,0 +1,9 @@
+@import '../../../styles/mixins/background';
+
+.container {
+    @apply flex items-center justify-center h-screen mx-auto grow;
+    
+    .background {
+        @include fixed-background('/background.jpeg', 'bg-white/30');
+    }
+}

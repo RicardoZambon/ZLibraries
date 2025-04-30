@@ -1,0 +1,86 @@
+/* @use 'tailwindcss'; */
+
+:host-context {
+    @apply grid grid-rows-[auto_1fr] overflow-hidden select-none;
+
+    &:not(.no-borders) {
+        @apply border rounded-lg bg-white border-gray-300/90;
+    }
+}
+
+
+.body {
+    overflow: overlay;
+
+    .row {
+        @apply border-b border-slate-300/50;
+        @apply cursor-pointer mt-0;
+        @apply grid grid-cols-[min-content_minmax(0,1fr)] grid-flow-col gap-4 px-4 py-2;
+
+        &:nth-child(even) {
+            @apply bg-slate-50/70;
+        }
+
+        &:hover {
+            @apply bg-blue-200/20;
+        }
+
+        &.focused {
+            @apply border-slate-400/60 z-[1];
+        }
+
+        &.selected {
+            @apply bg-blue-200/30 z-10 border-blue-300 relative;
+    
+            &:hover {
+                @apply bg-blue-200/40;
+            }
+        }
+
+        .cell {
+            @apply whitespace-nowrap;
+            @apply flex items-center;
+
+            a {
+                @apply px-2 text-lg;
+
+                &:not(.disabled) {
+                    @apply cursor-pointer;
+                }
+
+                &.disabled {
+                    @apply text-gray-400;
+                }
+            }
+
+            .remove {
+                @apply text-red-500;
+            }
+        
+            &.disabled {
+                @apply pointer-events-none opacity-[.60] cursor-default;
+            }
+        
+            & > * {
+                @apply overflow-hidden text-ellipsis;
+            }
+
+            div {
+                @apply whitespace-nowrap overflow-hidden text-ellipsis;
+            }
+        }
+    }
+
+    .loading {
+        @apply px-4 h-10 flex items-center border-b border-slate-300/50 mb-2;
+
+        svg {
+            @apply h-6 w-6 animate-spin;
+            @apply transition-opacity duration-200 ease-in-out;
+        }
+
+        span {
+            @apply pl-2;
+        }
+    }
+}

@@ -1,0 +1,58 @@
+{
+  "Loading": "Loading",
+
+
+  "//": "Buttons",
+  "Button-Cancel-Edit": "Cancel",
+  "Button-Delete": "Delete",
+  "Button-Edit": "Edit",
+  "Button-Export": "Export",
+  "Button-Filters": "Filter",
+  "Button-Filters-Clear": "Clear filters",
+  "Button-Filters-Modal-Confirm": "Confirm filter",
+  "Button-Modal-Cancel": "Cancel",
+  "Button-Modal-Close": "Close",
+  "Button-Modal-MultiEditor-Confirm": "Confirm changes",
+  "Button-Modal-MultiSelect-Confirm": "Confirm changes",
+  "Button-New": "New",
+  "Button-Open-Record": "Open",
+  "Button-Refresh": "Refresh",
+  "Button-Save": "Save",
+  "Button-Views": "Views",
+  "Button-Views-Details": "Details",
+  "Button-Views-History": "History",
+
+
+  "//": "Grids",
+  "Grid-Loading": "Loading...",
+  "Grid-Message-Empty": "No records found.",
+
+  
+  "//": "i18n",
+  "Date-Format": "MM/dd/yyyy",
+  "Date-Time-Format": "MM/dd/yyyy hh:mm a",
+  "Format-Currency": "1.2",
+  "MonthYear-Format": "MM/yyyy",
+  "Language-en": "English",
+  "Language-pt": "Português",
+  "locale": "en-US",
+
+
+  "//": "Modals",
+  "Modal-Delete-Confirm": "Confirm delete",
+  "Modal-Delete-Message": "You are about to delete system records, is not possible to reverse this action. Are you sure you want to continue?",
+  "Modal-Delete-Title": "Confirm the record deletion",
+  "Modal-Failed-Administrator": "If the problem persists, please contact your administrator.",
+  "Modal-Failed-DefaultMessage": "An error occurred in the server. Please try again later.",
+  "Modal-Failed-Title": "An error occurred",
+
+
+  "//": "Ribbon And Details",
+  "EditSection-Details": "Details",
+  "RibbonGroup-Actions": "Actions",
+  "RibbonGroup-Entity": "Entity",
+  "RibbonGroup-General": "General",
+  "RibbonGroup-Page": "Page",
+
+  "": ""
+}

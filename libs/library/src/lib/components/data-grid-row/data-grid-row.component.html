@@ -1,0 +1,26 @@
+<div *ngIf="dataGridDataset.configs.multiSelect"
+class="cell"
+(click)="onToggleSelection()"
+(onResize)="onResizeSelection($event)">
+    <input class="form-input"
+    type="checkbox"
+    [attr.disabled]="disabled"
+    [(ngModel)]="selected" />
+</div> 
+
+<div #cell
+*ngFor="let column of columns; index as i"
+class="cell"
+[class.disabled]="disabled"
+[ngClass]="column.customClass">
+    <div *ngIf="isFirstRow"
+    class="spacer"
+    (onResize)="onResize(i, $event)"></div>
+
+    <ng-container *ngTemplateOutlet="column.template ? column.template : simpleTemplate; context: { rowData: rowData, column: column }">
+    </ng-container>
+</div>
+
+<ng-template #simpleTemplate let-rowData="rowData" let-column="column">
+    <span>{{ getValue(column.field) }}</span>
+</ng-template>

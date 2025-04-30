@@ -1,0 +1,141 @@
+/* @use 'tailwindcss'; */
+
+nav {
+    @apply flex flex-col h-full min-h-full relative;
+    @apply transition-[margin-left,width] duration-200 ease-in-out;
+
+    &.collapsed {
+        @apply md:ml-0;
+
+        .navigation-items .loading {
+            svg {
+                @apply h-7 w-7;
+            }
+
+            span {
+                @apply opacity-0;
+            }
+        }
+    }
+
+    .navigation-container {
+        @apply flex flex-col flex-grow absolute inset-0 w-full overflow-hidden z-50;
+        @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
+        @apply transition-[width] duration-200 ease-in-out;
+    }
+
+    .header {
+        @apply pt-2 pb-3 bg-primary-600 select-none;
+
+        .logo-container {
+            @apply mb-3 h-[50px] relative;
+
+            .logo-collapsed, .logo-expanded {
+                @apply absolute inset-0 m-0 transition-opacity duration-200 ease-in-out;
+            }
+        }
+
+        .profile-container {
+            @apply flex flex-row flex-nowrap h-[48px] justify-items-stretch;
+
+            .picture {
+                @apply rounded-full mx-3 overflow-hidden w-[48px] min-w-[48px];
+            }
+
+            .profile {
+                @apply flex-grow whitespace-nowrap transition-opacity duration-200 ease-in-out overflow-hidden;
+
+                h4, h5 {
+                    @apply overflow-hidden text-ellipsis mr-3;
+                }
+                
+                h4 {
+                    @apply font-medium text-white;
+                }
+
+                h5 {
+                    @apply text-sm text-gray-300;
+                }
+            }
+        }
+    }
+
+    .navigation-items {
+        @apply flex-grow relative;
+        @apply bg-primary-600;
+
+        ul, .loading {
+            @apply bg-primary-700/80 relative;
+        }
+
+        .loading {
+            @apply px-6 py-3 text-gray-200 whitespace-nowrap select-none;
+
+            svg {
+                @apply inline-block transition-[height,width] duration-200 ease-in-out;
+                @apply h-7 w-7 md:h-5 md:w-5;
+            }
+
+            span {
+                @apply ml-2 transition-opacity duration-200 ease-in-out;
+                @apply opacity-0 md:opacity-100;
+            }
+        }
+    }
+}
+
+/* Animations & Transitions */
+nav {
+    .logo-container {
+        .logo-collapsed {
+            @apply opacity-100 md:opacity-0;
+        }
+
+        .logo-expanded {
+            @apply opacity-0 md:opacity-100;
+        }
+
+    }
+
+    .profile-container .profile {
+        @apply opacity-0 md:opacity-100;
+    }
+
+    &.collapsed:not(.expand) {
+        .logo-container {
+            .logo-collapsed {
+                @apply opacity-100;
+            }
+
+            .logo-expanded {
+                @apply opacity-0;
+            }
+        }
+
+        .profile-container .profile {
+            @apply opacity-0;
+        }
+    }
+
+    .expand {
+        .logo-collapsed {
+            @apply opacity-0 #{!important};
+        }
+
+        .logo-expanded {
+            @apply opacity-100 #{!important};
+        }
+
+        .profile-container .profile {
+            @apply opacity-100 #{!important};
+        }
+    }
+}
+
+.drop-shadow {
+    @apply fixed inset-0 z-10 bg-black/60 hidden;
+
+    &.show {
+        @apply block md:hidden;
+    }
+}

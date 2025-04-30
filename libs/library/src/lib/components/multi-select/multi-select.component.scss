@@ -1,0 +1,21 @@
+/* @use 'tailwindcss'; */
+
+lib-modal ::ng-deep {
+    .modal-body {
+        @apply grid-rows-[min-content_minmax(0,1fr)];
+        @apply grid-flow-row #{!important};
+    }
+}
+
+.search-grid {
+    @apply grid grid-rows-subgrid;
+}
+
+.search-grid, lib-multi-select-result-grid {
+    @apply row-span-full;
+}
+
+lib-multi-select-result-grid {
+    @apply min-h-[24rem];
+}
+

@@ -1,0 +1,103 @@
+<ng-container *ngIf="formGroupDirective.form?.enabled || isFormEditMode;else disabledControl">
+    <ng-container [ngSwitch]="type">
+        
+        <textarea *ngSwitchCase="'textarea'"
+        [attr.autofocus]="autofocus ? true : null"
+        [attr.maxLength]="maxLength ?? null"
+        [attr.rows]="rows"
+        [class.invalid]="invalid"
+        [formControlName]="controlName"
+        (blur)="onBlur()"
+        (focus)="onFocus()"
+        (input)="onInput()"
+        ></textarea>
+
+        <ng-container *ngSwitchCase="'checkbox'">
+            <input *ngIf="controlName; else fixedCheckbox"
+            class="switch"
+            type="checkbox"
+            [attr.autofocus]="autofocus ? true : null"
+            [class.invalid]="invalid"
+            [formControlName]="controlName"
+            (blur)="onBlur()"
+            (focus)="onFocus()"
+            (input)="onInput()"
+            />
+
+            <ng-template #fixedCheckbox>
+                <input
+                class="switch"
+                type="checkbox"
+                [attr.disabled]="true"
+                [class.invalid]="invalid"
+                [attr.readonly]="true"
+                [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="fixedValue"
+                (blur)="onBlur()"
+                (focus)="onFocus()"
+                (input)="onInput()"
+                (ngModelChange)="onValueChanged($event)"
+                />
+            </ng-template>
+        </ng-container>
+
+
+        <ng-container *ngSwitchDefault>
+            <input *ngIf="controlName; else fixedTextBox"
+            [attr.autofocus]="autofocus ? true : null"
+            [attr.maxLength]="maxLength ?? null"
+            [attr.readonly]="readOnly ? true : null"
+            [attr.step]="stepAttributeValue"
+            [class.invalid]="invalid"
+            [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
+            [formControlName]="controlName"
+            [type]="type"
+            (blur)="onBlur()"
+            (focus)="onFocus()"
+            (input)="onInput()"
+            />
+
+            <ng-template #fixedTextBox>
+                <input
+                [attr.disabled]="true"
+                [attr.maxLength]="maxLength ?? null"
+                [attr.readonly]="true"
+                [attr.step]="stepAttributeValue"
+                [class.invalid]="invalid"
+                [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="fixedValue"
+                [type]="type"
+                (blur)="onBlur()"
+                (focus)="onFocus()"
+                (input)="onInput()"
+                (ngModelChange)="onValueChanged($event)"
+                />
+            </ng-template>
+        </ng-container>
+
+    </ng-container>
+</ng-container>
+
+<ng-template #disabledControl>
+    <ng-container [ngSwitch]="type">
+        <label *ngSwitchCase="'checkbox'">
+            <i [ngClass]="fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value ? 'fa-solid fa-square-check' : 'fa-regular fa-square'"></i>
+        </label>
+
+        <label *ngSwitchCase="'date'">
+            {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | date: format }}
+        </label>
+
+        <label *ngSwitchCase="'datetime-local'">
+            {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | date: format }}
+        </label>
+
+        <label *ngSwitchCase="'number'">
+            {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | number: format }}
+        </label>
+
+        <label class="text" *ngSwitchDefault>{{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value }}</label>
+    </ng-container>
+</ng-template>

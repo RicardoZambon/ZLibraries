@@ -1,0 +1,37 @@
+/* @use 'tailwindcss'; */
+
+:host-context {
+    @apply w-full max-w-full min-w-full;
+}
+
+lib-data-grid {
+    @apply h-full;
+
+    ::ng-deep .body lib-data-grid-row {
+        @apply p-0 #{!important};
+    }
+}
+
+.operation-content {
+    @apply px-3 py-2;
+
+    .operation {
+        @apply text-sm font-semibold;
+
+        &.added {
+            @apply text-green-700;
+        }
+
+        &.deleted {
+            @apply text-red-700;
+        }
+
+        &.modified {
+            @apply text-blue-700;
+        }
+
+        &.unchanged {
+            @apply text-gray-700;
+        }
+    }
+}

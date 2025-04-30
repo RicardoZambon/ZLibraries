@@ -1,0 +1,22 @@
+<lib-modal
+position="top"
+[closeButtonText]="'Button-Modal-Cancel' | translate"
+[size]="size"
+[title]="title | translate">
+    <div body>
+        <div *ngIf="hasMessage" class="message">
+            <i *ngIf="showMessageIcon" class="fa-3x" [ngClass]="[ messageIcon, messageIconColor ]"></i>
+            <h4 [innerHTML]="message | translate"></h4>
+        </div>  
+
+        <ng-content></ng-content>
+
+        <div *ngIf="hasErrorMessage" class="erro">
+            <h4>{{ errorMessage | translate }}</h4>
+            <span>{{ 'Modal-Failed-Administrator' | translate }}</span>
+        </div>
+    </div>
+    <div footer>
+        <ng-content select="[footer]"></ng-content>
+    </div>
+</lib-modal>

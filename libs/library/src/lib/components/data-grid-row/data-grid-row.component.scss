@@ -1,0 +1,21 @@
+/* @use 'tailwindcss'; */
+
+:host {
+    @apply grid col-span-full grid-cols-subgrid;
+}
+
+.cell {
+    @apply relative whitespace-nowrap overflow-hidden text-ellipsis content-center;
+
+    &.disabled {
+        @apply pointer-events-none opacity-[.60] cursor-default overflow-hidden text-ellipsis;
+    }
+
+    input {
+        @apply align-super;
+    }
+}
+
+.spacer {
+    @apply absolute inset-0 -z-[1] h-0;
+}

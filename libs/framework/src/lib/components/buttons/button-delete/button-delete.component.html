@@ -1,0 +1,24 @@
+<lib-ribbon-button *ngIf="visible"
+color="text-red-500"
+icon="fa-trash-alt"
+label="Button-Delete"
+[disabled]="disabled"
+[loading]="loading"
+(action)="onButtonClicked()">
+</lib-ribbon-button>
+
+<framework-confirm-modal #modal
+messageIcon="fa-solid fa-circle-exclamation"
+messageIconColor="text-red-500"
+[message]="message"
+[title]="title">
+    <div footer>
+        <button
+        class="btn red-500"
+        type="button"
+        [class.loading]="modal.isLoading"
+        (click)="onDelete()">
+            {{ 'Modal-Delete-Confirm' | translate }}
+        </button>
+    </div>
+</framework-confirm-modal>

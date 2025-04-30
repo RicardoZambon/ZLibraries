@@ -1,0 +1,77 @@
+/* @use 'tailwindcss'; */
+
+:host {
+    @apply flex flex-col flex-grow max-w-full;
+}
+
+.tabs-container {
+    @apply relative;
+
+    .tabs-nav {
+        @apply flex flex-row;
+
+        li {
+            @apply flex relative;
+
+            .tab-item {
+                @apply py-2 pl-4 pr-11 max-w-xs select-none cursor-pointer text-xl font-medium text-ellipsis overflow-hidden;
+                @apply bg-gray-200/70 text-gray-700 border-t border-x border-gray-400/70 rounded-t-md;
+                @apply transition-colors ease-in-out;
+
+                span {
+                    @apply whitespace-nowrap;
+                }
+
+                svg {
+                    @apply h-7 w-7 animate-spin;
+                }
+            }
+
+            .tab-close {
+                @apply text-gray-400;
+            }
+
+            &:hover {
+                .tab-item {
+                    @apply bg-gray-200/90;
+                }
+
+                .tab-close {
+                    @apply text-gray-400;
+
+                    &:hover {
+                        @apply text-red-700;
+                    }
+                }
+            }
+
+            &.active .tab-item {
+                @apply bg-white/80 ;
+            }
+
+            &:hover {
+                .tab-item {
+                    @apply bg-white/90;
+                }
+
+                .tab-close {
+                    @apply text-gray-400;
+
+                    &:hover {
+                        @apply text-red-700;
+                    }
+                }
+            }
+
+            .tab-close {
+                @apply flex items-center absolute p-4 top-0 right-0 bottom-0 text-2xl cursor-pointer;
+                @apply transition-colors ease-in-out text-gray-400/80;
+            }
+        }
+    }
+}
+
+.tab-content {
+    @apply flex flex-col flex-grow rounded-b-lg p-2 overflow-hidden;
+    @apply bg-white/80 border border-gray-400/70 mt-[-1px];
+}

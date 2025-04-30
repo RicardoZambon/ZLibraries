@@ -1,0 +1,18 @@
+/* @use 'tailwindcss'; */
+
+:host-context {
+    @apply font-bold mb-2 border-b border-b-slate-300 select-none;
+
+    i {
+        @apply mx-1 text-xs;
+    }
+
+    a {
+        @apply cursor-pointer;
+
+        &:not(:first-of-type):before {
+            @apply text-xs font-semibold content-['\f054'] px-1;
+            font-family: "Font Awesome 6 Free";
+        }
+    }
+}
