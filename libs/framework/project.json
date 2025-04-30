@@ -7,7 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/angular:ng-packagr-lite",
+      "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
         "project": "libs/framework/ng-package.json"
@@ -17,7 +17,8 @@
           "tsConfig": "libs/framework/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/framework/tsconfig.lib.json"
+          "tsConfig": "libs/framework/tsconfig.lib.json",
+          "watch": true
         }
       },
       "defaultConfiguration": "production"
