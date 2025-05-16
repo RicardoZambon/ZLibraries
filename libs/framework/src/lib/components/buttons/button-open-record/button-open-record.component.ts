@@ -18,7 +18,8 @@ import { BaseButton } from '../base-button';
 })
 export class ButtonOpenRecordComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public path?: string;
+  @Input() public elementPath?: string;
+  @Input() public rootPath?: string;
   //#endregion
 
   //#region Variables
@@ -56,16 +57,17 @@ export class ButtonOpenRecordComponent extends BaseButton implements OnInit {
       return;
     }
 
-    let url: string = this.router.url;
-    if (this.path) {
-      url += `/${this.path}`;
+    let path: string = this.rootPath ?? this.router.url;
+
+    if (this.elementPath) {
+      path += `/${this.elementPath}`;
     }
     
     const selectedKey: string = this.dataGridDataset.selectedRowKeys[0];
     const selectedID: any = this.dataGridDataset.getRowID(selectedKey);
-    url += `/${selectedID}`;
+    path += `/${selectedID}`;
 
-    this.tabService.navigateCurrentTab(new Tab({ url }));
+    this.tabService.navigateCurrentTab(new Tab({ url: path }));
   }
   //#endregion
 
