@@ -1,8 +1,8 @@
 :host {
-    @apply w-full;
+    @apply block;
 }
 
-.container {
+.content {
     @apply mx-auto w-10/12 md:w-8/12 xl:w-5/12 rounded-lg;
     @apply divide-y divide-zinc-400;
     @apply shadow-[0_4px_8px_0_rgba(0,0,0,0.2),0_6px_20px_0_rgba(0,0,0,0.19)];
@@ -11,23 +11,15 @@
         @apply mt-20 pt-20 px-6 pb-6 rounded-t-lg bg-white/60 relative z-10 backdrop-blur-md;
 
         .logo-container {
-            @apply -mt-40 h-28 sm:h-40 mb-4;
-            @apply flex flex-row justify-center items-stretch;
+            @apply -mt-40 ml-auto mr-auto mb-4 w-fit rounded-3xl p-2;
+            @apply bg-white shadow-[0_4px_8px_0_rgba(0,0,0,0.2),0_6px_20px_0_rgba(0,0,0,0.19)];
     
             .logo {
-                @apply relative w-full sm:w-9/12 rounded-3xl bg-white;
-                @apply flex flex-row justify-center items-center;
-                @apply shadow-[0_4px_8px_0_rgba(0,0,0,0.2),0_6px_20px_0_rgba(0,0,0,0.19)];
-    
-                &:before {
-                    @apply content-[''] absolute;
-                    @apply inset-3 rounded-3xl border-2 border-amber-300;
-                }
+                @apply w-fit p-2 rounded-3xl;
+                @apply border-2 border-amber-300;
 
-                &:after {
-                    @apply content-[''] absolute;
-                    @apply inset-3;
-                    @apply bg-[url('/logo-login.png')] bg-no-repeat bg-center bg-contain;
+                img {
+                    @apply min-w-fit h-40;
                 }
             }
         }
@@ -55,7 +47,7 @@
             }
     
             .buttons {
-                @apply flex flex-row justify-center;
+                @apply flex justify-center gap-4;
             }
         }
     }
@@ -64,11 +56,7 @@
         @apply px-2 py-0.5 rounded-b-lg;
         @apply bg-slate-200/60 backdrop-blur-md;
         @apply text-sm font-semibold tracking-tight;
-        @apply flex flex-row justify-between flex-wrap;
-
-        .design {
-            @apply hidden sm:inline;
-        }
+        @apply flex justify-between flex-wrap;
     }
 }
 
