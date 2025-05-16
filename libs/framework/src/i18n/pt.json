@@ -32,8 +32,10 @@
   "Date-Format": "dd/MM/yyyy",
   "Date-Time-Format": "dd/MM/yyyy HH:mm",
   "Format-Currency": "1.2",
-  "MonthYear-Format": "MM/yyyy",
+  "Language-en": "English",
+  "Language-pt": "Português",
   "locale": "pt-BR",
+  "MonthYear-Format": "MM/yyyy",
 
 
   "//": "Modals",

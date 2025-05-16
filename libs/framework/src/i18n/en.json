@@ -32,10 +32,10 @@
   "Date-Format": "MM/dd/yyyy",
   "Date-Time-Format": "MM/dd/yyyy hh:mm a",
   "Format-Currency": "1.2",
-  "MonthYear-Format": "MM/yyyy",
   "Language-en": "English",
   "Language-pt": "Português",
   "locale": "en-US",
+  "MonthYear-Format": "MM/yyyy",
 
 
   "//": "Modals",
