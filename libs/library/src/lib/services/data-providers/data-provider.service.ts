@@ -14,6 +14,7 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   private isLoading: boolean = false;
   private isModelLoaded: boolean = false;
   private modelCache: ReplaySubject<TEntityModel | null> = new ReplaySubject<TEntityModel | null>(1);
+  protected shouldLazyLoad: boolean = false;
   //#endregion
 
   //#region Properties
@@ -34,8 +35,13 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
         const newID: number = Number(paramMap.get('id'));
         if (newID !== this.entityID) {
           this._entityID = newID;
+          
+          // Need to wait for the data-provider to be initialized.
           setTimeout(() => {
-            this.refreshModel(); 
+            // When lazy loading, the model should be loaded by the consuming component.
+            if (!this.shouldLazyLoad) {
+              this.refreshModel(); 
+            }
           });
         }
       });
@@ -54,24 +60,13 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   public abstract getTitle(entity: TEntityModel): string;
   
   public getModel$(): Observable<TEntityModel | null> {
-    if (!this.isModelLoaded) {
+    if (!this.isModelLoaded && !this.shouldLazyLoad) {
       this.refreshModel();
     }
     return this.modelCache.asObservable();
   }
 
-  public abstract saveModel(model: any): Observable<TEntityModel>;
-
-  public updateModel(model: any): void {
-    this.isModelLoaded = true;
-    this.modelCache.next(model);
-  }
-  //#endregion
-
-  //#region Private methods
-  protected abstract loadModel(entityID?: number): Observable<TEntityModel | null>;
-
-  private refreshModel(): void {
+  public refreshModel(): void {
     if (this.isLoading) {
       return;
     }
@@ -85,5 +80,16 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
         this.updateModel(model);
       });
   }
+
+  public abstract saveModel(model: any): Observable<TEntityModel>;
+
+  public updateModel(model: any): void {
+    this.isModelLoaded = true;
+    this.modelCache.next(model);
+  }
+  //#endregion
+
+  //#region Private methods
+  protected abstract loadModel(entityID?: number): Observable<TEntityModel | null>;
   //#endregion
 }
