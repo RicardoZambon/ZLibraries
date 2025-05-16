@@ -1,0 +1,42 @@
+@reference "tailwindcss";
+
+.main-container {
+    @apply flex flex-row h-screen bg-gray-300;
+
+    .sidebar {
+        @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
+
+        [logo-collapsed] {
+            @apply h-full bg-[url('/logo-small-menu.png')] bg-no-repeat bg-center bg-contain;
+        }
+
+        [logo-expanded] {
+            @apply h-full bg-[url('/logo-menu.png')] bg-no-repeat bg-center bg-contain;
+        }
+    }
+
+    .main {
+        @apply flex flex-col flex-grow h-screen overflow-hidden;
+        
+        .toolbar {
+            @apply relative flex flex-row justify-between p-2 border-b border-stone-300;
+            @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
+            
+            @apply bg-white/90;
+
+            div {
+                @apply inline-block;
+            }
+        }
+
+        .content {
+            @apply h-screen flex flex-grow px-3 pt-3 pb-2 overflow-hidden;
+        }
+    }
+}
+
+lib-modal {
+    h5 {
+        @apply mb-2 font-medium leading-5 text-lg;
+    }
+}
