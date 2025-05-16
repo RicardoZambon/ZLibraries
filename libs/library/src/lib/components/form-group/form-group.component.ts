@@ -9,10 +9,14 @@ import { TranslatePipe } from '@ngx-translate/core';
   imports: [
     NgIf,
     TranslatePipe,
-  ]
+  ],
+  host: {
+    '[class.expand]': 'shouldExpand'
+  }
 })
 export class FormGroupComponent {
   //#region ViewChilds, Inputs, Outputs
+  @Input() public shouldExpand: boolean = false;
   @Input() public label!: string;
   //#endregion
 

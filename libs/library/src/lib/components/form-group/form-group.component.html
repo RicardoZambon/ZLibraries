@@ -1,7 +1,9 @@
-<h3 class="title" *ngIf="hasTitle">
+<h3 *ngIf="hasTitle"
+class="title" >
     {{ label | translate }}
 </h3>
 
-<div class="content" [class.has-title]="hasTitle">
+<div class="content"
+[class.has-title]="hasTitle">
     <ng-content></ng-content>
 </div>
