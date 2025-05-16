@@ -1,7 +1,11 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
     @apply grid grid-cols-subgrid col-span-2 gap-3;
+
+    &.full-height {
+        @apply max-h-full overflow-auto;
+    }
 }
 
 label {
@@ -10,8 +14,6 @@ label {
 }
 
 .field {
-    @apply content-center;
-    
     .validations {
         @apply basis-full;
         @apply text-red-600 text-sm;

@@ -4,7 +4,8 @@
 </label>
 
 <div class="field"
-[class.col-span-2]="!showLabel">
+[class.col-span-2]="!showLabel"
+[ngStyle]="{ 'align-content': alignContent }" >
     <div class="loading" *ngIf="(loadingField || (formService.loading && formService.model === null)); else content">
         <div></div>
     </div>
@@ -20,17 +21,18 @@
         </div>
         
         <ng-template #defaultTemplate>
-            <lib-form-input
+            <lib-form-input #formInput
             [autofocus]="autofocus"
             [controlName]="controlName"
             [fixedValue]="fixedValue"
             [format]="format"
+            [isFullHeight]="isFullHeight"
             [maxLength]="maxLength"
             [readOnly]="readOnly"
             [rows]="rows"
             [step]="step"
-            [type]="type"
-            ></lib-form-input>
+            [type]="type">
+            </lib-form-input>
         </ng-template>
         
         <span class="text-sm italic" *ngIf="hasNotes">

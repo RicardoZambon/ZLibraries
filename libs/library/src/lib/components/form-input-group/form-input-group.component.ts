@@ -1,4 +1,4 @@
-import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import { Component, Input, OnInit, Optional, TemplateRef } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -15,17 +15,23 @@ import { FormInputComponent } from '../form-input/form-input.component';
       FormInputComponent,
       NgFor,
       NgIf,
+      NgStyle,
       NgTemplateOutlet,
       TranslatePipe,
-  ]
+  ],
+  host: {
+    '[class.full-height]': 'isFullHeight'
+  }
 })
 export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @Input() public autofocus: boolean = false;
+  @Input() public alignContent: 'center' | 'end' | 'start' = 'center';
   @Input() public controlName!: string;
   @Input() public fixedValue?: any;
   @Input() public format?: string;
   @Input() public label!: string;
+  @Input() public isFullHeight: boolean = false;
   @Input() public maxLength?: number;
   @Input() public notes: string = '';
   @Input() public readOnly: boolean = false;
