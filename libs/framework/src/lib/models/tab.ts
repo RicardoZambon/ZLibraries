@@ -1,4 +1,5 @@
 export interface ITab {
+  clones: string[];
   isTitleLoading: boolean;
   title?: string;
   url: string;
@@ -6,6 +7,8 @@ export interface ITab {
 
 export class Tab implements ITab{
   private _title?: string | undefined;
+
+  public clones: string[] = [];
   
   public isTitleLoading: boolean = true;
   

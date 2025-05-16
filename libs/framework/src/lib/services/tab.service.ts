@@ -52,6 +52,21 @@ export class TabService {
     this.navigateTo(tab);
   }
 
+  public cloneCurrentTab(url: string): void {
+    if (!this.activeTab) {
+      return;
+    }
+
+    const tab: ITab = this.activeTab[this.activeTab.length - 1];
+
+    this.customReuseStrategy.clones[url] = tab.url;
+    if (tab.clones.indexOf(url) === -1) {
+      tab.clones.push(url);
+    }
+
+    this.navigateTo(tab, url);
+  }
+
   public closeActiveTab(): void {
     this.closeTab(this.activeTabIndex);
   }
@@ -88,10 +103,27 @@ export class TabService {
     return this.activeTabs[this.activeTabIndex] === tab;
   }
 
+  public isUrlActive(url: string, checkForClones: boolean = false): boolean {
+    if (!this.activeTab) {
+      return false;
+    }
+
+    const tab: ITab = this.activeTab[this.activeTab.length - 1];
+
+    if (tab.url === url) {
+      return true;
+    } else if (checkForClones) {
+      return tab.clones.indexOf(url) !== -1;
+    }
+
+    return false
+  }
+
   public isUrlOpen(url: string): boolean {
-    return this.openTabs
-      .flatMap((tabs: ITab[]) => tabs)
-      .some((tab: ITab) => tab.url === url);
+    const tabs: ITab[] = this.openTabs
+      .flatMap((tabs: ITab[]) => tabs);
+
+    return this.isTabExists(tabs, url);
   }
 
   public navigateCurrentTab(tab: ITab): void {
@@ -99,15 +131,22 @@ export class TabService {
       return;
     }
 
-    const existingTab: ITab | undefined = this.activeTab.find((t: ITab) => t.url === tab.url);
-    if (existingTab) {
+    const tabIsAlreadyOpen: ITab | undefined = this.findTab(this.activeTab, tab.url);
+
+    if (tabIsAlreadyOpen) {
       // If the URL is active in the current tab, we need to navigate back.
-      this.navigateCurrentTabBack(existingTab);
+      this.navigateCurrentTabBack(tabIsAlreadyOpen);
       return;
     }
 
+    let clonedUrl: string | undefined = undefined;
+    if (tab.clones.length > 0) {
+      clonedUrl = tab.clones[0];
+      this.customReuseStrategy.clones[clonedUrl] = tab.url;
+    }
+
     this.activeTab.push(tab);
-    this.navigateTo(tab);
+    this.navigateTo(tab, clonedUrl);
   }
 
   public navigateCurrentTabBack(tab: ITab): void {
@@ -117,7 +156,7 @@ export class TabService {
 
     if (this.isUrlOpen(tab.url)) {
       // If the URL is active in other tab, we need to focus the tab.
-      const tabIndex: number = this.activeTabs.findIndex((t: ITab) => t.url === tab.url);
+      const tabIndex: number = this.findTabIndex(this.activeTabs, tab.url);
       if (tabIndex !== -1) {
         this.activateTab(this.activeTabs[tabIndex]);
         return;
@@ -137,8 +176,20 @@ export class TabService {
     this.navigateTo(tab);
   }
 
+  public navigateTo(tab: ITab | undefined, clonedUrl?: string): void {
+    let url: string = tab?.url ?? '/';
+    if (!!clonedUrl) {
+      url = clonedUrl;
+    }
+
+    this.router.navigate([ url ])
+      .then(() => {
+        this.customReuseStrategy.redirects = {};
+      });
+  }
+
   public openTab(tab: ITab): void {
-    const openTab: ITab | undefined = this.getActiveTab(tab.url);
+    const openTab: ITab | undefined = this.findTab(this.activeTabs, tab.url);
     if (openTab) {
       this.activateTab(openTab);
       return;
@@ -172,17 +223,21 @@ export class TabService {
   //#endregion
   
   //#region Private methods
-  private getActiveTab(url: string): ITab | undefined {
-    return this.activeTabs
-      .find((tab: ITab) => tab.url === url);
+  private findTab(tabs: ITab[], url: string): ITab | undefined {
+    return tabs.find((tab: ITab) => this.matchTabUrl(tab, url));
   }
 
-  public navigateTo(tab: ITab | undefined): void {
-    const url: string = tab?.url ?? '/';
-    this.router.navigate([ url ])
-      .then(() => {
-        this.customReuseStrategy.redirects = {};
-      });
+  private findTabIndex(tabs: ITab[], url: string): number {
+    return tabs.findIndex((tab: ITab) => this.matchTabUrl(tab, url));
+  }
+
+  private isTabExists(tabs: ITab[], url: string): boolean {
+    return tabs.some((tab: ITab) => this.matchTabUrl(tab, url));
+  }
+
+  private matchTabUrl(tab: ITab, url: string): boolean {
+    return tab.url === url
+      || tab.clones.indexOf(url) !== -1;
   }
   //#endregion
 }

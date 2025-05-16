@@ -1,5 +1,5 @@
 import { Inject } from '@angular/core';
-import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy } from '@angular/router';
+import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy, UrlSegment } from '@angular/router';
 import { TabService } from './tab.service';
 
 @Inject({})
@@ -10,6 +10,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
   //#region Variables
   private cachedHandles: { [key: string]: DetachedRouteHandle | null } = {};
 
+  public clones: { [key: string]: string } = {};
   public redirects: { [key: string]: string } = {};
   //#endregion
 
@@ -77,7 +78,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     const futureUrl: string = this.getUrlFromRoute(future);
     const currentUrl: string = this.getUrlFromRoute(current);
 
-    return (futureUrl === currentUrl && future.routeConfig === current.routeConfig) || this.redirects[currentUrl] === futureUrl;
+    return (futureUrl === currentUrl && future.routeConfig === current.routeConfig) || this.redirects[currentUrl] === futureUrl || this.clones[futureUrl] === currentUrl;
   }
 
   public store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
@@ -88,7 +89,11 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
   //#region Private methods
   private getCacheKey(route: ActivatedRouteSnapshot): string {
-    const url: string = this.getUrlFromRoute(route);
+    let url: string = this.getUrlFromRoute(route);
+    if (this.clones[url]) {
+      url = this.clones[url];
+    }
+
     const componentName: string = route.component?.name ?? '';
     return `${url}-${componentName}`;
   }
@@ -99,7 +104,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     const buildRoute: (route: ActivatedRouteSnapshot | null) => void = (route: ActivatedRouteSnapshot | null): void => {
       if (!!route) {
         if (!!route.url.length) {
-          segments.push(...route.url.map(segment => segment.path));
+          segments.push(...route.url.map((segment: UrlSegment) => segment.path));
         }
         buildRoute(route.parent);
       }

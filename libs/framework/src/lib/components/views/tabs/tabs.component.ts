@@ -63,15 +63,25 @@ export class TabsComponent implements OnInit {
   public ngOnInit(): void {
     const activatedDetailsTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.snapshot.root, DefaultDetailsTabViewComponent.name);
     if (activatedDetailsTabView) {
-      const url: string = RouteHelper.getRouteURL(activatedDetailsTabView);
-      this.tabService.openTab(new Tab({ url }));
+      const shouldIgnoreFirstChildRoute: boolean = !!activatedDetailsTabView.firstChild && activatedDetailsTabView.firstChild.data && activatedDetailsTabView.firstChild.data['ignoreRoute'] === true;
 
-      setTimeout(() => {
-        if (activatedDetailsTabView.firstChild) {
-          const url: string = RouteHelper.getRouteURL(activatedDetailsTabView.firstChild);
-          this.tabService.navigateCurrentTab(new Tab({ url }));
-        }
-      });
+      const url: string = RouteHelper.getRouteURL(activatedDetailsTabView);
+      const clones: string[] = [];
+
+      if (shouldIgnoreFirstChildRoute) {
+        clones.push(RouteHelper.getRouteURL(activatedDetailsTabView.firstChild!));
+        
+      } else {
+        setTimeout(() => {
+          if (!!activatedDetailsTabView.firstChild) {
+            const url: string = RouteHelper.getRouteURL(activatedDetailsTabView.firstChild);
+            this.tabService.navigateCurrentTab(new Tab({ url }));
+          }
+        });
+      }
+      
+      this.tabService.openTab(new Tab({ url, clones }));
+
     } else {
       const activatedTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.snapshot.root, DefaultTabViewComponent.name);
       if (activatedTabView) {

@@ -54,28 +54,30 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   public ngOnInit(): void {
     const activatedRoute: ActivatedRouteSnapshot | null = this.detailsViewRoute;
     if (activatedRoute) {
-      this.options = activatedRoute.routeConfig?.children?.map((route: Route) => {
-        const data: { [key: string | symbol]: any } = route.data ?? {};
+      this.options = activatedRoute.routeConfig?.children
+        ?.filter((route: Route) => !!route.data && route.data['ignoreRoute'] !== true)
+        ?.map((route: Route) => {
+          const data: { [key: string | symbol]: any } = route.data ?? {};
 
-        const option: IRibbonButtonOption = {
-          id: route.path ?? '',
-          isDisabled: false,
-          isVisible: true,
-          label: data['title'] ?? '',
-        };
+          const option: IRibbonButtonOption = {
+            id: route.path ?? '',
+            isDisabled: false,
+            isVisible: true,
+            label: data['title'] ?? '',
+          };
 
-        const icon: string | undefined = data['icon'];
-        if (icon) {
-          option.icon = icon;
-        }
+          const icon: string | undefined = data['icon'];
+          if (icon) {
+            option.icon = icon;
+          }
 
-        const allowedActions: string[] | undefined = data['allowedActions'];
-        if (allowedActions && allowedActions.length > 0) {
-          option.allowedActions = allowedActions;
-        }
+          const allowedActions: string[] | undefined = data['allowedActions'];
+          if (allowedActions && allowedActions.length > 0) {
+            option.allowedActions = allowedActions;
+          }
 
-        return option;
-      }) ?? [];
+          return option;
+        }) ?? [];
 
       const url: string = RouteHelper.getRouteURL(activatedRoute);
       this.baseUrlPath = url;
@@ -126,7 +128,7 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
           title: selectedView.label,
           url: url,
         });
-  
+
         this.tabService.navigateCurrentTab(tab);
       }
     }
@@ -151,7 +153,13 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   }
 
   private getActiveOption(routeSnapshot: ActivatedRouteSnapshot): string {
-    return routeSnapshot.children[0]?.url?.map((segment: UrlSegment) => segment.path)?.join('/') ?? '';
+    const option: string = routeSnapshot.children[0]?.url?.map((segment: UrlSegment) => segment.path)?.join('/') ?? '';
+
+    if (this.options.some((o: IRibbonButtonOption) => o.id === option)) {
+      return option;
+    }
+
+    return this.options[0].id;
   }
   //#endregion
 }
