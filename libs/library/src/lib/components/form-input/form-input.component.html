@@ -9,11 +9,11 @@
         [formControlName]="controlName"
         (blur)="onBlur()"
         (focus)="onFocus()"
-        (input)="onInput()"
-        ></textarea>
+        (input)="onInput()">
+        </textarea>
 
         <ng-container *ngSwitchCase="'checkbox'">
-            <input *ngIf="controlName; else fixedCheckbox"
+            <input *ngIf="isFormControl; else fixedCheckbox"
             class="switch"
             type="checkbox"
             [attr.autofocus]="autofocus ? true : null"
@@ -21,30 +21,28 @@
             [formControlName]="controlName"
             (blur)="onBlur()"
             (focus)="onFocus()"
-            (input)="onInput()"
-            />
+            (input)="onInput()" />
 
             <ng-template #fixedCheckbox>
                 <input
+                disabled
                 class="switch"
                 type="checkbox"
-                [attr.disabled]="true"
-                [class.invalid]="invalid"
+                [(ngModel)]="fixedValue"
                 [attr.readonly]="true"
+                [class.invalid]="invalid"
                 [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
                 [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="fixedValue"
                 (blur)="onBlur()"
                 (focus)="onFocus()"
                 (input)="onInput()"
-                (ngModelChange)="onValueChanged($event)"
-                />
+                (ngModelChange)="onValueChanged($event)" />
             </ng-template>
         </ng-container>
 
 
         <ng-container *ngSwitchDefault>
-            <input *ngIf="controlName; else fixedTextBox"
+            <input *ngIf="isFormControl; else fixedTextBox"
             [attr.autofocus]="autofocus ? true : null"
             [attr.maxLength]="maxLength ?? null"
             [attr.readonly]="readOnly ? true : null"
@@ -55,25 +53,23 @@
             [type]="type"
             (blur)="onBlur()"
             (focus)="onFocus()"
-            (input)="onInput()"
-            />
+            (input)="onInput()" />
 
             <ng-template #fixedTextBox>
                 <input
-                [attr.disabled]="true"
+                disabled
+                type="text"
                 [attr.maxLength]="maxLength ?? null"
                 [attr.readonly]="true"
                 [attr.step]="stepAttributeValue"
                 [class.invalid]="invalid"
                 [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
+                [ngModel]="type === 'date' || type === 'datetime-local' ? (fixedValue | date: format) : ( type === 'number' ? (fixedValue | number) : fixedValue )" 
                 [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="fixedValue"
-                [type]="type"
                 (blur)="onBlur()"
                 (focus)="onFocus()"
                 (input)="onInput()"
-                (ngModelChange)="onValueChanged($event)"
-                />
+                (ngModelChange)="onValueChanged($event)" />
             </ng-template>
         </ng-container>
 
@@ -100,4 +96,8 @@
 
         <label class="text" *ngSwitchDefault>{{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value }}</label>
     </ng-container>
+</ng-template>
+
+<ng-template #fixedTextbox let-fixedValue="fixedValue">
+    
 </ng-template>

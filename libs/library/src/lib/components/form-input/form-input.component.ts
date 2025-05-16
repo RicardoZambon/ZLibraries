@@ -17,17 +17,21 @@ import { BaseComponent } from '../base.component';
     NgSwitchCase,
     ReactiveFormsModule,
   ],
-  viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }]
+  viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
+  host: {
+    '[class.full-height]': 'isFullHeight'
+  }
 })
 export class FormInputComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @Input() public autofocus: boolean = false;
-  @Input() public controlName!: string;
+  @Input() public controlName: string = '';
   @Input() public disabledControlName?: string;
   @Input() public displayReadOnlyAsDisabled: boolean = true;
   @Input() public fixedValue?: any;
   @Input() public format?: string;
   @Input() public invalid: boolean = false;
+  @Input() public isFullHeight: boolean = false;
   @Input() public maxLength?: number;
   @Input() public readOnly: boolean = false;
   @Input() public rows!: number;
@@ -66,6 +70,10 @@ export class FormInputComponent extends BaseComponent implements OnInit {
       formGroup = <FormGroup>formGroup.get(group);
     }
     return formGroup;
+  }
+
+  protected get isFormControl(): boolean {
+    return !!this.controlName && this.controlName.length > 0;
   }
 
   protected get isFormEditMode(): boolean {

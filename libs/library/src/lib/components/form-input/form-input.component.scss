@@ -1,5 +1,17 @@
 /* @use 'tailwindcss'; */
 
+:host {
+    @apply block;
+
+    &.full-height {
+        @apply h-full;
+
+        textarea {
+            @apply h-full;
+        }
+    }
+}
+
 input, textarea {
     @apply border-gray-400;
     @apply focus:border-gray-400 focus:ring-4 focus:ring-primary-400/80;
