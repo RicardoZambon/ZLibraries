@@ -1,22 +1,41 @@
 /* @use 'tailwindcss'; */
 
 :host {
-    @apply flex flex-col flex-grow max-w-full;
+    @apply block relative h-full max-h-full max-w-full;
+}
+
+li .tab-item, .tab-content {
+    @apply border-x;
+    border-color: rgb(183 188 197);
+}
+
+li.active .tab-item, .tab-content {
+    background-color: rgb(246 247 248) !important;
 }
 
 .tabs-container {
-    @apply relative;
+    @apply absolute top-0 h-11 w-full max-h-11 max-w-full z-[1] overflow-hidden;
 
     .tabs-nav {
         @apply flex flex-row;
 
+        &:after {
+            @apply content-[''] absolute bottom-0 left-0 right-0 h-[1px] border-t;
+            border-color: rgb(183 188 197);
+        }
+
         li {
             @apply flex relative;
 
+            &.active {
+                @apply z-[1];
+            }
+
             .tab-item {
                 @apply py-2 pl-4 pr-11 max-w-xs select-none cursor-pointer text-xl font-medium text-ellipsis overflow-hidden;
-                @apply bg-gray-200/70 text-gray-700 border-t border-x border-gray-400/70 rounded-t-md;
+                @apply border-t text-gray-700 rounded-t-md;
                 @apply transition-colors ease-in-out;
+                background-color: rgb(223 225 230);
 
                 span {
                     @apply whitespace-nowrap;
@@ -33,33 +52,7 @@
 
             &:hover {
                 .tab-item {
-                    @apply bg-gray-200/90;
-                }
-
-                .tab-close {
-                    @apply text-gray-400;
-
-                    &:hover {
-                        @apply text-red-700;
-                    }
-                }
-            }
-
-            &.active .tab-item {
-                @apply bg-white/80 ;
-            }
-
-            &:hover {
-                .tab-item {
-                    @apply bg-white/90;
-                }
-
-                .tab-close {
-                    @apply text-gray-400;
-
-                    &:hover {
-                        @apply text-red-700;
-                    }
+                    background-color: rgb(250 251 251);
                 }
             }
 
@@ -72,6 +65,6 @@
 }
 
 .tab-content {
-    @apply flex flex-col flex-grow rounded-b-lg p-2 overflow-hidden;
-    @apply bg-white/80 border border-gray-400/70 mt-[-1px];
+    @apply absolute flex flex-col p-2 top-11 bottom-0 w-full max-w-full rounded-b-lg overflow-y-auto;
+    @apply border-b;
 }
