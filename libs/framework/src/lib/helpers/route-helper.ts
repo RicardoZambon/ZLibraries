@@ -1,11 +1,11 @@
 import { ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
 
 export abstract class RouteHelper {
-  public static getRouteWithComponent(routeSnapshot: ActivatedRouteSnapshot | null, componentName: string): ActivatedRouteSnapshot | null {
+  public static getRouteWithComponent(routeSnapshot: ActivatedRouteSnapshot | null, component: any): ActivatedRouteSnapshot | null {
     if (!routeSnapshot) {
       return null;
     }
-    return routeSnapshot.component?.name === componentName ? routeSnapshot : this.getRouteWithComponent(routeSnapshot.firstChild, componentName);
+    return routeSnapshot.component === component ? routeSnapshot : this.getRouteWithComponent(routeSnapshot.firstChild, component);
   }
 
   public static getRouteURL(route: ActivatedRouteSnapshot, rootLevel: boolean = false): string {

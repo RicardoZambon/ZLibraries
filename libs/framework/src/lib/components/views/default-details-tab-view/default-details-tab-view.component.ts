@@ -39,6 +39,8 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
   protected containerIcon?: string;
   protected containerTitle?: string;
   protected dataProviderClassName?: any;
+  protected detailsViewRoute: ActivatedRouteSnapshot | null = null;
+  private hasEntityID: boolean | null = null;
   //#endregion
 
   //#region Properties
@@ -61,12 +63,20 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
   public override ngOnInit(): void {
     super.ngOnInit();
 
+    this.detailsViewRoute = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
+    this.hasEntityID = this.dataProviderService?.hasEntityID ?? null;
+
     this.dataProviderService?.getModel$()
       .pipe(takeUntil(this.destroy$))
       .subscribe((model: any) => {
-        const detailsViewRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent.name);
-        if (detailsViewRoute) {
-          let title: string = detailsViewRoute.data['defaultTitle'];
+        if (this.hasEntityID !== this.dataProviderService.hasEntityID || !this.detailsViewRoute) {
+          // If the entity ID changes, we need update the detailsViewRoute to get the correct route URL later.
+          this.hasEntityID = this.dataProviderService.hasEntityID;
+          this.detailsViewRoute = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
+        }
+
+        if (!!this.detailsViewRoute) {
+          let title: string = this.detailsViewRoute.data['defaultTitle'];
           if (this.dataProviderService.hasEntityID) {
             title = this.dataProviderService.getTitle(model);
           }
@@ -74,7 +84,7 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
           this.containerIcon = '';
           this.containerTitle = title;
 
-          const url: string = RouteHelper.getRouteURL(detailsViewRoute);
+          const url: string = RouteHelper.getRouteURL(this.detailsViewRoute);
           this.tabService.updateTabTitle(url, title);
         }
       });

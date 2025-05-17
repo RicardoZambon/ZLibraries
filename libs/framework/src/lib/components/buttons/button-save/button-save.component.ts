@@ -82,7 +82,7 @@ export class ButtonSaveComponent extends BaseButton {
             default:
               this.dataProviderService.updateModel(model);
               
-              const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent.name);
+              const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
               const url: string = `${RouteHelper.getRouteURL(targetRoute!.parent!)}/${model.id}`;
 
               if (!this.tabService.isUrlActive(url)) {

@@ -61,7 +61,7 @@ export class TabsComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    const activatedDetailsTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.snapshot.root, DefaultDetailsTabViewComponent.name);
+    const activatedDetailsTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.snapshot.root, DefaultDetailsTabViewComponent);
     if (activatedDetailsTabView) {
       const shouldIgnoreFirstChildRoute: boolean = !!activatedDetailsTabView.firstChild && activatedDetailsTabView.firstChild.data && activatedDetailsTabView.firstChild.data['ignoreRoute'] === true;
 
@@ -83,7 +83,7 @@ export class TabsComponent implements OnInit {
       this.tabService.openTab(new Tab({ url, clones }));
 
     } else {
-      const activatedTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.snapshot.root, DefaultTabViewComponent.name);
+      const activatedTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.snapshot.root, DefaultTabViewComponent);
       if (activatedTabView) {
         const url: string = RouteHelper.getRouteURL(activatedTabView);
         this.tabService.openTab(new Tab({ url }));

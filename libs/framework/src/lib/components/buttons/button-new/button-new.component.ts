@@ -57,7 +57,7 @@ export class ButtonNewComponent extends BaseButton {
     let url: string = '';
 
     // Try to find the route with ':id' parameters.
-    let targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent.name);
+    let targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
     if (!targetRoute) {
       // If not found, uses the current route.
       url = RouteHelper.getRouteURL(this.router.routerState.root.snapshot, true);

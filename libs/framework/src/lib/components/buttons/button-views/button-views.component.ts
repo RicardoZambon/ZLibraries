@@ -19,7 +19,7 @@ import { BaseButton } from '../base-button';
 })
 export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public defaultDetailsTabViewComponentName: string = '';
+  @Input() public detailsViewRoute: ActivatedRouteSnapshot | null = null;
   //#endregion
   
   //#region Variables
@@ -28,10 +28,6 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#endregion
   
   //#region Properties
-  protected get detailsViewRoute(): ActivatedRouteSnapshot | null {
-    return RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, this.defaultDetailsTabViewComponentName);
-  }
-
   protected get hasOptions(): boolean {
     return this.options.some((option: IRibbonButtonOption) => (option.isVisible?? true) && (option.allowedActions === undefined || option.allowedActions.length === 0 || option.isAccessAllowed === true || (option.isAccessAllowed == undefined && option.allowedActions?.length > 0)));
   }
@@ -52,9 +48,8 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   }
 
   public ngOnInit(): void {
-    const activatedRoute: ActivatedRouteSnapshot | null = this.detailsViewRoute;
-    if (activatedRoute) {
-      this.options = activatedRoute.routeConfig?.children
+    if (!!this.detailsViewRoute) {
+      this.options = this.detailsViewRoute.routeConfig?.children
         ?.filter((route: Route) => !!route.data && route.data['ignoreRoute'] !== true)
         ?.map((route: Route) => {
           const data: { [key: string | symbol]: any } = route.data ?? {};
@@ -79,10 +74,10 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
           return option;
         }) ?? [];
 
-      const url: string = RouteHelper.getRouteURL(activatedRoute);
+      const url: string = RouteHelper.getRouteURL(this.detailsViewRoute);
       this.baseUrlPath = url;
 
-      this.changeSelectedView(this.getActiveOption(activatedRoute));
+      this.changeSelectedView(this.getActiveOption(this.detailsViewRoute));
     }
 
     this.router.events
