@@ -3,8 +3,8 @@ import { Router, RouterModule } from '@angular/router';
 import { ITab, Tab, TabsComponent, TabService } from '@framework';
 import { ModalComponent, SidebarComponent, SidebarMenu, SidebarService } from '@library';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthenticationService } from '@shared';
 import { Subject, take, takeUntil } from 'rxjs';
+import { AuthenticationService } from '../../services';
 
 @Component({
   selector: 'shared-main-layout',
