@@ -92,9 +92,11 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
         } else {
           this.selectedKey = selectedRowKey;
           this.selectedValue = this.dataGridDataset.getRowData(selectedRowKey);
+          
+          // The form should be reset, then set the model and patched the value in this order.
+          this.formGroup.reset();
           this.formService.model = this.selectedValue;
 
-          this.formGroup.reset();
           this.formGroup.patchValue(this.selectedValue);
         }
       });
