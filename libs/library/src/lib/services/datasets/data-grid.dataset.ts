@@ -154,9 +154,15 @@ export abstract class DataGridDataset extends GridDataset {
     if (!this.hasLoadedRows) {
       return;
     }
-    
+
     if (this.hasRowWithID(id)) {
-      const key: string | undefined = this.loadedKeys!.find((key: string) => this.getRowID(this.getRowData(key)) === id);
+      const rowIndex: number = this.loadedRows!.findIndex((row: any) => row[this.compareProperty] === id);
+      
+      if (rowIndex < 0) {
+        return;
+      }
+
+      const key: string | undefined = this.loadedKeys![rowIndex];
       if (!!key) {
         this.selectRow(key);
       }

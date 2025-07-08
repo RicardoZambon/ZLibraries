@@ -24,16 +24,32 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   
   //#region Variables
   private baseUrlPath?: string;
+  private isInternalNavigation: boolean = false;
   private selectedViewId?: string;
   //#endregion
   
   //#region Properties
+  private get defaultViewId(): string {
+    return this.options[0].id ?? '';
+  }
+
   protected get hasOptions(): boolean {
     return this.options.some((option: IRibbonButtonOption) => (option.isVisible?? true) && (option.allowedActions === undefined || option.allowedActions.length === 0 || option.isAccessAllowed === true || (option.isAccessAllowed == undefined && option.allowedActions?.length > 0)));
   }
 
   protected get selectedView(): IRibbonButtonOption | undefined {
     return this.options.find((option: IRibbonButtonOption) => option.id === this.selectedViewId);
+  }
+
+  private get selectedViewUrl(): string {
+    let url: string = this.baseUrlPath ?? '';
+
+    const selectedView: IRibbonButtonOption | undefined = this.selectedView;
+    if (selectedView && selectedView.id) {
+      url += `/${selectedView.id}`;
+    }
+
+    return url;
   }
   //#endregion
   
@@ -77,7 +93,11 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
       const url: string = RouteHelper.getRouteURL(this.detailsViewRoute);
       this.baseUrlPath = url;
 
-      this.changeSelectedView(this.getActiveOption(this.detailsViewRoute));
+      const option: string = this.detailsViewRoute.children[0]?.url?.map((segment: UrlSegment) => segment.path)?.join('/') ?? '';
+      if (option === this.defaultViewId) {
+        // We just need to check if the current option is the default, otherwise the router.events will handle the option selection.
+        this.changeSelectedView(this.defaultViewId);
+      }
     }
 
     this.router.events
@@ -85,18 +105,23 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
         filter((event: any) => event instanceof NavigationEnd),
         takeUntil(this.destroy$),
       )
-      .subscribe(() => {
+      .subscribe((event: NavigationEnd) => {
         const activatedRoute: ActivatedRouteSnapshot | null = this.detailsViewRoute;
         if (activatedRoute) {
           const url: string = RouteHelper.getRouteURL(activatedRoute);
           if (this.baseUrlPath === url) {
-            const activeViewId: string = this.getActiveOption(activatedRoute);
-            if (this.selectedViewId !== activeViewId) {
-              this.changeSelectedView(activeViewId);
+            const activeViewId: string = this.getActiveOption(event.url);
 
-              if (activeViewId && activeViewId.length > 0) {
-                this.tabService.updateTabTitle(`${url}/${activeViewId}`, this.selectedView!.label);
+            if (!this.isInternalNavigation) {
+              if (this.selectedViewId !== activeViewId) {
+                this.changeSelectedView(activeViewId);
               }
+            } else {
+              this.isInternalNavigation = false;
+            }
+
+            if (this.tabService.isUrlActive(this.selectedViewUrl) && !!this.selectedView?.label) {
+              this.tabService.updateTabTitle(this.selectedViewUrl, this.selectedView.label);
             }
           }
         }
@@ -106,27 +131,15 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   
   //#region Event handlers
   protected onViewClicked(selectedOption: string | undefined): void {
-    const activatedRoute: ActivatedRouteSnapshot | null = this.detailsViewRoute;
-    if (activatedRoute) {
+    this.changeSelectedView(selectedOption);
 
-      this.changeSelectedView(selectedOption);
-      
-      const selectedView: IRibbonButtonOption | undefined = this.selectedView;
-      if (selectedView) {
+    const tab: ITab = new Tab({
+      title: this.selectedView?.label,
+      url: this.selectedViewUrl,
+    });
 
-        let url: string = RouteHelper.getRouteURL(activatedRoute);
-        if (selectedView.id) {
-          url += `/${selectedView.id}`;
-        }
-
-        const tab: ITab = new Tab({
-          title: selectedView.label,
-          url: url,
-        });
-
-        this.tabService.navigateCurrentTab(tab);
-      }
-    }
+    this.isInternalNavigation = true;
+    this.tabService.navigateCurrentTab(tab);
   }
   //#endregion
 
@@ -147,14 +160,14 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
     }
   }
 
-  private getActiveOption(routeSnapshot: ActivatedRouteSnapshot): string {
-    const option: string = routeSnapshot.children[0]?.url?.map((segment: UrlSegment) => segment.path)?.join('/') ?? '';
+  private getActiveOption(url: string): string {
+    const option: string = url.replace(this.baseUrlPath ?? '', '').substring(1);
 
     if (this.options.some((o: IRibbonButtonOption) => o.id === option)) {
       return option;
     }
 
-    return this.options[0].id;
+    return this.defaultViewId;
   }
   //#endregion
 }

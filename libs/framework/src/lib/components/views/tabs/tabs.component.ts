@@ -1,4 +1,4 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -15,7 +15,6 @@ import { TabBreadcrumbsComponent } from '../tab-breadcrumbs/tab-breadcrumbs.comp
   templateUrl: './tabs.component.html',
   styleUrls: ['./tabs.component.scss'],
   imports: [
-    NgClass,
     NgFor,
     NgIf,
     TabBreadcrumbsComponent,

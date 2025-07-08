@@ -1,5 +1,5 @@
 import { NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { Component, Input, OnInit, Optional, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Optional, Output, TemplateRef } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, takeUntil } from 'rxjs';
@@ -31,6 +31,7 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   @Input() public fixedValue?: any;
   @Input() public format?: string;
   @Input() public label!: string;
+  @Input() public isDisabled: boolean = true;
   @Input() public isFullHeight: boolean = false;
   @Input() public maxLength?: number;
   @Input() public notes: string = '';

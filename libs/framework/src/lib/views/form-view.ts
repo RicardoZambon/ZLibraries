@@ -37,7 +37,7 @@ export abstract class FormView<TEntityModel> extends TabViewBase implements OnIn
 
   public ngOnInit(): void {
     this.dataForm = this.formSetup();
-    this.formService.setupForm(this.dataForm);
+    this.formService.initializeForm(this.dataForm);
 
     this.formService.loading = true;
     this.dataProvider?.getModel$()
@@ -45,7 +45,7 @@ export abstract class FormView<TEntityModel> extends TabViewBase implements OnIn
       .subscribe((model: TEntityModel | null) => {
         this.formService.loading = false;
         this.formService.model = model;
-        this.formService.resetValues();
+        this.formService.resetForm();
 
         if (!this.dataProvider?.hasEntityID) {
           this.formService.beginEdit();

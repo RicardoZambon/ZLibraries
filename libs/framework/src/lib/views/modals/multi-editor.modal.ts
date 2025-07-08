@@ -40,7 +40,7 @@ export abstract class MultiEditorModal<TEntityModel> extends ModalBase implement
 
   public ngOnInit(): void {
     this.dataForm = this.formSetup();
-    this.formService.setupForm(this.dataForm);
+    this.formService.initializeForm(this.dataForm);
 
     this.multiEditorDataset.savedChanges
       .pipe(takeUntil(this.destroy$))

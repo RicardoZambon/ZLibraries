@@ -2,7 +2,7 @@
 
 @mixin expanded {
     li {
-        div {
+        > div {
             &.parent {
                 &:not(.loading):after {
                     @apply opacity-100;
@@ -64,6 +64,7 @@
             @apply content-[''] absolute top-0 left-0 bottom-0 w-0 bg-gray-100 z-10;
             @apply transition-[width] ease-in-out;
             transition-duration: var(--sidebar-animation-duration);
+            will-change: width;
         }
 
         &.selected:before {
@@ -86,10 +87,11 @@ li {
 
         &.parent:after {
             @apply absolute font-extrabold w-[10px] top-0 right-3;
-            @apply transition-[opacity,transform] ease-in-out;
+            @apply transition-[opacity] ease-in-out;
             @apply opacity-0;
             font-family: "Font Awesome 6 Free";
             transition-duration: var(--sidebar-animation-duration);
+            will-change: opacity;
 
             &:not(.failed) {
                 @apply content-['\f104'];
@@ -106,15 +108,17 @@ li {
 
             i {
                 @apply text-xl mr-2;
-                @apply transition-[margin-left,font-size,line-height] ease-in-out;
+                @apply transition-[font-size,line-height,margin-left] ease-in-out;
                 margin-left: var(--sidebar-icon-collapsed-margin);
                 transition-duration: var(--sidebar-animation-duration);
+                will-change: font-size, line-height, margin-left;
             }
 
             span {
                 @apply opacity-0 text-ellipsis;
                 @apply transition-[opacity] ease-in-out;
                 transition-duration: var(--sidebar-animation-duration);
+                will-change: opacity;
             }
         }
 
@@ -122,6 +126,7 @@ li {
             @apply absolute w-4 h-full top-0 right-[0.55rem] opacity-0;
             @apply transition-[opacity] ease-in-out;
             transition-duration: var(--sidebar-animation-duration);
+            will-change: opacity;
 
             svg {
                 @apply w-full h-full;
@@ -133,6 +138,7 @@ li {
         @apply overflow-hidden;
         @apply transition-[height,max-height] ease-in-out;
         transition-duration: var(--sidebar-animation-duration);
+        will-change: height, max-height;
 
         a {
             @apply pl-5;

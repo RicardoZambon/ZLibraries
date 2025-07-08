@@ -14,6 +14,7 @@ export class FormService {
   private _model: any | null = null;
   private currentMode: 'edit' | 'view' = 'view';
   private form?: FormGroup;
+  private initialValue?: any;
   //#endregion
 
   //#region Properties
@@ -75,40 +76,52 @@ export class FormService {
   public cancelEdit(): void {
     this.currentMode = 'view';
     this.form?.disable();
-    this.resetValues();
+    this.resetForm();
   }
 
   public getModelFromForm(): any {
     return this.form?.getRawValue();
   }
 
-  public markAllAsTouched(): void {
-    this.form?.markAllAsTouched();
-  }
-
-  public resetValues(): void {
-    this.form?.reset();
-    this.form?.updateValueAndValidity();
-
-    if (this.model) {
-      this.form?.patchValue(this.model);
-    }
-  }
-
-  public setFieldValue(fieldName: string, value: any) {
-    this.fieldRefreshed.emit({
-      fieldName,
-      value,
-      loading: false
-    });
-  }
-
-  public setupForm(form: FormGroup): void {
+  public initializeForm(form: FormGroup): void {
     this.form = form;
+    this.initialValue = form.getRawValue();
 
     if (this.currentMode === 'view') {
       this.form.disable();
     }
+  }
+
+  public markAllAsTouched(): void {
+    if (!this.form) {
+      return;
+    }
+    
+    this.form.markAllAsTouched();
+  }
+
+  public resetForm(): void {
+    if (!this.form) {
+      return;
+    }
+    
+    this.form.reset();
+
+    if (!!this.model) {
+      this.form.patchValue(this.model);
+    } else if (!!this.initialValue) {
+      this.form.patchValue(this.initialValue);
+    }
+    
+    this.form.updateValueAndValidity();
+  }
+
+  public setFieldValue(fieldName: string, value: any): void {
+    this.fieldRefreshed.emit({
+      fieldName,
+      loading: false,
+      value,
+    });
   }
 
   public setValidationErrorsFromHttpResponse(errorResponse: HttpErrorResponse): void {

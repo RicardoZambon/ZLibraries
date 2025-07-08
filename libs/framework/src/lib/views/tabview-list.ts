@@ -11,12 +11,12 @@ export abstract class TabViewList<TListModel> extends TabViewBase implements OnI
   //#region Variables
   private _selectedItem?: TListModel;
   protected dataGridDataset: DataGridDataset;
-  private selectedRows: number = 0;
+  private selectionCount: number = 0;
   //#endregion
 
   //#region Properties
   protected get hasRowsSelected(): boolean {
-    return this.selectedRows > 0;
+    return this.selectionCount > 0;
   }
 
   protected get selectedItem(): TListModel | undefined {
@@ -60,10 +60,10 @@ export abstract class TabViewList<TListModel> extends TabViewBase implements OnI
 
   //#region Private methods
   protected selectedRowChanged(): void {
-    this.selectedRows = this.dataGridDataset.selectedRowKeys.length;
+    this.selectionCount = this.dataGridDataset.selectedRowKeys.length;
 
     this._selectedItem = undefined;
-    if (this.selectedRows === 1) {
+    if (this.selectionCount === 1) {
       this._selectedItem = <TListModel>this.dataGridDataset.getRowData(this.dataGridDataset.selectedRowKeys[0])
     }
   }

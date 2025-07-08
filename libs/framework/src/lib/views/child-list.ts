@@ -53,7 +53,7 @@ export abstract class ChildList<TEntityModel> extends ViewBase implements OnInit
       ?.pipe(takeUntil(this.destroy$))
       ?.subscribe(() => {
         this.dataGridDataset.refresh();
-      })
+      });
 
     if (this.dataProvider?.hasEntityID) {
       this.dataGridDataset.parentEntityId = this.dataProvider.entityID;

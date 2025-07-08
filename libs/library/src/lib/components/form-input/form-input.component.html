@@ -25,15 +25,16 @@
 
             <ng-template #fixedCheckbox>
                 <input
-                disabled
                 class="switch"
                 type="checkbox"
                 [(ngModel)]="fixedValue"
                 [attr.readonly]="true"
                 [class.invalid]="invalid"
                 [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
+                [disabled]="isDisabled"
                 [ngModelOptions]="{ standalone: true }"
                 (blur)="onBlur()"
+                (change)="onChange($event)"
                 (focus)="onFocus()"
                 (input)="onInput()"
                 (ngModelChange)="onValueChanged($event)" />
@@ -57,13 +58,13 @@
 
             <ng-template #fixedTextBox>
                 <input
-                disabled
                 type="text"
                 [attr.maxLength]="maxLength ?? null"
                 [attr.readonly]="true"
                 [attr.step]="stepAttributeValue"
                 [class.invalid]="invalid"
                 [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
+                [disabled]="isDisabled"
                 [ngModel]="type === 'date' || type === 'datetime-local' ? (fixedValue | date: format) : ( type === 'number' ? (fixedValue | number) : fixedValue )" 
                 [ngModelOptions]="{ standalone: true }"
                 (blur)="onBlur()"

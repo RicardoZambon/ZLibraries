@@ -1,21 +1,23 @@
 <lib-ribbon-button
-[label]="'Button-Filters'"
-[icon]="'fa-filter'"
 [color]="hasFiltersApplied ? 'text-amber-500' : 'text-primary-500'"
 [disabled]="disabled"
+[icon]="'fa-filter'"
+[iconSize]="iconSize"
+[label]="'Button-Filters'"
 [loading]="loading"
 (action)="onFiltersButtonClicked()">
 </lib-ribbon-button>
 
 <lib-ribbon-button
 *ngIf="hasFiltersApplied"
-[label]="'Button-Filters-Clear'"
-[icon]="'fa-broom'"
 [color]="'text-red-500'"
 [disabled]="disabled"
+[icon]="'fa-broom'"
+[iconSize]="iconSize"
+[label]="'Button-Filters-Clear'"
 [loading]="loading"
-(action)="onResetButtonClicked()"
-></lib-ribbon-button>
+(action)="onResetButtonClicked()">
+</lib-ribbon-button>
 
 <lib-modal position="top" [size]="modalSize" [title]="modalTitle | translate" [closeButtonText]="'Button-Modal-Cancel' | translate">
     <ng-container body>

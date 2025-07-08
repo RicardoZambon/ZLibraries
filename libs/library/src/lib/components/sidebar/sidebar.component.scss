@@ -3,21 +3,19 @@
 @mixin expanded {
     width: var(--sidebar-expanded-width);
 
-    .logo-container {
-        .collapsed {
-            @apply opacity-0;
+    .header {
+        .logo-container img {
+            &.collapsed {
+                @apply opacity-0;
+            }
+
+            &.expanded {
+                @apply opacity-100;
+            }
         }
 
-        .expanded {
-            @apply opacity-100 #{!important};
-        }
-    }
-
-    .profile-container .profile {
-        @apply opacity-100 max-w-full pl-2 #{!important};
-
-        h4, h5 {
-            animation: text-ellipsis 200ms forwards !important;
+        .profile-container .profile {
+            @apply opacity-100 max-w-full pl-2;
         }
     }
 
@@ -40,10 +38,11 @@
 :host {
     @apply block h-full select-none;
     @apply bg-primary-600;
-    @apply transition-[width,margin-left] ease-in-out;
-    width: var(--sidebar-collapsed-width);
+    @apply transition-[margin-left,width] ease-in-out;
     margin-left: calc(var(--sidebar-collapsed-width) * -1);
     transition-duration: var(--sidebar-animation-duration);
+    width: var(--sidebar-collapsed-width);
+    will-change: margin-left, width;
 
     @screen md {
         @apply ml-0;
@@ -66,17 +65,18 @@
     @apply pt-2 pb-3;
 
     .logo-container {
-        @apply text-center overflow-hidden;
+        @apply relative text-center overflow-hidden;
         height: var(--sidebar-logo-height);
 
         img {
             @apply m-auto max-h-full min-w-fit;
             @apply transition-opacity ease-in-out;
             transition-duration: var(--sidebar-animation-duration);
+            will-change: opacity;
 
-            &.expanded, &.active {
+            &.expanded {
+                @apply absolute top-0 left-1/2 -translate-x-1/2;
                 @apply opacity-0;
-                margin-top: calc(var(--sidebar-logo-height) * -1);
             }
         }
     }
@@ -94,9 +94,10 @@
         .profile {
             @apply pl-0 flex-grow max-w-0 whitespace-nowrap transition-[opacity,padding-left,max-width] opacity-0 ease-in-out overflow-hidden;
             transition-duration: var(--sidebar-animation-duration);
+            will-change: max-width, opacity, padding-left;
 
             h4, h5 {
-                @apply overflow-hidden;
+                @apply overflow-hidden text-ellipsis;
                 height: calc(var(--sidebar-picture-size) / 2);
                 animation: text-clip 200ms forwards;
             }
@@ -132,15 +133,17 @@ ul lib-sidebar-item, .loading, .error {
 
     i {
         @apply text-xl mr-2;
-        @apply transition-[margin-left,font-size,line-height] ease-in-out;
+        @apply transition-[font-size,line-height,margin-left] ease-in-out;
         margin-left: var(--sidebar-icon-collapsed-margin);
         transition-duration: var(--sidebar-animation-duration);
+        will-change: font-size, line-height, margin-left;
     }
 
     svg {
         @apply inline mt-[-4px] ml-2 h-6 w-6;
-        @apply transition-[height,width,margin-left] ease-in-out;
+        @apply transition-[height,margin-left,width] ease-in-out;
         transition-duration: var(--sidebar-animation-duration);
+        will-change: height, margin-left, width;
     }
 
     svg + span {

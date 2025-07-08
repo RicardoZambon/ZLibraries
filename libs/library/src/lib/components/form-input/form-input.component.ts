@@ -31,6 +31,7 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   @Input() public fixedValue?: any;
   @Input() public format?: string;
   @Input() public invalid: boolean = false;
+  @Input() public isDisabled: boolean = true;
   @Input() public isFullHeight: boolean = false;
   @Input() public maxLength?: number;
   @Input() public readOnly: boolean = false;
@@ -38,10 +39,11 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   @Input() public step: number = 1;
   @Input() public type: string = 'text';
   
-  @Output() public blur = new EventEmitter<any>();
-  @Output() public fixedValueChanged = new EventEmitter<string>();
-  @Output() public input = new EventEmitter<any>();
-  @Output() public focus = new EventEmitter<any>();
+  @Output() public blur: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public change: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public fixedValueChanged: EventEmitter<any> = new EventEmitter<string>();
+  @Output() public input: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public focus: EventEmitter<any> = new EventEmitter<any>();
   //#endregion
 
   //#region Host listeners
@@ -144,6 +146,10 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   //#region Event handlers
   protected onBlur(): void {
     this.blur.emit();
+  }
+
+  protected onChange(value: any): void {
+    this.change.emit(value);
   }
 
   protected onFocus(): void {

@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
 import { FormService } from '../../services';
@@ -78,6 +78,10 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
         if (this.gridLoading || !this.dataGridDataset.hasLoadedRows || !this.dataGridDataset.hasSelectedRows) {
           return;
         }
+
+        if (this.formGroup.disabled) {
+          this.formGroup.enable();
+        }
         
         const selectedRowKey: string = this.dataGridDataset.selectedRowKeys[0];
         if (!!this.selectedKey && this.formGroup.enabled && !this.formGroup.valid && this.selectedKey !== selectedRowKey) {
@@ -92,10 +96,6 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
 
           this.formGroup.reset();
           this.formGroup.patchValue(this.selectedValue);
-        }
-
-        if (this.formGroup.disabled) {
-          this.formGroup.enable();
         }
       });
 
@@ -122,6 +122,8 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
 
     this.selectedKey = undefined;
     this.formGroup.reset({ emitEvent: false });
+    this.clearAllFormArrays(this.formGroup);
+
     this.formGroup.disable({ emitEvent: false });
   }
 
@@ -159,19 +161,10 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
             this.modalProcessing = false;
             this.formGroup.enable();
 
-            if (e.status === 400 && e.error.errors) { //Validation issues
+            if (e.status === 400 && e.error.errors) {
               this.dataGridDataset.selectRowID(e.error.entityKey);
 
-              const errors: { [id: string]: string[]; } = e.error.errors;
-              Object.keys(errors)
-                .map((x: string) => { return { key: x, field: x.substring(0, 1).toLocaleLowerCase() + x.substring(1, x.length) }; })
-                .forEach((err: { key: string; field: string; }) => {
-                  setTimeout(() => {
-                    const field: FormControl = <FormControl>this.formGroup.get(err.field);
-                    field?.setErrors({ [errors[err.key][0]] : true });
-                    field?.markAsTouched();
-                  });
-                });
+              this.formService.setValidationErrorsFromHttpResponse(e);
             }
           }
         });
@@ -193,11 +186,25 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
       
       this.selectedKey = undefined;
       this.formGroup.reset({ emitEvent: false });
+      this.clearAllFormArrays(this.formGroup);
       this.formGroup.disable({ emitEvent: false });
     }
   }
   //#endregion
 
   //#region Private methods
+  private clearAllFormArrays(form: FormGroup): void {
+    Object.keys(form.controls).forEach((key: string) => {
+      const control: AbstractControl | null = form.get(key);
+      if (control instanceof FormArray) {
+        control.clear({ emitEvent: false });
+      }
+      
+      // Check for nested FormArrays.
+      if (control instanceof FormGroup) {
+        this.clearAllFormArrays(control);
+      }
+    });
+  }
   //#endregion
 }

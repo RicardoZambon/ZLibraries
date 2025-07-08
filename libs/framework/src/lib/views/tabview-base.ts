@@ -18,12 +18,12 @@ export abstract class TabViewBase extends ViewBase implements AfterViewInit {
     //#region Constructor and Angular life cycle methods
     constructor() {
       super();
-      
+
       // This will force the screen to initialize with the buttons disabled.
       this.loading = true;
       this.tabViewService = inject(TabViewService, { optional: true });
     }
-  
+
     public ngAfterViewInit(): void {
       this.tabViewService?.updateRibbonTemplate(this.ribbonTemplate);
     }
