@@ -1,0 +1,29 @@
+@mixin fixed-background($image, $color) {
+    @apply fixed -z-50 w-full h-screen;
+
+    @include background($image, $color);
+}
+
+@mixin background($image, $color) {
+    @apply overflow-hidden;
+
+    &, &:before {
+        @apply bg-[url(#{$image})] bg-fixed bg-cover;
+    }
+
+    &:before, &:after {
+        @apply content-[''] absolute inset-0;
+    }
+
+    &:before {
+        @apply blur;
+    }
+
+    &:after {
+        @apply #{$color};
+    }
+
+    * {
+        @apply z-10;
+    }
+}

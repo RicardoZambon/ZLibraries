@@ -1,0 +1,14 @@
+<div class="history-container">
+    <div class="service-history-container">
+        <shared-services-history-child-list #service
+        [controllerName]="controllerName">
+        </shared-services-history-child-list>
+    </div>
+
+    <div class="operations-history-container">
+        <shared-operations-history-child-list
+        [controllerName]="controllerName"
+        [serviceID]="service.selectedServiceID">
+        </shared-operations-history-child-list>
+    </div>
+</div>

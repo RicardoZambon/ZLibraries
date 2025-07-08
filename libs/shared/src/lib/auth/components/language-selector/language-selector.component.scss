@@ -1,0 +1,44 @@
+.dropdown {
+    
+    .btn {
+        @apply w-full font-medium;
+    }
+
+    ul {
+        @apply max-w-[188px] w-full;
+
+        li {
+            @apply my-1 first:mt-0 last:mb-0;
+            @apply shadow-[0_0_3px_0_rgba(0,0,0,0.3),0_0_10px_0_rgba(0,0,0,0.3)];
+        }
+
+        .dropdown-item {
+            @apply relative contrast-125 font-bold;
+
+            &:before {
+                @apply absolute inset-0 content-[''] -z-10;
+                @apply bg-gradient-to-r from-white/80 to-white/30;
+            }
+            
+            &:hover:before, &:focus:before {
+                @apply bg-gradient-to-r from-neutral-200/80 to-neutral-200/30;
+            }
+
+            &:active:before {
+                @apply bg-gradient-to-r from-primary-400/80 to-primary-400/30;
+            }
+
+            &:not(.selected):before {
+                @apply backdrop-grayscale;
+            }
+
+            &.flag-en {
+                @apply bg-[url('/flags/en.png')];
+            }
+
+            &.flag-pt {
+                @apply bg-[url('/flags/pt.png')];
+            }
+        }
+    }
+}

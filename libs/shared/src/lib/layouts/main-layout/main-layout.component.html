@@ -1,0 +1,32 @@
+<div class="main-container">
+    <lib-sidebar #sidebar></lib-sidebar>
+
+    <div class="toolbar">
+        <div>
+            <button class="btn" (click)="sidebar.collapse()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        <div>
+            <button class="btn gray-300" (click)="onLogoutClick()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>{{ 'Main-Logout' | translate }}</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="content">
+        <framework-tabs>
+            <router-outlet></router-outlet>
+        </framework-tabs>
+    </div>
+</div>
+
+<lib-modal #logoutModal position="top" size="xl" [closeButtonText]="'Main-Logout-Modal-Message-Cancel' | translate">
+    <div body>
+        <h5>{{ 'Main-Logout-Modal-Message' | translate }}</h5>
+    </div>
+    <div footer>
+        <button type="button" class="btn red-600" (click)="onLogoutConfirm()">{{ 'Main-Logout-Modal-Message-Confirm' | translate }}</button>
+    </div>
+</lib-modal>

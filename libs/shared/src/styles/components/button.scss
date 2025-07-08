@@ -1,0 +1,90 @@
+input[type=button], input[type=reset], input[type=submit], button, a {
+    &.btn {
+        @apply relative px-3 py-1.5 inline-block text-center rounded select-none;;
+        @apply bg-slate-700 text-white;
+        @apply transition-all;
+
+        @apply focus:ring-4 focus:ring-slate-600/30 focus:ring-opacity-80;
+        @apply focus:bg-slate-800 hover:bg-slate-800;
+        @apply active:bg-slate-900;
+
+        i:not(:last-child) {
+            @apply mr-2;
+        }
+
+        &.disabled, &:disabled {
+            @apply pointer-events-none opacity-[.60] ring-0;
+        }
+
+        &.error {
+            @apply bg-red-700 focus:ring-red-600/30;
+            @apply focus:bg-red-800 hover:bg-red-800;
+            @apply active:bg-red-900;
+
+            i:before {
+                @apply content-['\f00d'];
+            }
+        }
+
+        &.success {
+            @apply bg-green-700 ring-4 ring-green-600/30;
+            @apply pointer-events-none opacity-[.60];
+
+            i:before {
+                @apply content-['\f00c'];
+            }
+        }
+
+        &.loading {
+            @apply pointer-events-none opacity-[.60] ring-0 pl-8;
+            @apply transition-[margin-left] duration-200 ease-in-out;
+
+            &:before {
+                @apply content-[''] absolute left-2 top-0 bg-center bg-contain bg-no-repeat w-5 h-full animate-spin text-white;
+                @apply transition-opacity duration-200 ease-in-out;
+                background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"%3E%3Ccircle style="opacity:.25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"%3E%3C/circle%3E%3Cpath style="opacity:.75" fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"%3E%3C/path%3E%3C/svg%3E');
+            }
+
+            i {
+                @apply invisible;
+            }
+        }
+    }
+}
+
+@mixin button($color) {
+    input[type=button], input[type=reset], input[type=submit], button, a {
+        &.btn {
+            @for $i from 1 through 7 {
+                &.#{$color + '-' + $i + '00'} {
+                    @if $i > 4 {
+                        @apply text-white;
+                    } @else {
+                        @apply text-black;
+
+                        &.loading:before {
+                            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"%3E%3Ccircle style="opacity:.25" cx="12" cy="12" r="10" stroke="black" stroke-width="4"%3E%3C/circle%3E%3Cpath style="opacity:.75" fill="black" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"%3E%3C/path%3E%3C/svg%3E');
+                        }
+                    }
+
+                    @apply #{'bg-' + $color + '-' + $i + '00'};
+
+                    $ring: $i + '00/30';
+                    @if $i < 5 {
+                        $ring: '400/20';
+                    }
+
+                    @apply #{'focus:ring-' + $color + '-' + $ring};
+                    @apply #{'focus:bg-' + $color + '-' + ($i+1) + '00'};
+                    @apply #{'hover:bg-' + $color + '-' + ($i+1) + '00'};
+                    @apply #{'active:bg-' + $color + '-' + ($i+2) + '00'};
+                }
+            }
+        }
+    }
+}
+
+$colors: 'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose';
+@each $color in $colors {
+    @include button($color);
+}

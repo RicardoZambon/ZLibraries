@@ -1,0 +1,14 @@
+{
+  "Login-DesignBy": "Design by Ricardo Zambon",
+  "Login-Errors-InternalServerError": "Occurred some error with the server, please try again.",
+  "Login-Errors-Invalid": "The username or password you entered is incorrect.",
+  "Login-Password-Required": "Please enter the password",
+  "Login-Password": "Type your password",
+  "Login-RememberMe": "Remember me",
+  "Login-SelectLanguage": "Select language",
+  "Login-SignIn": "Sign In",
+  "Login-Username-Required": "Please enter the username",
+  "Login-Username": "Type your username",
+
+  "": ""
+}

@@ -1,0 +1,66 @@
+:host {
+    @apply block;
+}
+
+.content {
+    @apply mx-auto w-10/12 md:w-8/12 xl:w-5/12 rounded-lg;
+    @apply divide-y divide-zinc-400;
+    @apply shadow-[0_4px_8px_0_rgba(0,0,0,0.2),0_6px_20px_0_rgba(0,0,0,0.19)];
+
+    .login {
+        @apply mt-20 pt-20 px-6 pb-6 rounded-t-lg bg-white/60 relative z-10 backdrop-blur-md;
+
+        .logo-container {
+            @apply -mt-40 ml-auto mr-auto mb-4 w-fit rounded-3xl p-2;
+            @apply bg-white shadow-[0_4px_8px_0_rgba(0,0,0,0.2),0_6px_20px_0_rgba(0,0,0,0.19)];
+    
+            .logo {
+                @apply w-fit p-2 rounded-3xl;
+                @apply border-2 border-amber-300;
+
+                img {
+                    @apply min-w-fit h-40;
+                }
+            }
+        }
+    
+        .title {
+            @apply text-3xl font-bold text-center pb-5;
+        }
+
+        form {
+            > .validations {
+                @apply text-center text-red-500 font-bold;
+
+                &:after {
+                    @apply content-[''] block border-b border-red-500 mb-2 mx-auto;
+                    @apply animate-[separator_1s_ease-in-out_forwards];
+                }
+            }
+
+            .options {
+                @apply flex flex-row justify-between mb-3 flex-wrap-reverse;
+
+                shared-language-selector {
+                    @apply mb-3 sm:mb-0 w-full sm:w-auto;
+                }
+            }
+    
+            .buttons {
+                @apply flex justify-center gap-4;
+            }
+        }
+    }
+
+    .footer {
+        @apply px-2 py-0.5 rounded-b-lg;
+        @apply bg-slate-200/60 backdrop-blur-md;
+        @apply text-sm font-semibold tracking-tight;
+        @apply flex justify-between flex-wrap;
+    }
+}
+
+@keyframes separator {
+    from { width: 0; }
+    to { width: 100%; }
+}

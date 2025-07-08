@@ -1,0 +1,35 @@
+.dropdown {
+    @apply relative;
+
+    .btn {
+        @apply bg-neutral-600/60 text-white border border-neutral-900/40 backdrop-blur-md;
+
+        @apply focus:ring-neutral-600/30;
+        @apply focus:bg-neutral-600/70 hover:bg-neutral-600/70;
+        @apply active:bg-neutral-600/80;
+
+        &:after {
+            @apply content-[''] inline-block ml-1 align-middle;
+            @apply border-x-[.3em] border-t-[.3em] border-solid border-x-white/0;
+        }
+    }
+
+    &.show ul {
+        @apply block;
+    }
+
+    &.right ul {
+        @apply right-0;
+    }
+    
+    ul {
+        @apply absolute hidden py-1 rounded shadow;
+        @apply bg-white/95 border border-neutral-400 backdrop-blur-md shadow-md;
+
+        .dropdown-item {
+            @apply block p-2 cursor-pointer whitespace-nowrap select-none;
+            @apply focus:bg-neutral-200/80 hover:bg-neutral-200/80;
+            @apply active:bg-slate-400 active:text-white;
+        }
+    }
+}

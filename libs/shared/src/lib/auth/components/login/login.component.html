@@ -1,0 +1,75 @@
+<div class="content">
+    <div class="login">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="/logo-login.png" alt="Logo" />
+            </div>
+        </div>
+        
+        <h3 class="title">{{ 'Login-Title' | translate }}</h3>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+            <div class="validations" [class.hidden]="!formState.error">
+                    
+                <div *ngIf="formState.error === 'invalid'">
+                    {{'Login-Errors-Invalid' | translate}}
+                </div>
+                
+                <div *ngIf="formState.error === 'internalServerError'">{{'Login-Errors-InternalServerError' | translate}}</div>
+            </div>
+
+            <div class="input-group inline">
+                <input type="text" #username id="username" formControlName="username" class="form-input peer" [placeholder]="'Login-Username' | translate" autofocus />
+
+                <div class="input-group-text">
+                    <label for="username">
+                        <i class="fas fa-user fa-fw"></i>
+                    </label>
+                </div>
+
+                <div class="validations">
+                    <span *ngIf="form.get('username')?.hasError('required')">{{ 'Login-Username-Required' | translate }}</span>
+                </div>
+            </div>
+    
+            <div class="input-group inline">
+                <input type="password" id="password" formControlName="password" class="form-input" [placeholder]="'Login-Password' | translate" />
+
+                <div class="input-group-text">
+                    <label for="password">
+                        <i class="fas fa-key fa-fw"></i>
+                    </label>
+                </div>
+                
+                <div class="validations">
+                    <span *ngIf="form.get('password')?.hasError('required')">{{ 'Login-Password-Required' | translate }}</span>
+                </div>
+            </div>
+    
+            <div class="options">
+                <div>
+                    <input class="form-input" id="rememberMe" formControlName="rememberMe" type="checkbox">
+                    <label for="rememberMe">{{ 'Login-RememberMe' | translate }}</label>
+                </div>
+                
+                <shared-language-selector></shared-language-selector>
+            </div>
+    
+            <div class="buttons">
+                <button type="submit" class="btn"
+                [class.loading]="formState.loading && !formState.success && !formState.error"
+                [class.error]="formState.error"
+                [class.success]="formState.success">
+                    <i *ngIf="!formState.loading" class="fas fa-sign-in-alt fa-fw"></i>
+                    {{ 'Login-SignIn' | translate }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="footer">
+        <span [innerHTML]="'Login-Copyright' | translate"></span>
+        <span class="design">{{ 'Login-DesignBy' | translate }}</span>
+    </div>
+</div>

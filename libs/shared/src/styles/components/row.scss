@@ -1,0 +1,48 @@
+.row {
+    @apply grid gap-3;
+    
+    &.cols-1 {
+        @apply grid-cols-1;
+    }
+    &.cols-2 {
+        @apply grid-cols-2;
+    }
+    &.cols-3 {
+        @apply grid-cols-3;
+    }
+    &.cols-4 {
+        @apply grid-cols-4;
+    }
+    &.cols-5 {
+        @apply grid-cols-5;
+    }
+    &.cols-6 {
+        @apply grid-cols-6;
+    }
+    &.cols-7 {
+        @apply grid-cols-7;
+    }
+    &.cols-8 {
+        @apply grid-cols-8;
+    }
+    &.cols-9 {
+        @apply grid-cols-9;
+    }
+    &.cols-10 {
+        @apply grid-cols-10;
+    }
+    &.cols-11 {
+        @apply grid-cols-11;
+    }
+    &.cols-12 {
+        @apply grid-cols-12;
+    }
+
+    .input-group ~ .input-group {
+        @apply mt-0;
+    } 
+
+    ~ .row {
+        @apply mt-3;
+    }
+}

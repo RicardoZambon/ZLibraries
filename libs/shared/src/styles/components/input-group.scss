@@ -1,0 +1,42 @@
+.input-group {
+    &.inline {
+        @apply flex flex-row-reverse flex-wrap items-stretch mb-3;
+
+        .input-group-text {
+            @apply py-1.5 px-3 rounded-l flex flex-row items-center whitespace-nowrap select-none;
+            @apply bg-slate-500 text-gray-50 border-blue-400;
+        }
+
+        input[type=text].form-input, input[type=password].form-input {
+            @apply mt-0 rounded-l-none -ml-1;
+            @apply w-1 flex-grow;
+
+            &.ng-touched.ng-invalid {
+                ~ .input-group-text {
+                    @apply bg-red-600;
+                }
+            }
+        }
+    }
+
+    &.checkbox {
+        @apply pt-[1.85rem] text-center;
+    }
+
+    &:not(:first-child) {
+        @apply mt-3;
+    }
+
+    input[type=text].form-input, input[type=password].form-input {
+        &.ng-touched.ng-invalid {
+            ~ .validations {
+                @apply block;
+            }
+        }
+    }
+
+    .validations {
+        @apply hidden basis-full mt-1;
+        @apply text-red-600 text-sm;
+    }
+}

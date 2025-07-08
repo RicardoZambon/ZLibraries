@@ -1,0 +1,14 @@
+@import '../../../styles/mixins/background';
+
+:host {
+    @apply block h-screen;
+}
+
+.background {
+    @include fixed-background('/background.jpg', 'bg-white/30');
+}
+
+.container {
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+}
+

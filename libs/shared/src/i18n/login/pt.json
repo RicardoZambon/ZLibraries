@@ -1,0 +1,14 @@
+{
+  "Login-DesignBy": "Design por Ricardo Zambon",
+  "Login-Errors-InternalServerError": "Ocorreu algum erro no servidor, por favor tente novamente.",
+  "Login-Errors-Invalid": "O usuário ou senha informados são inválidos",
+  "Login-Password-Required": "Por favor informe a senha",
+  "Login-Password": "Digite a sua senha",
+  "Login-RememberMe": "Lembrar de mim",
+  "Login-SelectLanguage": "Selecionar idioma",
+  "Login-SignIn": "Entrar",
+  "Login-Username-Required": "Por favor informe o usuário",
+  "Login-Username": "Digite o seu usuário",
+
+  "": ""
+}
