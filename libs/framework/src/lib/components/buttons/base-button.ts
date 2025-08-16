@@ -40,6 +40,14 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
     return this._allowedActions;
   }
 
+  protected get isButtonDisabled(): boolean {
+    return this.disabled || !this.isAccessLoaded;
+  }
+
+  public get isVisible(): boolean {
+    return this.visible;
+  }
+
   public get options(): IRibbonButtonOption[] {
     return this._options;
   }

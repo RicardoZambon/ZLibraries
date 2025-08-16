@@ -1,10 +1,9 @@
 /* @use 'tailwindcss'; */
 
-lib-modal ::ng-deep {
-    .modal-body {
-        @apply grid-rows-[min-content_minmax(0,1fr)];
-        @apply grid-flow-row #{!important};
-    }
+.body-content {
+    @apply grid grid-flow-col auto-cols-fr gap-4 overflow-y-auto;
+    @apply grid-rows-[min-content_minmax(0,1fr)];
+    @apply grid-flow-row #{!important};
 }
 
 .search-grid {

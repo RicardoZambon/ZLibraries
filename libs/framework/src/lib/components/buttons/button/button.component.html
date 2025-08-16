@@ -1,0 +1,10 @@
+<lib-ribbon-button *ngIf="visible"
+[color]="color"
+[disabled]="disabled || !isAccessLoaded"
+[icon]="icon"
+[iconSize]="iconSize"
+[label]="label"
+[loading]="loading"
+[options]="options"
+(action)="onButtonClicked()">
+</lib-ribbon-button>

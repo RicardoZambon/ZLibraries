@@ -51,9 +51,9 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Variables
-  protected selected: boolean = false;
-
   private _rowData!: any;
+  private isWidthSet: { [column: number]: boolean } = {};
+  protected selected: boolean = false;
   //#endregion
 
   //#region Properties
@@ -98,9 +98,18 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
 
   //#region Event handlers
   protected onResize(colIndex: number, event: ResizeObserverEntry): void {
+    if (this.isWidthSet[colIndex]) {
+      return;
+    }
+
     const width: number = event.contentRect.width;
+    if (width <= 0) {
+      return;
+    }
+
     if (this.columns[colIndex].realSize != width) {
       this.columns[colIndex].realSize = width;
+      this.isWidthSet[colIndex] = true;
     }
   }
 

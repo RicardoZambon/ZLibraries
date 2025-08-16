@@ -5,7 +5,7 @@
 [position]="position"
 [size]="size"
 [title]="title">
-    <ng-container body>
+    <div body class="body-content">
         <div class="search-grid">
             <div class="search">
                 <input
@@ -27,7 +27,7 @@
         [isDisabled]="modalProcessing || isSearchGridLoading || isResultGridLoading"
         [template]="itemTemplate">
         </lib-multi-select-result-grid>
-    </ng-container>
+    </div>
 
     <div footer>
         <button

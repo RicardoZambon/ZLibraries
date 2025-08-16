@@ -93,7 +93,7 @@ body.modal-active {
         }
 
         .modal-body {
-            @apply grid grid-flow-col auto-cols-fr p-4 gap-4 overflow-y-auto;
+            @apply m-4 overflow-hidden;
         }
 
         .modal-footer {

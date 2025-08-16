@@ -5,7 +5,7 @@
 [position]="position"
 [size]="size"
 [title]="title">
-    <ng-container body>
+    <div body class="body-content">
         <div class="data-grid">
             <lib-data-grid [disabled]="modalProcessing" [lazyLoadRows]="true"></lib-data-grid>
         </div>
@@ -31,7 +31,7 @@
                 <ng-content></ng-content>
             </lib-form-group>
         </div>
-    </ng-container>
+    </div>
 
     <div footer>
         <button

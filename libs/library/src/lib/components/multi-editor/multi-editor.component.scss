@@ -1,5 +1,9 @@
 /* @use 'tailwindcss'; */
 
+.body-content {
+    @apply grid grid-flow-col auto-cols-fr gap-4 overflow-y-auto;
+}
+
 .data-grid, .data {
     @apply grid overflow-hidden select-none;
 }
