@@ -1,6 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { map, Observable, take, tap } from 'rxjs';
 import { ISidebarProfile, SidebarMenu } from '../models';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +51,10 @@ export abstract class SidebarService {
           parentMenu.children = childrenMenus;
           childrenMenus.forEach((childMenu: SidebarMenu) => childMenu.parent = parentMenu);
         },
-        error: () => this.childrenFailed.emit(parentMenu)
+        error: (exception: HttpErrorResponse) => {
+          this.childrenFailed.emit(parentMenu);
+          throw exception;
+        }
       });
   }
 

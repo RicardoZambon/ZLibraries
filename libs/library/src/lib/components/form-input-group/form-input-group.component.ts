@@ -1,5 +1,5 @@
-import { NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Optional, Output, TemplateRef } from '@angular/core';
+import { KeyValuePipe, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
+import { Component, Input, OnInit, Optional, TemplateRef } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, takeUntil } from 'rxjs';
@@ -12,13 +12,14 @@ import { FormInputComponent } from '../form-input/form-input.component';
   templateUrl: './form-input-group.component.html',
   styleUrls: ['./form-input-group.component.scss'],
   imports: [
-      FormInputComponent,
-      NgFor,
-      NgIf,
-      NgStyle,
-      NgTemplateOutlet,
-      TranslatePipe,
-  ],
+    FormInputComponent,
+    KeyValuePipe,
+    NgFor,
+    NgIf,
+    NgStyle,
+    NgTemplateOutlet,
+    TranslatePipe,
+],
   host: {
     '[class.full-height]': 'isFullHeight'
   }
@@ -48,7 +49,6 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Variables
-  protected errors: string[] = [];
   protected loadingField: boolean = false;
   //#endregion
 
@@ -90,14 +90,12 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.loadingField = false;
-        this.recalculateErrors();
       });
 
     this.formControl?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.loadingField = false;
-        this.recalculateErrors();
       });
 
     this.formService.fieldRefreshed
@@ -107,7 +105,6 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
       )
       .subscribe((field: { fieldName?: string, value?: any, loading?: boolean }) => {
         this.loadingField = field.loading ?? false;
-        this.recalculateErrors();
       });
   }
   //#endregion
@@ -119,8 +116,5 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Private methods
-  private recalculateErrors(): void {
-    this.errors = Object.keys(this.validations).filter((id: string) => this.formControl!.hasError(id));
-  }
   //#endregion
 }

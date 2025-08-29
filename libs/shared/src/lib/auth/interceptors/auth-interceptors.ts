@@ -54,7 +54,7 @@ export class AuthInterceptor implements HttpInterceptor {
               request.clone({ setHeaders: { authorization: `Bearer ${token}` } })
             );
           }),
-          catchError((err: HttpErrorResponse, _: Observable<HttpEvent<unknown>>) => {
+          catchError((err: HttpErrorResponse) => {
             if (err.status === 401) {
               this.authenticationService.signOut();
               this.router.navigate(['/login']);

@@ -89,6 +89,10 @@
             @apply rounded-full overflow-hidden;
             min-width: var(--sidebar-picture-size);
             width: var(--sidebar-picture-size);
+
+            img {
+                min-width: var(--sidebar-picture-size);
+            }
         }
 
         .profile {
