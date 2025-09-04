@@ -1,5 +1,7 @@
+import { FlexibleConnectedPositionStrategy, Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
 import { NgFor, NgIf, NgStyle } from '@angular/common';
-import { Component, DoCheck, ElementRef, HostListener, Input, KeyValueChanges, KeyValueDiffer, KeyValueDiffers, OnInit, Optional, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, ElementRef, HostListener, Input, KeyValueChanges, KeyValueDiffer, KeyValueDiffers, OnInit, Optional, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { catchError, debounceTime, Observable, of, pairwise, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ICatalogEntry, ICatalogResult } from '../../models';
@@ -20,7 +22,7 @@ import { FormInputComponent } from '../form-input/form-input.component';
     NgStyle,
   ]
 })
-export class CatalogSelectComponent extends BaseComponent implements DoCheck, OnInit {
+export class CatalogSelectComponent extends BaseComponent implements AfterViewInit, DoCheck, OnInit {
   //#region HostListeners
   @HostListener('body:mousedown', ['$event'])
   private bodyMouseDown(event: MouseEvent): void {
@@ -33,15 +35,16 @@ export class CatalogSelectComponent extends BaseComponent implements DoCheck, On
   @HostListener('body:mouseup', ['$event'])
   private bodyMouseUp(event: MouseEvent): void {
     if (this.showDropDown && this.clickedOutside) {
-      this.showDropDown = false;
+      this.closeDropdownOverlay();
       this.clickedOutside = false;
     }
   }
   //#endregion
 
   //#region ViewChilds, Inputs, Outputs
+  @ViewChild('dropdownTemplate', { read: TemplateRef }) private dropdownTemplate!: TemplateRef<any>;
   @ViewChild('input', { read: ElementRef }) private inputElement!: ElementRef<HTMLDivElement>;
-
+  
   @Input() public autofocus: boolean = false;
   @Input() public controlName!: string;
   @Input() public displayControlName!: string;
@@ -68,27 +71,27 @@ export class CatalogSelectComponent extends BaseComponent implements DoCheck, On
   @Input() public validations: { [id: string]: string; } = {};
   @Input() public valueProperty: string = 'value';
   //#endregion
-
+  
   //#region Variables
+  private _filters: { [id: string]: any; } = {};
+  private _searchEndpoint?: string;
+  private apiSubject: Subject<{endpoint: string, maxEntries: number, criteria: string | null, filters: { [id: string]: any; }}> = new Subject<{endpoint: string, maxEntries: number, criteria: string | null, filters: { [id: string]: any; }}>();
+  private clickedOutside: boolean = false;
   protected entries: ICatalogEntry[] = [];
+  private filterDiffer?: KeyValueDiffer<string, any>;
   protected focused: boolean = false;
+  private initialized: boolean = false;
+  private isRequestInProgress: boolean = false;
+  private lastCriteria: string | null = null;
   protected loading: boolean = false;
   protected maxHeight: number = 0;
+  private overlayRef?: OverlayRef;
+  private results: ICatalogEntry[] = [];
   protected right: boolean = false;
   protected selectedValue: any;
   protected showDropDown: boolean = false;
   protected showMessage: boolean = false;
   protected useCriteria: boolean = false;
-  
-  private _filters: { [id: string]: any; } = {};
-  private _searchEndpoint?: string;
-  private apiSubject: Subject<{endpoint: string, maxEntries: number, criteria: string | null, filters: { [id: string]: any; }}> = new Subject<{endpoint: string, maxEntries: number, criteria: string | null, filters: { [id: string]: any; }}>();
-  private clickedOutside: boolean = false;
-  private filterDiffer?: KeyValueDiffer<string, any>;
-  private isRequestInProgress: boolean = false;
-  private initialized: boolean = false;
-  private lastCriteria: string | null = null;
-  private results: ICatalogEntry[] = [];
   //#endregion
 
   //#region Properties
@@ -130,6 +133,9 @@ export class CatalogSelectComponent extends BaseComponent implements DoCheck, On
     private readonly formGroup: FormGroupDirective,
     @Optional() private readonly formGroupName: FormGroupName,
     private keyValueDiffers: KeyValueDiffers,
+    private overlay: Overlay,
+    private positionBuilder: OverlayPositionBuilder,
+    private viewContainerRef: ViewContainerRef,
   ) {
     super();
 
@@ -168,6 +174,26 @@ export class CatalogSelectComponent extends BaseComponent implements DoCheck, On
           this.isRequestInProgress = false;
         }
       });
+  }
+
+  public ngAfterViewInit(): void {
+    let parent: HTMLElement | null | undefined = this.inputElement?.nativeElement?.parentElement;
+    while (parent) {
+      const style: CSSStyleDeclaration = getComputedStyle(parent);
+      const overflowY: string = style.overflowY;
+      const isScroll: boolean = overflowY === 'auto' || overflowY === 'scroll';
+
+      if (isScroll && parent.scrollHeight > parent.clientHeight) {
+        parent.addEventListener('scroll', () => {
+          if (this.overlayRef) {
+            // this.overlayRef.updatePosition();
+            this.closeDropdownOverlay();
+          }
+        });
+      }
+
+      parent = parent.parentElement;
+    }
   }
 
   public ngDoCheck(): void {
@@ -270,8 +296,11 @@ export class CatalogSelectComponent extends BaseComponent implements DoCheck, On
       this.showDropDown = !this.showDropDown;
       this.right = false;
 
-      if (this.showDropDown && this.results.length > 0) {
-        this.entries = this.tryFilterFromDataset(this.results);
+      if (this.showDropDown) {
+        if (this.results.length > 0) {
+          this.entries = this.tryFilterFromDataset(this.results);
+        }
+        this.openDropdownOverlay();
       }
     }
   }
@@ -293,7 +322,7 @@ export class CatalogSelectComponent extends BaseComponent implements DoCheck, On
       this.formControl.setValue(entry.value);
     }
 
-    this.showDropDown = false;
+    this.closeDropdownOverlay();
 
     if (!this.entriesList && !this.useCriteria) {
       this.entries = this.results;
@@ -320,12 +349,63 @@ export class CatalogSelectComponent extends BaseComponent implements DoCheck, On
     });
   }
 
+  private closeDropdownOverlay(): void {
+    this.showDropDown = false;
+    if (this.overlayRef) {
+      this.overlayRef.detach();
+      this.overlayRef.dispose();
+      this.overlayRef = undefined;
+    }
+  }
+
   private initializeEntries(): void {
     if (!!this.entriesList) {
       this.searchList();
     } else {
       this.searchAPI(null);
     }
+  }
+
+  private openDropdownOverlay(): void {
+    if (this.overlayRef) {
+      return;
+    }
+
+    const positionStrategy: FlexibleConnectedPositionStrategy = this.positionBuilder
+      .flexibleConnectedTo(this.inputElement)
+      .withPositions([
+        {
+          originX: 'start',
+          originY: 'bottom',
+          overlayX: 'start',
+          overlayY: 'top',
+        },
+        {
+          originX: 'start',
+          originY: 'top',
+          overlayX: 'start',
+          overlayY: 'bottom',
+        }
+      ]);
+    
+    this.overlayRef = this.overlay.create({
+      positionStrategy,
+      hasBackdrop: false,
+      scrollStrategy: this.overlay.scrollStrategies.reposition(),
+    });
+
+    // Set overlay width to match input field
+    const inputRect: DOMRect = this.inputElement.nativeElement.getBoundingClientRect();
+    this.overlayRef.updateSize({ width: inputRect.width });
+
+    this.overlayRef.backdropClick()
+      .pipe(take(1))
+      .subscribe(() => {
+        this.closeDropdownOverlay();
+      });
+
+    const portal: TemplatePortal = new TemplatePortal(this.dropdownTemplate, this.viewContainerRef);
+    this.overlayRef.attach(portal);
   }
 
   private searchAPI(criteria: string | null): void {

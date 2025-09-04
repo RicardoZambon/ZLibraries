@@ -43,7 +43,6 @@ export class FormService {
 
   public get model(): any | null {
     return this._model;
-
   }
 
   public set model(value: any | null) {

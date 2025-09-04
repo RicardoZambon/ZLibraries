@@ -29,7 +29,7 @@ export class OperationsHistoryModalComponent extends ModalBase {
 
   //#region Properties
   public get isModalShown(): boolean {
-    return this.modal.show;
+    return this.modal.isShown;
   }
   //#endregion
 

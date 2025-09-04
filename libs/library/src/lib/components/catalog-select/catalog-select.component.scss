@@ -4,6 +4,10 @@
     @apply grid grid-cols-subgrid col-span-2;
 }
 
+.catalog-container {
+    @apply relative;
+}
+
 div {
     lib-form-input {
         &.fixed-content ::ng-deep input {
@@ -16,40 +20,37 @@ div {
         }
     }
 
-    .dropdown-container {
-        @apply sticky select-none z-10;
+}
 
-        .dropdown {
-            @apply rounded-md border overflow-y-auto overscroll-none border-gray-400 bg-white shadow;
-            @apply max-h-52;
-            @apply transition-[display] duration-1000;
-            
-            &:not(.visible) {
-                @apply hidden;
+.dropdown-container {
+    @apply w-full select-none;
+}
+
+.dropdown {
+    @apply rounded-md border overflow-y-auto overscroll-none border-gray-400 bg-white shadow;
+    @apply max-h-52;
+    @apply transition-[display] duration-1000;
+
+    &.right {
+        @apply right-0;
+    }
+
+    li {
+        @apply px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis;
+
+        &.dropdown-item {
+            @apply cursor-pointer;
+
+            &:nth-child(even) {
+                @apply bg-stone-100/70;
             }
 
-            &.right {
-                @apply right-0;
+            &.selected {
+                @apply bg-primary-200/20 font-bold;
             }
 
-            li {
-                @apply px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis;
-
-                &.dropdown-item {
-                    @apply cursor-pointer;
-
-                    &:nth-child(even) {
-                        @apply bg-stone-100/70;
-                    }
-
-                    &.selected {
-                        @apply bg-primary-200/20 font-bold;
-                    }
-
-                    &, &:nth-child(even), &.selected {
-                        @apply hover:bg-primary-200/50;
-                    }
-                }
+            &, &:nth-child(even), &.selected {
+                @apply hover:bg-primary-200/50;
             }
         }
     }

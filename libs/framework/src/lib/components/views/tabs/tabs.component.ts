@@ -86,6 +86,8 @@ export class TabsComponent implements OnInit {
       if (activatedTabView) {
         const url: string = RouteHelper.getRouteURL(activatedTabView);
         this.tabService.openTab(new Tab({ url }));
+      } else {
+        this.router.navigate(['/']);
       }
     }
   }

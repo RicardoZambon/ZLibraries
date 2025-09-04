@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
 import { FormService } from '../../services';
@@ -56,9 +56,8 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
     private formService: FormService,
     private dataGridDataset: DataGridDataset,
     private multiEditorDataset: MultiEditorDataset,
-    elementRef: ElementRef,
   ) {
-    super(elementRef);
+    super();
   }
 
   public ngOnInit(): void {
@@ -92,11 +91,9 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
         } else {
           this.selectedKey = selectedRowKey;
           this.selectedValue = this.dataGridDataset.getRowData(selectedRowKey);
-          
-          // The form should be reset, then set the model and patched the value in this order.
-          this.formGroup.reset();
           this.formService.model = this.selectedValue;
 
+          this.formGroup.reset();
           this.formGroup.patchValue(this.selectedValue);
         }
       });
@@ -182,7 +179,7 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
   public override toggleModal(): void {
     this.modal.toggleModal();
 
-    if (this.modal.show) {
+    if (this.modal.isShown) {
       this.gridLoading = true;
       this.dataGridDataset.refresh();
       

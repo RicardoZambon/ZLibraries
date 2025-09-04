@@ -1,13 +1,13 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { FormService, ModalComponent } from '@library';
+import { FormService, IModal } from '@library';
 import { Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ModalBase } from './modal-base';
 
 @Component({ template: '' })
 export abstract class ViewModal<TEntityModel> extends ModalBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild('modal') protected modalComponent!: ModalComponent;
+  @ViewChild('modal') protected modalComponent!: IModal;
   //#endregion
 
   //#region Variables
@@ -41,6 +41,7 @@ export abstract class ViewModal<TEntityModel> extends ModalBase implements OnIni
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: TEntityModel | null) => {
         this.formService.model = data;
+        this.formService.loading = false;
         this.dataForm.patchValue(<any>data);
       });
   }
@@ -55,7 +56,7 @@ export abstract class ViewModal<TEntityModel> extends ModalBase implements OnIni
     this.formService.loading = true;
     this.dataForm.reset();
 
-    if (!this.modalComponent.show) {
+    if (!this.modalComponent.isShown) {
       this.entityIdSubject.next(entityID);
     } else {
       this.formService.resetForm();

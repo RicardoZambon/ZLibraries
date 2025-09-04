@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
@@ -41,9 +41,8 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   constructor(
     private dataGridDataset: DataGridDataset,
     protected resultDataset: MultiSelectResultDataset,
-    _el: ElementRef,
   ) {
-    super(_el);
+    super();
 
     dataGridDataset.configs.multiSelect = true;
     this.closeButtonText = 'Button-Modal-Cancel';
@@ -125,7 +124,7 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   public override toggleModal(): void {
     this.modal.toggleModal();
 
-    if (this.modal.show) {
+    if (this.modal.isShown) {
       this.searchCriteria = '';
       this.dataGridDataset.setFilters();
 
@@ -135,7 +134,7 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   }
   //#endregion
 
-  //#region Private methods
+  //#regiosn Private methods
   private updateSelectedItems(): void {
     if (this.isSearchGridLoading || this.isResultGridLoading) {
       return;

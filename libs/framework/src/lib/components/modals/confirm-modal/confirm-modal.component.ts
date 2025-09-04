@@ -2,7 +2,7 @@ import { NgClass, NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, Optional, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FormService, ModalComponent } from '@library';
+import { FormService, IModal, ModalComponent } from '@library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BackendFormValidationHelper } from '../../../helpers';
 
@@ -17,7 +17,7 @@ import { BackendFormValidationHelper } from '../../../helpers';
     TranslatePipe,
   ]
 })
-export class ConfirmModalComponent {
+export class ConfirmModalComponent implements IModal {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ModalComponent) private modal!: ModalComponent;
 
@@ -37,7 +37,7 @@ export class ConfirmModalComponent {
 
   //#region Properties
   public get isShown(): boolean {
-    return this.modal.show;
+    return this.modal.isShown;
   }
 
 
@@ -107,9 +107,12 @@ export class ConfirmModalComponent {
     }
 
     if (!!this.formGroup) {
-      this.formGroup.reset();
+      // TODO: TEST THIS CHANGE
+      //this.formGroup.reset()
+      this.formService?.resetForm();
     }
 
+    
     this.clearErrorMessage();
     this.modal.toggleModal();
   }

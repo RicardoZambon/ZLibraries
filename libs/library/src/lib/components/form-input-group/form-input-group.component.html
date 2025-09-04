@@ -16,7 +16,8 @@
         
         <div class="validations" [class.show]="formControl?.invalid" *ngIf="formControl?.touched">
             <ng-container *ngFor="let error of formControl?.errors | keyvalue">
-                <span *ngIf="error.value === true">{{ validations[error.key] | translate }}</span>
+                <span *ngIf="hasValidation(error.key)">{{ validations[error.key] | translate }}</span>
+                <ng-template #defaultValidationError>{{ error.key }}</ng-template>
             </ng-container>
         </div>
         

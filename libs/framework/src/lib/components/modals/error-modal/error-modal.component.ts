@@ -26,7 +26,7 @@ export class ErrorModalComponent {
 
   //#region Properties
   public get isShown(): boolean {
-    return this.modal.show;
+    return this.modal.isShown;
   }
   //#endregion
 

@@ -20,21 +20,23 @@
         (click)="onClick()"
         (focus)="onFocus()">
         </lib-form-input>
+    </div>
+</ng-template>
 
-        <div class="dropdown-container">
-            <ul class="dropdown"
-            [class.right]="right"
-            [class.visible]="showDropDown">
-                <li *ngIf="loading">{{ 'Loading...' }}</li>
+<ng-template #dropdownTemplate>
+    <div class="dropdown-container">
+        <ul class="dropdown"
+        [class.right]="right"
+        [class.visible]="showDropDown">
+            <li *ngIf="loading">{{ 'Loading...' }}</li>
 
-                <li *ngIf="useCriteria && showMessage">Type {{ minimumLengthSearch }} or more characters to match results.</li>
+            <li *ngIf="useCriteria && showMessage">Type {{ minimumLengthSearch }} or more characters to match results.</li>
 
-                <li class="dropdown-item" *ngFor="let entry of entries"
-                [class.selected]="selectedValue === entry.value"
-                (click)="selectItem(entry)">
-                    {{ entry.display }}
-                </li>
-            </ul>
-        </div>
+            <li class="dropdown-item" *ngFor="let entry of entries"
+            [class.selected]="selectedValue === entry.value"
+            (click)="selectItem(entry)">
+                {{ entry.display }}
+            </li>
+        </ul>
     </div>
 </ng-template>

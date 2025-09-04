@@ -1,5 +1,6 @@
 import { NgIf } from '@angular/common';
-import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, Input } from '@angular/core';
+import { IModal } from '../../models';
 import { BaseComponent } from '../base.component';
 
 @Component({
@@ -7,13 +8,14 @@ import { BaseComponent } from '../base.component';
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.scss'],
   host: {
-    '[class.show]': 'show'
+    'title': '', // This is to ensure that the title input does not conflict with the native HTML title attribute.
+    '[class.show]': 'isShown',
   },
   imports: [
     NgIf,
   ]
 })
-export class ModalComponent extends BaseComponent {
+export class ModalComponent extends BaseComponent implements IModal {
   //#region ViewChilds, Inputs, Outputs
   @Input() public closeButtonText: string = 'Close';
   @Input() public dialog: boolean = true;
@@ -26,23 +28,26 @@ export class ModalComponent extends BaseComponent {
   //#region Variables
   private _show: boolean = false;
   private clickedOutside: boolean = false;
+  private elementRef: ElementRef
   //#endregion
 
   //#region Properties
-  public get show(): boolean {
+  public get isShown(): boolean {
     return this._show;
   }
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(private elementRef: ElementRef) {
+  constructor() {
     super();
+
+    this.elementRef = inject(ElementRef);
   }
   //#endregion
 
   //#region Event handlers
   protected onCloseClick(): void {
-    if (!this.modalProcessing && this.show) {
+    if (!this.modalProcessing && this.isShown) {
       this.closeModal();
     }
   }
@@ -50,7 +55,7 @@ export class ModalComponent extends BaseComponent {
 
   //#region Public methods
   public closeModal(): void {
-    if (this.show) {
+    if (this.isShown) {
       this.toggleModal();
     }
   }
@@ -61,7 +66,7 @@ export class ModalComponent extends BaseComponent {
     
     this._show = body?.classList.contains('modal-active') ?? false;
 
-    if (this.show) {
+    if (this.isShown) {
       this.clickedOutside = false;
 
       const autofocus: any = this.elementRef.nativeElement.querySelector('[autofocus]')
@@ -78,7 +83,7 @@ export class ModalComponent extends BaseComponent {
   //#region Host listeners
   @HostListener('body:mousedown', ['$event'])
   private bodyMouseDown(event: MouseEvent): void {
-    if (this.dialog && this.show) {
+    if (this.dialog && this.isShown) {
       const target: HTMLElement = <HTMLElement>event.target;
 
       this.clickedOutside = (!this.modalProcessing && event.button === 0 && target.closest('lib-modal') && !target.closest('.modal-content')) ?? false;
@@ -87,7 +92,7 @@ export class ModalComponent extends BaseComponent {
 
   @HostListener('body:mouseup', ['$event'])
   private bodyMouseUp(event: MouseEvent): void {
-    if (this.dialog && this.show) {      
+    if (this.dialog && this.isShown) {      
       if (this.clickedOutside && !this.modalProcessing) {
         this.toggleModal();
       }
@@ -105,7 +110,7 @@ export class ModalComponent extends BaseComponent {
       isEscape = ((<KeyboardEvent>event).keyCode === 27);
     }
 
-    if (!this.modalProcessing && this.show && isEscape && document.body.classList.contains('modal-active')) {
+    if (!this.modalProcessing && this.isShown && isEscape && document.body.classList.contains('modal-active')) {
       this.toggleModal();
     }
   }

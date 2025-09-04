@@ -113,6 +113,9 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Public methods
+  protected hasValidation(errorKey: string): boolean {
+    return Object.keys(this.validations).indexOf(errorKey) >= 0;
+  }
   //#endregion
 
   //#region Private methods
