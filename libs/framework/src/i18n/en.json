@@ -29,9 +29,10 @@
 
   
   "//": "i18n",
-  "Date-Format": "MM/dd/yyyy",
-  "Date-Time-Format": "MM/dd/yyyy hh:mm a",
   "Format-Currency": "1.2",
+  "Format-Date": "MM/dd/yyyy",
+  "Format-DateTime": "MM/dd/yyyy hh:mm a",
+  "Format-Number": "1.0",
   "Language-en": "English",
   "Language-pt": "Português",
   "locale": "en-US",
