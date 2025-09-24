@@ -1,9 +1,10 @@
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { NgFor, NgIf, NgStyle } from '@angular/common';
-import { AfterViewInit, Component, DoCheck, ElementRef, HostListener, Input, KeyValueChanges, KeyValueDiffer, KeyValueDiffers, OnInit, Optional, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, KeyValueChanges, KeyValueDiffer, KeyValueDiffers, OnInit, Optional, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
-import { catchError, debounceTime, Observable, of, pairwise, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
+import { debounceTime, forkJoin, Observable, of, pairwise, startWith, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { ICatalogEntry, ICatalogResult } from '../../models';
 import { CatalogService, DataGridDataset } from '../../services';
 import { BaseComponent } from '../base.component';
@@ -20,23 +21,24 @@ import { FormInputComponent } from '../form-input/form-input.component';
     NgFor,
     NgIf,
     NgStyle,
+    TranslatePipe,
   ]
 })
-export class CatalogSelectComponent extends BaseComponent implements AfterViewInit, DoCheck, OnInit {
+export class CatalogSelectComponent extends BaseComponent implements OnInit {
   //#region HostListeners
   @HostListener('body:mousedown', ['$event'])
   private bodyMouseDown(event: MouseEvent): void {
     const target: HTMLElement = <HTMLElement>event.target;
-    if (this.showDropDown && !target.closest('.catalog-container.show')) {
-      this.clickedOutside = (event.button === 0 && !target.closest('.dropdown-container')) ?? false;
+    if (this.isDropDownShown && !target.closest('.catalog-container.show')) {
+      this.wasClickedOutside = (event.button === 0 && !target.closest('.dropdown-container')) ?? false;
     }
   }
 
   @HostListener('body:mouseup', ['$event'])
   private bodyMouseUp(event: MouseEvent): void {
-    if (this.showDropDown && this.clickedOutside) {
+    if (this.isDropDownShown && this.wasClickedOutside) {
       this.closeDropdownOverlay();
-      this.clickedOutside = false;
+      this.wasClickedOutside = false;
     }
   }
   //#endregion
@@ -49,11 +51,11 @@ export class CatalogSelectComponent extends BaseComponent implements AfterViewIn
   @Input() public controlName!: string;
   @Input() public displayControlName!: string;
   @Input() public displayProperty: string = 'display';
-  @Input() public entriesList?: any[] | { key: number; value: Observable<any> }[] | null;
+  @Input() public entriesList?: any[] | { key: number; value: Observable<any> | string }[] | null;
   @Input() public set filters(value: { [id: string]: any; }) {
-    this._filters = value;
-    if (this.initialized) {
-      // this.initializeEntries();
+    if (this._filters !== value) {
+      this._filters = value;
+      this.updateFilters();
     }
   }
   @Input() public label!: string;
@@ -61,40 +63,39 @@ export class CatalogSelectComponent extends BaseComponent implements AfterViewIn
   @Input() public minimumLengthSearch: number = 3;
   @Input() public notes: string = '';
   @Input() public readOnly: boolean = false;
-  public get searchEndpoint(): string | undefined { return this._searchEndpoint; }
-  @Input() public set searchEndpoint(value: string | undefined) {
-    this._searchEndpoint = value;
-    if (this.initialized) {
-      this.initializeEntries();
-    }
-  }
+  @Input() public searchEndpoint?: string;
   @Input() public validations: { [id: string]: string; } = {};
   @Input() public valueProperty: string = 'value';
   //#endregion
   
   //#region Variables
-  private _filters: { [id: string]: any; } = {};
-  private _searchEndpoint?: string;
-  private apiSubject: Subject<{endpoint: string, maxEntries: number, criteria: string | null, filters: { [id: string]: any; }}> = new Subject<{endpoint: string, maxEntries: number, criteria: string | null, filters: { [id: string]: any; }}>();
-  private clickedOutside: boolean = false;
-  protected entries: ICatalogEntry[] = [];
-  private filterDiffer?: KeyValueDiffer<string, any>;
-  protected focused: boolean = false;
-  private initialized: boolean = false;
-  private isRequestInProgress: boolean = false;
-  private lastCriteria: string | null = null;
-  protected loading: boolean = false;
+  protected displayedEntries: ICatalogEntry[] = [];
+  protected isDropDownShown: boolean = false;
+  protected isFocused: boolean = false;
+  protected isLoading: boolean = false;
   protected maxHeight: number = 0;
-  private overlayRef?: OverlayRef;
-  private results: ICatalogEntry[] = [];
-  protected right: boolean = false;
   protected selectedValue: any;
-  protected showDropDown: boolean = false;
-  protected showMessage: boolean = false;
-  protected useCriteria: boolean = false;
+  protected shouldUseCriteria: boolean = false;
+  protected showFailureMessage: boolean = false;
+  protected showMinimumCharactersMessage: boolean = false;
+  protected showNoResultsMessage: boolean = false;
+  
+  private _filters: { [id: string]: any; } = {};
+  private entriesDataSource: ICatalogEntry[] = [];
+  private filterDiffer?: KeyValueDiffer<string, any>;
+  private isDataInitialized: boolean = false;
+  private isSubscriptionInitialized: boolean = false;
+  private lastCriteriaUsed: string | null = null;
+  private overlayRef?: OverlayRef;
+  private searchSubject: Subject<string | null> = new Subject<string | null>();
+  private wasClickedOutside: boolean = false;
   //#endregion
 
   //#region Properties
+  public get filters(): { [id: string]: any; } | undefined {
+    return this._filters;
+  }
+
   protected get displayControl(): FormControl {
     return <FormControl>this.formGroup.form.get(this.formDisplayControlName);
   }
@@ -124,6 +125,10 @@ export class CatalogSelectComponent extends BaseComponent implements AfterViewIn
   protected get isTouched(): boolean {
     return this.formControl.touched;
   }
+
+  private get hasSearchEndpoint(): boolean {
+    return !!this.searchEndpoint && this.searchEndpoint.length > 0;
+  }
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -138,178 +143,96 @@ export class CatalogSelectComponent extends BaseComponent implements AfterViewIn
     private viewContainerRef: ViewContainerRef,
   ) {
     super();
-
-    this.apiSubject
-      .pipe(
-        debounceTime(500),
-        takeUntil(this.destroy$),
-        switchMap(({ endpoint, maxEntries, criteria, filters }: {endpoint: string, maxEntries: number, criteria: string | null, filters: { [id: string]: any; }}): Observable<ICatalogResult | null> => {
-          if (this.isRequestInProgress) {
-            return of(null);
-          }
-
-          this.isRequestInProgress = true;
-          this.lastCriteria = criteria;
-
-          return this.catalogService.search(endpoint, maxEntries, criteria ?? '', filters)
-            .pipe(
-              take(1),
-              catchError((_: any) => {
-                this.loading = false;
-                this.isRequestInProgress = false;
-                return of(null);
-              })
-            );
-        })
-      ).subscribe({
-        next: (results: ICatalogResult | null) => {
-          if (!!results) {
-            this.loading = false;
-            this.isRequestInProgress = false;
-            this.updateResults(results);
-          }
-        },
-        error: (_: any) => {
-          this.loading = false;
-          this.isRequestInProgress = false;
-        }
-      });
-  }
-
-  public ngAfterViewInit(): void {
-    let parent: HTMLElement | null | undefined = this.inputElement?.nativeElement?.parentElement;
-    while (parent) {
-      const style: CSSStyleDeclaration = getComputedStyle(parent);
-      const overflowY: string = style.overflowY;
-      const isScroll: boolean = overflowY === 'auto' || overflowY === 'scroll';
-
-      if (isScroll && parent.scrollHeight > parent.clientHeight) {
-        parent.addEventListener('scroll', () => {
-          if (this.overlayRef) {
-            // this.overlayRef.updatePosition();
-            this.closeDropdownOverlay();
-          }
-        });
-      }
-
-      parent = parent.parentElement;
-    }
-  }
-
-  public ngDoCheck(): void {
-    if (!this.initialized) {
-      return;
-    }
-
-    if (!!this.filterDiffer) {
-      const changes: KeyValueChanges<string ,any> | null = this.filterDiffer.diff(this._filters);
-      if (!!changes) {
-        this.initializeEntries();
-      }
-    }
   }
 
   public ngOnInit(): void {
-    this.filterDiffer = this.keyValueDiffers.find(this._filters).create();
-
-    if (this.useCriteria) {
-      this.showMessage = true;
-    }
-
-    const disabled: boolean = this.formGroup.form.disabled;
-
-    this.addDisplayControl();
-
-    if (disabled) {
+    // Check and add the display control, if it does not exist.
+    const wasFormDisabled: boolean = this.formGroup.form.disabled;
+    this.checkAndAddDisplayControl();
+    if (wasFormDisabled) {
       this.formGroup.form.disable();
     }
 
-    this.formControl?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((value: any) => {
-        if (this.selectedValue !== value) {
-          this.selectedValue = value;
-          
-          if (!!this.entriesList && !this.focused) {
-            const display: string = this.entries.filter((entry: ICatalogEntry) => entry.value === value)[0]?.display ?? '';
-            this.displayControl?.setValue(display, { emitEvent: false });
-          } else if (!value) {
-            this.displayControl?.reset(null, { emitEvent: false });
-            if (!!this.results) {
-              this.initializeEntries();
-            }
-          }
-        }
+    // Initialize the entries data source from the entries list, if provided.
+    this.initializeEntriesDataSource();
 
-        this.syncFormControlsEnabledDisabled();
-      });
+    // Initialize the search functionality.
+    this.initializeSearch();
 
+    // Subscribe to changes in the display control to apply search criteria.
     this.displayControl?.valueChanges
       .pipe(
-        debounceTime(500),
         takeUntil(this.destroy$),
+        tap(() => {
+          this.isLoading = true;
+          this.resetMessages();
+        }),
+        debounceTime(500),
         startWith(null),
         pairwise(),
       )
       .subscribe(([ previous, current ]: string[]) => {
-        if (previous !== current && this.focused) {
-          this.showMessage = false;
-          if (!this.useCriteria) {
-            if (this.readOnly || previous === undefined) {
-              this.entries = this.results;
-            } else {
-              this.searchResults(current);
-            }
-          } else if ((current?.length ?? 0) >= this.minimumLengthSearch) {
-            if (!this.showDropDown) {
-              this.showDropDown = true;
-              this.right = false;
-            }
-            this.searchAPI(current);
-          } else {
-            this.formControl?.reset();
-            this.showMessage = true;
-          }
+        if (!this.isFocused || previous === current) {
+          return;
         }
+        this.applySearchCriteria(current);
       });
 
-    this.selectedValue = this.formControl?.value;
-    this.initializeEntries();
+    this.filterDiffer = this.keyValueDiffers.find(this._filters).create();
+
+    // Subscribe to changes in the form control to update the selected value and display control states.
     this.syncFormControlsEnabledDisabled();
 
-    this.initialized = true;
+    this.formControl?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((value: any) => {
+        if (this.selectedValue === value) {
+          return;
+        }
+
+        this.selectedValue = value;
+        if (this.hasSearchEndpoint) {
+          if (!value) {
+            this.displayControl?.reset(null, { emitEvent: false });
+          }
+        } else {
+          const display: string = this.entriesDataSource.filter((entry: ICatalogEntry) => entry.value === value)[0]?.display ?? '';
+          this.displayControl?.setValue(display, { emitEvent: false });
+        }
+
+        this.syncFormControlsEnabledDisabled();
+      });
   }
   //#endregion
 
   //#region Event handlers
-  protected onBlur(): void {
-    this.focused = false;
+  protected onContainerBlur(): void {
+    this.isFocused = false;
   }
 
-  protected onClick(): void {
-    if ((!this.showDropDown || this.readOnly)
+  protected onContainerClick(): void {
+    if ((!this.isDropDownShown || this.readOnly)
       && (this.formGroup.form?.enabled ?? false)
       && (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
     ) {
       this.maxHeight = this.inputElement?.nativeElement?.getBoundingClientRect()?.height ?? 0;
 
-      this.showDropDown = !this.showDropDown;
-      this.right = false;
-
-      if (this.showDropDown) {
-        if (this.results.length > 0) {
-          this.entries = this.tryFilterFromDataset(this.results);
-        }
+      this.isDropDownShown = !this.isDropDownShown;
+      if (this.isDropDownShown) {
         this.openDropdownOverlay();
       }
     }
   }
 
-  protected onFocus(): void {
-    this.focused = true;
+  protected onContainerFocus(): void {
+    this.isFocused = true;
   }
 
-  protected selectItem(entry: ICatalogEntry): void {
+  protected onDropDownErrorClick(): void {
+    this.refreshSearch();
+  }
+
+  protected onDropDownItemClick(entry: ICatalogEntry): void {
     if (this.displayControl) {
       this.displayControl.markAsDirty();
       this.displayControl.markAllAsTouched();
@@ -323,10 +246,10 @@ export class CatalogSelectComponent extends BaseComponent implements AfterViewIn
     }
 
     this.closeDropdownOverlay();
+  }
 
-    if (!this.entriesList && !this.useCriteria) {
-      this.entries = this.results;
-    }
+  protected onDropDownMessageClick(): void {
+    this.closeDropdownOverlay();
   }
   //#endregion
 
@@ -334,7 +257,14 @@ export class CatalogSelectComponent extends BaseComponent implements AfterViewIn
   //#endregion
 
   //#region Private methods
-  private addDisplayControl(): void {
+  private applySearchCriteria(criteria: string | null): void {
+    this.isLoading = true;
+    this.resetMessages();
+
+    this.searchSubject.next(criteria);
+  }
+
+  private checkAndAddDisplayControl(): void {
     let parent: FormGroup = this.formGroup.form;
     const controlNames: string[] = this.formDisplayControlName.split('.');
 
@@ -350,7 +280,7 @@ export class CatalogSelectComponent extends BaseComponent implements AfterViewIn
   }
 
   private closeDropdownOverlay(): void {
-    this.showDropDown = false;
+    this.isDropDownShown = false;
     if (this.overlayRef) {
       this.overlayRef.detach();
       this.overlayRef.dispose();
@@ -358,12 +288,111 @@ export class CatalogSelectComponent extends BaseComponent implements AfterViewIn
     }
   }
 
-  private initializeEntries(): void {
-    if (!!this.entriesList) {
-      this.searchList();
-    } else {
-      this.searchAPI(null);
+  private initializeEntriesDataSource(): void {
+    if (this.hasSearchEndpoint || !this.entriesList || this.entriesList.length === 0) {
+      return;
     }
+
+    const observables: Observable<string>[] = [];
+
+    this.entriesList.forEach((entry: any | { key: number, value: Observable<any> }) => {
+      const value: number = entry[this.valueProperty];
+      const display: string | Observable<any> = entry[this.displayProperty];
+
+      if (display instanceof Observable) {
+        this.entriesDataSource.push({ value: value, display: 'Loading...' });
+        
+        observables.push(display
+          .pipe(
+            take(1),
+            tap(v => {
+              this.entriesDataSource.filter(x => x.value === value)[0].display = v;
+              if (this.selectedValue === value) {
+                this.displayControl.setValue(v);
+              }
+            })
+          )
+        );
+      } else {
+        this.entriesDataSource.push({ value, display });
+      }
+    });
+
+    forkJoin(observables)
+      .pipe(take(1))
+      .subscribe(() => {
+      });
+  }
+
+  private initializeSearch(): void {
+    this.searchSubject
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((criteria: string | null) => {
+          this.lastCriteriaUsed = criteria;
+
+          if (!this.hasSearchEndpoint) {
+            if (this.entriesDataSource.length === 0) {
+              return of(null).pipe(take(1));
+            }
+            return of(this.entriesDataSource.filter((entry: ICatalogEntry) => entry.display.toLowerCase().indexOf(criteria?.toLowerCase() ?? '') > -1)).pipe(take(1));
+          }
+
+          this.updateMinimumCharactersMessageVisibility(criteria ?? '');
+          if (this.showMinimumCharactersMessage) {
+            return of(null).pipe(take(1));
+          }
+
+          return this.catalogService.search(this.searchEndpoint!, this.maxEntries, criteria ?? '', this.filters)
+            .pipe(take(1));
+        }),
+      ).subscribe({
+        next: (result: ICatalogResult | any[] | null | undefined) => {
+          this.isLoading = false;
+          this.displayedEntries = [];
+
+          if (Array.isArray(result) && result.length > 0) {
+            this.displayedEntries = result;
+
+          } else if (result?.entries && Array.isArray(result.entries)) {
+            const catalogResult: ICatalogResult = result as ICatalogResult;
+            if (!catalogResult) {
+              return;
+            }
+
+            this.displayedEntries = catalogResult.entries;
+
+            if (!this.isDataInitialized) {
+              // The shouldUseCriteria is only set from the initialization.
+              this.isDataInitialized = true;
+              this.shouldUseCriteria = catalogResult.shouldUseCriteria ?? false;
+              this.showMinimumCharactersMessage = this.displayedEntries.length === 0;
+            }
+          }
+
+          // Try to filter out already loaded rows from the data grid dataset.
+          if (this.displayedEntries.length > 0 && this.dataGridDataset) {
+            this.tryFilterFromDataset(this.displayedEntries);
+          }
+          
+          if (!this.showMinimumCharactersMessage && this.displayedEntries.length === 0) {
+            this.showNoResultsMessage = true;
+          }
+        },
+        error: (_: any) => {
+          this.isLoading = false;
+          this.displayedEntries = [];
+          this.showFailureMessage = true;
+
+          // Set a new subscription to allow retrying the search later.
+          this.initializeSearch();
+        }
+      });
+
+      if (!this.isSubscriptionInitialized) {
+        this.isSubscriptionInitialized = true;
+        this.applySearchCriteria(null);
+      }
   }
 
   private openDropdownOverlay(): void {
@@ -408,55 +437,18 @@ export class CatalogSelectComponent extends BaseComponent implements AfterViewIn
     this.overlayRef.attach(portal);
   }
 
-  private searchAPI(criteria: string | null): void {
-    if (this.searchEndpoint) {
-      if (!this.loading) {
-        if (this.entries) {
-          this.entries = [];
-        }
-
-        if (this.useCriteria) {
-          this.showMessage = false;
-        }
-      }
-
-      this.loading = true;
-      this.apiSubject.next({ endpoint: this.searchEndpoint, maxEntries: this.maxEntries, criteria: criteria, filters: this._filters });
+  private refreshSearch(reInitialize: boolean = false): void {
+    if (reInitialize) {
+      this.isDataInitialized = false;
     }
+
+    this.applySearchCriteria(this.lastCriteriaUsed);
   }
 
-  private searchList(): void {
-    if (!!this.entriesList) {
-      this.loading = true;
-      this.entries = [];
-
-      this.entriesList.forEach((entry: any | { key: number, value: Observable<any> }) => {
-        const value: number = entry[this.valueProperty];
-        const display: string | Observable<any> = entry[this.displayProperty];
-
-        if (display instanceof Observable) {
-          this.entries.push({ value: value, display: 'Loading...' });
-          
-          display
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(v => {
-              this.entries.filter(x => x.value === value)[0].display = v;
-
-              if (this.selectedValue === value) {
-                this.displayControl.setValue(v);
-              }
-            });
-        } else {
-          this.entries.push({ value, display });
-        }
-      });
-      this.loading = false;
-    }
-  }
-
-  private searchResults(criteria?: string): void {
-    this.entries = this.results
-      .filter((result: ICatalogEntry) => result.display.toLowerCase().indexOf((criteria ?? '').toLowerCase()) > -1);
+  private resetMessages(): void {
+    this.showFailureMessage = false;
+    this.showNoResultsMessage = false;
+    this.showMinimumCharactersMessage = false;
   }
 
   private syncFormControlsEnabledDisabled(): void {
@@ -475,37 +467,29 @@ export class CatalogSelectComponent extends BaseComponent implements AfterViewIn
       && this.dataGridDataset.hasLoadedRows
     ) {
       // If the control name is matching the ID property of the data grid dataset, filter out the loaded rows to remove duplicated IDs.
-
       const loadedIDs: any[] = this.dataGridDataset.loadedKeys!.map((key: string) => this.dataGridDataset.getRowID(key));
       return results.filter((result: ICatalogEntry) => loadedIDs.indexOf(result.value) < 0);
     }
     return results;
   }
 
-  private updateResults(results: ICatalogResult): void {
-    this.results = this.tryFilterFromDataset(results.entries);
-    if (!results.shouldUseCriteria) {
-      this.entries = this.results;
+  private updateFilters(): void {
+    if (!this.filterDiffer || !this.filters) {
+      return;
     }
 
-    if (this.lastCriteria === null) {
-      this.useCriteria = results.shouldUseCriteria;
-      
-      if (!this.useCriteria) {
-        const currentSelection: ICatalogEntry[] = this.results.filter((result: ICatalogEntry) => result.value === this.formControl.value);
-        
-        if (currentSelection.length > 0) {
-          const display: string = currentSelection.length === 0 ? '' : currentSelection[0].display;
-          this.displayControl.setValue(display, { emitEvent: false });
-        } else {
-          // console.log('this.formControl.setValue(null)')
-          // this.formControl.setValue(null);
-          // this.displayControl.setValue(null);
-        }
-      } else {
-        this.showMessage = true;
-      }
+    const changes: KeyValueChanges<string ,any> | null = this.filterDiffer.diff(this.filters);
+    if (changes) {
+      const reInitialize: boolean = true;
+      this.refreshSearch(reInitialize);
     }
+  }
+
+  private updateMinimumCharactersMessageVisibility(criteria: string): void {
+    this.showMinimumCharactersMessage =
+      this.shouldUseCriteria
+      && this.minimumLengthSearch > 0
+      && (criteria?.length ?? 0) < this.minimumLengthSearch;
   }
   //#endregion
 }

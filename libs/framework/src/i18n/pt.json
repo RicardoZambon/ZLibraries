@@ -23,6 +23,13 @@
   "Button-Views-History": "Histórico",
 
 
+  "//": "Forms",
+  "CatalogSelect-Loading": "Carregando...",
+  "CatalogSelect-FailureMessage": "Ocorreu um erro ao buscar os resultados. Por favor, clique aqui para tentar novamente.",
+  "CatalogSelect-MinimumLengthSearch": "Digite {{ minimumLengthSearch }} ou mais caracteres para buscar resultados.",
+  "CatalogSelect-NoResultsFound": "Nenhum resultado foi encontrado com os critérios fornecidos.",
+
+
   "//": "Grids",
   "Grid-Loading": "Carregando...",
   "Grid-Message-Empty": "Nenhum registro encontrado.",

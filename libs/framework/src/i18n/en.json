@@ -23,6 +23,13 @@
   "Button-Views-History": "History",
 
 
+  "//": "Forms",
+  "CatalogSelect-Loading": "Loading...",
+  "CatalogSelect-FailureMessage": "An error occurred while fetching the results. Please click here to try again.",
+  "CatalogSelect-MinimumLengthSearch": "Type {{ minimumLengthSearch }} or more characters to search results.",
+  "CatalogSelect-NoResultsFound": "No results were found from the provided criteria.",
+
+
   "//": "Grids",
   "Grid-Loading": "Loading...",
   "Grid-Message-Empty": "No records found.",

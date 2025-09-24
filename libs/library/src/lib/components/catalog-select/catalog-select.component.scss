@@ -31,10 +31,6 @@ div {
     @apply max-h-52;
     @apply transition-[display] duration-1000;
 
-    &.right {
-        @apply right-0;
-    }
-
     li {
         @apply px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis;
 
