@@ -186,6 +186,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
     this.formControl?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe((value: any) => {
+        this.syncFormControlsEnabledDisabled();
+
         if (this.selectedValue === value) {
           return;
         }
@@ -199,8 +201,6 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
           const display: string = this.entriesDataSource.filter((entry: ICatalogEntry) => entry.value === value)[0]?.display ?? '';
           this.displayControl?.setValue(display, { emitEvent: false });
         }
-
-        this.syncFormControlsEnabledDisabled();
       });
   }
   //#endregion
