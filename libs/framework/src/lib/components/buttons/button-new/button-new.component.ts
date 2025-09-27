@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { Component, forwardRef, Input, Optional } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import { DataProviderService, RibbonButtonComponent, RibbonGroupChild } from '@library';
+import { DataProviderService, IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { RouteHelper } from '../../../helpers';
 import { ITab, Tab } from '../../../models';
 import { AuthService, TabService } from '../../../services';
@@ -20,6 +20,7 @@ import { BaseButton } from '../base-button';
 export class ButtonNewComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   @Input() public endpoint: string = 'new';
+  @Input() public parameters?: { [key: string]: string };
   @Input() public path?: string;
   //#endregion
 
@@ -48,16 +49,26 @@ export class ButtonNewComponent extends BaseButton {
   //#endregion
 
   //#region Event handlers
-  protected onButtonClicked(option?: string): void {
+  protected onButtonClicked(optionId?: string): void {
+    let option: IRibbonButtonOption | undefined = undefined;
+    if (optionId) {
+      option = this.options.find(o => o.id === optionId);
+    }
+
     let path: string | undefined = this.path;
-    if (this.options.length > 0) {
-      path = option;
+    if (option && option.path && option.path.length > 0) {
+      path = option.path ?? optionId;
+    }
+
+    let queryParameters: { [key: string]: string } | undefined = this.parameters;
+    if (option && option.parameters && Object.keys(option.parameters).length > 0) {
+      queryParameters = { ...queryParameters, ...option.parameters };
     }
     
     let url: string = '';
 
     // Try to find the route with ':id' parameters.
-    let targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
+    const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
     if (!targetRoute) {
       // If not found, uses the current route.
       url = RouteHelper.getRouteURL(this.router.routerState.root.snapshot, true);
@@ -65,11 +76,12 @@ export class ButtonNewComponent extends BaseButton {
       url = RouteHelper.getRouteURL(targetRoute!.parent!);
     }
     
-    if (path) {
+    if (path && path.length > 0) {
       url += `/${path}`;
     }
 
     const tab: ITab = new Tab({
+      queryParams: queryParameters,
       url: `${url}/${this.endpoint}`,
     });
 

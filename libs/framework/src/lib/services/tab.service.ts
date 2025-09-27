@@ -182,7 +182,7 @@ export class TabService {
       url = clonedUrl;
     }
 
-    this.router.navigate([ url ])
+    this.router.navigate([ url ], { queryParams: tab?.queryParams })
       .then(() => {
         this.customReuseStrategy.redirects = {};
       });
@@ -209,6 +209,7 @@ export class TabService {
 
     this.customReuseStrategy.redirects[tab.url] = url;
     tab.url = url;
+    tab.queryParams = {};
 
     this.navigateTo(tab);
   }

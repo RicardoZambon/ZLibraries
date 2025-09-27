@@ -6,4 +6,6 @@ export interface IRibbonButtonOption {
   isDisabled?: boolean;
   isVisible?: boolean;
   label: string;
+  parameters?: { [key: string]: string };
+  path?: string;
 }

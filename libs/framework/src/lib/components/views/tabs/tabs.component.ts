@@ -74,18 +74,28 @@ export class TabsComponent implements OnInit {
         setTimeout(() => {
           if (!!activatedDetailsTabView.firstChild) {
             const url: string = RouteHelper.getRouteURL(activatedDetailsTabView.firstChild);
-            this.tabService.navigateCurrentTab(new Tab({ url }));
+            this.tabService.navigateCurrentTab(new Tab({
+              queryParams: activatedDetailsTabView.queryParams,
+              url: url,
+            }));
           }
         });
       }
-      
-      this.tabService.openTab(new Tab({ url, clones }));
+
+      this.tabService.openTab(new Tab({
+        clones: clones,
+        queryParams: activatedDetailsTabView.queryParams,
+        url: url,
+      }));
 
     } else {
       const activatedTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.snapshot.root, DefaultTabViewComponent);
       if (activatedTabView) {
         const url: string = RouteHelper.getRouteURL(activatedTabView);
-        this.tabService.openTab(new Tab({ url }));
+        this.tabService.openTab(new Tab({
+          queryParams: activatedTabView.queryParams,
+          url: url,
+        }));
       } else {
         this.router.navigate(['/']);
       }

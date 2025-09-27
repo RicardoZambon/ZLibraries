@@ -1,6 +1,7 @@
 export interface ITab {
   clones: string[];
   isTitleLoading: boolean;
+  queryParams?: { [key: string]: string };
   title?: string;
   url: string;
 }
@@ -11,6 +12,8 @@ export class Tab implements ITab{
   public clones: string[] = [];
   
   public isTitleLoading: boolean = true;
+
+  public queryParams?: { [key: string]: string };
   
   public get title(): string | undefined {
     return this._title;
