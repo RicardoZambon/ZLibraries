@@ -173,6 +173,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
       )
       .subscribe(([ previous, current ]: string[]) => {
         if (!this.isFocused || previous === current) {
+          this.isLoading = false;
           return;
         }
         this.applySearchCriteria(current);
