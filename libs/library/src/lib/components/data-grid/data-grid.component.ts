@@ -39,8 +39,8 @@ export class DataGridComponent extends BaseComponent implements OnInit {
 
   //#region Variables
   private gridRoute: string = '';
+  protected hasFailed: boolean = false;
   protected headerRightMargin: number = 0;
-  protected isDataLoaded: boolean = false;
   private isGridCurrentUrl: boolean = false;
   private lastPosition: number = 0;
   protected loading: boolean = false;
@@ -95,6 +95,10 @@ export class DataGridComponent extends BaseComponent implements OnInit {
     return this.dataGridDataset?.configs?.messageOnEmpty ?? '';
   }
 
+  protected get messageToDisplayWhenFailed(): string {
+    return this.dataGridDataset?.configs?.messageOnFailed ?? '';
+  }
+
   protected get selectionColWidth(): string {
     return this.selectionColRealSize
       ? `${this.selectionColRealSize}px`
@@ -144,9 +148,9 @@ export class DataGridComponent extends BaseComponent implements OnInit {
 
     this.dataGridDataset.loadFinished
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
+      .subscribe((isSuccess: boolean) => {
         this.loading = false;
-        this.isDataLoaded = true;
+        this.hasFailed = !isSuccess;
 
         setTimeout(() => {
           const viewportWidth: number = this.viewport?.measureViewportSize('horizontal') ?? 0;

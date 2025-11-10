@@ -5,7 +5,7 @@
 }
 
 .content {
-    @apply flex flex-grow flex-col py-1 px-3 md:pr-40 overflow-auto scroll-smooth;
+    @apply flex flex-grow flex-col pt-3 pb-1 px-3 md:pr-[10.5rem] overflow-auto scroll-smooth;
 
     &.no-scroll-spy {
         @apply md:pr-3;
@@ -13,7 +13,7 @@
 }
 
 .scroll-spy {
-    @apply absolute top-3 right-2 w-36 select-none hidden md:flex flex-col;
+    @apply absolute top-3 right-3 w-36 select-none hidden md:flex flex-col;
 
     a {
         @apply cursor-pointer py-2 px-4 text-gray-600 border-l-2 border-l-gray-300 text-sm;

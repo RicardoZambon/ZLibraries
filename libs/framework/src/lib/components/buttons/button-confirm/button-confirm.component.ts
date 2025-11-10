@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, forwardRef, input, Input, ViewChild } from '@angular/core';
+import { Component, forwardRef, Input, ViewChild } from '@angular/core';
 import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, take } from 'rxjs';
@@ -9,25 +9,30 @@ import { ConfirmModalComponent } from '../../modals';
 import { BaseButton } from '../base-button';
 
 @Component({
-  selector: 'framework-button-delete',
-  templateUrl: './button-delete.component.html',
+  selector: 'framework-button-confirm',
+  templateUrl: './button-confirm.component.html',
   imports: [
     ConfirmModalComponent,
     NgIf,
     RibbonButtonComponent,
     TranslatePipe,
   ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonDeleteComponent)}]
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonConfirmComponent)}]
 })
-export class ButtonDeleteComponent extends BaseButton {
+export class ButtonConfirmComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ConfirmModalComponent) private confirmModal!: ConfirmModalComponent;
 
   @Input() public action!: Observable<any>;
-  @Input() public label: string = 'Button-Delete';
-  @Input() public modalConfirmButtonLabel: string = 'Modal-Delete-Confirm';
-  @Input() public modalMessage: string = 'Modal-Delete-Message';
-  @Input() public modalTitle: string = 'Modal-Delete-Title';
+  @Input() public color: string = 'text-primary-500';
+  @Input() public icon!: string;
+  @Input() public label!: string;
+  @Input() public modalConfirmButtonColor!: string;
+  @Input() public modalConfirmButtonLabel!: string;
+  @Input() public modalMessage!: string;
+  @Input() public modalMessageIcon: string = 'fa-solid fa-circle-question';
+  @Input() public modalMessageIconColor!: string;
+  @Input() public modalTitle!: string;
   //#endregion
 
   //#region Variables

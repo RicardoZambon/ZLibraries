@@ -1,6 +1,7 @@
 import { NgIf } from '@angular/common';
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { DataProviderService, FormService, RibbonButtonComponent, RibbonGroupChild } from '@library';
+import { takeUntil } from 'rxjs';
 import { AuthService } from '../../../services';
 import { ModalBase } from '../../../views/modals/modal-base';
 import { BaseButton } from '../base-button';
@@ -14,7 +15,7 @@ import { BaseButton } from '../base-button';
   ],
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonEditComponent)}]
 })
-export class ButtonEditComponent extends BaseButton {
+export class ButtonEditComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @Input() public cancelColor: string = 'text-red-500';
   @Input() public cancelIcon: string = 'fa-ban';
@@ -45,6 +46,14 @@ export class ButtonEditComponent extends BaseButton {
     authService: AuthService,
   ) {
     super(authService);
+  }
+
+  public ngOnInit(): void {
+    this.formService.editCanceled
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.isButtonCancelVisible = false;
+      });
   }
   //#endregion
 

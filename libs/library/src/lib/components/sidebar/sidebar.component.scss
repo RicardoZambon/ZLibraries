@@ -15,7 +15,8 @@
         }
 
         .profile-container .profile {
-            @apply opacity-100 max-w-full pl-2;
+            @apply opacity-100 pl-2;
+            width: calc(var(--sidebar-expanded-width) - var(--sidebar-picture-size) - 24px); /* 24px = mx-3 (12px each side) */
         }
     }
 
@@ -36,13 +37,17 @@
 }
 
 :host {
-    @apply block h-full select-none;
+    @apply grid h-full select-none overflow-x-hidden;
     @apply bg-primary-600;
     @apply transition-[margin-left,width] ease-in-out;
     margin-left: calc(var(--sidebar-collapsed-width) * -1);
     transition-duration: var(--sidebar-animation-duration);
     width: var(--sidebar-collapsed-width);
     will-change: margin-left, width;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+        "header"
+        "nav";
 
     @screen md {
         @apply ml-0;
@@ -63,9 +68,10 @@
 
 .header {
     @apply pt-2 pb-3;
+    grid-area: header;
 
     .logo-container {
-        @apply relative text-center overflow-hidden;
+        @apply relative text-center w-full overflow-hidden;
         height: var(--sidebar-logo-height);
 
         img {
@@ -82,11 +88,11 @@
     }
 
     .profile-container {
-        @apply mt-2 mx-3 flex flex-nowrap justify-center;
+        @apply mt-2 mx-3 flex flex-nowrap;
         height: var(--sidebar-picture-size);
 
         .picture {
-            @apply rounded-full overflow-hidden;
+            @apply rounded-full overflow-hidden flex-shrink-0;
             min-width: var(--sidebar-picture-size);
             width: var(--sidebar-picture-size);
 
@@ -96,9 +102,11 @@
         }
 
         .profile {
-            @apply pl-0 flex-grow max-w-0 whitespace-nowrap transition-[opacity,padding-left,max-width] opacity-0 ease-in-out overflow-hidden;
-            transition-duration: var(--sidebar-animation-duration);
-            will-change: max-width, opacity, padding-left;
+            @apply pl-0 whitespace-nowrap w-0 opacity-0 ease-in-out overflow-hidden;
+            transition: opacity var(--sidebar-animation-duration) ease-in-out,
+                        padding-left var(--sidebar-animation-duration) ease-in-out,
+                        width var(--sidebar-animation-duration) ease-in-out;
+            will-change: width, opacity, padding-left;
 
             h4, h5 {
                 @apply overflow-hidden text-ellipsis;
@@ -113,6 +121,47 @@
             h5 {
                 @apply text-sm text-gray-300;
             }
+        }
+    }
+}
+
+nav {
+    @apply overflow-y-auto;
+    grid-area: nav;
+    
+    /* Firefox support */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.2) transparent;
+
+    /* WebKit browsers */
+    &::-webkit-scrollbar {
+        @apply h-0;
+        width: 7px;
+    }
+
+    &::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        @apply bg-black/20;
+        border-radius: 10px;
+        transition: background 0.2s ease;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+        @apply bg-black/55;
+    }
+    
+    &:hover::-webkit-scrollbar-thumb {
+        @apply bg-black/45;
+    }
+
+    @media screen and (max-width: 480px) {
+        scrollbar-width: thin;
+        
+        &::-webkit-scrollbar {
+            width: 5px;
         }
     }
 }

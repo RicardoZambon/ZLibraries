@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 
 export abstract class BackendFormValidationHelper {
   public static validateAllFormFields(httpErrorResponse: HttpErrorResponse, formGroup: FormGroup) {
@@ -9,15 +9,19 @@ export abstract class BackendFormValidationHelper {
 
     // Error 400 = Validation issues
     if (httpErrorResponse.status === 400 && httpErrorResponse.error && httpErrorResponse.error.errors) {
-      const errors: { [id: string]: string[] } = <{ [id: string]: string[]; }>httpErrorResponse.error.errors;
+      const controls: string[] = Object.keys(formGroup.controls);
+      const validationErrors: { [id: string]: string[] } = <{ [id: string]: string[]; }>httpErrorResponse.error.errors;
 
-      Object.keys(errors)
-        .map((x: string) => { return { key: x, field: x.substring(0, 1).toLocaleLowerCase() + x.substring(1, x.length) }; })
-        .forEach((err: { key: string; field: string }) => {
+      Object.keys(validationErrors)
+        .forEach((fieldName: string) => {
           setTimeout(() => {
-            const field: FormControl = <FormControl>formGroup.get(err.field);
-            field?.setErrors({ [errors[err.key][0]]: true });
-            field?.markAsTouched();
+            const controlName: string | undefined = controls.find((controlName: string) => controlName.toLocaleLowerCase() === fieldName.toLocaleLowerCase());
+            if (!controlName || !formGroup.get(controlName)) {
+              return;
+            }
+
+            formGroup.get(controlName)!.setErrors({ [validationErrors[fieldName][0]]: true });
+            formGroup.get(controlName)!.markAsTouched();
           });
         });
     }

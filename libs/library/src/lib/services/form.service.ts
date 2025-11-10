@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class FormService {
@@ -13,11 +14,16 @@ export class FormService {
   private _loading: boolean = false;
   private _model: any | null = null;
   private currentMode: 'edit' | 'view' = 'view';
+  private editCanceled$: Subject<void> = new Subject<void>();
   private form?: FormGroup;
   private initialValue?: any;
   //#endregion
 
   //#region Properties
+  public get editCanceled(): Observable<void> {
+    return this.editCanceled$.asObservable();
+  }
+
   public get isEditMode(): boolean {
     return this.currentMode === 'edit';
   }
@@ -76,6 +82,7 @@ export class FormService {
     this.currentMode = 'view';
     this.form?.disable();
     this.resetForm();
+    this.editCanceled$.next();
   }
 
   public getModelFromForm(): any {

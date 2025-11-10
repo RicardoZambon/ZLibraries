@@ -1,32 +1,28 @@
 import { Injectable } from '@angular/core';
-
 import { DataGridConfigs } from '../../models/configs/data-grid-configs';
 import { GridConfigsProvider } from './grid-configs.provider';
 
 @Injectable()
-export class DataGridConfigsProvider extends GridConfigsProvider {
+export class DataGridConfigsProvider extends GridConfigsProvider<DataGridConfigs> {
   //#region ViewChilds, Inputs, Outputs
   //#endregion
 
   //#region Variables
-  protected override _configs: DataGridConfigs;
   //#endregion
 
   //#region Properties
-  public override get configs(): DataGridConfigs {
-    return {...this._configs};
-  }
   //#endregion
   
   //#region Constructor and Angular life cycle methods
-  constructor(private gridConfigsProvider: GridConfigsProvider) {
+  constructor() {
     super();
 
-    this._configs = {
-      ...this.gridConfigsProvider.configs,
+    this._configs =
+    {
+      ...this._configs,
       multiSelect: false,
       multiSelectSize: 'minmax(1.5rem, min-content)',
-    };
+    } as DataGridConfigs;
   }
   //#endregion
 

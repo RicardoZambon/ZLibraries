@@ -33,6 +33,7 @@
   "//": "Grids",
   "Grid-Loading": "Carregando...",
   "Grid-Message-Empty": "Nenhum registro encontrado.",
+  "Grid-Message-Failed": "Ocorreu um erro ao carregar os registros. Por favor, tente novamente mais tarde.",
 
 
   "//": "i18n",

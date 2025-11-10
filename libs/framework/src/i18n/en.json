@@ -33,6 +33,7 @@
   "//": "Grids",
   "Grid-Loading": "Loading...",
   "Grid-Message-Empty": "No records found.",
+  "Grid-Message-Failed": "An error occurred while loading the records. Please try again later.",
 
   
   "//": "i18n",

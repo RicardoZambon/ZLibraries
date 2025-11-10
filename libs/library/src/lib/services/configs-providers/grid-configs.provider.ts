@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
-
 import { GridConfigs } from '../../models/configs/grid-configs';
 
 @Injectable()
-export class GridConfigsProvider {
+export class GridConfigsProvider<TGridConfigs extends GridConfigs = GridConfigs> {
   //#region ViewChilds, Inputs, Outputs
   //#endregion
 
   //#region Variables
-  protected _configs: GridConfigs;
+  protected _configs: TGridConfigs;
   //#endregion
 
   //#region Properties
-  public get configs(): GridConfigs {
+  public get configs(): TGridConfigs {
     return this._configs;
   }
   //#endregion
@@ -25,7 +24,7 @@ export class GridConfigsProvider {
       recordBlockSize: 100,
       rowHeight: 41.6,
       rowsToDisplay: 6,
-    };
+    } as TGridConfigs;
   }
   //#endregion
 

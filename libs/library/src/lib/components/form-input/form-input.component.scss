@@ -14,7 +14,7 @@
 
 input, textarea {
     @apply border-gray-400;
-    @apply focus:border-gray-400 focus:ring-4 focus:ring-primary-400/80;
+    @apply focus:border-gray-400 focus:ring-4 focus:ring-primary-400/30;
     @apply transition-all;
 
     @apply invalid:border-red-400;
@@ -33,7 +33,7 @@ input[type=file], input[type=month], input[type=tel], input[type=time], input[ty
     @apply block w-full rounded-md shadow-sm px-2 py-1;
 
     &.ng-invalid.ng-touched, &.invalid {
-        @apply pr-9 -mr-9;
+        @apply pr-9 -mr-9 transition-none;
         @apply focus:ring-red-400/30;
         @apply bg-no-repeat bg-[right_0.5625rem_center] bg-[length:1.125rem_1.125rem];
         background-image: url("data:image/svg+xml,%3csvg class='text-white' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");

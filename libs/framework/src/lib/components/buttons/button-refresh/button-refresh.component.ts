@@ -35,7 +35,7 @@ export class ButtonRefreshComponent extends BaseButton implements OnInit {
   public ngOnInit(): void {
     this.dataGridDataset?.loadFinished
       .pipe(takeUntil(this.destroy$))
-      .subscribe((_: void) => {
+      .subscribe(() => {
         this.loading = false;
       });
   }

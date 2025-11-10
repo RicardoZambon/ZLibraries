@@ -53,12 +53,22 @@ class="body"
             </span>
         </div>
         
-        <div *ngIf="!loading && isDataLoaded && !hasLoadedRows && hasMessageToDisplayWhenEmpty && shouldDisplayMessageWhenEmpty"
-        class="message"
-        [style.height.px]="configs.rowHeight">
-            <span>
-                {{ messageToDisplayWhenEmpty | translate }}
-            </span>
-        </div>
+        <ng-container *ngIf="!loading && (!hasLoadedRows || hasFailed)">
+            <div *ngIf="!hasFailed && !hasLoadedRows && hasMessageToDisplayWhenEmpty && shouldDisplayMessageWhenEmpty"
+            class="message"
+            [style.height.px]="configs.rowHeight">
+                <span>
+                    {{ messageToDisplayWhenEmpty | translate }}
+                </span>
+            </div>
+
+            <div *ngIf="hasFailed"
+            class="message"
+            [style.height.px]="configs.rowHeight">
+                <span>
+                    <i class="fas fa-exclamation-triangle mr-2 text-yellow-600"></i>{{ messageToDisplayWhenFailed | translate }}
+                </span>
+            </div>
+        </ng-container>
     </cdk-virtual-scroll-viewport>
 </div>

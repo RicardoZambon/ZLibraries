@@ -1,6 +1,6 @@
 export * from './lib/components';
 export * from './lib/configs';
-export * from './lib/default-configs';
+export * from './lib/configs-providers';
 export * from './lib/framework.module';
 export * from './lib/helpers';
 export * from './lib/models';

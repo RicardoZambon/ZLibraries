@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { GridConfigsProvider } from '@library';
+import { DataGridConfigs, DataGridConfigsProvider } from '@library';
 
 @Injectable()
-export class AppGridConfigsProvider extends GridConfigsProvider {
+export class FrameworkGridConfigsProvider extends DataGridConfigsProvider {
   //#region ViewChilds, Inputs, Outputs
   //#endregion
 
@@ -16,8 +16,11 @@ export class AppGridConfigsProvider extends GridConfigsProvider {
   constructor() {
     super();
 
-    this.configs.loadingDisplayText = 'Grid-Loading';
-    this.configs.messageOnEmpty = 'Grid-Message-Empty';
+    Object.assign(this.configs, {
+      loadingDisplayText: 'Grid-Loading',
+      messageOnEmpty: 'Grid-Message-Empty',
+      messageOnFailed: 'Grid-Message-Failed',
+    } as DataGridConfigs);
   }
   //#endregion
 

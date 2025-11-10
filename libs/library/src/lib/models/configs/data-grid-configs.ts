@@ -1,6 +1,6 @@
 import { GridConfigs } from './grid-configs';
 
-export interface DataGridConfigs extends GridConfigs {
+export type DataGridConfigs = GridConfigs & {
   hideBorders?: boolean;
   hideColumnHeaders?: boolean;
   multiSelect?: boolean;

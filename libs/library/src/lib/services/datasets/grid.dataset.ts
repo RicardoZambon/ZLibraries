@@ -11,7 +11,7 @@ const KEY_FIELD: string = '_key';
 export abstract class GridDataset extends BaseDataset {
   //#region ViewChilds, Inputs, Outputs
   public filtersChanged = new EventEmitter<{ [key: string ] : string }>();
-  public loadFinished: EventEmitter<void> = new EventEmitter();
+  public loadFinished: EventEmitter<boolean> = new EventEmitter<boolean>();
   public loadStarted: EventEmitter<void> = new EventEmitter();
   //#endregion
 
@@ -142,11 +142,11 @@ export abstract class GridDataset extends BaseDataset {
           }
 
           this.isLoading = false;
-          this.loadFinished.emit();
+          this.loadFinished.emit(true);
         },
         error: (_: any) => {
           this.isLoading = false;
-          this.loadFinished.emit();
+          this.loadFinished.emit(false);
         }
       });
   }
