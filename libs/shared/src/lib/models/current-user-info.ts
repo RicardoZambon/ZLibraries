@@ -1,4 +1,4 @@
 export interface ICurrentUserInfo {
-  costCenter: string;
+  costCenterName: string;
   name: string;
 }

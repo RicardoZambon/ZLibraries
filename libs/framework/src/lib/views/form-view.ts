@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataProviderService, FormService } from '@library';
-import { take } from 'rxjs';
+import { take, takeUntil } from 'rxjs';
 import { TabViewBase } from './tabview-base';
 
 @Component({ template: '' })
@@ -41,7 +41,7 @@ export abstract class FormView<TEntityModel> extends TabViewBase implements OnIn
 
     this.formService.loading = true;
     this.dataProvider?.getModel$()
-      .pipe(take(1))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((model: TEntityModel | null) => {
         this.formService.loading = false;
         this.formService.model = model;

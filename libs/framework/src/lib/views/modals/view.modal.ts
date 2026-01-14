@@ -11,6 +11,7 @@ export abstract class ViewModal<TEntityModel> extends ModalBase implements OnIni
   //#endregion
 
   //#region Variables
+  protected beginEditOnEntityLoad: boolean = false;
   protected dataForm!: FormGroup;
   protected data$: Observable<TEntityModel | null>;
   private entityIdSubject: Subject<number | undefined> = new Subject<number | undefined>();
@@ -43,6 +44,10 @@ export abstract class ViewModal<TEntityModel> extends ModalBase implements OnIni
         this.formService.model = data;
         this.formService.loading = false;
         this.dataForm.patchValue(<any>data);
+
+        if (this.beginEditOnEntityLoad) {
+          this.formService.beginEdit();
+        }
       });
   }
   //#endregion

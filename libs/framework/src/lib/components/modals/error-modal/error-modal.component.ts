@@ -43,15 +43,13 @@ export class ErrorModalComponent {
     this.modal.closeModal();
   }
 
-  public setErrorMessage(httpErrorResponse: HttpErrorResponse): void {
-    if (typeof httpErrorResponse.error === 'string') {
-      this.errorMessage = httpErrorResponse.error;
-    } else {
-      this.errorMessage = 'Modal-Failed-DefaultMessage';
+  public showModal(error: string | HttpErrorResponse): void {
+    let errorMessage: string = 'Modal-Failed-DefaultMessage';
+    if (typeof error === 'string') {
+      errorMessage = error;
+    } else if (typeof error.error === 'string') {
+      errorMessage = error.error;
     }
-  }
-
-  public showModal(errorMessage: string): void {
     this.errorMessage = errorMessage;
     this.modal.toggleModal();
   }
