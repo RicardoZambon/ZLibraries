@@ -39,7 +39,7 @@ export class FormService {
   public set loading(value: boolean) {
     if (this._loading !== value) {
       this._loading = value;
-      if (value)  {
+      if (value) {
         this.form?.disable();
       } else if (this.isEditMode) {
         this.form?.enable();
@@ -58,7 +58,7 @@ export class FormService {
     }
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   //#endregion
 
@@ -85,6 +85,16 @@ export class FormService {
     this.editCanceled$.next();
   }
 
+  public disableForm(): void {
+    this.form?.disable();
+  }
+
+  public enableForm(): void {
+    if (this.isEditMode) {
+      this.form?.enable();
+    }
+  }
+
   public getModelFromForm(): any {
     return this.form?.getRawValue();
   }
@@ -102,7 +112,7 @@ export class FormService {
     if (!this.form) {
       return;
     }
-    
+
     this.form.markAllAsTouched();
   }
 
@@ -118,7 +128,7 @@ export class FormService {
     } else if (!!this.initialValue) {
       this.form.patchValue(this.initialValue);
     }
-    
+
     this.form.updateValueAndValidity();
   }
 
@@ -138,7 +148,7 @@ export class FormService {
     // Error 400 = Validation issues
     if (errorResponse.status === 400 && errorResponse.error && errorResponse.error.errors) {
       const errors: { [id: string]: string[] } = <{ [id: string]: string[] }>errorResponse.error.errors;
-      
+
       Object.keys(errors)
         .map((x: string) => { return { key: x, field: x.substring(0, 1).toLocaleLowerCase() + x.substring(1, x.length) }; })
         .forEach((err: { key: string; field: string }) => {

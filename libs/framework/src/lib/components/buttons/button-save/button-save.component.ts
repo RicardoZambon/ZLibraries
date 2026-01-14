@@ -67,7 +67,7 @@ export class ButtonSaveComponent extends BaseButton {
       .subscribe({
         next: (model: any) => {
           this.finishLoading('success');
-          this.formService.loading = false;
+          this.formService.enableForm();
           this.formService.model = model;
           this.formService.cancelEdit();
 
@@ -93,7 +93,7 @@ export class ButtonSaveComponent extends BaseButton {
         },
         error: (e: HttpErrorResponse) => {
           this.finishLoading('warning');
-          this.formService.loading = false;
+          this.formService.enableForm();
 
           if (e.status === 400) {
             this.formService.setValidationErrorsFromHttpResponse(e);
@@ -126,7 +126,7 @@ export class ButtonSaveComponent extends BaseButton {
       return throwError(() => new HttpErrorResponse({ error: { message: 'Form invalid', errors: null }, status: 400 }));;
     }
 
-    this.formService.loading = true;
+    this.formService.disableForm();
     const model: any = this.formService.getModelFromForm();
     return this.dataProviderService.saveModel(model);
   }

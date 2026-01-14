@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
   public ngOnInit(): void {
     this.form = this.formBuilder.group({
       password: ['', Validators.required],
-      rememberMe: [false],
+      rememberMe: [false, { nonNullable: true }],
       username: ['', Validators.required],
     });
   }

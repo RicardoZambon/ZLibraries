@@ -49,7 +49,7 @@
 
   "//": "Modals",
   "Modal-Delete-Confirm": "Confirm delete",
-  "Modal-Delete-Message": "You are about to delete system records, is not possible to reverse this action. Are you sure you want to continue?",
+  "Modal-Delete-Message": "You are about to delete records, is not possible to reverse this action. Are you sure you want to continue?",
   "Modal-Delete-Title": "Confirm the record deletion",
   "Modal-Failed-Administrator": "If the problem persists, please contact your administrator.",
   "Modal-Failed-DefaultMessage": "An error occurred in the server. Please try again later.",
