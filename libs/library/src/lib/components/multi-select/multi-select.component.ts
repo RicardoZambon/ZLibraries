@@ -32,9 +32,19 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   protected isResultGridLoading: boolean = false;
   protected isSearchGridLoading: boolean = false;
   protected searchCriteria: string = '';
+
+  private _searchColumn: string = '';
   //#endregion
 
   //#region Properties
+  private get searchColumn(): string {
+    if (this._searchColumn.length === 0) {
+      let columnName = this.dataGridDataset.columns.filter((col: IGridColumn) => col.field !== '')[0]?.field ?? 'Search';
+      columnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
+      this._searchColumn = columnName;
+    }
+    return this._searchColumn;
+  }
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -103,16 +113,16 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   }
 
   protected onSearch(): void {
-    const filters: { [key: string]: string; } = {};
-
-    if (this.searchCriteria.length > 0) {
-      let columnName = this.dataGridDataset.columns.filter((col: IGridColumn) => col.field !== '')[0]?.field ?? 'Search';
-      columnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
-      filters[columnName] = this.searchCriteria;
-    }
+    const filters: { [key: string]: string; } = this.dataGridDataset.filters ?? {};
 
     this.isSearchGridLoading = true;
-    this.dataGridDataset.setFilters(filters);
+    if (this.searchCriteria.length > 0) {
+      filters[this.searchColumn] = this.searchCriteria;
+      this.dataGridDataset.setFilters(filters);
+
+    } else if (Object.keys(filters).includes(this.searchColumn)) {
+      this.clearSearch();
+    }
   }
   //#endregion
 
@@ -126,7 +136,7 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
 
     if (this.modal.isShown) {
       this.searchCriteria = '';
-      this.dataGridDataset.setFilters();
+      this.clearSearch();
 
       this.isResultGridLoading = true;
       this.resultDataset.refresh();
@@ -135,6 +145,13 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#endregion
 
   //#regiosn Private methods
+  private clearSearch(): void {
+    const filters: { [key: string]: string; } = this.dataGridDataset.filters ?? {};
+    if (Object.keys(filters).includes(this.searchColumn)) {
+      delete filters[this.searchColumn];
+    }
+    this.dataGridDataset.setFilters(filters);
+  }
   private updateSelectedItems(): void {
     if (this.isSearchGridLoading || this.isResultGridLoading) {
       return;

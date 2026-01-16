@@ -31,6 +31,9 @@ export abstract class GridDataset extends BaseDataset {
   //#endregion
   
   //#region Properties
+  public get filters(): { [key: string]: string; } | undefined {
+    return this.queryFilters;
+  }
   public get hasLoadedRows(): boolean {
     return !!this._loadedRows && this._loadedRows.length > 0;
   }
