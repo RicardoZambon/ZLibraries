@@ -35,6 +35,7 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   @Input() public isDisabled: boolean = true;
   @Input() public isFullHeight: boolean = false;
   @Input() public maxLength?: number;
+  @Input() public min?: number;
   @Input() public notes: string = '';
   @Input() public readOnly: boolean = false;
   @Input() public rows!: number;

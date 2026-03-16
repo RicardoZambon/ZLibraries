@@ -34,11 +34,12 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   @Input() public isDisabled: boolean = true;
   @Input() public isFullHeight: boolean = false;
   @Input() public maxLength?: number;
+  @Input() public min?: number;
   @Input() public readOnly: boolean = false;
   @Input() public rows!: number;
   @Input() public step: number = 1;
   @Input() public type: string = 'text';
-  
+
   @Output() public blur: EventEmitter<any> = new EventEmitter<any>();
   @Output() public change: EventEmitter<any> = new EventEmitter<any>();
   @Output() public fixedValueChanged: EventEmitter<any> = new EventEmitter<string>();
@@ -89,6 +90,13 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   protected get stepAttributeValue(): number | null {
     if (this.type === 'number') {
       return this.step;
+    }
+    return null;
+  }
+
+  protected get minAttributeValue(): number | null {
+    if (this.type === 'number') {
+      return this.min ?? null;
     }
     return null;
   }

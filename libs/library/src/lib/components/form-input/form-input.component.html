@@ -46,6 +46,7 @@
             <input *ngIf="isFormControl; else fixedTextBox"
             [attr.autofocus]="autofocus ? true : null"
             [attr.maxLength]="maxLength ?? null"
+            [attr.min]="minAttributeValue"
             [attr.readonly]="readOnly ? true : null"
             [attr.step]="stepAttributeValue"
             [class.invalid]="invalid"
@@ -60,6 +61,7 @@
                 <input
                 type="text"
                 [attr.maxLength]="maxLength ?? null"
+                [attr.min]="minAttributeValue"
                 [attr.readonly]="true"
                 [attr.step]="stepAttributeValue"
                 [class.invalid]="invalid"

@@ -62,6 +62,12 @@ export class ButtonSaveComponent extends BaseButton {
   protected onButtonClicked(option?: string): void {
     this.startLoading();
 
+    this.formService.markAllAsTouched();
+    if (!this.formService.isValid) {
+      this.finishLoading('warning');
+      return;
+    }
+
     this.saveModel()
       .pipe(take(1))
       .subscribe({
@@ -120,12 +126,6 @@ export class ButtonSaveComponent extends BaseButton {
 
   //#region Private methods
   private saveModel(): Observable<any> {
-    this.formService.markAllAsTouched();
-    
-    if (!this.formService.isValid) {
-      return throwError(() => new HttpErrorResponse({ error: { message: 'Form invalid', errors: null }, status: 400 }));;
-    }
-
     this.formService.disableForm();
     const model: any = this.formService.getModelFromForm();
     return this.dataProviderService.saveModel(model);
