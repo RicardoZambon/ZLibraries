@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Router, RouteReuseStrategy } from '@angular/router';
 import { CustomReuseStrategy } from './custom-reuse-strategy';
@@ -35,6 +36,7 @@ export class TabService {
   
   //#region Constructor and Angular life cycle methods
   constructor(
+    private location: Location,
     private router: Router,
     routeReuseStrategy: RouteReuseStrategy,
   ) {
@@ -206,12 +208,10 @@ export class TabService {
     }
 
     const tab: ITab = this.activeTab[this.activeTab.length - 1];
-
-    this.customReuseStrategy.redirects[tab.url] = url;
     tab.url = url;
     tab.queryParams = {};
 
-    this.navigateTo(tab);
+    this.location.replaceState(url);
   }
 
   public updateTabTitle(url: string, title: string): void {
