@@ -30,7 +30,7 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   //#region Constructor and Angular life cycle methods
   constructor() {
     this.activatedRoute.paramMap
-      .pipe(takeUntil(this.destroy$))
+      .pipe(take(1))
       .subscribe((paramMap: ParamMap) => {
         const newID: number = Number(paramMap.get('id'));
         if (newID !== this.entityID) {
@@ -85,6 +85,12 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
 
   public updateModel(model: any): void {
     this.isModelLoaded = true;
+
+    // Update entity ID if changed.
+    if (model && (model as any).id !== this.entityID) {
+      this._entityID = (model as any).id;
+    }
+
     this.modelCache.next(model);
   }
   //#endregion
