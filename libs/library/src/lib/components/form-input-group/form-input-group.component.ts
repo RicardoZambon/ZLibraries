@@ -1,5 +1,5 @@
 import { KeyValuePipe, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { Component, Input, OnInit, Optional, TemplateRef } from '@angular/core';
+import { Component, inject, Input, OnInit, TemplateRef } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, takeUntil } from 'rxjs';
@@ -50,6 +50,10 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Variables
+  protected formService: FormService = inject(FormService);
+  protected readonly formGroupDirective: FormGroupDirective = inject(FormGroupDirective);
+  protected readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
+
   protected loadingField: boolean = false;
   //#endregion
 
@@ -78,11 +82,7 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected formService: FormService,
-    protected readonly formGroupDirective: FormGroupDirective,
-    @Optional() protected readonly formGroupName: FormGroupName,
-  ) {
+  constructor() {
     super();
   }
 

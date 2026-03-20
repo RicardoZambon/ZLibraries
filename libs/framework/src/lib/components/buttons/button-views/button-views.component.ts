@@ -1,11 +1,11 @@
 import { NgIf } from '@angular/common';
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, inject, Input, OnInit } from '@angular/core';
 import { ActivatedRouteSnapshot, NavigationEnd, Route, Router, UrlSegment } from '@angular/router';
-import { IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@library';
+import { DataProviderService, IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { filter, takeUntil } from 'rxjs';
 import { RouteHelper } from '../../../helpers';
 import { ITab, Tab } from '../../../models';
-import { AuthService, TabService, TabViewService } from '../../../services';
+import { TabService, TabViewService } from '../../../services';
 import { BaseButton } from '../base-button';
 
 @Component({
@@ -21,14 +21,18 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @Input() public detailsViewRoute: ActivatedRouteSnapshot | null = null;
   //#endregion
-  
+
   //#region Variables
   private baseUrlPath?: string;
   private isInternalNavigation: boolean = false;
   private selectedViewId?: string;
   //#endregion
-  
+
   //#region Properties
+  protected get isNewEntity(): boolean {
+    return !(this.dataProviderService?.hasEntityID ?? false);
+  }
+
   private get defaultViewId(): string {
     return this.options[0].id ?? '';
   }
@@ -52,16 +56,14 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
     return url;
   }
   //#endregion
-  
+
+  private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
+  private router: Router = inject(Router);
+  private tabService: TabService = inject(TabService);
+  private tabViewService: TabViewService = inject(TabViewService);
+  //#endregion
+
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private router: Router,
-    private tabService: TabService,
-    private tabViewService: TabViewService,
-    authService: AuthService
-  ) {
-    super(authService);
-  }
 
   public ngOnInit(): void {
     if (!!this.detailsViewRoute) {
@@ -119,27 +121,27 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
             } else {
               this.isInternalNavigation = false;
             }
-
-            if (this.tabService.isUrlActive(this.selectedViewUrl) && !!this.selectedView?.label) {
-              this.tabService.updateTabTitle(this.selectedViewUrl, this.selectedView.label);
-            }
           }
         }
       });
   }
   //#endregion
-  
+
   //#region Event handlers
   protected onViewClicked(selectedOption: string | undefined): void {
     this.changeSelectedView(selectedOption);
-
-    const tab: ITab = new Tab({
-      title: this.selectedView?.label,
-      url: this.selectedViewUrl,
-    });
-
     this.isInternalNavigation = true;
-    this.tabService.navigateCurrentTab(tab);
+
+    if (selectedOption === this.defaultViewId) {
+      // Default view: remove sub-view entry, navigate back to detail view
+      this.tabService.replaceCurrentTabSubView(this.baseUrlPath!);
+    } else {
+      const tab: ITab = new Tab({
+        title: this.selectedView?.label,
+        url: this.selectedViewUrl,
+      });
+      this.tabService.replaceCurrentTabSubView(this.baseUrlPath!, tab);
+    }
   }
   //#endregion
 

@@ -1,10 +1,10 @@
 import { NgIf } from '@angular/common';
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, inject, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { takeUntil } from 'rxjs';
 import { Tab } from '../../../models';
-import { AuthService, TabService } from '../../../services';
+import { TabService } from '../../../services';
 import { BaseButton } from '../base-button';
 
 @Component({
@@ -32,15 +32,12 @@ export class ButtonOpenRecordComponent extends BaseButton implements OnInit {
   }
   //#endregion
 
+  private dataGridDataset: DataGridDataset = inject(DataGridDataset);
+  private router: Router = inject(Router);
+  private tabService: TabService = inject(TabService);
+  //#endregion
+
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private dataGridDataset: DataGridDataset,
-    private router: Router,
-    private tabService: TabService,
-    authService: AuthService,
-  ) {
-    super(authService);
-  }
 
   public ngOnInit(): void {
     this.dataGridDataset.selectedRowsChanged
@@ -62,12 +59,12 @@ export class ButtonOpenRecordComponent extends BaseButton implements OnInit {
     if (this.elementPath) {
       path += `/${this.elementPath}`;
     }
-    
+
     const selectedKey: string = this.dataGridDataset.selectedRowKeys[0];
     const selectedID: any = this.dataGridDataset.getRowID(selectedKey);
     path += `/${selectedID}`;
 
-    this.tabService.navigateCurrentTab(new Tab({ url: path }));
+    this.tabService.navigateCurrentTab(new Tab({ entityBaseUrl: path, url: path }));
   }
   //#endregion
 

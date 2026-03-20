@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { DataGridDataset, IGridColumn, IListParameters } from '@library';
 import { Observable, of } from 'rxjs';
 import { IOperationsHistoryList } from '../models';
@@ -15,8 +15,10 @@ export class OperationsHistoryDataset extends DataGridDataset {
   ];
 
   public controllerName?: string;
-  
+
   private _serviceID?: number | undefined;
+
+  protected operationsHistoryService: OperationsHistoryService = inject(OperationsHistoryService);
   //#endregion
 
   //#region Properties
@@ -29,9 +31,9 @@ export class OperationsHistoryDataset extends DataGridDataset {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(protected operationsHistoryService: OperationsHistoryService) {
+  constructor() {
     super();
-    
+
     this.configs.hideColumnHeaders = true;
     this.configs.showMessageOnEmpty = false;
   }

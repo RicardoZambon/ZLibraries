@@ -45,4 +45,8 @@ import { ButtonEditLegacyComponent, ButtonNewLegacyComponent, ButtonOpenRecordLe
     ButtonOpenRecordLegacyComponent,
   ]
 })
+/**
+ * @deprecated Use standalone component imports instead of FrameworkButtonsModule.
+ * Import individual button components directly in your component's `imports` array.
+ */
 export class FrameworkButtonsModule { }

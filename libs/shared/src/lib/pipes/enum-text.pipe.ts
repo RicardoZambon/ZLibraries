@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'enumText'
+  name: 'enumLabel'
 })
-export class EnumTextPipe implements PipeTransform {
+export class EnumLabelPipe implements PipeTransform {
   transform(value?: number, enumType?: any): string {
     if (value === undefined || enumType === undefined) {
       return '';

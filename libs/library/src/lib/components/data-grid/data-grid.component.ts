@@ -1,10 +1,10 @@
 import { ListRange } from '@angular/cdk/collections';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { NgFor, NgIf, NgStyle } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, Input, NgZone, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { filter, takeUntil } from 'rxjs';
+import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
 import { IGridColumn } from '../../models';
 import { DataGridConfigs } from '../../models/configs';
 import { DataGridDataset } from '../../services';
@@ -27,17 +27,24 @@ import { DataGridRowComponent } from '../data-grid-row/data-grid-row.component';
     TranslatePipe,
   ]
 })
-export class DataGridComponent extends BaseComponent implements OnInit {
+export class DataGridComponent extends BaseComponent implements OnInit, AfterViewInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('body') private bodyElement!: ElementRef<HTMLDivElement>;
   @ViewChild(CdkVirtualScrollViewport) private viewport?: CdkVirtualScrollViewport;
-  
+
   @Input() disabled: boolean = false;
   @Input() lazyLoadRows: boolean = false;
   @Input() showButtons: boolean = false;
   //#endregion
 
   //#region Variables
+  private bodyResizeObserver?: ResizeObserver;
+  private bodyResized$: Subject<void> = new Subject<void>();
+  protected changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
+  private ngZone: NgZone = inject(NgZone);
+  private router: Router = inject(Router);
+
   private gridRoute: string = '';
   protected hasFailed: boolean = false;
   protected headerRightMargin: number = 0;
@@ -50,7 +57,7 @@ export class DataGridComponent extends BaseComponent implements OnInit {
   //#region Properties
   protected get bodyMinHeight(): number {
     let rowsToDisplay: number = this.configs.rowsToDisplay ?? 3;
-    
+
     let rowsCount: number = this.dataGridDataset.loadedRows?.length ?? 0;
     if (rowsCount === 0) {
       rowsCount = 1;
@@ -75,6 +82,10 @@ export class DataGridComponent extends BaseComponent implements OnInit {
     return this.dataGridDataset.columnsSize;
   }
 
+  protected get hasBeenLoaded(): boolean {
+    return this.dataGridDataset.hasBeenLoaded;
+  }
+
   protected get hasLoadedRows(): boolean {
     return (this.dataGridDataset.loadedRows?.length ?? 0) > 0;
   }
@@ -95,6 +106,10 @@ export class DataGridComponent extends BaseComponent implements OnInit {
     return this.dataGridDataset?.configs?.messageOnEmpty ?? '';
   }
 
+  protected get messageToDisplayWhenLazyLoad(): string {
+    return this.dataGridDataset?.configs?.messageOnLazyLoad ?? '';
+  }
+
   protected get messageToDisplayWhenFailed(): string {
     return this.dataGridDataset?.configs?.messageOnFailed ?? '';
   }
@@ -111,11 +126,7 @@ export class DataGridComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected changeDetectorRef: ChangeDetectorRef,
-    protected dataGridDataset: DataGridDataset,
-    private router: Router,
-  ) {
+  constructor() {
     super();
   }
 
@@ -132,14 +143,14 @@ export class DataGridComponent extends BaseComponent implements OnInit {
         if (event instanceof NavigationStart && this.isGridCurrentUrl) {
           this.lastPosition = this.viewport?.measureScrollOffset() ?? 0;
           this.isGridCurrentUrl = false;
-          
+
         } else if (event instanceof NavigationEnd && event.url === this.gridRoute) {
           this.viewport?.scrollTo({ top: this.lastPosition });
           this.viewport?.checkViewportSize();
           this.isGridCurrentUrl = true;
         }
       });
-    
+
     this.dataGridDataset.loadStarted
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -166,12 +177,14 @@ export class DataGridComponent extends BaseComponent implements OnInit {
         });
       });
 
-      
+
     if (!this.lazyLoadRows) {
       if (!this.dataGridDataset.loadedRows) {
         this.loading = true;
       }
       this.dataGridDataset.loadRows();
+    } else if (this.dataGridDataset.isLoading) {
+      this.loading = true;
     }
   }
 
@@ -185,6 +198,32 @@ export class DataGridComponent extends BaseComponent implements OnInit {
           this.dataGridDataset.loadRows();
         }
       });
+
+    this.bodyResized$
+      .pipe(
+        debounceTime(150),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        const viewportWidth: number = this.viewport?.measureViewportSize('horizontal') ?? 0;
+        if (viewportWidth > 0) {
+          this.headerRightMargin = this.bodyElement.nativeElement.clientWidth - viewportWidth;
+        }
+        this.viewport?.checkViewportSize();
+        this.changeDetectorRef.detectChanges();
+      });
+
+    this.ngZone.runOutsideAngular(() => {
+      this.bodyResizeObserver = new ResizeObserver(() => {
+        this.bodyResized$.next();
+      });
+      this.bodyResizeObserver.observe(this.bodyElement.nativeElement);
+    });
+  }
+
+  public override ngOnDestroy(): void {
+    this.bodyResizeObserver?.disconnect();
+    super.ngOnDestroy();
   }
   //#endregion
 

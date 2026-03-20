@@ -33,6 +33,10 @@ export abstract class FormView<TEntityModel> extends TabViewBase implements OnIn
     this.dataProvider = inject(DataProviderService, { optional: true });
     this.formBuilder = inject(FormBuilder);
     this.formService = inject(FormService);
+
+    if (!this.dataProvider) {
+      console.warn(this.constructor.name + ': DataProviderService is not provided. Model loading will be disabled.');
+    }
   }
 
   public ngOnInit(): void {

@@ -1,5 +1,5 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { AfterViewInit, Component, HostListener, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, inject, OnInit } from '@angular/core';
 import { take, takeUntil } from 'rxjs';
 import { ISidebarProfile, SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu } from '../../models';
 import { SidebarService } from '../../services';
@@ -65,10 +65,13 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   //#endregion
 
   //#region Variables
-  protected configErrorText: string;
-  protected configLogoCollapsedPath?: string;
-  protected configLogoExpandedPath?: string;
-  protected configLoadingText: string;
+  private sidebarConfigs: SidebarConfigs = inject(SIDEBAR_CONFIGS);
+  private sidebarService: SidebarService = inject(SidebarService);
+
+  protected configErrorText: string = this.sidebarConfigs.errorText;
+  protected configLoadingText: string = this.sidebarConfigs.loadingText;
+  protected configLogoCollapsedPath?: string = this.sidebarConfigs.logoCollapsedPath;
+  protected configLogoExpandedPath?: string = this.sidebarConfigs.logoExpandedPath;
   protected hasFailed: boolean = false;
   protected menus: SidebarMenu[] = [];
   protected profile?: ISidebarProfile;
@@ -98,16 +101,8 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   //#endregion
   
   //#region Constructor and Angular life cycle methods
-  constructor(
-    @Inject(SIDEBAR_CONFIGS) sidebarConfigs: SidebarConfigs,
-    private sidebarService: SidebarService,
-  ) {
+  constructor() {
     super();
-
-    this.configErrorText = sidebarConfigs.errorText;
-    this.configLoadingText = sidebarConfigs.loadingText;
-    this.configLogoCollapsedPath = sidebarConfigs.logoCollapsedPath;
-    this.configLogoExpandedPath = sidebarConfigs.logoExpandedPath;
   }
 
   public ngAfterViewInit(): void {

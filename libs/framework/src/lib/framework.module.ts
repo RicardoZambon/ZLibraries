@@ -8,4 +8,8 @@ import { FrameworkComponentsModule } from './components';
     FrameworkComponentsModule,
   ],
 })
+/**
+ * @deprecated Use standalone component imports instead of FrameworkModule.
+ * Import individual components directly in your component's `imports` array.
+ */
 export class FrameworkModule {}

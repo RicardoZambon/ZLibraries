@@ -5,6 +5,10 @@ import { takeUntil } from 'rxjs';
 import { TabService } from '../../services';
 import { LegacyTabViewBase } from './legacy-tabview-base';
 
+/**
+ * @deprecated Use standalone {@link TabViewList} instead. Migrate by extending TabViewList
+ * and using standalone component imports with inject() for dependency injection.
+ */
 @Component({ template: '' })
 export abstract class LegacyTabViewList<TListModel> extends LegacyTabViewBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs

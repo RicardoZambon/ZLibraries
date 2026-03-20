@@ -1,5 +1,5 @@
 import { NgClass, NgFor } from '@angular/common';
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, Input, ViewChild } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -20,7 +20,9 @@ export class LanguageSelectorComponent {
   //#endregion
 
   //#region Variables
-  protected languages: string[];
+  private translate: TranslateService = inject(TranslateService);
+
+  protected languages: string[] = this.translate.getLangs();
   protected showDropdown: boolean = false;
   //#endregion
 
@@ -31,9 +33,6 @@ export class LanguageSelectorComponent {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(private translate: TranslateService) {
-    this.languages = this.translate.getLangs();
-  }
   //#endregion
 
   //#region Event handlers

@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnDestroy, ViewChild } from '@angular/core';
 import { IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { Subject, take } from 'rxjs';
 import { AuthService } from '../../services';
@@ -28,6 +28,7 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#region Variables
   public visible: boolean = true;
 
+  protected authService: AuthService = inject(AuthService);
   protected destroy$: Subject<boolean> = new Subject<boolean>();
   protected isAccessLoaded: boolean = false;
 
@@ -54,7 +55,7 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(protected authService: AuthService) {
+  constructor() {
     super();
 
     this.checkAccessIsAllowed();
@@ -62,7 +63,7 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
 
   public ngOnDestroy(): void {
     this.destroy$.next(true);
-    this.destroy$.unsubscribe();
+    this.destroy$.complete();
   }
   //#endregion
 

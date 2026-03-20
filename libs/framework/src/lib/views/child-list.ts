@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { DataGridDataset, DataProviderService, MultiSelectResultDataset } from '@library';
-import { takeUntil } from 'rxjs';
+import { skip, takeUntil } from 'rxjs';
 import { ViewBase } from './view-base';
 
 @Component({ template: '' })
@@ -52,6 +52,12 @@ export abstract class ChildList<TEntityModel> extends ViewBase implements OnInit
     this.resultDataset?.savedChanges
       ?.pipe(takeUntil(this.destroy$))
       ?.subscribe(() => {
+        this.dataGridDataset.refresh();
+      });
+
+    this.dataProvider?.getModel$()
+      .pipe(skip(1), takeUntil(this.destroy$))
+      .subscribe(() => {
         this.dataGridDataset.refresh();
       });
 

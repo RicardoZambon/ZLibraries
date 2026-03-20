@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -30,24 +30,21 @@ export class LoginComponent implements OnInit {
     error: string | null,
     loading: boolean,
     success: boolean,
+  } = {
+    error: null,
+    loading: false,
+    success: false
   };
+
+  private authenticationService: AuthenticationService = inject(AuthenticationService);
+  private formBuilder: FormBuilder = inject(FormBuilder);
+  private router: Router = inject(Router);
   //#endregion
 
   //#region Properties
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private authenticationService: AuthenticationService,
-    private formBuilder: FormBuilder,
-    private router: Router
-  ) {
-    this.formState = {
-      error: null,
-      loading: false,
-      success: false
-    };
-  }
 
   public ngOnInit(): void {
     this.form = this.formBuilder.group({

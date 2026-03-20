@@ -1,5 +1,5 @@
-import { NgFor } from '@angular/common';
-import { Component } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ITab } from '../../../models';
 import { TabService } from '../../../services';
@@ -10,6 +10,7 @@ import { TabService } from '../../../services';
   styleUrls: ['./tab-breadcrumbs.component.scss'],
   imports: [
     NgFor,
+    NgIf,
     TranslatePipe,
   ]
 })
@@ -29,10 +30,10 @@ export class TabBreadcrumbsComponent {
   }
   //#endregion
   
-  //#region Constructor and Angular life cycle methods
-  constructor(private tabService: TabService) {
+  private tabService: TabService = inject(TabService);
+  //#endregion
 
-  }
+  //#region Constructor and Angular life cycle methods
   //#endregion
 
   //#region Event handlers

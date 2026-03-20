@@ -1,5 +1,5 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { Component, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, Input, OnInit, TemplateRef } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs';
 import { MultiSelectResultDataset } from '../../../services/datasets/multi-select-result.dataset';
@@ -27,6 +27,9 @@ export class MultiSelectResultGridComponent extends BaseComponent implements OnI
   //#endregion
 
   //#region Variables
+  protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
+  protected resultDataset: MultiSelectResultDataset = inject(MultiSelectResultDataset);
+
   protected isLoading: boolean = true;
   //#endregion
 
@@ -34,10 +37,8 @@ export class MultiSelectResultGridComponent extends BaseComponent implements OnI
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected dataGridDataset: DataGridDataset,
-    protected resultDataset: MultiSelectResultDataset) {
-    super();  
+  constructor() {
+    super();
   }
 
   public ngOnInit(): void {

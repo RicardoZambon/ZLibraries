@@ -13,6 +13,11 @@ import { BaseButton } from '../../base-button';
   ],
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonEditLegacyComponent)}]
 })
+/**
+ * @deprecated Use standalone {@link ButtonEditComponent} instead.
+ * Migrate by replacing this legacy component with the standalone equivalent
+ * and using inject() for dependency injection.
+ */
 export class ButtonEditLegacyComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   @Input() public cancelColor: string = 'text-red-500';

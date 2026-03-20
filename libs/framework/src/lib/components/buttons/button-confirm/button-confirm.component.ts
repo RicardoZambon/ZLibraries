@@ -1,10 +1,9 @@
 import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, forwardRef, Input, ViewChild } from '@angular/core';
+import { Component, forwardRef, inject, Input, ViewChild } from '@angular/core';
 import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, take } from 'rxjs';
-import { AuthService } from '../../../services';
 import { ConfirmModalComponent } from '../../modals';
 import { BaseButton } from '../base-button';
 
@@ -41,12 +40,12 @@ export class ButtonConfirmComponent extends BaseButton {
   //#region Properties
   //#endregion
 
+  protected gridDataset: DataGridDataset = inject(DataGridDataset);
+  //#endregion
+
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected gridDataset: DataGridDataset,
-    authService: AuthService,
-  ) {
-    super(authService);
+  constructor() {
+    super();
     
     this.disabled = true;
   }

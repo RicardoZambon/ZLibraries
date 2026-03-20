@@ -1,8 +1,12 @@
-import { Component, Input, OnInit, Optional } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { DataGridDataset, MultiSelectResultDataset } from '@library';
 import { takeUntil } from 'rxjs';
 import { ViewBase } from './view-base';
 
+/**
+ * @deprecated Use standalone {@link ChildList} instead. Migrate by extending ChildList
+ * and using standalone component imports with inject() for dependency injection.
+ */
 @Component({ template: '' })
 export abstract class ChildListLegacy extends ViewBase implements OnInit {
 
@@ -31,10 +35,10 @@ export abstract class ChildListLegacy extends ViewBase implements OnInit {
   @Input() disabled: boolean = false;
 
 
-  constructor(
-    protected dataGridDataset: DataGridDataset,
-    @Optional() protected resultDataset: MultiSelectResultDataset | null
-  ) {
+  protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
+  protected resultDataset: MultiSelectResultDataset | null = inject(MultiSelectResultDataset, { optional: true });
+
+  constructor() {
     super();
   }
 

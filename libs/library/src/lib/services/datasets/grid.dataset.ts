@@ -22,15 +22,20 @@ export abstract class GridDataset extends BaseDataset {
   protected configsProvider: GridConfigsProvider
   protected compareProperty: string = 'id';
   protected focusedRow: string | null = null;
-  protected isLoading: boolean = false;
+  public isLoading: boolean = false;
   protected recordBlock: number = 0;
 
+  private _hasBeenLoaded: boolean = false;
   private _loadedKeys?: string[];
   private _loadedRows?: any[];
   private queryFilters?: { [key: string]: string; };
   //#endregion
   
   //#region Properties
+  public get hasBeenLoaded(): boolean {
+    return this._hasBeenLoaded;
+  }
+
   public get filters(): { [key: string]: string; } | undefined {
     return this.queryFilters;
   }
@@ -140,11 +145,10 @@ export abstract class GridDataset extends BaseDataset {
       .pipe(take(1))
       .subscribe({
         next: (rows: any[]) => {
-          if (rows?.length > 0) {
-            this.updateLoadedRows(rows);
-          }
+          this.updateLoadedRows(rows ?? []);
 
           this.isLoading = false;
+          this._hasBeenLoaded = true;
           this.loadFinished.emit(true);
         },
         error: (_: any) => {
@@ -212,6 +216,7 @@ export abstract class GridDataset extends BaseDataset {
 
   //#region Private methods
   protected clearLoadedRows(): void {
+    this._hasBeenLoaded = false;
     this._loadedRows = undefined;
     this._loadedKeys = undefined;
     this.recordBlock = 0;

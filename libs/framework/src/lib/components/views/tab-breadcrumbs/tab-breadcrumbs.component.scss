@@ -14,5 +14,9 @@
             @apply text-xs font-semibold content-['\f054'] px-1;
             font-family: "Font Awesome 6 Free";
         }
+
+        svg {
+            @apply inline-block h-4 w-4 animate-spin;
+        }
     }
 }

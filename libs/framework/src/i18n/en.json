@@ -18,6 +18,8 @@
   "Button-Open-Record": "Open",
   "Button-Refresh": "Refresh",
   "Button-Save": "Save",
+  "Button-Save-And-Close": "Save & Close",
+  "Button-Save-And-New": "Save & New",
   "Button-Views": "Views",
   "Button-Views-Details": "Details",
   "Button-Views-History": "History",
@@ -26,14 +28,15 @@
   "//": "Forms",
   "CatalogSelect-Loading": "Loading...",
   "CatalogSelect-FailureMessage": "An error occurred while fetching the results. Please click here to try again.",
-  "CatalogSelect-MinimumLengthSearch": "Type {{ minimumLengthSearch }} or more characters to search results.",
-  "CatalogSelect-NoResultsFound": "No results were found from the provided criteria.",
+  "CatalogSelect-MinimumLengthSearch": "Type at least {{ minimumLengthSearch }} characters.",
+  "CatalogSelect-NoResultsFound": "No results found.",
 
 
   "//": "Grids",
   "Grid-Loading": "Loading...",
   "Grid-Message-Empty": "No records found.",
   "Grid-Message-Failed": "An error occurred while loading the records. Please try again later.",
+  "Grid-Message-LazyLoad": "Click the refresh button to load entries.",
 
   
   "//": "i18n",
@@ -54,6 +57,8 @@
   "Modal-Failed-Administrator": "If the problem persists, please contact your administrator.",
   "Modal-Failed-DefaultMessage": "An error occurred in the server. Please try again later.",
   "Modal-Failed-Title": "An error occurred",
+  "Modal-NotFound-Message": "The requested record was not found.\nIt may have been deleted or the URL may be incorrect.",
+  "Modal-NotFound-Title": "Record not found",
 
 
   "//": "Ribbon And Details",

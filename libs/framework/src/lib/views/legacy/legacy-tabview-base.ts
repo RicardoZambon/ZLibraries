@@ -4,6 +4,10 @@ import { ITabView, RouterFormatter } from '@library';
 import { TabService } from '../../services';
 import { ViewBase } from '../view-base';
 
+/**
+ * @deprecated Use standalone {@link TabViewBase} instead. Migrate by extending TabViewBase
+ * and using standalone component imports with inject() for dependency injection.
+ */
 @Component({ template: '' })
 export abstract class LegacyTabViewBase extends ViewBase implements OnInit, ITabView {
 

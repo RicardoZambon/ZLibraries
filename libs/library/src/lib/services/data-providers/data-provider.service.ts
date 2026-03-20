@@ -1,6 +1,7 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { Observable, ReplaySubject, Subject, take, takeUntil } from 'rxjs';
+import { Observable, ReplaySubject, Subject, take } from 'rxjs';
 
 @Injectable()
 export abstract class DataProviderService<TEntityModel> implements OnDestroy {
@@ -11,6 +12,7 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   private _entityID?: number;
   protected activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   protected destroy$: Subject<boolean> = new Subject<boolean>();
+  private errorSubject: Subject<HttpErrorResponse> = new Subject<HttpErrorResponse>();
   private isLoading: boolean = false;
   private isModelLoaded: boolean = false;
   private modelCache: ReplaySubject<TEntityModel | null> = new ReplaySubject<TEntityModel | null>(1);
@@ -37,10 +39,10 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
           this._entityID = newID;
           
           // Need to wait for the data-provider to be initialized.
-          setTimeout(() => {
+          queueMicrotask(() => {
             // When lazy loading, the model should be loaded by the consuming component.
             if (!this.shouldLazyLoad) {
-              this.refreshModel(); 
+              this.refreshModel();
             }
           });
         }
@@ -57,6 +59,10 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   //#endregion
 
   //#region Public methods
+  public getError$(): Observable<HttpErrorResponse> {
+    return this.errorSubject.asObservable();
+  }
+
   public abstract getTitle(entity: TEntityModel): string;
   
   public getModel$(): Observable<TEntityModel | null> {
@@ -75,13 +81,27 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
 
     this.loadModel(this.entityID)
       .pipe(take(1))
-      .subscribe((model: TEntityModel | null) => {
-        this.isLoading = false;
-        this.updateModel(model);
+      .subscribe({
+        next: (model: TEntityModel | null) => {
+          this.isLoading = false;
+          this.updateModel(model);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.isLoading = false;
+          this.isModelLoaded = true;
+          this.modelCache.next(null);
+          this.errorSubject.next(error);
+        },
       });
   }
 
   public abstract saveModel(model: any): Observable<TEntityModel>;
+
+  public resetForNewEntity(): void {
+    this._entityID = undefined;
+    this.isModelLoaded = false;
+    this.modelCache.next(null);
+  }
 
   public updateModel(model: any): void {
     this.isModelLoaded = true;

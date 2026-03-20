@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ICatalogResult } from '../models/catalog-result';
@@ -12,14 +12,13 @@ export class CatalogService {
   //#endregion
 
   //#region Variables
+  private http: HttpClient = inject(HttpClient);
   //#endregion
 
   //#region Properties
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
-  constructor(private http: HttpClient) {
-  }
   //#endregion
 
   //#region Event handlers

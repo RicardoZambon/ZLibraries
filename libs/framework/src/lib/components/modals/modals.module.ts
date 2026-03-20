@@ -14,4 +14,8 @@ import { ErrorModalComponent } from './error-modal/error-modal.component';
     ErrorModalComponent,
   ]
 })
+/**
+ * @deprecated Use standalone component imports instead of FrameworkModalsModule.
+ * Import individual components directly in your component's `imports` array.
+ */
 export class FrameworkModalsModule { }

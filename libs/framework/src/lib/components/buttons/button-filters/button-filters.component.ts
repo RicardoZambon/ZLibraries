@@ -1,10 +1,9 @@
 import { NgIf } from '@angular/common';
-import { Component, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
 import { FormGroupDirective } from '@angular/forms';
 import { DataGridDataset, FormService, ModalComponent, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs';
-import { AuthService } from '../../../services';
 import { BaseButton } from '../base-button';
 
 @Component({
@@ -45,13 +44,13 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   }
   //#endregion
   
+  protected gridDataset: DataGridDataset = inject(DataGridDataset);
+  protected readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
+  //#endregion
+  
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected gridDataset: DataGridDataset,
-    protected readonly formGroup: FormGroupDirective,
-    authService: AuthService,
-  ) {
-    super(authService);
+  constructor() {
+    super();
 
     // This will force the screen to initialize with the filter disabled.
     this.disabled = true;

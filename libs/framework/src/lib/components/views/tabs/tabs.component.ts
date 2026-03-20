@@ -1,13 +1,11 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Route, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RouteHelper } from '../../../helpers';
-import { ITab, Tab } from '../../../models';
+import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, ITab, Tab } from '../../../models';
 import { ITabHistory } from '../../../models/tab-history';
 import { TabService } from '../../../services/tab.service';
-import { DefaultDetailsTabViewComponent } from '../default-details-tab-view/default-details-tab-view.component';
-import { DefaultTabViewComponent } from '../default-tab-view/default-tab-view.component';
 import { TabBreadcrumbsComponent } from '../tab-breadcrumbs/tab-breadcrumbs.component';
 
 @Component({
@@ -48,19 +46,27 @@ export class TabsComponent implements OnInit {
     return this.tabService.activeTabs ?? [];
   }
 
+  protected get tabDisplayTitles(): (string | undefined)[] {
+    return this.tabService.activeTabsDisplayTitles;
+  }
+
+  protected get tabLoadingStates(): boolean[] {
+    return this.tabService.activeTabsLoadingStates;
+  }
+
   protected trackByFn: (index: number, tab: ITab) => string = (_: number, tab: ITab): any => tab.url;
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   constructor(
     private router: Router,
     private tabService: TabService,
   ) {
-    
+
   }
 
   public ngOnInit(): void {
-    const activatedDetailsTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.snapshot.root, DefaultDetailsTabViewComponent);
+    const activatedDetailsTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.snapshot.root, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
     if (activatedDetailsTabView) {
       const shouldIgnoreFirstChildRoute: boolean = !!activatedDetailsTabView.firstChild && activatedDetailsTabView.firstChild.data && activatedDetailsTabView.firstChild.data['ignoreRoute'] === true;
 
@@ -69,27 +75,41 @@ export class TabsComponent implements OnInit {
 
       if (shouldIgnoreFirstChildRoute) {
         clones.push(RouteHelper.getRouteURL(activatedDetailsTabView.firstChild!));
-        
-      } else {
-        setTimeout(() => {
-          if (!!activatedDetailsTabView.firstChild) {
-            const url: string = RouteHelper.getRouteURL(activatedDetailsTabView.firstChild);
-            this.tabService.navigateCurrentTab(new Tab({
-              queryParams: activatedDetailsTabView.queryParams,
-              url: url,
-            }));
+
+      } else if (!!activatedDetailsTabView.firstChild) {
+        const childPath: string = activatedDetailsTabView.firstChild.url.map((s: any) => s.path).join('/');
+        const defaultChildPath: string = activatedDetailsTabView.routeConfig?.children
+          ?.filter((route: Route) => !!route.data && route.data['ignoreRoute'] !== true)
+          ?.[0]?.path ?? '';
+
+        if (childPath !== defaultChildPath) {
+          const entityID: number = Number(activatedDetailsTabView.paramMap.get('id'));
+          if (!entityID) {
+            // New entity: inner views are not available, redirect to base URL.
+            this.router.navigate([url], { replaceUrl: true });
+          } else {
+            // Non-default child route (e.g. direct navigation to /audit): add sub-view to history for breadcrumbs.
+            const childTitle: string = activatedDetailsTabView.firstChild?.data?.['title'] ?? '';
+            queueMicrotask(() => {
+              const childUrl: string = RouteHelper.getRouteURL(activatedDetailsTabView.firstChild!);
+              this.tabService.replaceCurrentTabSubView(url, new Tab({
+                title: childTitle,
+                url: childUrl,
+              }));
+            });
           }
-        });
+        }
       }
 
       this.tabService.openTab(new Tab({
         clones: clones,
+        entityBaseUrl: url,
         queryParams: activatedDetailsTabView.queryParams,
         url: url,
       }));
 
     } else {
-      const activatedTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.snapshot.root, DefaultTabViewComponent);
+      const activatedTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.snapshot.root, FRAMEWORK_VIEW_TYPE, FrameworkViewType.List);
       if (activatedTabView) {
         const url: string = RouteHelper.getRouteURL(activatedTabView);
         this.tabService.openTab(new Tab({

@@ -18,6 +18,8 @@
   "Button-Open-Record": "Abrir",
   "Button-Refresh": "Atualizar",
   "Button-Save": "Salvar",
+  "Button-Save-And-Close": "Salvar e Fechar",
+  "Button-Save-And-New": "Salvar e Novo",
   "Button-Views": "Visões",
   "Button-Views-Details": "Detalhes",
   "Button-Views-History": "Histórico",
@@ -26,14 +28,15 @@
   "//": "Forms",
   "CatalogSelect-Loading": "Carregando...",
   "CatalogSelect-FailureMessage": "Ocorreu um erro ao buscar os resultados. Por favor, clique aqui para tentar novamente.",
-  "CatalogSelect-MinimumLengthSearch": "Digite {{ minimumLengthSearch }} ou mais caracteres para buscar resultados.",
-  "CatalogSelect-NoResultsFound": "Nenhum resultado foi encontrado com os critérios fornecidos.",
+  "CatalogSelect-MinimumLengthSearch": "Digite ao menos {{ minimumLengthSearch }} caracteres.",
+  "CatalogSelect-NoResultsFound": "Nenhum resultado encontrado.",
 
 
   "//": "Grids",
   "Grid-Loading": "Carregando...",
   "Grid-Message-Empty": "Nenhum registro encontrado.",
   "Grid-Message-Failed": "Ocorreu um erro ao carregar os registros. Por favor, tente novamente mais tarde.",
+  "Grid-Message-LazyLoad": "Clique no botão atualizar para carregar os registros.",
 
 
   "//": "i18n",
@@ -54,6 +57,8 @@
   "Modal-Failed-Administrator": "Se o problema persistir, por favor, entre em contato com o administrador.",
   "Modal-Failed-DefaultMessage": "Ocorreu um erro no servidor. Por favor, tente novamente mais tarde.",
   "Modal-Failed-Title": "Ocorreu um erro",
+  "Modal-NotFound-Message": "O registro solicitado não foi encontrado.\nEle pode ter sido excluído ou a URL pode estar incorreta.",
+  "Modal-NotFound-Title": "Registro não encontrado",
 
 
   "//": "Ribbon And Details",

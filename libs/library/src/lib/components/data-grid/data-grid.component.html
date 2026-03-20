@@ -53,7 +53,15 @@ class="body"
             </span>
         </div>
         
-        <ng-container *ngIf="!loading && (!hasLoadedRows || hasFailed)">
+        <div *ngIf="!loading && !hasBeenLoaded && lazyLoadRows"
+        class="message"
+        [style.height.px]="configs.rowHeight">
+            <span>
+                {{ messageToDisplayWhenLazyLoad | translate }}
+            </span>
+        </div>
+
+        <ng-container *ngIf="!loading && hasBeenLoaded && (!hasLoadedRows || hasFailed)">
             <div *ngIf="!hasFailed && !hasLoadedRows && hasMessageToDisplayWhenEmpty && shouldDisplayMessageWhenEmpty"
             class="message"
             [style.height.px]="configs.rowHeight">

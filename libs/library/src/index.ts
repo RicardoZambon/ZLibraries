@@ -7,3 +7,4 @@ export * from './lib/models/configs';
 export * from './lib/pipes';
 export * from './lib/services';
 export * from './lib/services/configs-providers';
+export * from './lib/validators';

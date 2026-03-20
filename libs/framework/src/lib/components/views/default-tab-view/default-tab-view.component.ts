@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { RibbonComponent } from '@library';
 import { Subject, takeUntil } from 'rxjs';
@@ -48,7 +48,7 @@ export class DefaultTabViewComponent implements AfterViewInit, OnDestroy, OnInit
 
   public ngOnDestroy(): void {
     this.destroy$.next(true);
-    this.destroy$.unsubscribe();
+    this.destroy$.complete();
   }
 
   public ngOnInit(): void {
@@ -75,12 +75,24 @@ export class DefaultTabViewComponent implements AfterViewInit, OnDestroy, OnInit
 
   //#region Private methods
   private updateRibbonTemplate(template: TemplateRef<any> | undefined = undefined): void {
+    const isRealTemplate: boolean = !!template;
+
     if (!template) {
       template = this.emptyRibbonTemplate;
     }
 
     this.ribbonTemplate = template!;
-    this.changeDetectorRef.detectChanges();
+
+    if (isRealTemplate) {
+      // Real template from a child view — render immediately so buttons appear
+      // without waiting for the next change detection cycle (user interaction).
+      this.changeDetectorRef.detectChanges();
+    } else {
+      // Empty/fallback template — defer rendering to avoid briefly flashing
+      // an empty ribbon during component creation (the child view will push
+      // the real template moments later in the same initialization cycle).
+      this.changeDetectorRef.markForCheck();
+    }
   }
   //#endregion
 }

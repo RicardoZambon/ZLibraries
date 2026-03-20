@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { APP_CONFIG, AppConfig } from '@framework';
 import { IListParameters } from '@library';
 import { Observable } from 'rxjs';
@@ -13,17 +13,14 @@ export class ServicesHistoryService {
   //#endregion
 
   //#region Variables
+  private config: AppConfig = inject(APP_CONFIG);
+  private http: HttpClient = inject(HttpClient);
   //#endregion
 
   //#region Properties
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    @Inject(APP_CONFIG) private config: AppConfig,
-    private http: HttpClient,
-  ) {
-  }
   //#endregion
 
   //#region Event handlers

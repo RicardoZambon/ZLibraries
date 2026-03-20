@@ -1,9 +1,9 @@
 import { NgIf } from '@angular/common';
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, inject, Input, OnInit } from '@angular/core';
 import { DataGridDataset, ITabView, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { takeUntil } from 'rxjs';
 import { Tab } from '../../../../models';
-import { AuthService, TabService } from '../../../../services';
+import { TabService } from '../../../../services';
 import { BaseButton } from '../../base-button';
 
 @Component({
@@ -15,6 +15,11 @@ import { BaseButton } from '../../base-button';
   ],
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonOpenRecordLegacyComponent)}]
 })
+/**
+ * @deprecated Use standalone {@link ButtonOpenRecordComponent} instead.
+ * Migrate by replacing this legacy component with the standalone equivalent
+ * and using inject() for dependency injection.
+ */
 export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnInit {
   protected selectionCount: number = 0;
 
@@ -23,13 +28,8 @@ export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnIni
   @Input() tabView!: ITabView;
 
 
-  constructor(
-    authService: AuthService,
-    protected dataGridDataset: DataGridDataset,
-    private tabService: TabService
-  ) {
-    super(authService);
-  }
+  protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
+  private tabService: TabService = inject(TabService);
 
   ngOnInit(): void {
     this.dataGridDataset.selectedRowsChanged

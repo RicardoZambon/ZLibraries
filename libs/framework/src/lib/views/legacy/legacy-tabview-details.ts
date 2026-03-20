@@ -7,6 +7,11 @@ import { Tab } from '../../models';
 import { TabService } from '../../services';
 import { LegacyTabViewBase } from './legacy-tabview-base';
 
+/**
+ * @deprecated Use standalone {@link TabViewBase} with {@link DefaultDetailsTabViewComponent} pattern instead.
+ * Migrate by extending TabViewBase and composing detail/history views as child routes
+ * with standalone component imports.
+ */
 @Component({ template: '' })
 export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements AfterViewInit {
   //#region ViewChilds, Inputs, Outputs

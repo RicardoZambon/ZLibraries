@@ -13,4 +13,8 @@ import { FrameworkViewsModule } from './views/views.module';
     FrameworkViewsModule,
   ]
 })
+/**
+ * @deprecated Use standalone component imports instead of FrameworkComponentsModule.
+ * Import individual components directly in your component's `imports` array.
+ */
 export class FrameworkComponentsModule { }

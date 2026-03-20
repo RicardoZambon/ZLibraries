@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
@@ -35,6 +35,10 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
   //#endregion
 
   //#region Variables
+  private formService: FormService = inject(FormService);
+  private dataGridDataset: DataGridDataset = inject(DataGridDataset);
+  private multiEditorDataset: MultiEditorDataset = inject(MultiEditorDataset);
+
   protected gridLoading: boolean = false;
 
   private selectedKey?: string;
@@ -52,11 +56,7 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private formService: FormService,
-    private dataGridDataset: DataGridDataset,
-    private multiEditorDataset: MultiEditorDataset,
-  ) {
+  constructor() {
     super();
   }
 

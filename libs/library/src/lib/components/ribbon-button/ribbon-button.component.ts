@@ -106,6 +106,7 @@ export class RibbonButtonComponent {
   protected onButtonClicked(): void {
     if (this.options.length > 0) {
       if (this.defaultOption >= 0 && this.defaultOption < this.options.length) {
+        this.showDropdown = false;
         this.action.emit(this.options[this.defaultOption].id);
       } else {
         this.onShowHideDropdown();

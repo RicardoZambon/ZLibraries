@@ -1,8 +1,8 @@
 import { NgIf } from '@angular/common';
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, forwardRef, inject, Input } from '@angular/core';
 import { ITabView, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { Tab } from '../../../../models';
-import { AuthService, TabService } from '../../../../services';
+import { TabService } from '../../../../services';
 import { BaseButton } from '../../base-button';
 
 @Component({
@@ -14,15 +14,18 @@ import { BaseButton } from '../../base-button';
   ],
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonNewLegacyComponent)}]
 })
+/**
+ * @deprecated Use standalone {@link ButtonNewComponent} instead.
+ * Migrate by replacing this legacy component with the standalone equivalent
+ * and using inject() for dependency injection.
+ */
 export class ButtonNewLegacyComponent extends BaseButton {
   @Input() path!: string;
   @Input() endpoint: string = 'new';
   @Input() tabView!: ITabView;
 
 
-  constructor(authService: AuthService, private tabService: TabService) {
-    super(authService);
-  }
+  private tabService: TabService = inject(TabService);
   
   clicked(): void {
     this.tabService.navigateTo(new Tab({ url: `${this.path}/${this.endpoint}` }));

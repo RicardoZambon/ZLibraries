@@ -36,6 +36,10 @@ export abstract class MultiEditorModal<TEntityModel> extends ModalBase implement
     this.formBuilder = inject(FormBuilder);
     this.formService = inject(FormService);
     this.multiEditorDataset = inject(MultiEditorDataset);
+
+    if (!this.dataProvider && !this.overrideParentID) {
+      console.warn(this.constructor.name + ': DataProviderService is not provided and no overrideParentID set. Parent entity ID resolution may fail.');
+    }
   }
 
   public ngOnInit(): void {

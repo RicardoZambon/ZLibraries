@@ -1,6 +1,6 @@
 import { NgClass, NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, Optional, ViewChild } from '@angular/core';
+import { Component, inject, Input, ViewChild } from '@angular/core';
 import { ControlContainer, FormGroup } from '@angular/forms';
 import { FormService, IModal, ModalComponent } from '@library';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -52,11 +52,15 @@ export class ConfirmModalComponent implements IModal {
   }
   //#endregion
 
+  private controlContainer: ControlContainer | null = inject(ControlContainer, { optional: true });
+  protected formService: FormService | undefined = inject(FormService, { optional: true }) ?? undefined;
+  //#endregion
+
   //#region Constructor and Angular life cycle methods
-  constructor(
-    @Optional() private controlContainer: ControlContainer,
-    @Optional() protected formService?: FormService,
-  ) {
+  constructor() {
+    if (!this.formService) {
+      console.warn(ConfirmModalComponent.name + ': FormService is not provided. Form state management during modal toggle will be disabled.');
+    }
   }
   //#endregion
 
@@ -67,10 +71,6 @@ export class ConfirmModalComponent implements IModal {
   public beginLoading(): void {
     this.clearErrorMessage();
     this.isLoading = true;
-
-    // if (!!this.formGroupOk){
-    //   this.formGroupOk.disable();
-    // }
   }
   
   public clearErrorMessage(): void {

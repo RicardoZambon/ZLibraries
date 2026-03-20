@@ -20,6 +20,7 @@ export class FrameworkGridConfigsProvider extends DataGridConfigsProvider {
       loadingDisplayText: 'Grid-Loading',
       messageOnEmpty: 'Grid-Message-Empty',
       messageOnFailed: 'Grid-Message-Failed',
+      messageOnLazyLoad: 'Grid-Message-LazyLoad',
     } as DataGridConfigs);
   }
   //#endregion

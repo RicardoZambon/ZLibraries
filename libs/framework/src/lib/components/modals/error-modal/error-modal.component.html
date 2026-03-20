@@ -2,11 +2,12 @@
 position="top"
 [closeButtonText]="'Button-Modal-Close' | translate"
 [size]="size"
-[title]="title | translate">
+[title]="title | translate"
+(closed)="closed.emit()">
     <div body>
         <div class="erro">
             <h4>{{ errorMessage | translate }}</h4>
-            <span>{{ 'Modal-Failed-Administrator' | translate }}</span>
+            <span *ngIf="subtitle">{{ subtitle | translate }}</span>
         </div>
     </div>
 </lib-modal>

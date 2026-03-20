@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ButtonFiltersComponent } from '@framework';
 import { Subject } from 'rxjs';
@@ -12,18 +12,17 @@ export abstract class FiltersBase implements OnInit, OnDestroy {
   //#region Variables
   protected destroy$: Subject<boolean> = new Subject<boolean>();
   protected filterForm!: FormGroup;
+  protected formBuilder: FormBuilder = inject(FormBuilder);
   //#endregion
 
   //#region Properties
   //#endregion
   
   //#region Constructor and Angular life cycle methods
-  constructor(protected formBuilder: FormBuilder) {
-  }
 
   public ngOnDestroy(): void {
     this.destroy$.next(true);
-    this.destroy$.unsubscribe();
+    this.destroy$.complete();
   }
 
   public ngOnInit(): void {

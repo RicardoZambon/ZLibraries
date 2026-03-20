@@ -1,7 +1,7 @@
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { NgFor, NgIf, NgStyle } from '@angular/common';
-import { Component, ElementRef, HostListener, Input, KeyValueChanges, KeyValueDiffer, KeyValueDiffers, OnInit, Optional, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, HostListener, inject, Input, KeyValueChanges, KeyValueDiffer, KeyValueDiffers, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { debounceTime, forkJoin, Observable, of, pairwise, startWith, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
@@ -20,11 +20,10 @@ import { FormInputComponent } from '../form-input/form-input.component';
     FormInputGroupComponent,
     NgFor,
     NgIf,
-    NgStyle,
     TranslatePipe,
   ]
 })
-export class CatalogSelectComponent extends BaseComponent implements OnInit {
+export class CatalogSelectComponent extends BaseComponent implements OnInit, AfterViewInit {
   //#region HostListeners
   @HostListener('body:mousedown', ['$event'])
   private bodyMouseDown(event: MouseEvent): void {
@@ -51,7 +50,16 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
   @Input() public controlName!: string;
   @Input() public displayControlName!: string;
   @Input() public displayProperty: string = 'display';
-  @Input() public entriesList?: any[] | { key: number; value: Observable<any> | string }[] | null;
+  @Input() public set entriesList(value: any[] | { key: number; value: Observable<any> | string }[] | null | undefined) {
+    if (this._entriesList !== value) {
+      this._entriesList = value;
+      if (this.isSubscriptionInitialized) {
+        this.entriesDataSource = [];
+        this.initializeEntriesDataSource();
+        this.refreshSearch();
+      }
+    }
+  }
   @Input() public set filters(value: { [id: string]: any; }) {
     if (this._filters !== value) {
       this._filters = value;
@@ -69,18 +77,31 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
   //#endregion
   
   //#region Variables
+  private catalogService: CatalogService = inject(CatalogService);
+  private dataGridDataset: DataGridDataset = inject(DataGridDataset, { optional: true })!;
+  private readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
+  private readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
+  private keyValueDiffers: KeyValueDiffers = inject(KeyValueDiffers);
+  private overlay: Overlay = inject(Overlay);
+  private positionBuilder: OverlayPositionBuilder = inject(OverlayPositionBuilder);
+  private viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
+
   protected displayedEntries: ICatalogEntry[] = [];
+  protected focusedIndex: number = -1;
   protected isDropDownShown: boolean = false;
   protected isFocused: boolean = false;
   protected isLoading: boolean = false;
-  protected maxHeight: number = 0;
   protected selectedValue: any;
   protected shouldUseCriteria: boolean = false;
   protected showFailureMessage: boolean = false;
   protected showMinimumCharactersMessage: boolean = false;
   protected showNoResultsMessage: boolean = false;
   
+  private static instanceCounter: number = 0;
+
+  private _entriesList?: any[] | { key: number; value: Observable<any> | string }[] | null;
   private _filters: { [id: string]: any; } = {};
+  private instanceId: number;
   private entriesDataSource: ICatalogEntry[] = [];
   private filterDiffer?: KeyValueDiffer<string, any>;
   private isDataInitialized: boolean = false;
@@ -92,6 +113,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Properties
+  public get entriesList(): any[] | { key: number; value: Observable<any> | string }[] | null | undefined {
+    return this._entriesList;
+  }
+
   public get filters(): { [id: string]: any; } | undefined {
     return this._filters;
   }
@@ -129,20 +154,40 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
   private get hasSearchEndpoint(): boolean {
     return !!this.searchEndpoint && this.searchEndpoint.length > 0;
   }
+
+  protected get activeDescendantId(): string | null {
+    if (this.focusedIndex >= 0 && this.focusedIndex < this.displayedEntries.length) {
+      return `catalog-select-${this.instanceId}-option-${this.focusedIndex}`;
+    }
+    return null;
+  }
+
+  protected get listboxId(): string {
+    return `catalog-select-${this.instanceId}-listbox`;
+  }
+
+  protected get showClearButton(): boolean {
+    return this.selectedValue != null && !this.readOnly && (this.formControl?.enabled ?? false);
+  }
+
+  protected getOptionId(index: number): string {
+    return `catalog-select-${this.instanceId}-option-${index}`;
+  }
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private catalogService: CatalogService,
-    @Optional() private dataGridDataset: DataGridDataset,
-    private readonly formGroup: FormGroupDirective,
-    @Optional() private readonly formGroupName: FormGroupName,
-    private keyValueDiffers: KeyValueDiffers,
-    private overlay: Overlay,
-    private positionBuilder: OverlayPositionBuilder,
-    private viewContainerRef: ViewContainerRef,
-  ) {
+  constructor() {
     super();
+    this.instanceId = CatalogSelectComponent.instanceCounter++;
+  }
+
+  public ngAfterViewInit(): void {
+    this.setInputAriaAttributes();
+  }
+
+  public override ngOnDestroy(): void {
+    this.closeDropdownOverlay();
+    super.ngOnDestroy();
   }
 
   public ngOnInit(): void {
@@ -164,6 +209,9 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
       .pipe(
         takeUntil(this.destroy$),
         tap(() => {
+          if (!this.isFocused) {
+            return;
+          }
           this.isLoading = true;
           this.resetMessages();
         }),
@@ -203,6 +251,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
           this.displayControl?.setValue(display, { emitEvent: false });
         }
       });
+
+    // Initial sync: if the form control already has a value (e.g., the model was loaded
+    // before this component initialized), sync the display control immediately.
+    this.syncDisplayFromCurrentValue();
   }
   //#endregion
 
@@ -216,17 +268,81 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
       && (this.formGroup.form?.enabled ?? false)
       && (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
     ) {
-      this.maxHeight = this.inputElement?.nativeElement?.getBoundingClientRect()?.height ?? 0;
-
-      this.isDropDownShown = !this.isDropDownShown;
-      if (this.isDropDownShown) {
-        this.openDropdownOverlay();
-      }
+      this.openDropdownOverlay();
     }
   }
 
   protected onContainerFocus(): void {
     this.isFocused = true;
+    if (!this.isDropDownShown && !this.readOnly
+      && (this.formGroup.form?.enabled ?? false)
+      && (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
+    ) {
+      this.openDropdownOverlay();
+    }
+  }
+
+  protected onClearClick(event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (this.formControl) {
+      this.formControl.setValue(null);
+      this.formControl.markAsDirty();
+      this.formControl.markAsTouched();
+    }
+
+    if (this.displayControl) {
+      this.displayControl.setValue('', { emitEvent: false });
+      this.displayControl.markAsDirty();
+      this.displayControl.markAsTouched();
+    }
+
+    this.selectedValue = null;
+  }
+
+  protected onKeyDown(event: KeyboardEvent): void {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        if (!this.isDropDownShown) {
+          this.openDropdownOverlay();
+        }
+        if (this.displayedEntries.length > 0) {
+          this.focusedIndex = Math.min(this.focusedIndex + 1, this.displayedEntries.length - 1);
+          this.scrollFocusedItemIntoView();
+        }
+        this.updateInputAriaActiveDescendant();
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        if (this.isDropDownShown && this.displayedEntries.length > 0) {
+          this.focusedIndex = Math.max(this.focusedIndex - 1, 0);
+          this.scrollFocusedItemIntoView();
+        }
+        this.updateInputAriaActiveDescendant();
+        break;
+
+      case 'Enter':
+        event.preventDefault();
+        if (this.isDropDownShown && this.focusedIndex >= 0 && this.focusedIndex < this.displayedEntries.length) {
+          this.onDropDownItemClick(this.displayedEntries[this.focusedIndex]);
+        }
+        break;
+
+      case 'Escape':
+        if (this.isDropDownShown) {
+          event.preventDefault();
+          this.closeDropdownOverlay();
+        }
+        break;
+
+      case 'Tab':
+        if (this.isDropDownShown) {
+          this.closeDropdownOverlay();
+        }
+        break;
+    }
   }
 
   protected onDropDownErrorClick(): void {
@@ -282,6 +398,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
 
   private closeDropdownOverlay(): void {
     this.isDropDownShown = false;
+    this.focusedIndex = -1;
+    this.updateInputAriaActiveDescendant();
     if (this.overlayRef) {
       this.overlayRef.detach();
       this.overlayRef.dispose();
@@ -290,13 +408,13 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
   }
 
   private initializeEntriesDataSource(): void {
-    if (this.hasSearchEndpoint || !this.entriesList || this.entriesList.length === 0) {
+    if (this.hasSearchEndpoint || !this._entriesList || this._entriesList.length === 0) {
       return;
     }
 
     const observables: Observable<string>[] = [];
 
-    this.entriesList.forEach((entry: any | { key: number, value: Observable<any> }) => {
+    this._entriesList.forEach((entry: any | { key: number, value: Observable<any> }) => {
       const value: number = entry[this.valueProperty];
       const display: string | Observable<any> = entry[this.displayProperty];
 
@@ -373,7 +491,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
 
           // Try to filter out already loaded rows from the data grid dataset.
           if (this.displayedEntries.length > 0 && this.dataGridDataset) {
-            this.tryFilterFromDataset(this.displayedEntries);
+            this.displayedEntries = this.tryFilterFromDataset(this.displayedEntries);
           }
           
           if (!this.showMinimumCharactersMessage && this.displayedEntries.length === 0) {
@@ -397,8 +515,11 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
   }
 
   private openDropdownOverlay(): void {
+    // Defensive cleanup of any stale overlay before creating a new one.
     if (this.overlayRef) {
-      return;
+      this.overlayRef.detach();
+      this.overlayRef.dispose();
+      this.overlayRef = undefined;
     }
 
     const positionStrategy: FlexibleConnectedPositionStrategy = this.positionBuilder
@@ -428,14 +549,24 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
     const inputRect: DOMRect = this.inputElement.nativeElement.getBoundingClientRect();
     this.overlayRef.updateSize({ width: inputRect.width });
 
-    this.overlayRef.backdropClick()
-      .pipe(take(1))
-      .subscribe(() => {
-        this.closeDropdownOverlay();
-      });
-
     const portal: TemplatePortal = new TemplatePortal(this.dropdownTemplate, this.viewContainerRef);
     this.overlayRef.attach(portal);
+    this.isDropDownShown = true;
+    this.focusedIndex = this.selectedValue != null
+      ? this.displayedEntries.findIndex((entry: ICatalogEntry) => entry.value === this.selectedValue)
+      : -1;
+    this.updateInputAriaActiveDescendant();
+
+    // Re-evaluate minimum characters message visibility when opening the dropdown,
+    // in case it was incorrectly reset by a programmatic value change.
+    if (this.shouldUseCriteria && !this.isLoading) {
+      this.updateMinimumCharactersMessageVisibility(this.displayControl?.value ?? '');
+    }
+
+    // Scroll the selected item into view after the overlay renders.
+    if (this.focusedIndex >= 0) {
+      requestAnimationFrame(() => this.scrollFocusedItemIntoView());
+    }
   }
 
   private refreshSearch(reInitialize: boolean = false): void {
@@ -450,6 +581,19 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
     this.showFailureMessage = false;
     this.showNoResultsMessage = false;
     this.showMinimumCharactersMessage = false;
+  }
+
+  private syncDisplayFromCurrentValue(): void {
+    const currentValue: any = this.formControl?.value;
+    if (currentValue == null || this.selectedValue === currentValue) {
+      return;
+    }
+
+    this.selectedValue = currentValue;
+    if (!this.hasSearchEndpoint) {
+      const display: string = this.entriesDataSource.filter((entry: ICatalogEntry) => entry.value === currentValue)[0]?.display ?? '';
+      this.displayControl?.setValue(display, { emitEvent: false });
+    }
   }
 
   private syncFormControlsEnabledDisabled(): void {
@@ -491,6 +635,47 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit {
       this.shouldUseCriteria
       && this.minimumLengthSearch > 0
       && (criteria?.length ?? 0) < this.minimumLengthSearch;
+  }
+
+  private getNativeInput(): HTMLInputElement | null {
+    return this.inputElement?.nativeElement?.querySelector('input') ?? null;
+  }
+
+  private scrollFocusedItemIntoView(): void {
+    if (!this.overlayRef || this.focusedIndex < 0) {
+      return;
+    }
+    const optionId: string = this.getOptionId(this.focusedIndex);
+    const element: HTMLElement | null = this.overlayRef.overlayElement.querySelector('#' + optionId);
+    if (element) {
+      element.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  private setInputAriaAttributes(): void {
+    const input: HTMLInputElement | null = this.getNativeInput();
+    if (!input) {
+      return;
+    }
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', String(this.isDropDownShown));
+    input.setAttribute('aria-haspopup', 'listbox');
+    input.setAttribute('aria-owns', this.listboxId);
+  }
+
+  private updateInputAriaActiveDescendant(): void {
+    const input: HTMLInputElement | null = this.getNativeInput();
+    if (!input) {
+      return;
+    }
+    input.setAttribute('aria-expanded', String(this.isDropDownShown));
+    const descendantId: string | null = this.activeDescendantId;
+    if (descendantId) {
+      input.setAttribute('aria-activedescendant', descendantId);
+    } else {
+      input.removeAttribute('aria-activedescendant');
+    }
   }
   //#endregion
 }

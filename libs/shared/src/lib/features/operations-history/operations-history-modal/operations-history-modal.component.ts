@@ -1,7 +1,7 @@
 import { JsonPipe } from '@angular/common';
 import { Component, Input, ViewChild } from '@angular/core';
 import { ModalBase } from '@framework';
-import { FormService, ModalComponent } from '@library';
+import { ModalComponent } from '@library';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -13,7 +13,6 @@ import { TranslatePipe } from '@ngx-translate/core';
     ModalComponent,
     TranslatePipe,
   ],
-  providers: [{ provide: FormService }]
 })
 export class OperationsHistoryModalComponent extends ModalBase {
   //#region ViewChilds, Inputs, Outputs

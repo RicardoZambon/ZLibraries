@@ -5,7 +5,11 @@ import { DataProviderService, FormService } from '@library';
 import { Observable, take, tap, throwError } from 'rxjs';
 import { ViewBase } from '../view-base';
 
-@Component({ template: '' })
+/**
+ * @deprecated Use standalone {@link FormView} instead. Migrate by extending FormView
+ * and using standalone component imports with inject() for dependency injection.
+ */
+@Component({ template: ''})
 export abstract class LegacySubViewForm extends ViewBase implements OnInit {
   @Input() entityId?: number;
   @Input() set model(value: any | null) {

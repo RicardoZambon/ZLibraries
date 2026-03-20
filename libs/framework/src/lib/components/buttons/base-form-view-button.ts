@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { DataProviderService, FormService } from '@library';
-import { AuthService } from '../../services';
 import { BaseButton } from './base-button';
 
 @Component({ template: '' })
@@ -20,8 +19,8 @@ export abstract class BaseFormViewButton extends BaseButton {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(authService: AuthService) {
-    super(authService);
+  constructor() {
+    super();
 
     this.dataProviderService = inject(DataProviderService<any>);
     this.formService = inject(FormService);

@@ -1,5 +1,5 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtInterceptor } from '@auth0/angular-jwt';
 import { APP_CONFIG, AppConfig } from '@framework';
@@ -12,19 +12,17 @@ export class AuthInterceptor implements HttpInterceptor {
   //#endregion
 
   //#region Variables
+  private authenticationService: AuthenticationService = inject(AuthenticationService);
+  private config: AppConfig = inject(APP_CONFIG);
+  private jwtInterceptor: JwtInterceptor = inject(JwtInterceptor);
   private refreshToken$?: Observable<string>;
+  private router: Router = inject(Router);
   //#endregion
 
   //#region Properties
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    @Inject(APP_CONFIG) private config: AppConfig,
-    private authenticationService: AuthenticationService,
-    private jwtInterceptor: JwtInterceptor,
-    private router: Router,
-  ) {}
   //#endregion
 
   //#region Event handlers

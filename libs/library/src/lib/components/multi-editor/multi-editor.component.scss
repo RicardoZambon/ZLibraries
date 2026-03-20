@@ -1,11 +1,19 @@
 /* @use 'tailwindcss'; */
 
 .body-content {
-    @apply grid grid-flow-col auto-cols-fr gap-4 overflow-y-auto;
+    @apply grid grid-flow-col auto-cols-fr gap-4;
+    overflow: clip;
+    overflow-clip-margin: 4px;
 }
 
-.data-grid, .data {
+.data-grid {
     @apply grid overflow-hidden select-none;
+}
+
+.data {
+    @apply grid select-none;
+    overflow: clip;
+    overflow-clip-margin: 4px;
 }
 
 .data {

@@ -1,11 +1,10 @@
 import { NgIf } from '@angular/common';
-import { Component, forwardRef, Input, Optional } from '@angular/core';
+import { Component, forwardRef, inject, Input } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { DataProviderService, IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { RouteHelper } from '../../../helpers';
-import { ITab, Tab } from '../../../models';
-import { AuthService, TabService } from '../../../services';
-import { DefaultDetailsTabViewComponent } from '../../views';
+import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, ITab, Tab } from '../../../models';
+import { TabService } from '../../../services';
 import { BaseButton } from '../base-button';
 
 @Component({
@@ -37,15 +36,12 @@ export class ButtonNewComponent extends BaseButton {
   }
   //#endregion
 
+  private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
+  private router: Router = inject(Router);
+  private tabService: TabService = inject(TabService);
+  //#endregion
+
   //#region Constructor and Angular life cycle methods
-  constructor(
-    @Optional() private dataProviderService: DataProviderService<any>,
-    private router: Router,
-    private tabService: TabService,
-    authService: AuthService,
-  ) {
-    super(authService);
-  }
   //#endregion
 
   //#region Event handlers
@@ -64,25 +60,27 @@ export class ButtonNewComponent extends BaseButton {
     if (option && option.parameters && Object.keys(option.parameters).length > 0) {
       queryParameters = { ...queryParameters, ...option.parameters };
     }
-    
+
     let url: string = '';
 
     // Try to find the route with ':id' parameters.
-    const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
+    const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.root.snapshot, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
     if (!targetRoute) {
       // If not found, uses the current route.
       url = RouteHelper.getRouteURL(this.router.routerState.root.snapshot, true);
     } else {
       url = RouteHelper.getRouteURL(targetRoute!.parent!);
     }
-    
+
     if (path && path.length > 0) {
       url += `/${path}`;
     }
 
+    const entityUrl: string = `${url}/${this.endpoint}`;
     const tab: ITab = new Tab({
+      entityBaseUrl: entityUrl,
       queryParams: queryParameters,
-      url: `${url}/${this.endpoint}`,
+      url: entityUrl,
     });
 
     this.tabService.navigateCurrentTab(tab);

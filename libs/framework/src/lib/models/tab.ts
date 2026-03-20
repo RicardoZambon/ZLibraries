@@ -1,5 +1,6 @@
 export interface ITab {
   clones: string[];
+  entityBaseUrl?: string;
   isTitleLoading: boolean;
   queryParams?: { [key: string]: string };
   title?: string;
@@ -10,7 +11,9 @@ export class Tab implements ITab{
   private _title?: string | undefined;
 
   public clones: string[] = [];
-  
+
+  public entityBaseUrl?: string;
+
   public isTitleLoading: boolean = true;
 
   public queryParams?: { [key: string]: string };

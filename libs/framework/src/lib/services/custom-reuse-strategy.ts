@@ -1,4 +1,4 @@
-import { Inject } from '@angular/core';
+import { ApplicationRef, Inject, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy, UrlSegment } from '@angular/router';
 import { TabService } from './tab.service';
 
@@ -10,6 +10,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
   //#region Variables
   private cachedHandles: { [key: string]: DetachedRouteHandle | null } = {};
 
+  private applicationRef: ApplicationRef = inject(ApplicationRef);
   public clones: { [key: string]: string } = {};
   public redirects: { [key: string]: string } = {};
   //#endregion
@@ -51,7 +52,19 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
 
     const cacheKey: string = this.getCacheKey(route);
-    return this.cachedHandles[cacheKey];
+    const handle: DetachedRouteHandle | null = this.cachedHandles[cacheKey];
+
+    if (handle) {
+      // Schedule global change detection after Angular finishes reattaching the component.
+      // Without this, reattached components may render stale views (e.g., empty ribbon)
+      // because NgTemplateOutlet does not re-create its embedded view automatically.
+      // ApplicationRef.tick() ensures the entire app tree is checked, including embedded views.
+      setTimeout(() => {
+        this.applicationRef.tick();
+      });
+    }
+
+    return handle;
   }
 
   public shouldAttach(route: ActivatedRouteSnapshot): boolean {

@@ -32,7 +32,7 @@ export abstract class BaseDataset implements OnDestroy {
 
   public ngOnDestroy(): void {
     this.destroy$.next(true);
-    this.destroy$.unsubscribe();
+    this.destroy$.complete();
   }
   //#endregion
 

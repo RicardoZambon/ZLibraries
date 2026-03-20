@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { ITab, Tab, TabsComponent, TabService } from '@framework';
 import { ModalComponent, SidebarComponent, SidebarMenu, SidebarService } from '@library';
@@ -24,24 +24,21 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   //#endregion
 
   //#region Variables
+  private authenticationService: AuthenticationService = inject(AuthenticationService);
   private destroy$: Subject<boolean> = new Subject<boolean>();
+  private router: Router = inject(Router);
+  private sidebarService: SidebarService = inject(SidebarService);
+  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Properties
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private authenticationService: AuthenticationService,
-    private router: Router,
-    private sidebarService: SidebarService,
-    private tabService: TabService,
-  ) {
-  }
 
   public ngOnDestroy(): void {
     this.destroy$.next(true);
-    this.destroy$.unsubscribe();
+    this.destroy$.complete();
   }
 
   public ngOnInit(): void {

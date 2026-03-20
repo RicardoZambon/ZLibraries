@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, ElementRef, HostListener, inject, Input } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
 import { IModal } from '../../models';
 import { BaseComponent } from '../base.component';
 
@@ -23,6 +23,8 @@ export class ModalComponent extends BaseComponent implements IModal {
   @Input() public position: 'top' | 'left' | 'right' | 'bottom' | 'center' = 'center';
   @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'auto';
   @Input() public title!: string;
+
+  @Output() public closed: EventEmitter<void> = new EventEmitter<void>();
   //#endregion
 
   //#region Variables
@@ -61,9 +63,11 @@ export class ModalComponent extends BaseComponent implements IModal {
   }
 
   public toggleModal(): void {
+    const wasShown: boolean = this._show;
+
     const body: HTMLBodyElement | null = document.querySelector('body');
     body?.classList.toggle('modal-active');
-    
+
     this._show = body?.classList.contains('modal-active') ?? false;
 
     if (this.isShown) {
@@ -73,6 +77,8 @@ export class ModalComponent extends BaseComponent implements IModal {
       if (autofocus && !!autofocus.focus) {
         autofocus.focus();
       }
+    } else if (wasShown) {
+      this.closed.emit();
     }
   }
   //#endregion

@@ -1,6 +1,7 @@
+import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, Optional, ViewChild } from '@angular/core';
-import { FormService, ModalComponent } from '@library';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ModalComponent } from '@library';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -9,6 +10,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrls: ['./error-modal.component.scss'],
   imports: [
     ModalComponent,
+    NgIf,
     TranslatePipe,
   ]
 })
@@ -18,7 +20,10 @@ export class ErrorModalComponent {
 
   @Input() public errorMessage: string = '';
   @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'xl';
+  @Input() public subtitle: string = 'Modal-Failed-Administrator';
   @Input() public title: string = 'Modal-Failed-Title';
+
+  @Output() public closed: EventEmitter<void> = new EventEmitter<void>();
   //#endregion
 
   //#region Variables
@@ -31,8 +36,6 @@ export class ErrorModalComponent {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(@Optional() protected formService?: FormService) {
-  }
   //#endregion
 
   //#region Event handlers

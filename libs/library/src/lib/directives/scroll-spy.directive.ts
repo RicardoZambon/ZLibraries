@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
 
 @Directive({
   selector: '[libScrollSpy]'
@@ -31,16 +31,15 @@ export class ScrollSpyDirective implements AfterViewInit {
   //#endregion
 
   //#region Variables
+  private _el: ElementRef<HTMLElement> = inject(ElementRef);
   private activeSection: number | null = null;
   private sections = new Array<Element>();
   //#endregion
 
   //#region Properties
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
-  constructor(private _el: ElementRef<HTMLElement>) {
-  }
 
   ngAfterViewInit() {
     this.updateSections(Array.from(this._el.nativeElement.children));

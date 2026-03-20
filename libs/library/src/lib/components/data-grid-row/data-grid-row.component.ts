@@ -1,5 +1,5 @@
 import { NgClass, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, HostListener, inject, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxResizeObserverModule } from 'ngx-resize-observer';
 import { takeUntil } from 'rxjs';
@@ -51,6 +51,9 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Variables
+  protected changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
+
   private _rowData!: any;
   private isWidthSet: { [column: number]: boolean } = {};
   protected selected: boolean = false;
@@ -75,10 +78,7 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected changeDetectorRef: ChangeDetectorRef,
-    protected dataGridDataset: DataGridDataset,
-  ) {
+  constructor() {
     super();
   }
 

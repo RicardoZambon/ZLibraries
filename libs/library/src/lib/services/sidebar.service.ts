@@ -72,6 +72,8 @@ export abstract class SidebarService {
       this.loadChildren(menu);
     }
 
+    const hasUrl: boolean = (menu.url?.length ?? 0) > 0;
+
     // In case we're deselecting the menu because a child was selected, we need to keep track of the original selection state.
     const isSelected: boolean = menu.isSelected;
 
@@ -83,10 +85,13 @@ export abstract class SidebarService {
       this.selectedMenu = menu;
       this.selectMenu(menu);
 
-      if ((menu.url?.length ?? 0) > 0) {
+      if (hasUrl) {
         this.menuUrlSelected.emit(menu);
       }
 
+    } else if (hasUrl) {
+      // Menu with a URL is already selected — navigate again instead of toggling off.
+      this.menuUrlSelected.emit(menu);
     } else {
       this.selectedMenu = null;
       this.deselectMenu(menu);

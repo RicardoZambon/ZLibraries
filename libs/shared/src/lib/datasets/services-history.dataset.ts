@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { DataGridDataset, IGridColumn, IListParameters } from '@library';
 import { Observable, of } from 'rxjs';
 import { IServicesHistoryList } from '../models';
@@ -13,15 +13,17 @@ export class ServicesHistoryDataset extends DataGridDataset {
   public override columns: IGridColumn[] = [
     { field: '', headerName: '' },
   ];
-  
+
   public controllerName?: string;
+
+  protected servicesHistoryService: ServicesHistoryService = inject(ServicesHistoryService);
   //#endregion
 
   //#region Properties
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(protected servicesHistoryService: ServicesHistoryService) {
+  constructor() {
     super();
 
     this.configs.hideColumnHeaders = true;

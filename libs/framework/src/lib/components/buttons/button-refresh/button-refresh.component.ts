@@ -1,7 +1,6 @@
-import { Component, forwardRef, OnInit, Optional } from '@angular/core';
+import { Component, forwardRef, inject, OnInit } from '@angular/core';
 import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { takeUntil } from 'rxjs';
-import { AuthService } from '../../../services';
 import { BaseButton } from '../base-button';
 
 @Component({
@@ -22,12 +21,12 @@ export class ButtonRefreshComponent extends BaseButton implements OnInit {
   //#region Properties
   //#endregion
 
+  private dataGridDataset: DataGridDataset | null = inject(DataGridDataset, { optional: true });
+  //#endregion
+
   //#region Constructor and Angular life cycle methods
-  constructor(
-    @Optional() private dataGridDataset: DataGridDataset,
-    authService: AuthService,
-  ) {
-    super(authService);
+  constructor() {
+    super();
     
     this.disabled = false;
   }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
@@ -29,6 +29,9 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#endregion
 
   //#region Variables
+  private dataGridDataset: DataGridDataset = inject(DataGridDataset);
+  protected resultDataset: MultiSelectResultDataset = inject(MultiSelectResultDataset);
+
   protected isResultGridLoading: boolean = false;
   protected isSearchGridLoading: boolean = false;
   protected searchCriteria: string = '';
@@ -48,13 +51,10 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private dataGridDataset: DataGridDataset,
-    protected resultDataset: MultiSelectResultDataset,
-  ) {
+  constructor() {
     super();
 
-    dataGridDataset.configs.multiSelect = true;
+    this.dataGridDataset.configs.multiSelect = true;
     this.closeButtonText = 'Button-Modal-Cancel';
   }
 

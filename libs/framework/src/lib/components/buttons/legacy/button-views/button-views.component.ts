@@ -10,6 +10,11 @@ import { BaseButton } from '../../base-button';
   ],
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonViewsLegacyComponent)}]
 })
+/**
+ * @deprecated Use standalone {@link ButtonViewsComponent} instead.
+ * Migrate by replacing this legacy component with the standalone equivalent
+ * and using inject() for dependency injection.
+ */
 export class ButtonViewsLegacyComponent extends BaseButton {
   @Input() views!: IRibbonButtonOption[];
 

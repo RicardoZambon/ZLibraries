@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthenticationService } from '../../services';
 
@@ -10,17 +10,14 @@ export class AuthGuard implements CanActivate {
   //#endregion
 
   //#region Variables
+  private authenticationService: AuthenticationService = inject(AuthenticationService);
+  private router: Router = inject(Router);
   //#endregion
 
   //#region Properties
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private authenticationService: AuthenticationService,
-    private router: Router,
-  ) {
-  }
   //#endregion
 
   //#region Event handlers

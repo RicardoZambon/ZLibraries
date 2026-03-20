@@ -1,8 +1,8 @@
 import { NgFor, NgIf, NgStyle } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { delay, filter, takeUntil } from 'rxjs';
-import { SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu } from '../../models';
+import { SidebarMenu } from '../../models';
 import { SidebarService } from '../../services';
 import { BaseComponent } from '../base.component';
 
@@ -32,6 +32,9 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   //#endregion
 
   //#region Variables
+  private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private sidebarService: SidebarService = inject(SidebarService);
+
   private _childHeight: number = 0;
   protected hasFailed: boolean = false;
   protected isLoading: boolean = false;
@@ -65,11 +68,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   //#endregion
   
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private changeDetectorRef: ChangeDetectorRef,
-    @Inject(SIDEBAR_CONFIGS) sidebarConfigs: SidebarConfigs,
-    private sidebarService: SidebarService,
-  ) {
+  constructor() {
     super();
   }
 

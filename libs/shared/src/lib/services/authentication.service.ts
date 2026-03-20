@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { APP_CONFIG, AppConfig, AuthService, TabService } from '@framework';
 import { Observable, catchError, interval, map, mergeMap, tap } from 'rxjs';
@@ -11,25 +11,21 @@ import { IAuthResponse, ICurrentUserInfo } from '../models';
 export class AuthenticationService extends AuthService {
   //#region ViewChilds, Inputs, Outputs
   //#endregion
-  
+
   //#region Variables
   public adminAction: string = 'AdministrativeMaster';
 
-  private readonly BASE_URL: string;
+  private config: AppConfig = inject(APP_CONFIG);
+  private http: HttpClient = inject(HttpClient);
+  private readonly BASE_URL: string = `${this.config.BASE_URL}/Authentication`;
   //#endregion
 
   //#region Properties
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    @Inject(APP_CONFIG) private config: AppConfig,
-    private http: HttpClient,
-    jwtHelper: JwtHelperService,
-    tabService: TabService,
-  ) {
-    super(jwtHelper, tabService);
-    this.BASE_URL = `${this.config.BASE_URL}/Authentication`;
+  constructor() {
+    super(inject(JwtHelperService), inject(TabService));
   }
   //#endregion
 

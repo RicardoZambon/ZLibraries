@@ -1,5 +1,5 @@
 import { CommonModule, formatDate, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Optional, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { ControlContainer, FormControl, FormGroup, FormGroupDirective, FormGroupName, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { FormService } from '../../services';
@@ -51,6 +51,9 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Variables
+  protected readonly formGroupDirective: FormGroupDirective = inject(FormGroupDirective);
+  protected readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
+  protected readonly formService: FormService = inject(FormService);
   //#endregion
 
   //#region Properties
@@ -103,11 +106,7 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected readonly formGroupDirective: FormGroupDirective,
-    @Optional() protected readonly formGroupName: FormGroupName,
-    protected readonly formService: FormService,
-  ) {
+  constructor() {
     super();
   }
 

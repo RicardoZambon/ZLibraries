@@ -1,6 +1,13 @@
 import { ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
 
 export abstract class RouteHelper {
+  public static getRouteByData(routeSnapshot: ActivatedRouteSnapshot | null, key: string, value: any): ActivatedRouteSnapshot | null {
+    if (!routeSnapshot) {
+      return null;
+    }
+    return routeSnapshot.data[key] === value ? routeSnapshot : this.getRouteByData(routeSnapshot.firstChild, key, value);
+  }
+
   public static getRouteWithComponent(routeSnapshot: ActivatedRouteSnapshot | null, component: any): ActivatedRouteSnapshot | null {
     if (!routeSnapshot) {
       return null;

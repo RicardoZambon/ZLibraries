@@ -19,4 +19,8 @@ import { TabsComponent } from './tabs/tabs.component';
     TabsComponent,
   ]
 })
+/**
+ * @deprecated Use standalone component imports instead of FrameworkViewsModule.
+ * Import individual components directly in your component's `imports` array.
+ */
 export class FrameworkViewsModule { }

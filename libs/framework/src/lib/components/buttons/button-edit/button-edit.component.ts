@@ -1,8 +1,7 @@
 import { NgIf } from '@angular/common';
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, inject, Input, OnInit } from '@angular/core';
 import { DataProviderService, FormService, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { takeUntil } from 'rxjs';
-import { AuthService } from '../../../services';
 import { ModalBase } from '../../../views/modals/modal-base';
 import { BaseButton } from '../base-button';
 
@@ -39,14 +38,11 @@ export class ButtonEditComponent extends BaseButton implements OnInit {
   }
   //#endregion
 
+  private dataProviderService: DataProviderService<any> = inject(DataProviderService);
+  private formService: FormService = inject(FormService);
+  //#endregion
+
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private dataProviderService: DataProviderService<any>,
-    private formService: FormService,
-    authService: AuthService,
-  ) {
-    super(authService);
-  }
 
   public ngOnInit(): void {
     this.formService.editCanceled
