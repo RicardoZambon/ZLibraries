@@ -32,22 +32,22 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   //#endregion
 
   //#region Variables
-  private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
-  private sidebarService: SidebarService = inject(SidebarService);
-
-  private _childHeight: number = 0;
   protected hasFailed: boolean = false;
   protected isLoading: boolean = false;
   protected isSelected: boolean = false;
+
+  private _childHeight: number = 0;
+  private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private sidebarService: SidebarService = inject(SidebarService);
   //#endregion
 
   //#region Properties
-  protected get areChildrenLoaded(): boolean {
-    return this.isParent && (this.menu.children?.length ?? 0) > 0;
-  }
-
   public get childHeight(): number {
     return this._childHeight;
+  }
+
+  protected get areChildrenLoaded(): boolean {
+    return this.isParent && (this.menu.children?.length ?? 0) > 0;
   }
 
   protected get isActive(): boolean {
@@ -150,6 +150,10 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   //#endregion
 
   //#region Private methods
+  protected trackByFn(_index: number, item: SidebarMenu): number {
+    return item.id;
+  }
+
   private getChildHeight(menu: SidebarMenu): number {
     if (menu.isSelected) {
       return menu.children.reduce((height: number, childMenu: SidebarMenu) => height + (childMenu.height ?? 0) + this.getChildHeight(childMenu), 0);
@@ -157,10 +161,6 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
     return 0;
   }
 
-  protected trackByFn(_index: number, item: SidebarMenu): number {
-    return item.id;
-  }
-  
   private updateSubMenuHeight(): void {
     this._childHeight = this.getChildHeight(this.menu);
   }

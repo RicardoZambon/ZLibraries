@@ -13,6 +13,7 @@ export abstract class MultiEditorDataset extends BaseDataset {
 
   //#region Variables
   protected readonly dataGridDataset: DataGridDataset;
+
   private fakeIDsGenerated: any[] = [];
   private modifiedValues: IMultiEditorChanges = {
     changed: {},

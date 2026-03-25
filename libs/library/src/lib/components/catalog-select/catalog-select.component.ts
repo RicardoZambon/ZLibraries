@@ -77,15 +77,6 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   //#endregion
   
   //#region Variables
-  private catalogService: CatalogService = inject(CatalogService);
-  private dataGridDataset: DataGridDataset = inject(DataGridDataset, { optional: true })!;
-  private readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
-  private readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
-  private keyValueDiffers: KeyValueDiffers = inject(KeyValueDiffers);
-  private overlay: Overlay = inject(Overlay);
-  private positionBuilder: OverlayPositionBuilder = inject(OverlayPositionBuilder);
-  private viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
-
   protected displayedEntries: ICatalogEntry[] = [];
   protected focusedIndex: number = -1;
   protected isDropDownShown: boolean = false;
@@ -96,19 +87,26 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   protected showFailureMessage: boolean = false;
   protected showMinimumCharactersMessage: boolean = false;
   protected showNoResultsMessage: boolean = false;
-  
-  private static instanceCounter: number = 0;
 
+  private static instanceCounter: number = 0;
   private _entriesList?: any[] | { key: number; value: Observable<any> | string }[] | null;
   private _filters: { [id: string]: any; } = {};
-  private instanceId: number;
+  private catalogService: CatalogService = inject(CatalogService);
+  private dataGridDataset: DataGridDataset = inject(DataGridDataset, { optional: true })!;
   private entriesDataSource: ICatalogEntry[] = [];
   private filterDiffer?: KeyValueDiffer<string, any>;
+  private readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
+  private readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
+  private instanceId: number;
   private isDataInitialized: boolean = false;
   private isSubscriptionInitialized: boolean = false;
+  private keyValueDiffers: KeyValueDiffers = inject(KeyValueDiffers);
   private lastCriteriaUsed: string | null = null;
+  private overlay: Overlay = inject(Overlay);
   private overlayRef?: OverlayRef;
+  private positionBuilder: OverlayPositionBuilder = inject(OverlayPositionBuilder);
   private searchSubject: Subject<string | null> = new Subject<string | null>();
+  private viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
   private wasClickedOutside: boolean = false;
   //#endregion
 
@@ -119,6 +117,13 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
   public get filters(): { [id: string]: any; } | undefined {
     return this._filters;
+  }
+
+  protected get activeDescendantId(): string | null {
+    if (this.focusedIndex >= 0 && this.focusedIndex < this.displayedEntries.length) {
+      return `catalog-select-${this.instanceId}-option-${this.focusedIndex}`;
+    }
+    return null;
   }
 
   protected get displayControl(): FormControl {
@@ -143,23 +148,16 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     ].join('.');
   }
 
+  protected getOptionId(index: number): string {
+    return `catalog-select-${this.instanceId}-option-${index}`;
+  }
+
   protected get isInvalid(): boolean {
     return this.formControl.invalid;
   }
 
   protected get isTouched(): boolean {
     return this.formControl.touched;
-  }
-
-  private get hasSearchEndpoint(): boolean {
-    return !!this.searchEndpoint && this.searchEndpoint.length > 0;
-  }
-
-  protected get activeDescendantId(): string | null {
-    if (this.focusedIndex >= 0 && this.focusedIndex < this.displayedEntries.length) {
-      return `catalog-select-${this.instanceId}-option-${this.focusedIndex}`;
-    }
-    return null;
   }
 
   protected get listboxId(): string {
@@ -170,8 +168,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     return this.selectedValue != null && !this.readOnly && (this.formControl?.enabled ?? false);
   }
 
-  protected getOptionId(index: number): string {
-    return `catalog-select-${this.instanceId}-option-${index}`;
+  private get hasSearchEndpoint(): boolean {
+    return !!this.searchEndpoint && this.searchEndpoint.length > 0;
   }
   //#endregion
 

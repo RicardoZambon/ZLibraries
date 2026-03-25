@@ -10,11 +10,12 @@ export abstract class MultiSelectResultDataset extends GridDataset {
   //#endregion
 
   //#region Variables
+  public displayedIDs: any[] = [];
+  public displayedRows: any[] = [];
+
   private _idsToAdd: any[] = [];
   private _idsToRemove: any[] = [];
   private addedRowData: any[] = [];
-  public displayedIDs: any[] = [];
-  public displayedRows: any[] = [];
   //#endregion
   
   //#region Properties

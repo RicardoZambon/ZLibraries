@@ -28,9 +28,8 @@ export class MultiSelectResultGridComponent extends BaseComponent implements OnI
 
   //#region Variables
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  protected resultDataset: MultiSelectResultDataset = inject(MultiSelectResultDataset);
-
   protected isLoading: boolean = true;
+  protected resultDataset: MultiSelectResultDataset = inject(MultiSelectResultDataset);
   //#endregion
 
   //#region Properties

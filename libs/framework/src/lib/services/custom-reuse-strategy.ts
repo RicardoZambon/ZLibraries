@@ -8,11 +8,11 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
   //#endregion
 
   //#region Variables
-  private cachedHandles: { [key: string]: DetachedRouteHandle | null } = {};
-
-  private applicationRef: ApplicationRef = inject(ApplicationRef);
   public clones: { [key: string]: string } = {};
   public redirects: { [key: string]: string } = {};
+
+  private applicationRef: ApplicationRef = inject(ApplicationRef);
+  private cachedHandles: { [key: string]: DetachedRouteHandle | null } = {};
   //#endregion
 
   //#region Properties

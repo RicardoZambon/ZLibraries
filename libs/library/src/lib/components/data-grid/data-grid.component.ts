@@ -38,19 +38,19 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
   //#endregion
 
   //#region Variables
-  private bodyResizeObserver?: ResizeObserver;
-  private bodyResized$: Subject<void> = new Subject<void>();
   protected changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  private ngZone: NgZone = inject(NgZone);
-  private router: Router = inject(Router);
-
-  private gridRoute: string = '';
   protected hasFailed: boolean = false;
   protected headerRightMargin: number = 0;
+  protected loading: boolean = false;
+
+  private bodyResized$: Subject<void> = new Subject<void>();
+  private bodyResizeObserver?: ResizeObserver;
+  private gridRoute: string = '';
   private isGridCurrentUrl: boolean = false;
   private lastPosition: number = 0;
-  protected loading: boolean = false;
+  private ngZone: NgZone = inject(NgZone);
+  private router: Router = inject(Router);
   private selectionColRealSize?: number;
   //#endregion
 

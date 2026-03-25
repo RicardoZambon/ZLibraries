@@ -53,23 +53,23 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   //#region Variables
   protected changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
+  protected selected: boolean = false;
 
   private _rowData!: any;
   private isWidthSet: { [column: number]: boolean } = {};
-  protected selected: boolean = false;
   //#endregion
 
   //#region Properties
+  public get rowData(): any {
+    return this._rowData;
+  }
+
   protected get columns(): IGridColumn[] {
     return this.dataGridDataset.columns;
   }
 
   private get isRowDataSelected(): boolean {
     return this.dataGridDataset.isKeySelected(this.rowKey)
-  }
-
-  public get rowData(): any {
-    return this._rowData;
   }
 
   private get rowKey(): string {

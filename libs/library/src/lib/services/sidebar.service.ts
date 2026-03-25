@@ -18,9 +18,10 @@ export abstract class SidebarService {
   //#region Variables
   public isActive: boolean = false;
   public isCollapsed: boolean = false;
+  public shouldActivate: boolean = false;
+
   private menus: SidebarMenu[] = [];
   private selectedMenu: SidebarMenu | null = null;
-  public shouldActivate: boolean = false;
   //#endregion
 
   //#region Properties

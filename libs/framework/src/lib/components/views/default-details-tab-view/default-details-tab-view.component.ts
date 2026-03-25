@@ -45,6 +45,7 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
   protected containerTitle?: string;
   protected dataProviderClassName?: any;
   protected detailsViewRoute: ActivatedRouteSnapshot | null = null;
+
   private hasEntityID: boolean | null = null;
   private hasLoadError: boolean = false;
   //#endregion

@@ -13,12 +13,11 @@ export class OperationsHistoryDataset extends DataGridDataset {
   public override columns: IGridColumn[] = [
     { field: '', headerName: '' },
   ];
-
   public controllerName?: string;
 
-  private _serviceID?: number | undefined;
-
   protected operationsHistoryService: OperationsHistoryService = inject(OperationsHistoryService);
+
+  private _serviceID?: number | undefined;
   //#endregion
 
   //#region Properties

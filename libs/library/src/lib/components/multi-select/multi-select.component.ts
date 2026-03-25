@@ -29,14 +29,13 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#endregion
 
   //#region Variables
-  private dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  protected resultDataset: MultiSelectResultDataset = inject(MultiSelectResultDataset);
-
   protected isResultGridLoading: boolean = false;
   protected isSearchGridLoading: boolean = false;
+  protected resultDataset: MultiSelectResultDataset = inject(MultiSelectResultDataset);
   protected searchCriteria: string = '';
 
   private _searchColumn: string = '';
+  private dataGridDataset: DataGridDataset = inject(DataGridDataset);
   //#endregion
 
   //#region Properties

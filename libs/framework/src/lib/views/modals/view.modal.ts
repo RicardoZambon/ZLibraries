@@ -12,12 +12,13 @@ export abstract class ViewModal<TEntityModel> extends ModalBase implements OnIni
 
   //#region Variables
   protected beginEditOnEntityLoad: boolean = false;
-  protected dataForm!: FormGroup;
   protected data$: Observable<TEntityModel | null>;
-  private entityIdSubject: Subject<number | undefined> = new Subject<number | undefined>();
+  protected dataForm!: FormGroup;
   protected formBuilder: FormBuilder;
   protected formService: FormService;
   protected selectionCount: number = 0;
+
+  private entityIdSubject: Subject<number | undefined> = new Subject<number | undefined>();
   //#endregion
 
   //#region Properties

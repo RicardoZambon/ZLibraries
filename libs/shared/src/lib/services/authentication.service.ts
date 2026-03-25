@@ -16,8 +16,9 @@ export class AuthenticationService extends AuthService {
   public adminAction: string = 'AdministrativeMaster';
 
   private config: AppConfig = inject(APP_CONFIG);
-  private http: HttpClient = inject(HttpClient);
+
   private readonly BASE_URL: string = `${this.config.BASE_URL}/Authentication`;
+  private http: HttpClient = inject(HttpClient);
   //#endregion
 
   //#region Properties

@@ -146,7 +146,7 @@ The system provides three distinct navigation modes:
 
 4. **Direct navigation to sub-view URL**: TabsComponent detects the non-default child route, reads the view title from route `data['title']`, and calls `replaceCurrentTabSubView` so the breadcrumb shows `[Entity name] > [View name]` instead of a loading spinner.
 
-5. **Save changes URL from `/new` to `/:id`**: `redirectCurrentTab` updates both `url` and `entityBaseUrl` on the current entry, ensuring future entity matching uses the real ID.
+5. **Save changes URL from `/new` to `/:id`**: `redirectCurrentTab` updates both `url` and `entityBaseUrl` on the current entry, ensuring future entity matching uses the real ID. `ButtonViewsComponent` picks up the new URL via `NavigationEnd` — it reads the current details route from `router.routerState` (not the stored `ActivatedRouteSnapshot`, which is immutable) and updates its `baseUrlPath`. Without this, view switching after save would use the stale `/new` URL.
 
 6. **Direct navigation to inner view of a new entity** (e.g., `/entity/new/audit`): TabsComponent detects that the `:id` param is not a valid numeric ID (`Number("new")` → `NaN`) and redirects to the base URL (`/entity/new`) using `replaceUrl: true`. Inner views like Audit/History require a persisted entity, so they are not accessible for new entities. The redirect keeps the URL clean and prevents loading empty/broken inner views.
 

@@ -19,13 +19,6 @@ export class TabService {
   //#endregion
 
   //#region Properties
-  private get activeTab(): ITab[] | null {
-    if (this.activeTabIndex < 0 ) {
-      return null;
-    }
-    return this.openTabs[this.activeTabIndex];
-  }
-
   public get activeTabHistory(): ITab[] {
     return this.openTabs[this.activeTabIndex] ?? [];
   }
@@ -46,6 +39,13 @@ export class TabService {
       const displayIndex: number = this.displayTitleIndices[i] ?? 0;
       return tabs[displayIndex]?.isTitleLoading ?? true;
     });
+  }
+
+  private get activeTab(): ITab[] | null {
+    if (this.activeTabIndex < 0) {
+      return null;
+    }
+    return this.openTabs[this.activeTabIndex];
   }
   //#endregion
   

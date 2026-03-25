@@ -35,12 +35,11 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
   //#endregion
 
   //#region Variables
-  private formService: FormService = inject(FormService);
-  private dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  private multiEditorDataset: MultiEditorDataset = inject(MultiEditorDataset);
-
   protected gridLoading: boolean = false;
 
+  private dataGridDataset: DataGridDataset = inject(DataGridDataset);
+  private formService: FormService = inject(FormService);
+  private multiEditorDataset: MultiEditorDataset = inject(MultiEditorDataset);
   private selectedKey?: string;
   private selectedValue?: any;
   //#endregion

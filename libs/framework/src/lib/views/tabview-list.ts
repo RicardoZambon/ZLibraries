@@ -9,8 +9,9 @@ export abstract class TabViewList<TListModel> extends TabViewBase implements OnI
   //#endregion
 
   //#region Variables
-  private _selectedItem?: TListModel;
   protected dataGridDataset: DataGridDataset;
+
+  private _selectedItem?: TListModel;
   private selectionCount: number = 0;
   //#endregion
 

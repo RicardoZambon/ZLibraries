@@ -19,12 +19,10 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
   //#endregion
   
   //#region Variables
-  protected entityId?: number;
-
-  protected defaultView: string = 'details';
-
   public override title: string = '';
 
+  protected defaultView: string = 'details';
+  protected entityId?: number;
   protected views: IRibbonButtonOption[] = [
     { id: 'details', label: 'Button-Views-Details', icon: 'fa-dice-d6' },
     { id: 'history', label: 'Button-Views-History', icon: 'fa-history' }
@@ -32,10 +30,6 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
   //#endregion
 
   //#region Properties
-  protected get currentView(): string {
-    return this.activeView ?? this.defaultView;
-  }
-
   public override get loading(): boolean {
     return super.loading;
   }
@@ -43,6 +37,10 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
   public override set loading(value: boolean) {
     super.loading = value;
     this.formService.loading = value;
+  }
+
+  protected get currentView(): string {
+    return this.activeView ?? this.defaultView;
   }
 
   protected get model(): any {

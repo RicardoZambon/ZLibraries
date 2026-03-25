@@ -50,10 +50,9 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Variables
-  protected formService: FormService = inject(FormService);
   protected readonly formGroupDirective: FormGroupDirective = inject(FormGroupDirective);
   protected readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
-
+  protected formService: FormService = inject(FormService);
   protected loadingField: boolean = false;
   //#endregion
 

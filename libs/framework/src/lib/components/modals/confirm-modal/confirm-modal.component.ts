@@ -39,6 +39,8 @@ export class ConfirmModalComponent implements IModal {
     return this.modal.isShown;
   }
 
+  protected formService: FormService | undefined = inject(FormService, { optional: true }) ?? undefined;
+
   protected get hasErrorMessage(): boolean {
     return !!this.errorMessage && this.errorMessage.length > 0;
   }
@@ -47,13 +49,11 @@ export class ConfirmModalComponent implements IModal {
     return !!this.message && this.message.length > 0;
   }
 
+  private controlContainer: ControlContainer | null = inject(ControlContainer, { optional: true });
+
   private get formGroup(): FormGroup | null {
     return this.controlContainer?.control as FormGroup ?? null;
   }
-  //#endregion
-
-  private controlContainer: ControlContainer | null = inject(ControlContainer, { optional: true });
-  protected formService: FormService | undefined = inject(FormService, { optional: true }) ?? undefined;
   //#endregion
 
   //#region Constructor and Angular life cycle methods

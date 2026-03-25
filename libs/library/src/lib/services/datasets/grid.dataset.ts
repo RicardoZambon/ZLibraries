@@ -17,12 +17,12 @@ export abstract class GridDataset extends BaseDataset {
 
   //#region Variables
   public configs: GridConfigs;
-  public loadedLastRow: boolean = false;
-  
-  protected configsProvider: GridConfigsProvider
-  protected compareProperty: string = 'id';
-  protected focusedRow: string | null = null;
   public isLoading: boolean = false;
+  public loadedLastRow: boolean = false;
+
+  protected compareProperty: string = 'id';
+  protected configsProvider: GridConfigsProvider
+  protected focusedRow: string | null = null;
   protected recordBlock: number = 0;
 
   private _hasBeenLoaded: boolean = false;

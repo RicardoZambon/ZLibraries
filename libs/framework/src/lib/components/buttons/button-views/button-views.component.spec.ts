@@ -1,5 +1,6 @@
+import { NavigationEnd } from '@angular/router';
 import { of, Subject } from 'rxjs';
-import { Tab } from '../../../models';
+import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, Tab } from '../../../models';
 import { RouteHelper } from '../../../helpers';
 import { ButtonViewsComponent } from './button-views.component';
 
@@ -11,7 +12,7 @@ describe('ButtonViewsComponent — view switching logic', () => {
   let mockTabService: { replaceCurrentTabSubView: jest.Mock };
   let mockTabViewService: { setActiveView: jest.Mock };
   let mockAuthService: { checkActionsAreAllowed: jest.Mock };
-  let mockRouter: { events: Subject<any> };
+  let mockRouter: { events: Subject<any>; routerState: { root: { snapshot: any } } };
   let mockDataProviderService: { hasEntityID: boolean } | null;
 
   function createDetailsViewRoute(baseUrl: string, children: any[]): any {
@@ -55,6 +56,7 @@ describe('ButtonViewsComponent — view switching logic', () => {
     };
     mockRouter = {
       events: new Subject(),
+      routerState: { root: { snapshot: {} } },
     };
     mockDataProviderService = { hasEntityID: true };
 
@@ -223,6 +225,97 @@ describe('ButtonViewsComponent — view switching logic', () => {
       ];
 
       expect(component.hasOptions).toBe(false);
+    });
+  });
+
+  describe('baseUrlPath update after save redirect (/new → /:id)', () => {
+    it('should update baseUrlPath when NavigationEnd fires after save redirect', () => {
+      // 1. Initialize with /new URL (simulating creating a new entity)
+      const route: any = createDetailsViewRoute('/configs/campos-filtros/new', defaultChildren());
+      component.detailsViewRoute = route;
+      jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/configs/campos-filtros/new');
+
+      component.ngOnInit();
+
+      // Verify initial baseUrlPath is /new
+      expect((component as any).baseUrlPath).toBe('/configs/campos-filtros/new');
+
+      // 2. Simulate save redirect: router navigates to /94, RouteHelper now returns /94
+      const savedRouteSnapshot: any = {
+        data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details },
+        url: [{ path: 'configs' }, { path: 'campos-filtros' }, { path: '94' }],
+        parent: { url: [{ path: 'configs' }, { path: 'campos-filtros' }], parent: { url: [], parent: null } },
+        firstChild: null,
+      };
+      mockRouter.routerState.root.snapshot = savedRouteSnapshot;
+
+      jest.spyOn(RouteHelper, 'getRouteByData').mockReturnValue(savedRouteSnapshot);
+      (RouteHelper.getRouteURL as jest.Mock).mockReturnValue('/configs/campos-filtros/94');
+
+      // Fire NavigationEnd as would happen after router.navigateByUrl
+      mockRouter.events.next(new NavigationEnd(1, '/configs/campos-filtros/94', '/configs/campos-filtros/94'));
+
+      // 3. Verify baseUrlPath was updated
+      expect((component as any).baseUrlPath).toBe('/configs/campos-filtros/94');
+    });
+
+    it('should use updated baseUrlPath when switching views after save redirect', () => {
+      // 1. Initialize with /new URL
+      const route: any = createDetailsViewRoute('/configs/campos-filtros/new', defaultChildren());
+      component.detailsViewRoute = route;
+      jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/configs/campos-filtros/new');
+
+      component.ngOnInit();
+
+      // 2. Simulate save redirect
+      const savedRouteSnapshot: any = {
+        data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details },
+        url: [{ path: 'configs' }, { path: 'campos-filtros' }, { path: '94' }],
+        parent: { url: [{ path: 'configs' }, { path: 'campos-filtros' }], parent: { url: [], parent: null } },
+        firstChild: null,
+      };
+      mockRouter.routerState.root.snapshot = savedRouteSnapshot;
+
+      jest.spyOn(RouteHelper, 'getRouteByData').mockReturnValue(savedRouteSnapshot);
+      (RouteHelper.getRouteURL as jest.Mock).mockReturnValue('/configs/campos-filtros/94');
+
+      mockRouter.events.next(new NavigationEnd(1, '/configs/campos-filtros/94', '/configs/campos-filtros/94'));
+
+      // 3. Click on Audit view — should use /94, not /new
+      component.onViewClicked('audit');
+
+      const args: any[] = lastReplaceCall();
+      expect(args[0]).toBe('/configs/campos-filtros/94');
+      expect(args[1]).toBeInstanceOf(Tab);
+      expect(args[1].url).toBe('/configs/campos-filtros/94/audit');
+    });
+
+    it('should use updated baseUrlPath when switching to default view after save redirect', () => {
+      // 1. Initialize with /new URL
+      const route: any = createDetailsViewRoute('/configs/campos-filtros/new', defaultChildren());
+      component.detailsViewRoute = route;
+      jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/configs/campos-filtros/new');
+
+      component.ngOnInit();
+
+      // 2. Simulate save redirect
+      const savedRouteSnapshot: any = {
+        data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details },
+        url: [{ path: 'configs' }, { path: 'campos-filtros' }, { path: '94' }],
+        parent: { url: [{ path: 'configs' }, { path: 'campos-filtros' }], parent: { url: [], parent: null } },
+        firstChild: null,
+      };
+      mockRouter.routerState.root.snapshot = savedRouteSnapshot;
+
+      jest.spyOn(RouteHelper, 'getRouteByData').mockReturnValue(savedRouteSnapshot);
+      (RouteHelper.getRouteURL as jest.Mock).mockReturnValue('/configs/campos-filtros/94');
+
+      mockRouter.events.next(new NavigationEnd(1, '/configs/campos-filtros/94', '/configs/campos-filtros/94'));
+
+      // 3. Click on default view — should use /94
+      component.onViewClicked('');
+
+      expect(lastReplaceCall()).toEqual(['/configs/campos-filtros/94']);
     });
   });
 

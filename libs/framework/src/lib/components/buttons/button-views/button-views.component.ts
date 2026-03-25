@@ -4,7 +4,7 @@ import { ActivatedRouteSnapshot, NavigationEnd, Route, Router, UrlSegment } from
 import { DataProviderService, IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { filter, takeUntil } from 'rxjs';
 import { RouteHelper } from '../../../helpers';
-import { ITab, Tab } from '../../../models';
+import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, ITab, Tab } from '../../../models';
 import { TabService, TabViewService } from '../../../services';
 import { BaseButton } from '../base-button';
 
@@ -29,20 +29,20 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#endregion
 
   //#region Properties
-  protected get isNewEntity(): boolean {
-    return !(this.dataProviderService?.hasEntityID ?? false);
-  }
-
-  private get defaultViewId(): string {
-    return this.options[0].id ?? '';
-  }
-
   protected get hasOptions(): boolean {
     return this.options.some((option: IRibbonButtonOption) => (option.isVisible?? true) && (option.allowedActions === undefined || option.allowedActions.length === 0 || option.isAccessAllowed === true || (option.isAccessAllowed == undefined && option.allowedActions?.length > 0)));
   }
 
+  protected get isNewEntity(): boolean {
+    return !(this.dataProviderService?.hasEntityID ?? false);
+  }
+
   protected get selectedView(): IRibbonButtonOption | undefined {
     return this.options.find((option: IRibbonButtonOption) => option.id === this.selectedViewId);
+  }
+
+  private get defaultViewId(): string {
+    return this.options[0].id ?? '';
   }
 
   private get selectedViewUrl(): string {
@@ -108,10 +108,20 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
         takeUntil(this.destroy$),
       )
       .subscribe((event: NavigationEnd) => {
-        const activatedRoute: ActivatedRouteSnapshot | null = this.detailsViewRoute;
-        if (activatedRoute) {
-          const url: string = RouteHelper.getRouteURL(activatedRoute);
-          if (this.baseUrlPath === url) {
+        if (this.detailsViewRoute) {
+          // Use the current router state to get the up-to-date URL, since the stored
+          // detailsViewRoute snapshot is immutable and becomes stale after save redirects
+          // (e.g., /new → /:id).
+          const currentRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
+            this.router.routerState.root.snapshot,
+            FRAMEWORK_VIEW_TYPE,
+            FrameworkViewType.Details,
+          );
+
+          if (currentRoute) {
+            const url: string = RouteHelper.getRouteURL(currentRoute);
+            this.baseUrlPath = url;
+
             const activeViewId: string = this.getActiveOption(event.url);
 
             if (!this.isInternalNavigation) {

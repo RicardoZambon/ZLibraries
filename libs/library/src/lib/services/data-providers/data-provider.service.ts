@@ -9,14 +9,15 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   //#endregion
 
   //#region Variables
-  private _entityID?: number;
   protected activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   protected destroy$: Subject<boolean> = new Subject<boolean>();
+  protected shouldLazyLoad: boolean = false;
+
+  private _entityID?: number;
   private errorSubject: Subject<HttpErrorResponse> = new Subject<HttpErrorResponse>();
   private isLoading: boolean = false;
   private isModelLoaded: boolean = false;
   private modelCache: ReplaySubject<TEntityModel | null> = new ReplaySubject<TEntityModel | null>(1);
-  protected shouldLazyLoad: boolean = false;
   //#endregion
 
   //#region Properties

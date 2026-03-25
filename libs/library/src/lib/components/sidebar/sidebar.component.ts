@@ -66,7 +66,6 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
 
   //#region Variables
   private sidebarConfigs: SidebarConfigs = inject(SIDEBAR_CONFIGS);
-  private sidebarService: SidebarService = inject(SidebarService);
 
   protected configErrorText: string = this.sidebarConfigs.errorText;
   protected configLoadingText: string = this.sidebarConfigs.loadingText;
@@ -75,6 +74,8 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   protected hasFailed: boolean = false;
   protected menus: SidebarMenu[] = [];
   protected profile?: ISidebarProfile;
+
+  private sidebarService: SidebarService = inject(SidebarService);
   private wasClickedOutside: boolean = false;
   //#endregion
 
@@ -142,15 +143,15 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   //#endregion
 
   //#region Private methods
+  protected trackByFn(_index: number, item: SidebarMenu): number {
+    return item.id;
+  }
+
   private deactivate(): void {
     if (this.sidebarService.isActive) {
       this.sidebarService.isActive = false;
       this.sidebarService.deselectAll();
     }
-  }
-
-  protected trackByFn(_index: number, item: SidebarMenu): number {
-    return item.id;
   }
 
   private updateShouldActivate(): void {
