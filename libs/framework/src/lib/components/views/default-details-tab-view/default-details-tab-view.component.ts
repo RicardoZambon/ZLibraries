@@ -46,19 +46,17 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
   protected dataProviderClassName?: any;
   protected detailsViewRoute: ActivatedRouteSnapshot | null = null;
 
+  private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
   private hasEntityID: boolean | null = null;
   private hasLoadError: boolean = false;
+  private router: Router = inject(Router);
+  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Properties
   protected get componentName(): string {
     return DefaultDetailsTabViewComponent.name;
   }
-  //#endregion
-
-  private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
-  private router: Router = inject(Router);
-  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Constructor and Angular life cycle methods

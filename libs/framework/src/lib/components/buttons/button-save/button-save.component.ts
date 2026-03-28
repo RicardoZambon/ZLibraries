@@ -28,22 +28,20 @@ export class ButtonSaveComponent extends BaseButton {
   //#endregion
 
   //#region Variables
-  //#endregion
-
-  //#region Properties
-  protected get isFormLoading(): boolean {
-    return this.formService.loading;
-  }
-
-  protected get isFormEditMode(): boolean {
-    return this.formService.isEditMode;
-  }
-  //#endregion
-
   private dataProviderService: DataProviderService<any> = inject(DataProviderService);
   private formService: FormService = inject(FormService);
   private router: Router = inject(Router);
   private tabService: TabService = inject(TabService);
+  //#endregion
+
+  //#region Properties
+  protected get isFormEditMode(): boolean {
+    return this.formService.isEditMode;
+  }
+
+  protected get isFormLoading(): boolean {
+    return this.formService.loading;
+  }
   //#endregion
 
   //#region Constructor and Angular life cycle methods

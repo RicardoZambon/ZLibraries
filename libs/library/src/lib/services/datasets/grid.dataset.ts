@@ -10,18 +10,18 @@ const KEY_FIELD: string = '_key';
 @Injectable()
 export abstract class GridDataset extends BaseDataset {
   //#region ViewChilds, Inputs, Outputs
-  public filtersChanged = new EventEmitter<{ [key: string ] : string }>();
-  public loadFinished: EventEmitter<boolean> = new EventEmitter<boolean>();
-  public loadStarted: EventEmitter<void> = new EventEmitter();
   //#endregion
 
   //#region Variables
   public configs: GridConfigs;
+  public filtersChanged: EventEmitter<{ [key: string]: string }> = new EventEmitter<{ [key: string]: string }>();
   public isLoading: boolean = false;
   public loadedLastRow: boolean = false;
+  public loadFinished: EventEmitter<boolean> = new EventEmitter<boolean>();
+  public loadStarted: EventEmitter<void> = new EventEmitter<void>();
 
   protected compareProperty: string = 'id';
-  protected configsProvider: GridConfigsProvider
+  protected configsProvider: GridConfigsProvider;
   protected focusedRow: string | null = null;
   protected recordBlock: number = 0;
 
@@ -30,15 +30,16 @@ export abstract class GridDataset extends BaseDataset {
   private _loadedRows?: any[];
   private queryFilters?: { [key: string]: string; };
   //#endregion
-  
+
   //#region Properties
+  public get filters(): { [key: string]: string; } | undefined {
+    return this.queryFilters;
+  }
+
   public get hasBeenLoaded(): boolean {
     return this._hasBeenLoaded;
   }
 
-  public get filters(): { [key: string]: string; } | undefined {
-    return this.queryFilters;
-  }
   public get hasLoadedRows(): boolean {
     return !!this._loadedRows && this._loadedRows.length > 0;
   }
@@ -98,7 +99,7 @@ export abstract class GridDataset extends BaseDataset {
 
   public getRowID(key: string): any {
     const row: any = this.getRowData(key);
-    
+
     return this.compareProperty.split('.')
       .reduce((row: any, property: string) => row[property], row);
   }
@@ -112,7 +113,7 @@ export abstract class GridDataset extends BaseDataset {
       return false;
     }
 
-    const loadedIDs: any[] =this.compareProperty.split('.')
+    const loadedIDs: any[] = this.compareProperty.split('.')
       .reduce((loadedRows: any[], property: string) => loadedRows.map((row: any) => row[property]), this._loadedRows ?? [])
       .map((row: any) =>
         typeof id === 'string' ? `${row}`
@@ -122,7 +123,7 @@ export abstract class GridDataset extends BaseDataset {
 
     return loadedIDs.indexOf(id) >= 0;
   }
-  
+
   public isKeyExists(key: string): boolean {
     return this.hasLoadedRows && this._loadedKeys!.some((x: string) => x === key);
   }
@@ -166,10 +167,6 @@ export abstract class GridDataset extends BaseDataset {
     this.loadRows();
   }
 
-  public setFocusedRow(key: string): void {
-    this.focusedRow = key;
-  }
-
   public removeKeys(keys: string[]): void {
     if (!this.hasLoadedRows) {
       return;
@@ -195,7 +192,11 @@ export abstract class GridDataset extends BaseDataset {
     this.filtersChanged.emit(filters);
     this.refresh();
   }
-  
+
+  public setFocusedRow(key: string): void {
+    this.focusedRow = key;
+  }
+
   public updateRow(key: string, newRowData: any): void {
     if (!this.hasLoadedRows) {
       return;

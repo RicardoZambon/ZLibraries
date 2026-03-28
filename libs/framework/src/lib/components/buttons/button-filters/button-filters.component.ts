@@ -25,27 +25,26 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ModalComponent) modal!: ModalComponent;
 
-  @Input() public modalTitle!: string;
   @Input() public modalSize: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'xl';
+  @Input() public modalTitle!: string;
   @Input() public validateFormFunction?: Function;
   //#endregion
 
   //#region Variables
+  protected gridDataset: DataGridDataset = inject(DataGridDataset);
+  protected readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
+
   private filters: { [key: string]: string; } = {};
   //#endregion
 
   //#region Properties
   protected get hasFiltersApplied(): boolean {
     return Object.keys(this.filters).length > 0;
-  };
+  }
 
   protected get singleColumn(): boolean {
-    return this.modalSize === 'sm' || this.modalSize == 'md' || this.modalSize == 'lg' || this.modalSize == 'xl';
+    return this.modalSize === 'sm' || this.modalSize === 'md' || this.modalSize === 'lg' || this.modalSize === 'xl';
   }
-  //#endregion
-  
-  protected gridDataset: DataGridDataset = inject(DataGridDataset);
-  protected readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
   //#endregion
   
   //#region Constructor and Angular life cycle methods

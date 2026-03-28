@@ -23,18 +23,16 @@ export class ButtonOpenRecordComponent extends BaseButton implements OnInit {
   //#endregion
 
   //#region Variables
+  private dataGridDataset: DataGridDataset = inject(DataGridDataset);
+  private router: Router = inject(Router);
   private selectionCount: number = 0;
+  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Properties
   protected get isSelectedOneRecord(): boolean {
     return this.selectionCount === 1;
   }
-  //#endregion
-
-  private dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  private router: Router = inject(Router);
-  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Constructor and Angular life cycle methods

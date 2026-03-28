@@ -16,12 +16,10 @@ export class ButtonRefreshComponent extends BaseButton implements OnInit {
   //#endregion
 
   //#region Variables
+  private dataGridDataset: DataGridDataset | null = inject(DataGridDataset, { optional: true });
   //#endregion
 
   //#region Properties
-  //#endregion
-
-  private dataGridDataset: DataGridDataset | null = inject(DataGridDataset, { optional: true });
   //#endregion
 
   //#region Constructor and Angular life cycle methods

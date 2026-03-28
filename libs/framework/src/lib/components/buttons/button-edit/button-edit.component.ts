@@ -26,6 +26,9 @@ export class ButtonEditComponent extends BaseButton implements OnInit {
 
   //#region Variables
   protected isButtonCancelVisible: boolean = false;
+
+  private dataProviderService: DataProviderService<any> = inject(DataProviderService);
+  private formService: FormService = inject(FormService);
   //#endregion
 
   //#region Properties
@@ -36,10 +39,6 @@ export class ButtonEditComponent extends BaseButton implements OnInit {
   protected get isFormLoading(): boolean {
     return this.formService.loading;
   }
-  //#endregion
-
-  private dataProviderService: DataProviderService<any> = inject(DataProviderService);
-  private formService: FormService = inject(FormService);
   //#endregion
 
   //#region Constructor and Angular life cycle methods

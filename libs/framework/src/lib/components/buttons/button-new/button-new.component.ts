@@ -24,6 +24,9 @@ export class ButtonNewComponent extends BaseButton {
   //#endregion
 
   //#region Variables
+  private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
+  private router: Router = inject(Router);
+  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Properties
@@ -34,11 +37,6 @@ export class ButtonNewComponent extends BaseButton {
   protected get hasDataProviderEntityID(): boolean {
     return this.dataProviderService?.hasEntityID ?? false;
   }
-  //#endregion
-
-  private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
-  private router: Router = inject(Router);
-  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Constructor and Angular life cycle methods

@@ -18,19 +18,14 @@ export class TabBreadcrumbsComponent {
   //#region ViewChilds, Inputs, Outputs
   //#endregion
 
-  //#region Host listeners
-  //#endregion
-
   //#region Variables
+  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Properties
   protected get tabHistory(): ITab[] {
     return this.tabService.activeTabHistory;
   }
-  //#endregion
-  
-  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Constructor and Angular life cycle methods

@@ -26,7 +26,7 @@ import { BaseButton } from '../../base-button';
  */
 export class ButtonSaveLegacyComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ErrorModalComponent) errorModal!: ErrorModalComponent;
+  @ViewChild(ErrorModalComponent) private errorModal!: ErrorModalComponent;
 
   @Input() public defaultOption: number = 0;
   @Input() public form?: LegacySubViewForm;
@@ -34,13 +34,11 @@ export class ButtonSaveLegacyComponent extends BaseButton {
   //#endregion
 
   //#region Variables
+  private formService: FormService = inject(FormService);
+  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Properties
-  //#endregion
-
-  private formService: FormService = inject(FormService);
-  private tabService: TabService = inject(TabService);
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -65,8 +63,8 @@ export class ButtonSaveLegacyComponent extends BaseButton {
     this.tabView.loading = true;
     
     this.form.save()
-    .pipe(take(1))
-    .subscribe({
+      .pipe(take(1))
+      .subscribe({
       next: (model: any) => {
         this.finishLoading('success');
         
@@ -113,7 +111,4 @@ export class ButtonSaveLegacyComponent extends BaseButton {
 
   //#region Private methods
   //#endregion
-
-
-  
 }

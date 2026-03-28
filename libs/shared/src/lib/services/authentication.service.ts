@@ -46,22 +46,22 @@ export class AuthenticationService extends AuthService {
         }),
         catchError((error: HttpErrorResponse) =>
           interval(1000)
-          .pipe(
-            mergeMap(() => {
-              switch(error.status) {
-                case 401:
-                  throw 'InvalidUsernamePassword';
-                default:
-                  throw 'InternalServerError';
-              }
-            })
-          )
+            .pipe(
+              mergeMap(() => {
+                switch(error.status) {
+                  case 401:
+                    throw 'InvalidUsernamePassword';
+                  default:
+                    throw 'InternalServerError';
+                }
+              })
+            )
         )
       );
   }
 
   public getActions(): Observable<string[]> {
-    return this.http.post<string[]>(`${this.BASE_URL}/GetActions`, {})
+    return this.http.post<string[]>(`${this.BASE_URL}/GetActions`, {});
   }
 
   public getUserInfo(): ICurrentUserInfo | null {

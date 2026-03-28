@@ -24,13 +24,17 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
 
   //#region Variables
   private baseUrlPath?: string;
+  private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
   private isInternalNavigation: boolean = false;
+  private router: Router = inject(Router);
   private selectedViewId?: string;
+  private tabService: TabService = inject(TabService);
+  private tabViewService: TabViewService = inject(TabViewService);
   //#endregion
 
   //#region Properties
   protected get hasOptions(): boolean {
-    return this.options.some((option: IRibbonButtonOption) => (option.isVisible?? true) && (option.allowedActions === undefined || option.allowedActions.length === 0 || option.isAccessAllowed === true || (option.isAccessAllowed == undefined && option.allowedActions?.length > 0)));
+    return this.options.some((option: IRibbonButtonOption) => (option.isVisible ?? true) && (option.allowedActions === undefined || option.allowedActions.length === 0 || option.isAccessAllowed === true || (option.isAccessAllowed === undefined && option.allowedActions?.length > 0)));
   }
 
   protected get isNewEntity(): boolean {
@@ -55,12 +59,6 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
 
     return url;
   }
-  //#endregion
-
-  private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
-  private router: Router = inject(Router);
-  private tabService: TabService = inject(TabService);
-  private tabViewService: TabViewService = inject(TabViewService);
   //#endregion
 
   //#region Constructor and Angular life cycle methods
