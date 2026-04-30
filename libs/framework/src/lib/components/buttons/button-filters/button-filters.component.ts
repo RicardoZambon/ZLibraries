@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, forwardRef, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
 import { FormGroupDirective } from '@angular/forms';
 import { DataGridDataset, FormService, ModalComponent, RibbonButtonComponent, RibbonGroupChild } from '@library';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -31,8 +31,8 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   //#endregion
 
   //#region Variables
-  protected readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
   protected gridDataset: DataGridDataset = inject(DataGridDataset);
+  protected readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
 
   private filters: { [key: string]: string; } = {};
   //#endregion
@@ -103,9 +103,9 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
     this.button.startLoading();
     
     this.formGroup.form.reset();
+    this.filters = {};
+
     this.gridDataset.setFilters();
-    this.filters = this.gridDataset.filters ?? {};
-    this.formGroup.form.patchValue(this.filters, { emitEvent: false });
   }
   //#endregion
 
@@ -118,8 +118,6 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
     } else {
       this.gridDataset.setFilters();
     }
-
-    this.filters = this.gridDataset.filters ?? {};
   }
   //#endregion
 
