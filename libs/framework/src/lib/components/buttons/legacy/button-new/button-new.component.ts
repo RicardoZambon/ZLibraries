@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { Component, forwardRef, inject, Input } from '@angular/core';
-import { ITabView, RibbonButtonComponent, RibbonGroupChild } from '@library';
+import { ITabView, RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
 import { Tab } from '../../../../models';
 import { TabService } from '../../../../services';
 import { BaseButton } from '../../base-button';

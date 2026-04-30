@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { Component, forwardRef, inject, Input } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import { DataProviderService, IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@library';
+import { DataProviderService, IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
 import { RouteHelper } from '../../../helpers';
 import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, ITab, Tab } from '../../../models';
 import { TabService } from '../../../services';

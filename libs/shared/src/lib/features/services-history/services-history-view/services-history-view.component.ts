@@ -1,7 +1,7 @@
 import { Component, inject, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ViewBase } from '@framework';
-import { DataProviderService } from '@library';
+import { ViewBase } from '@zambon/framework';
+import { DataProviderService } from '@zambon/library';
 import { take } from 'rxjs';
 import { OperationsHistoryChildListComponent } from '../../operations-history';
 import { ServicesHistoryChildListComponent } from '../services-history-child-list/services-history-child-list.component';

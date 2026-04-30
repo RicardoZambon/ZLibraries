@@ -4,7 +4,7 @@ import { SidebarComponent } from './sidebar.component';
 describe(SidebarComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ SidebarComponent ]
+      imports: [ SidebarComponent ]
     })
     .compileComponents();
   });

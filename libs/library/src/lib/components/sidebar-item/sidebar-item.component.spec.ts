@@ -4,7 +4,7 @@ import { SidebarItemComponent } from './sidebar-item.component';
 describe(SidebarItemComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ SidebarItemComponent ]
+      imports: [ SidebarItemComponent ]
     })
     .compileComponents();
   });

@@ -1,7 +1,7 @@
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
-// Mock the @framework module to avoid symlink resolution issues
-jest.mock('@framework', () => ({}), { virtual: true });
+// Mock the @zambon/framework module to avoid symlink resolution issues
+jest.mock('@zambon/framework', () => ({}), { virtual: true });
 // Mock the services barrel to avoid pulling in AuthenticationService's full import chain
 jest.mock('../../services', () => ({
   AuthenticationService: jest.fn(),

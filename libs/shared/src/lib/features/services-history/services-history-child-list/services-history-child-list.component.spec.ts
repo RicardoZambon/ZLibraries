@@ -4,7 +4,7 @@ import { ServicesHistoryChildListComponent } from './services-history-child-list
 describe(ServicesHistoryChildListComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ ServicesHistoryChildListComponent ]
+      imports: [ ServicesHistoryChildListComponent ]
     })
     .compileComponents();
   });

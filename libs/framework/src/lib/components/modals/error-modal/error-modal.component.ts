@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { ModalComponent } from '@library';
+import { ModalComponent } from '@zambon/library';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({

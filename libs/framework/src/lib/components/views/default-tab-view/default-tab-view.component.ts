@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { RibbonComponent } from '@library';
+import { RibbonComponent } from '@zambon/library';
 import { Subject, takeUntil } from 'rxjs';
 import { TabViewService } from '../../../services';
 

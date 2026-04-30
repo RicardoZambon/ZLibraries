@@ -1,5 +1,5 @@
 {
-  "name": "@library",
+  "name": "@zambon/library",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/cdk": "^19.1.5",

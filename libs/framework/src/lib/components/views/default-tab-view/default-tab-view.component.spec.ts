@@ -4,7 +4,7 @@ import { DefaultTabViewComponent } from './default-tab-view.component';
 describe(DefaultTabViewComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ DefaultTabViewComponent ]
+      imports: [ DefaultTabViewComponent ]
     })
     .compileComponents();
   });

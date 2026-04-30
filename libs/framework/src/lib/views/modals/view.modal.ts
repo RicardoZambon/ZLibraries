@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { FormService, IModal } from '@library';
+import { FormService, IModal } from '@zambon/library';
 import { Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ModalBase } from './modal-base';
 

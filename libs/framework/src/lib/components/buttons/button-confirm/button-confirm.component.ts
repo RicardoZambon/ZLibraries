@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, forwardRef, inject, Input, ViewChild } from '@angular/core';
-import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@library';
+import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, take } from 'rxjs';
 import { ConfirmModalComponent } from '../../modals';

@@ -10,15 +10,27 @@
     "importHelpers": true,
     "target": "esnext",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@framework": ["libs/framework/src/index.ts"],
-      "@library": ["libs/library/src/index.ts"],
-      "@shared": ["libs/shared/src/index.ts"]
+      "@zambon/framework": [
+        "libs/framework/src/index.ts"
+      ],
+      "@zambon/library": [
+        "libs/library/src/index.ts"
+      ],
+      "@zambon/shared": [
+        "libs/shared/src/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

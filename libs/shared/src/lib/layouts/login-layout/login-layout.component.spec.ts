@@ -4,7 +4,7 @@ import { LoginLayoutComponent } from './login-layout.component';
 describe(LoginLayoutComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ LoginLayoutComponent ]
+      imports: [ LoginLayoutComponent ]
     })
     .compileComponents();
   });

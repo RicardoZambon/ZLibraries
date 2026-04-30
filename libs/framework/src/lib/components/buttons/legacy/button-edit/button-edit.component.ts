@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { Component, forwardRef, Input } from '@angular/core';
-import { RibbonButtonComponent, RibbonGroupChild } from '@library';
+import { RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
 import { LegacySubViewForm, ModalBase } from '../../../../views';
 import { BaseButton } from '../../base-button';
 

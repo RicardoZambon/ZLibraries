@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ITabView, RouterFormatter } from '@library';
+import { ITabView, RouterFormatter } from '@zambon/library';
 import { TabService } from '../../services';
 import { ViewBase } from '../view-base';
 

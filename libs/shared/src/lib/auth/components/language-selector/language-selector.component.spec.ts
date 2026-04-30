@@ -4,7 +4,7 @@ import { LanguageSelectorComponent } from './language-selector.component';
 describe(LanguageSelectorComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ LanguageSelectorComponent ]
+      imports: [ LanguageSelectorComponent ]
     })
     .compileComponents();
   });

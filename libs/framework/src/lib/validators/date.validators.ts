@@ -1,1 +1,1 @@
-export { DateValidators } from '@library';
+export { DateValidators } from '@zambon/library';

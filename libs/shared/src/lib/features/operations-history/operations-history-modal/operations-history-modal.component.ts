@@ -1,7 +1,7 @@
 import { JsonPipe } from '@angular/common';
 import { Component, Input, ViewChild } from '@angular/core';
-import { ModalBase } from '@framework';
-import { ModalComponent } from '@library';
+import { ModalBase } from '@zambon/framework';
+import { ModalComponent } from '@zambon/library';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({

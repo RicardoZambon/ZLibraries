@@ -1,5 +1,5 @@
 {
-  "name": "@shared",
+  "name": "@zambon/shared",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "^19.1.0",
@@ -7,9 +7,12 @@
     "@angular/forms": "^19.1.0",
     "@angular/router": "^19.1.0",
     "@auth0/angular-jwt": "^5.2.0",
-    "@framework": "^0.0.1",
-    "@library": "^0.0.1",
+    "@zambon/framework": "^0.0.1",
+    "@zambon/library": "^0.0.1",
     "@ngx-translate/core": "^16.0.4"
   },
-  "sideEffects": false
+  "sideEffects": [
+    "**/*.scss"
+  ],
+  "style": "styles/common.scss"
 }

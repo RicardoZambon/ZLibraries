@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { DataProviderService, MultiSelectResultDataset } from '@library';
+import { DataProviderService, MultiSelectResultDataset } from '@zambon/library';
 import { TabViewList } from './tabview-list';
 
 @Component({ template: '' })

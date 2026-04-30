@@ -4,7 +4,7 @@ import { ErrorModalComponent } from './error-modal.component';
 describe(ErrorModalComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ ErrorModalComponent ]
+      imports: [ ErrorModalComponent ]
     })
     .compileComponents();
   });

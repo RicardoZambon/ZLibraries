@@ -1,9 +1,11 @@
 import { HttpRequest, HttpHandler, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { JwtInterceptor } from '@auth0/angular-jwt';
 import { of, throwError } from 'rxjs';
 
-// Mock @framework to avoid symlink resolution issues
-jest.mock('@framework', () => ({
+// Mock @zambon/framework to avoid symlink resolution issues
+jest.mock('@zambon/framework', () => ({
   APP_CONFIG: 'APP_CONFIG_TOKEN',
   AppConfig: class AppConfig {
     public BASE_URL: string;
@@ -17,6 +19,7 @@ jest.mock('../../services', () => ({
 }));
 
 import { AuthInterceptor } from './auth-interceptors';
+import { AuthenticationService } from '../../services';
 
 describe('AuthInterceptor', () => {
   let interceptor: AuthInterceptor;
@@ -47,12 +50,17 @@ describe('AuthInterceptor', () => {
       handle: jest.fn(() => of(new HttpResponse({ status: 200 }))),
     } as unknown as jest.Mocked<HttpHandler>;
 
-    interceptor = new (AuthInterceptor as any)(
-      mockConfig,
-      mockAuthService,
-      mockJwtInterceptor,
-      mockRouter,
-    );
+    TestBed.configureTestingModule({
+      providers: [
+        AuthInterceptor,
+        { provide: 'APP_CONFIG_TOKEN', useValue: mockConfig },
+        { provide: AuthenticationService, useValue: mockAuthService },
+        { provide: JwtInterceptor, useValue: mockJwtInterceptor },
+        { provide: Router, useValue: mockRouter },
+      ],
+    });
+
+    interceptor = TestBed.inject(AuthInterceptor);
   });
 
   it('should create', () => {

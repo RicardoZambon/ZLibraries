@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { AfterViewInit, Component, Input, TemplateRef, ViewChild } from '@angular/core';
-import { ChildList } from '@framework';
-import { DataGridComponent, DataGridDataset } from '@library';
+import { ChildList } from '@zambon/framework';
+import { DataGridComponent, DataGridDataset } from '@zambon/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ServicesHistoryDataset } from '../../../datasets';
 import { UtcDatePipe } from '../../../pipes';

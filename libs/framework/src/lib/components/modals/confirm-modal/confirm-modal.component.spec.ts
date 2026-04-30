@@ -4,7 +4,7 @@ import { ConfirmModalComponent } from './confirm-modal.component';
 describe(ConfirmModalComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConfirmModalComponent ]
+      imports: [ ConfirmModalComponent ]
     })
     .compileComponents();
   });

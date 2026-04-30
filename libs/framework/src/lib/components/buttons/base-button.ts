@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnDestroy, ViewChild } from '@angular/core';
-import { IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@library';
+import { IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
 import { Subject, take } from 'rxjs';
 import { AuthService } from '../../services';
 

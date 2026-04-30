@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormService, IRibbonButtonOption } from '@library';
+import { FormService, IRibbonButtonOption } from '@zambon/library';
 import { Observable, takeUntil } from 'rxjs';
 import { ButtonNewLegacyComponent } from '../../components';
 import { Tab } from '../../models';

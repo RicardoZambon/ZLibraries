@@ -4,7 +4,7 @@ import { OperationsHistoryChildListComponent } from './operations-history-child-
 describe(OperationsHistoryChildListComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ OperationsHistoryChildListComponent ]
+      imports: [ OperationsHistoryChildListComponent ]
     })
     .compileComponents();
   });

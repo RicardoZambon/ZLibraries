@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
-import { RibbonButtonComponent, RibbonGroupChild } from '@library';
+import { RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
 import { BaseButton } from '../base-button';
 
 @Component({

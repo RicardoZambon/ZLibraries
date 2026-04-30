@@ -15,7 +15,7 @@ describe(TabBreadcrumbsComponent.name, () => {
   //   tabServiceSpy.navigateCurrentTabBack.and.callThrough();
 
   //   await TestBed.configureTestingModule({
-  //     declarations: [ TabBreadcrumbsComponent ],
+  //     imports: [ TabBreadcrumbsComponent ],
   //     imports: [
   //       CommonModule,
   //       TranslateModule.forRoot(),

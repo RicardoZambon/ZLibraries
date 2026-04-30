@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { DataProviderService, FormService } from '@library';
+import { DataProviderService, FormService } from '@zambon/library';
 import { take, takeUntil } from 'rxjs';
 import { TabViewBase } from './tabview-base';
 

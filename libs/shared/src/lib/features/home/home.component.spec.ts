@@ -4,7 +4,7 @@ import { HomeComponent } from './home.component';
 describe(HomeComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ HomeComponent ]
+      imports: [ HomeComponent ]
     })
     .compileComponents();
   });

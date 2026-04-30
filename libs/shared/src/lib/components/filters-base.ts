@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ButtonFiltersComponent } from '@framework';
+import { ButtonFiltersComponent } from '@zambon/framework';
 import { Subject } from 'rxjs';
 
 @Component({ template: '' })

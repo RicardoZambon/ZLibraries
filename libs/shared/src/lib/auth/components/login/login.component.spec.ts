@@ -4,7 +4,7 @@ import { LoginComponent } from './login.component';
 describe(LoginComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ LoginComponent ]
+      imports: [ LoginComponent ]
     })
     .compileComponents();
   });

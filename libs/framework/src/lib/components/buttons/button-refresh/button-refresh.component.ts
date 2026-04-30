@@ -1,5 +1,5 @@
 import { Component, forwardRef, inject, OnInit } from '@angular/core';
-import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@library';
+import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
 import { takeUntil } from 'rxjs';
 import { BaseButton } from '../base-button';
 

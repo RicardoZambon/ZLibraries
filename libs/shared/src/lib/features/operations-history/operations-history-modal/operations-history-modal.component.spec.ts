@@ -4,7 +4,7 @@ import { OperationsHistoryModalComponent } from './operations-history-modal.comp
 describe(OperationsHistoryModalComponent.name, () => {
   beforeEach(() => {OperationsHistoryModalComponent
     TestBed.configureTestingModule({
-      declarations: [ OperationsHistoryModalComponent ]
+      imports: [ OperationsHistoryModalComponent ]
     })
     .compileComponents();
   });

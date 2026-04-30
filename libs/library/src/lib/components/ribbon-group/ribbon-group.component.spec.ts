@@ -10,9 +10,9 @@ describe(RibbonGroupComponent.name, () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RibbonGroupComponent ],
       imports: [
         CommonModule,
+        RibbonGroupComponent,
       ],
     })
     .compileComponents();
@@ -30,10 +30,10 @@ describe(RibbonGroupComponent.name, () => {
       declarations: [
         RibbonGroupTestComponent,
         RibbonGroupButtonTestComponent,
-        RibbonGroupComponent,
       ],
       imports: [
         CommonModule,
+        RibbonGroupComponent,
       ],
     })
     .compileComponents();
@@ -55,10 +55,10 @@ describe(RibbonGroupComponent.name, () => {
       declarations: [
         RibbonGroupTestComponent,
         RibbonGroupButtonTestComponent,
-        RibbonGroupComponent,
       ],
       imports: [
         CommonModule,
+        RibbonGroupComponent,
       ],
     })
     .compileComponents();
@@ -97,10 +97,10 @@ describe(RibbonGroupComponent.name, () => {
       declarations: [
         RibbonGroupTestComponent,
         RibbonGroupButtonTestComponent,
-        RibbonGroupComponent,
       ],
       imports: [
         CommonModule,
+        RibbonGroupComponent,
       ],
     })
     .compileComponents();

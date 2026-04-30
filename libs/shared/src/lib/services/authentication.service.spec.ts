@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 
-// Mock @framework to avoid symlink resolution issues
-jest.mock('@framework', () => ({
+// Mock @zambon/framework to avoid symlink resolution issues
+jest.mock('@zambon/framework', () => ({
   APP_CONFIG: 'APP_CONFIG_TOKEN',
   AppConfig: class AppConfig {
     public BASE_URL: string;

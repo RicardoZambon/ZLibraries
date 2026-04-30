@@ -4,7 +4,7 @@ import { ServicesHistoryViewComponent } from './services-history-view.component'
 describe(ServicesHistoryViewComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ ServicesHistoryViewComponent ]
+      imports: [ ServicesHistoryViewComponent ]
     })
     .compileComponents();
   });
