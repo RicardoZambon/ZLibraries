@@ -46,9 +46,6 @@ export abstract class FiltersBase implements OnInit, OnDestroy {
   //#endregion
 
   //#region Private methods
-  //#endregion
-
-  //#region Abstract methods
   protected abstract formSetup(): FormGroup<any>;
   //#endregion
 }

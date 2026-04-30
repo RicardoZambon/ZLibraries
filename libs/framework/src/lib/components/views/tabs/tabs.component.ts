@@ -54,7 +54,7 @@ export class TabsComponent implements OnInit {
     return this.tabService.activeTabsLoadingStates;
   }
 
-  protected trackByFn: (index: number, tab: ITab) => string = (_: number, tab: ITab): any => tab.url;
+  protected trackByFn: (index: number, tab: ITab) => string = (_: number, tab: ITab): string => tab.url;
   //#endregion
 
   //#region Constructor and Angular life cycle methods

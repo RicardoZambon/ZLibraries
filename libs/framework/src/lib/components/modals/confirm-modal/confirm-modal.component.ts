@@ -32,14 +32,14 @@ export class ConfirmModalComponent implements IModal {
 
   //#region Variables
   public isLoading: boolean = false;
+
+  protected formService: FormService | undefined = inject(FormService, { optional: true }) ?? undefined;
   //#endregion
 
   //#region Properties
   public get isShown(): boolean {
     return this.modal.isShown;
   }
-
-  protected formService: FormService | undefined = inject(FormService, { optional: true }) ?? undefined;
 
   protected get hasErrorMessage(): boolean {
     return !!this.errorMessage && this.errorMessage.length > 0;
@@ -58,9 +58,6 @@ export class ConfirmModalComponent implements IModal {
 
   //#region Constructor and Angular life cycle methods
   constructor() {
-    if (!this.formService) {
-      console.warn(ConfirmModalComponent.name + ': FormService is not provided. Form state management during modal toggle will be disabled.');
-    }
   }
   //#endregion
 

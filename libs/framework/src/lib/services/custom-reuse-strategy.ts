@@ -10,13 +10,13 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
   //#region Variables
   public clones: { [key: string]: string } = {};
   public redirects: { [key: string]: string } = {};
+  public tabService?: TabService;
 
   private applicationRef: ApplicationRef = inject(ApplicationRef);
   private cachedHandles: { [key: string]: DetachedRouteHandle | null } = {};
   //#endregion
 
   //#region Properties
-  public tabService?: TabService;
   //#endregion
   
   //#region Constructor and Angular life cycle methods

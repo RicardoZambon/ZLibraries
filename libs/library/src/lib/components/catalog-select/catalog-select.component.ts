@@ -71,14 +71,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   @Input() public minimumLengthSearch: number = 3;
   @Input() public notes: string = '';
   @Input() public readOnly: boolean = false;
-  @Input() public set searchEndpoint(value: string | undefined) {
-    if (this._searchEndpoint !== value) {
-      this._searchEndpoint = value;
-      if (this.isSubscriptionInitialized) {
-        this.refreshSearch(true);
-      }
-    }
-  }
+  @Input() public searchEndpoint?: string;
   @Input() public validations: { [id: string]: string; } = {};
   @Input() public valueProperty: string = 'value';
   //#endregion
@@ -98,7 +91,6 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   private static instanceCounter: number = 0;
   private _entriesList?: any[] | { key: number; value: Observable<any> | string }[] | null;
   private _filters: { [id: string]: any; } = {};
-  private _searchEndpoint?: string;
   private catalogService: CatalogService = inject(CatalogService);
   private dataGridDataset: DataGridDataset = inject(DataGridDataset, { optional: true })!;
   private entriesDataSource: ICatalogEntry[] = [];
@@ -125,10 +117,6 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
   public get filters(): { [id: string]: any; } | undefined {
     return this._filters;
-  }
-
-  public get searchEndpoint(): string | undefined {
-    return this._searchEndpoint;
   }
 
   protected get activeDescendantId(): string | null {
@@ -158,10 +146,6 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       ...this.formGroupName?.path ?? [],
       this.displayControlName
     ].join('.');
-  }
-
-  protected getOptionId(index: number): string {
-    return `catalog-select-${this.instanceId}-option-${index}`;
   }
 
   protected get isInvalid(): boolean {
@@ -381,6 +365,9 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   //#endregion
 
   //#region Public methods
+  protected getOptionId(index: number): string {
+    return `catalog-select-${this.instanceId}-option-${index}`;
+  }
   //#endregion
 
   //#region Private methods

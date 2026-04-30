@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'enumLabel'
 })
 export class EnumLabelPipe implements PipeTransform {
-  transform(value?: number, enumType?: any): string {
+  public transform(value?: number, enumType?: any): string {
     if (value === undefined || enumType === undefined) {
       return '';
     }

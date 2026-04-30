@@ -65,9 +65,6 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
     const tabViewService: TabViewService = inject(TabViewService);
     super(changeDetectorRef, tabViewService);
 
-    if (!this.dataProviderService) {
-      console.warn(DefaultDetailsTabViewComponent.name + ': DataProviderService is not provided. Entity title updates will be disabled.');
-    }
   }
 
   public override ngOnInit(): void {

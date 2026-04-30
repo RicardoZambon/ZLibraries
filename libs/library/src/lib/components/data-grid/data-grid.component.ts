@@ -32,9 +32,9 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
   @ViewChild('body') private bodyElement!: ElementRef<HTMLDivElement>;
   @ViewChild(CdkVirtualScrollViewport) private viewport?: CdkVirtualScrollViewport;
 
-  @Input() disabled: boolean = false;
-  @Input() lazyLoadRows: boolean = false;
-  @Input() showButtons: boolean = false;
+  @Input() public disabled: boolean = false;
+  @Input() public lazyLoadRows: boolean = false;
+  @Input() public showButtons: boolean = false;
   //#endregion
 
   //#region Variables

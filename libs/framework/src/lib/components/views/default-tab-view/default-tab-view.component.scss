@@ -1,5 +1,5 @@
 /* @use 'tailwindcss'; */
 
 :host-context {
-    @apply flex flex-col flex-grow overflow-hidden gap-2;
+    @apply flex min-h-0 flex-col flex-grow overflow-hidden gap-2;
 }

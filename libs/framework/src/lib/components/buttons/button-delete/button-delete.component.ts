@@ -30,12 +30,10 @@ export class ButtonDeleteComponent extends BaseButton {
   //#endregion
 
   //#region Variables
+  protected gridDataset: DataGridDataset = inject(DataGridDataset);
   //#endregion
 
   //#region Properties
-  //#endregion
-
-  protected gridDataset: DataGridDataset = inject(DataGridDataset);
   //#endregion
 
   //#region Constructor and Angular life cycle methods

@@ -96,13 +96,13 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
       });
   }
 
-  public abstract saveModel(model: any): Observable<TEntityModel>;
-
   public resetForNewEntity(): void {
     this._entityID = undefined;
     this.isModelLoaded = false;
     this.modelCache.next(null);
   }
+
+  public abstract saveModel(model: any): Observable<TEntityModel>;
 
   public updateModel(model: any): void {
     this.isModelLoaded = true;

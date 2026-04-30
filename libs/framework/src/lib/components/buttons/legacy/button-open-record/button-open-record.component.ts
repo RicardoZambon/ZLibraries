@@ -21,26 +21,37 @@ import { BaseButton } from '../../base-button';
  * and using inject() for dependency injection.
  */
 export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnInit {
+  //#region ViewChilds, Inputs, Outputs
+  @Input() public endpoint: string = 'new';
+  @Input() public path!: string;
+  @Input() public tabView!: ITabView;
+  //#endregion
+
+  //#region Variables
+  protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
   protected selectionCount: number = 0;
 
-  @Input() path!: string;
-  @Input() endpoint: string = 'new';
-  @Input() tabView!: ITabView;
-
-
-  protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
   private tabService: TabService = inject(TabService);
+  //#endregion
 
-  ngOnInit(): void {
+  //#region Properties
+  //#endregion
+
+  //#region Constructor and Angular life cycle methods
+  public ngOnInit(): void {
     this.dataGridDataset.selectedRowsChanged
     .pipe(takeUntil(this.destroy$))
     .subscribe(() => {
         this.selectionCount = this.dataGridDataset.selectedRowKeys.length;
     });
   }
+  //#endregion
 
-  
-  clicked(): void {
+  //#region Event handlers
+  //#endregion
+
+  //#region Public methods
+  public clicked(): void {
     if (this.dataGridDataset.hasSelectedRows && this.selectionCount === 1) {
       const selectedKey: string = this.dataGridDataset.selectedRowKeys[0];
       const selectedID: any = this.dataGridDataset.getRowID(selectedKey);
@@ -49,4 +60,8 @@ export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnIni
       // this.tabService.navigateTab(this.tabView, `${this.path}/${this.dataGridDataset.selectedRows[0]}`);
     }
   }
+  //#endregion
+
+  //#region Private methods
+  //#endregion
 }

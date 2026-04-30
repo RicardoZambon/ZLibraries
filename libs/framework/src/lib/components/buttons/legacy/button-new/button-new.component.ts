@@ -20,15 +20,32 @@ import { BaseButton } from '../../base-button';
  * and using inject() for dependency injection.
  */
 export class ButtonNewLegacyComponent extends BaseButton {
-  @Input() path!: string;
-  @Input() endpoint: string = 'new';
-  @Input() tabView!: ITabView;
+  //#region ViewChilds, Inputs, Outputs
+  @Input() public endpoint: string = 'new';
+  @Input() public path!: string;
+  @Input() public tabView!: ITabView;
+  //#endregion
 
-
+  //#region Variables
   private tabService: TabService = inject(TabService);
-  
-  clicked(): void {
+  //#endregion
+
+  //#region Properties
+  //#endregion
+
+  //#region Constructor and Angular life cycle methods
+  //#endregion
+
+  //#region Event handlers
+  //#endregion
+
+  //#region Public methods
+  public clicked(): void {
     this.tabService.navigateTo(new Tab({ url: `${this.path}/${this.endpoint}` }));
     // this.tabService.navigateTab(this.tabView, `${this.path}/${this.endpoint}`);
   }
+  //#endregion
+
+  //#region Private methods
+  //#endregion
 }
