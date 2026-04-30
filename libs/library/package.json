@@ -9,5 +9,8 @@
     "@angular/router": "^19.1.0",
     "@ngx-translate/core": "^16.0.4"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": false
 }
