@@ -1,0 +1,8 @@
+<lib-ribbon-button *ngIf="visible && (!hasDataProvider || hasDataProviderEntityID)"
+icon="fa-plus"
+label="Button-New"
+[disabled]="disabled || !isAccessLoaded"
+[loading]="loading"
+[options]="options"
+(action)="onButtonClicked($event)">
+</lib-ribbon-button>

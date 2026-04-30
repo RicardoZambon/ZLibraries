@@ -1,0 +1,20 @@
+<lib-data-grid [lazyLoadRows]="true">
+</lib-data-grid>
+
+<ng-template #operationTemplate let-rowData="rowData">
+    <div class="operation-content" (click)="openModal()">
+        <span class="operation"
+        [class.added]="rowData.operationType === 'Added'"
+        [class.deleted]="rowData.operationType === 'Deleted'"
+        [class.modified]="rowData.operationType === 'Modified'"
+        [class.unchanged]="rowData.operationType === 'Unchanged'">
+            {{ rowData.operationType }}
+        </span>
+        {{ rowData.entityName }}
+    </div>
+</ng-template>
+
+<shared-operations-history-modal
+[newValues]="selectedNewValues"
+[oldValues]="selectedOldValues">
+</shared-operations-history-modal>

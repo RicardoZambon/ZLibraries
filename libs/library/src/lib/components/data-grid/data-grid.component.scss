@@ -1,0 +1,104 @@
+/* @use 'tailwindcss'; */
+
+:host-context {
+    @apply flex flex-col overflow-hidden select-none;
+
+    &:not(.no-borders) {
+        @apply border rounded-lg bg-white border-gray-300/90;
+    }
+
+    &.no-borders {
+        .header {
+            .header-row {
+                @apply py-1.5;
+            }
+        }
+    
+        .body lib-data-grid-row {
+            @apply py-1;
+        }
+    }
+}
+
+.header-row, lib-data-grid-row, .loading, .message {
+    @apply gap-4 px-4;
+}
+
+.header {
+    @apply font-bold bg-gray-200/40 border-b border-gray-300/90;
+
+    &.hide {
+        @apply hidden;
+    }
+
+    .header-row {
+        @apply flex flex-row py-3;
+    }
+
+    .header-cell {
+        @apply whitespace-nowrap overflow-hidden text-ellipsis;
+
+        &:not(.selection) {
+            @apply flex-grow;
+        }
+    }
+}
+
+.body {
+    @apply flex-grow relative;
+
+    cdk-virtual-scroll-viewport {
+        @apply absolute inset-0;
+
+        ::ng-deep .cdk-virtual-scroll-content-wrapper {
+            @apply grid;
+            grid-template-columns: inherit;
+        }
+    }
+
+    lib-data-grid-row {
+        @apply py-2 -mt-px border-y cursor-pointer border-slate-300/50;
+
+        &:nth-child(even) {
+            @apply bg-slate-50/70;
+        }
+
+        &:hover {
+            @apply bg-blue-200/20;
+        }
+
+        &.focused {
+            @apply border-slate-400/60 z-[1];
+        }
+
+        &.selected {
+            @apply bg-blue-200/30 z-10 border-blue-300 relative;
+    
+            &:hover {
+                @apply bg-blue-200/40;
+            }
+        }
+    }
+
+    .loading, .message {
+        @apply flex items-center gap-2 whitespace-nowrap;
+        @apply h-10 border-b border-slate-300/50;
+        @apply col-span-full;
+
+        span {
+            @apply overflow-hidden text-ellipsis;
+        }
+    }
+
+    .loading {
+        svg {
+            @apply h-6 w-6 min-w-6 min-h-6 animate-spin;
+            @apply transition-opacity duration-200 ease-in-out;
+        }
+    }
+}
+
+
+.buttons {
+    @apply flex p-1 border-t border-b border-gray-300/90;
+}

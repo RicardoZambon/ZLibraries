@@ -1,0 +1,41 @@
+<lib-modal
+[closeButtonText]="closeButtonText | translate"
+[dialog]="dialog"
+[modalProcessing]="modalProcessing"
+[position]="position"
+[size]="size"
+[title]="title">
+    <div body class="body-content">
+        <div class="search-grid">
+            <div class="search">
+                <input
+                class="form-input"
+                placeholder="Search..."
+                type="text"
+                [(ngModel)]="searchCriteria"
+                [disabled]="modalProcessing || isSearchGridLoading"
+                (keydown.enter)="onSearch()" />
+            </div>
+            
+            <lib-data-grid
+            [disabled]="modalProcessing || isSearchGridLoading || isResultGridLoading"
+            [lazyLoadRows]="true">
+            </lib-data-grid>
+        </div>
+
+        <lib-multi-select-result-grid
+        [isDisabled]="modalProcessing || isSearchGridLoading || isResultGridLoading"
+        [template]="itemTemplate">
+        </lib-multi-select-result-grid>
+    </div>
+
+    <div footer>
+        <button
+        class="btn blue-500"
+        type="button"
+        [class.loading]="modalProcessing"
+        (click)="onSave()">
+            {{ 'Button-Modal-MultiSelect-Confirm' | translate }}
+        </button>
+    </div>
+</lib-modal>

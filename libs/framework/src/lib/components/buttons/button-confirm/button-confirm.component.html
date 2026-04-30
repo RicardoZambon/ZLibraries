@@ -1,0 +1,24 @@
+<lib-ribbon-button *ngIf="visible"
+[color]="color"
+[disabled]="disabled"
+[icon]="icon"
+[label]="label"
+[loading]="loading"
+(action)="onButtonClicked()">
+</lib-ribbon-button>
+
+<framework-confirm-modal #modal
+[message]="modalMessage"
+[messageIcon]="modalMessageIcon"
+[messageIconColor]="modalMessageIconColor"
+[title]="modalTitle">
+    <div footer>
+        <button
+        class="btn {{ modalConfirmButtonColor }}"
+        type="button"
+        [class.loading]="modal.isLoading"
+        (click)="onDelete()">
+            {{ modalConfirmButtonLabel | translate }}
+        </button>
+    </div>
+</framework-confirm-modal>

@@ -1,0 +1,46 @@
+<label *ngIf="showLabel"
+[attr.for]="controlName">
+    {{ label | translate }}:
+</label>
+
+<div class="field"
+[class.col-span-2]="!showLabel"
+[ngStyle]="{ 'align-content': alignContent }" >
+    <div class="loading" *ngIf="(loadingField || (formService.loading && formService.model === null)); else content">
+        <div></div>
+    </div>
+
+    <ng-template #content>
+        <ng-container *ngTemplateOutlet="template ? template : defaultTemplate">
+        </ng-container>
+        
+        <div class="validations" [class.show]="formControl?.invalid" *ngIf="formControl?.touched">
+            <ng-container *ngFor="let error of formControl?.errors | keyvalue">
+                <span *ngIf="hasValidation(error.key)">{{ validations[error.key] | translate }}</span>
+                <ng-template #defaultValidationError>{{ error.key }}</ng-template>
+            </ng-container>
+        </div>
+        
+        <ng-template #defaultTemplate>
+            <lib-form-input #formInput
+            [autofocus]="autofocus"
+            [controlName]="controlName"
+            [fixedValue]="fixedValue"
+            [format]="format"
+            [isDisabled]="isDisabled"
+            [isFullHeight]="isFullHeight"
+            [min]="min"
+            [maxLength]="maxLength"
+            [readOnly]="readOnly"
+            [rows]="rows"
+            [step]="step"
+            [type]="type">
+            </lib-form-input>
+        </ng-template>
+        
+        <span class="text-sm italic" *ngIf="hasNotes">
+            *{{ notes | translate }}
+        </span>
+    </ng-template>
+
+</div>

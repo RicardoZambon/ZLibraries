@@ -1,0 +1,25 @@
+/* @use 'tailwindcss'; */
+
+.body-content {
+    @apply grid grid-flow-col auto-cols-fr gap-4;
+    overflow: clip;
+    overflow-clip-margin: 4px;
+}
+
+.data-grid {
+    @apply grid overflow-hidden select-none;
+}
+
+.data {
+    @apply grid select-none;
+    overflow: clip;
+    overflow-clip-margin: 4px;
+}
+
+.data {
+    @apply grid-rows-[min-content_minmax(0,1fr)] gap-2 min-h-[24rem];
+
+    .buttons {
+        @apply grid grid-flow-col gap-2 auto-cols-auto border-b-gray-300/90;
+    }
+}

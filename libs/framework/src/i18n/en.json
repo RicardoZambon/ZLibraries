@@ -1,0 +1,72 @@
+{
+  "Loading": "Loading",
+
+
+  "//": "Buttons",
+  "Button-Cancel-Edit": "Cancel",
+  "Button-Delete": "Delete",
+  "Button-Edit": "Edit",
+  "Button-Export": "Export",
+  "Button-Filters": "Filter",
+  "Button-Filters-Clear": "Clear filters",
+  "Button-Filters-Modal-Confirm": "Confirm filter",
+  "Button-Modal-Cancel": "Cancel",
+  "Button-Modal-Close": "Close",
+  "Button-Modal-MultiEditor-Confirm": "Confirm changes",
+  "Button-Modal-MultiSelect-Confirm": "Confirm changes",
+  "Button-New": "New",
+  "Button-Open-Record": "Open",
+  "Button-Refresh": "Refresh",
+  "Button-Save": "Save",
+  "Button-Save-And-Close": "Save & Close",
+  "Button-Save-And-New": "Save & New",
+  "Button-Views": "Views",
+  "Button-Views-Details": "Details",
+  "Button-Views-History": "History",
+
+
+  "//": "Forms",
+  "CatalogSelect-Loading": "Loading...",
+  "CatalogSelect-FailureMessage": "An error occurred while fetching the results. Please click here to try again.",
+  "CatalogSelect-MinimumLengthSearch": "Type at least {{ minimumLengthSearch }} characters.",
+  "CatalogSelect-NoResultsFound": "No results found.",
+
+
+  "//": "Grids",
+  "Grid-Loading": "Loading...",
+  "Grid-Message-Empty": "No records found.",
+  "Grid-Message-Failed": "An error occurred while loading the records. Please try again later.",
+  "Grid-Message-LazyLoad": "Click the refresh button to load entries.",
+
+  
+  "//": "i18n",
+  "Format-Currency": "1.2",
+  "Format-Date": "MM/dd/yyyy",
+  "Format-DateTime": "MM/dd/yyyy hh:mm a",
+  "Format-Number": "1.0",
+  "Language-en": "English",
+  "Language-pt": "Português",
+  "locale": "en-US",
+  "MonthYear-Format": "MM/yyyy",
+
+
+  "//": "Modals",
+  "Modal-Delete-Confirm": "Confirm delete",
+  "Modal-Delete-Message": "You are about to delete records, is not possible to reverse this action. Are you sure you want to continue?",
+  "Modal-Delete-Title": "Confirm the record deletion",
+  "Modal-Failed-Administrator": "If the problem persists, please contact your administrator.",
+  "Modal-Failed-DefaultMessage": "An error occurred in the server. Please try again later.",
+  "Modal-Failed-Title": "An error occurred",
+  "Modal-NotFound-Message": "The requested record was not found.\nIt may have been deleted or the URL may be incorrect.",
+  "Modal-NotFound-Title": "Record not found",
+
+
+  "//": "Ribbon And Details",
+  "EditSection-Details": "Details",
+  "RibbonGroup-Actions": "Actions",
+  "RibbonGroup-Entity": "Entity",
+  "RibbonGroup-General": "General",
+  "RibbonGroup-Page": "Page",
+
+  "": ""
+}

@@ -1,0 +1,96 @@
+.form-input {
+    @apply border-gray-400;
+    @apply focus:border-gray-400 focus:ring-4 focus:ring-primary-400/30 focus:ring-opacity-80;
+    @apply transition-colors transition-shadow;
+
+    @apply invalid:border-red-400;
+
+    @apply disabled:bg-slate-100;
+
+    &.ng-invalid.ng-touched {
+        @apply border-red-600;
+    }
+}
+
+input[type=text], input[type=number], input[type=password], textarea {
+    &.form-input {
+        @apply mt-1 block w-full rounded-md shadow-sm;
+
+        &.ng-invalid.ng-touched {
+            @apply pr-9;
+            @apply focus:ring-red-400/30;
+            @apply bg-no-repeat bg-[right_0.5625rem_center] bg-[length:1.125rem_1.125rem];
+            background-image: url("data:image/svg+xml,%3csvg class='text-white' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        }
+    }
+}
+
+input[type=checkbox].form-input {
+    @apply p-0.5 h-5 w-5 rounded relative;
+    @apply inline-flex flex-row justify-end;
+    @apply appearance-none bg-white;
+
+    @apply disabled:pointer-events-none disabled:opacity-50;
+
+    &:not(.switch) {
+        @apply border-2 shadow-md focus:ring focus:shadow-none;
+
+        &:before {
+            @apply content-[''] rounded;
+            @apply flex items-center justify-center absolute inset-0 p-1;
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+    }
+
+    &:checked {
+        @apply bg-none bg-primary-400 border-primary-400/80;
+
+        &:before {
+            @apply content-['\f00c'];
+            @apply text-white;
+        }
+    }
+
+    &:disabled {
+        ~ label {
+            @apply opacity-50;
+        }
+    }
+
+    ~ label {
+        @apply ml-2 select-none;
+    }
+}
+
+input[type=checkbox].form-input.switch {
+    @apply w-10 rounded-[2rem];
+    @apply appearance-none bg-white;
+
+    &:before {
+        @apply content-[''] h-full aspect-square rounded-full;
+        @apply bg-slate-500/60;
+    }
+
+    &:after {
+        @apply content-[''] grow;
+        transition: flex-grow .15s ease-in-out;
+    }
+
+    &:focus:before {
+        @apply bg-slate-500/60;
+    }
+
+    &:checked {
+        @apply bg-none bg-primary-400 border-primary-400/80;
+
+        &:before {
+            @apply content-[''];
+            @apply bg-white;
+        }
+
+        &:after {
+            @apply grow-0;
+        }
+    }
+}

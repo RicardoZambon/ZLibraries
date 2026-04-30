@@ -1,0 +1,29 @@
+<lib-ribbon-button
+[color]="hasFiltersApplied ? 'text-amber-500' : 'text-primary-500'"
+[disabled]="disabled"
+[icon]="'fa-filter'"
+[iconSize]="iconSize"
+[label]="'Button-Filters'"
+[loading]="loading"
+(action)="onFiltersButtonClicked()">
+</lib-ribbon-button>
+
+<lib-ribbon-button
+*ngIf="hasFiltersApplied"
+[color]="'text-red-500'"
+[disabled]="disabled"
+[icon]="'fa-broom'"
+[iconSize]="iconSize"
+[label]="'Button-Filters-Clear'"
+[loading]="loading"
+(action)="onResetButtonClicked()">
+</lib-ribbon-button>
+
+<lib-modal position="top" [size]="modalSize" [title]="modalTitle | translate" [closeButtonText]="'Button-Modal-Cancel' | translate">
+    <ng-container body>
+        <ng-content></ng-content>
+    </ng-container>
+    <div footer>
+        <button type="submit" class="btn blue-500" (click)="onFiltersSubmitClicked()">{{ 'Button-Filters-Modal-Confirm' | translate }}</button>
+    </div>
+</lib-modal>

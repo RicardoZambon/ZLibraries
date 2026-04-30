@@ -1,0 +1,29 @@
+/* @use 'tailwindcss'; */
+
+:host-context {
+    @apply flex flex-grow relative overflow-hidden max-h-full h-full min-h-full;
+}
+
+.content {
+    @apply flex flex-grow flex-col pt-3 pb-1 px-3 md:pr-[10.5rem] overflow-auto scroll-smooth;
+
+    &.no-scroll-spy {
+        @apply md:pr-3;
+    }
+}
+
+.scroll-spy {
+    @apply absolute top-3 right-3 w-36 select-none hidden md:flex flex-col;
+
+    a {
+        @apply cursor-pointer py-2 px-4 text-gray-600 border-l-2 border-l-gray-300 text-sm;
+
+        &.active {
+            @apply text-primary-400 border-l-primary-400;
+        }
+
+        &:active {
+            @apply bg-primary-400/10;
+        }
+    }
+}

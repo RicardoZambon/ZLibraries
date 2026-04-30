@@ -1,0 +1,31 @@
+{
+  "name": "storybook-host",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/storybook-host/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/apps/storybook-host",
+        "index": "apps/storybook-host/src/index.html",
+        "main": "apps/storybook-host/src/main.ts",
+        "tsConfig": "apps/storybook-host/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [],
+        "styles": [
+          "node_modules/@fortawesome/fontawesome-free/css/all.css",
+          "libs/shared/src/styles/common.scss",
+          "apps/storybook-host/src/styles.scss"
+        ],
+        "scripts": []
+      }
+    }
+  },
+  "tags": [
+    "type:storybook-host"
+  ]
+}

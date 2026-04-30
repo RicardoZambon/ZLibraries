@@ -1,0 +1,73 @@
+<lib-form-input-group
+[controlName]="controlName"
+[label]="label"
+[notes]="notes"
+[template]="template"
+[validations]="validations">
+</lib-form-input-group>
+
+<ng-template #template>
+    <div class="catalog-container"
+    [class.show]="isDropDownShown">
+        <lib-form-input #input
+        [class.fixed-content]="readOnly && !shouldUseCriteria"
+        [autofocus]="autofocus"
+        [controlName]="displayControlName"
+        [invalid]="isInvalid && isTouched"
+        [readOnly]="readOnly"
+        (blur)="onContainerBlur()"
+        (click)="onContainerClick()"
+        (focus)="onContainerFocus()"
+        (keydown)="onKeyDown($event)">
+        </lib-form-input>
+        <button *ngIf="showClearButton"
+        class="clear-button"
+        type="button"
+        tabindex="-1"
+        (click)="onClearClick($event)">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #dropdownTemplate>
+    <div class="dropdown-container">
+        <ul class="dropdown"
+        role="listbox"
+        [attr.id]="listboxId">
+            <li *ngIf="isLoading"
+            (click)="onDropDownMessageClick()">
+                {{ 'CatalogSelect-Loading' | translate }}
+            </li>
+
+            <li *ngIf="shouldUseCriteria && showMinimumCharactersMessage"
+            title="{{ 'CatalogSelect-MinimumLengthSearch' | translate: { minimumLengthSearch: minimumLengthSearch } }}"
+            (click)="onDropDownMessageClick()">
+                {{ 'CatalogSelect-MinimumLengthSearch' | translate: { minimumLengthSearch: minimumLengthSearch } }}
+            </li>
+
+            <li *ngIf="showNoResultsMessage"
+            title="{{ 'CatalogSelect-NoResultsFound' | translate }}"
+            (click)="onDropDownMessageClick()">
+                {{ 'CatalogSelect-NoResultsFound' | translate }}
+            </li>
+
+            <li *ngIf="showFailureMessage"
+            class="error"
+            title="{{ 'CatalogSelect-FailureMessage' | translate }}"
+            (click)="onDropDownErrorClick()">
+                {{ 'CatalogSelect-FailureMessage' | translate }}
+            </li>
+
+            <li class="dropdown-item" *ngFor="let entry of displayedEntries; let i = index"
+            role="option"
+            [attr.id]="getOptionId(i)"
+            [attr.aria-selected]="selectedValue === entry.value"
+            [class.focused]="focusedIndex === i"
+            [class.selected]="selectedValue === entry.value"
+            (click)="onDropDownItemClick(entry)">
+                {{ entry.display }}
+            </li>
+        </ul>
+    </div>
+</ng-template>

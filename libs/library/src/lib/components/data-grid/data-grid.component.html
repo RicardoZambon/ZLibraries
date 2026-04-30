@@ -1,0 +1,82 @@
+<div class="buttons"
+*ngIf="showButtons">
+    <ng-content select="[buttons]"></ng-content>
+</div>
+
+<div class="header"
+[class.hide]="isHideColumns"
+[style.padding-right.px]="headerRightMargin">
+    <div class="header-row">
+        <div *ngIf="isShowMultiSelect"
+        class="header-cell selection"
+        [ngStyle]="{
+            'width': selectionColWidth ? selectionColWidth : null
+        }">
+            &nbsp;
+        </div>
+        
+        <div *ngFor="let column of columns"
+        class="header-cell"
+        [ngStyle]="{
+            'width.px': column.realSize ?? 0 > 0 ? column.realSize : null
+        }">
+            <span>{{ column.headerName | translate }}</span>
+        </div>
+    </div>
+</div>
+
+<div #body
+class="body"
+[style.min-height.px]="bodyMinHeight">
+    <cdk-virtual-scroll-viewport
+    [itemSize]="configs.rowHeight"
+    [style.grid-template-columns]="gridColumns">
+        <lib-data-grid-row #row
+        *cdkVirtualFor="let row of dataGridDataset.loadedRows; index as i; trackBy: trackByFn"
+        [disabled]="disabled"
+        [isFirstRow]="isFirstVisibleRow(i)"
+        [rowData]="row"
+        [style.height.px]="configs.rowHeight"
+        (selectionResized)="onSelectionResized($event)">
+        </lib-data-grid-row>
+
+        <div *ngIf="loading"
+        class="loading"
+        [style.height.px]="configs.rowHeight">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+    
+            <span>
+                {{ dataGridDataset.configs.loadingDisplayText ?? '' | translate }} 
+            </span>
+        </div>
+        
+        <div *ngIf="!loading && !hasBeenLoaded && lazyLoadRows"
+        class="message"
+        [style.height.px]="configs.rowHeight">
+            <span>
+                {{ messageToDisplayWhenLazyLoad | translate }}
+            </span>
+        </div>
+
+        <ng-container *ngIf="!loading && hasBeenLoaded && (!hasLoadedRows || hasFailed)">
+            <div *ngIf="!hasFailed && !hasLoadedRows && hasMessageToDisplayWhenEmpty && shouldDisplayMessageWhenEmpty"
+            class="message"
+            [style.height.px]="configs.rowHeight">
+                <span>
+                    {{ messageToDisplayWhenEmpty | translate }}
+                </span>
+            </div>
+
+            <div *ngIf="hasFailed"
+            class="message"
+            [style.height.px]="configs.rowHeight">
+                <span>
+                    <i class="fas fa-exclamation-triangle mr-2 text-yellow-600"></i>{{ messageToDisplayWhenFailed | translate }}
+                </span>
+            </div>
+        </ng-container>
+    </cdk-virtual-scroll-viewport>
+</div>

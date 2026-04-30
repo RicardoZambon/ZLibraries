@@ -1,0 +1,44 @@
+<div class="header">
+    <div class="logo-container">
+        <img class="collapsed" [src]="configLogoCollapsedPath" />
+        <img class="expanded" [src]="configLogoExpandedPath" />
+    </div>
+
+    <div class="profile-container" *ngIf="isProfileLoaded">
+        <div class="picture" *ngIf="hasProfileImage">
+            <img [src]="profile!.image" />
+        </div>
+
+        <div class="profile">
+            <h4>{{ profile!.name }}</h4>
+            <h5>{{ profile!.title }}</h5>
+        </div>
+    </div>
+</div>    
+
+<nav>
+    <ul *ngIf="!isLoading; else loading">
+        <lib-sidebar-item *ngFor="let menu of menus; trackBy: trackByFn"
+        [menu]="menu">
+        </lib-sidebar-item>
+
+        <div class="error" *ngIf="hasFailed">
+            <div>
+                <i class="fa-solid fa-fw fa-triangle-exclamation"></i>
+                <span>{{ configErrorText }}</span>
+            </div>
+        </div>
+    </ul>
+</nav>
+
+<ng-template #loading>
+    <div class="loading">
+        <div>
+            <svg class="animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{{ configLoadingText }}</span>
+        </div>
+    </div>
+</ng-template>

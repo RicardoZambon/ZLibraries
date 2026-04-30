@@ -1,0 +1,8 @@
+# Create a new application
+npx nx g @nx/angular:app apps/[application]
+
+# Create a new module
+npx nx g @nx/angular:library libs/[module] --buildable --importPath=@[module] --name [module]
+
+# Migrate a project to standalone
+npx nx g @angular/core:standalone --path=<relative_path>

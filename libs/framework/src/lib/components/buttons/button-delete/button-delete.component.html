@@ -1,0 +1,24 @@
+<lib-ribbon-button *ngIf="visible"
+color="text-red-500"
+icon="fa-trash-alt"
+[disabled]="disabled"
+[label]="label"
+[loading]="loading"
+(action)="onButtonClicked()">
+</lib-ribbon-button>
+
+<framework-confirm-modal #modal
+messageIcon="fa-solid fa-circle-exclamation"
+messageIconColor="text-red-500"
+[message]="modalMessage"
+[title]="modalTitle">
+    <div footer>
+        <button
+        class="btn red-500"
+        type="button"
+        [class.loading]="modal.isLoading"
+        (click)="onDelete()">
+            {{ modalConfirmButtonLabel | translate }}
+        </button>
+    </div>
+</framework-confirm-modal>

@@ -1,0 +1,16 @@
+<div #dropdown class="dropdown right" [class.show]="showDropdown">
+    <button class="btn" type="button" (click)="onDropdownClick()">
+        {{ title | translate }}
+    </button>
+
+    <ul>
+        <li *ngFor="let lang of languages">
+            <a class="dropdown-item flag-{{ lang }}"
+            [ngClass]="{'selected': lang === selectedLanguage}"
+            (click)="onSelectLanguage(lang)"
+            >
+                {{ 'Language-' + lang | translate }}
+            </a>
+        </li>
+    </ul>
+</div>

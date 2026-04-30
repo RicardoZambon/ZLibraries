@@ -1,0 +1,22 @@
+<lib-ribbon>
+    <ng-container *ngTemplateOutlet="ribbonTemplate"></ng-container>
+
+    <ng-template #emptyRibbon>
+    </ng-template>
+
+    <div right>
+        <lib-ribbon-group [label]="'RibbonGroup-Page' | translate">
+            <framework-button-views [detailsViewRoute]="detailsViewRoute">
+            </framework-button-views>
+        </lib-ribbon-group>
+    </div>
+</lib-ribbon>
+
+<lib-group-container
+[icon]="containerIcon"
+[title]="containerTitle">
+    <router-outlet>
+    </router-outlet>
+</lib-group-container>
+
+<framework-error-modal (closed)="onErrorModalClosed()"></framework-error-modal>

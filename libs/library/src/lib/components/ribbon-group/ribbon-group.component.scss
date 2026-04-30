@@ -1,0 +1,19 @@
+/* @use 'tailwindcss'; */
+
+:host-context {
+    @apply pr-2 relative;
+
+    &:after {
+        @apply content-[''] absolute -right-1 top-1 bottom-1 w-[1px];
+        @apply bg-gray-400/60;
+    }
+
+    .content {
+        @apply flex flex-row flex-nowrap;
+    }
+
+    .label {
+        @apply text-sm pt-[0.05rem] select-none text-center;
+        @apply text-gray-500;
+    }
+}

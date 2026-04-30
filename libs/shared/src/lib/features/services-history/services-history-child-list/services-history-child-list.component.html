@@ -1,0 +1,19 @@
+<lib-data-grid [lazyLoadRows]="true">
+</lib-data-grid>
+
+<ng-template #serviceTemplate let-rowData="rowData">
+    <div class="service-content">
+        <div class="icon">
+            <i class="fa-solid fa-circle fa-lg"></i>
+        </div>
+        <div class="information">
+            <div class="service-name">
+                {{ rowData.name }}
+            </div>
+            <div class="details">
+                <span class="datetime"><i class="fa-solid fa-clock"></i> {{ rowData.changedOn | utcDate | date: ('Format-DateTime' | translate) }}</span>
+                <span class="user"><i class="fa-solid fa-user"></i> {{ rowData.changedByName }}</span>
+            </div>
+        </div>
+    </div>
+</ng-template>

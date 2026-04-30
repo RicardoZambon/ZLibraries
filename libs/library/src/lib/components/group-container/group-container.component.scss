@@ -1,0 +1,30 @@
+/* @use 'tailwindcss'; */
+
+:host-context {
+    @apply flex flex-col flex-grow border rounded-lg relative overflow-hidden;
+    @apply bg-white/80 border-gray-300/90;
+}
+
+.title {
+    @apply flex px-2 py-1 h-8 items-center border-b border-gray-300/90 text-ellipsis;
+
+    i {
+        @apply text-slate-500 pr-2;
+    }
+
+    h4 {
+        @apply font-semibold;
+    }
+
+    svg {
+        @apply h-5 w-5 animate-spin;
+    }
+}
+
+.content-container {
+    @apply flex flex-grow relative overflow-hidden;
+
+    ::ng-deep > * {
+        @apply flex-grow overflow-hidden;
+    }
+}

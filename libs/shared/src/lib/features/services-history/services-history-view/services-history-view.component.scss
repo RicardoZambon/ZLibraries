@@ -1,0 +1,39 @@
+/* @use 'tailwindcss'; */
+
+:host-context {
+    @apply flex flex-grow overflow-hidden;
+}
+
+.history-container {
+    @apply flex flex-grow overflow-hidden p-2;
+
+    .service-history-container, .operations-history-container {
+        @apply flex flex-grow overflow-hidden;
+
+        lib-data-grid {
+            @apply flex-grow;
+        }
+    }
+
+    .service-history-container {
+        @apply w-2/6 pr-1;
+    
+        ::ng-deep lib-data-grid-row {
+            &:first-child {
+                .icon:before {
+                    @apply hidden;
+                }
+            }
+    
+            &:last-child {
+                .icon:after {
+                    @apply hidden;
+                }
+            }
+        }
+    }
+
+    .operations-history-container {
+        @apply w-4/6 pl-1;
+    }
+}

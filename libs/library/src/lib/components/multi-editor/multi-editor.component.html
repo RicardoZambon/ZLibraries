@@ -1,0 +1,46 @@
+<lib-modal
+[closeButtonText]="closeButtonText | translate"
+[dialog]="dialog"
+[modalProcessing]="modalProcessing"
+[position]="position"
+[size]="size"
+[title]="title">
+    <div body class="body-content">
+        <div class="data-grid">
+            <lib-data-grid [disabled]="modalProcessing" [lazyLoadRows]="true"></lib-data-grid>
+        </div>
+
+        <div class="data">
+            <div class="buttons">
+                <a *ngIf="showAddButton"
+                class="btn gray-500"
+                [class.disabled]="modalProcessing || gridLoading || formLoading || formGroup.invalid"
+                (click)="onNewClick()">
+                    {{ addButtonLabel }}
+                </a>
+
+                <a *ngIf="showDeleteButton && hasSelectedKey"
+                class="btn red-500"
+                [class.disabled]="modalProcessing || gridLoading || formLoading"
+                (click)="onDeleteClick()">
+                    {{ removeButtonLabel }}
+                </a>
+            </div>
+
+            <lib-form-group>
+                <ng-content></ng-content>
+            </lib-form-group>
+        </div>
+    </div>
+
+    <div footer>
+        <button
+        class="btn blue-500"
+        type="button"
+        [class.disabled]="gridLoading || formLoading"
+        [class.loading]="modalProcessing"
+        (click)="onSaveClick()">
+            {{ 'Button-Modal-MultiEditor-Confirm' | translate }}
+        </button>
+    </div>
+</lib-modal>

@@ -1,0 +1,13 @@
+<div class="title">
+    <h6 (click)="onToggle()"><i class="fas fa-chevron-down fa-sm"></i>{{ this.label }}</h6>
+</div>
+
+<div #container class="content animate"
+[ngStyle]="maxHeight >= 0 && {
+    'height.px': maxHeight,
+    'max-height.px': maxHeight
+} || null">
+    <div #maxHeighContainer>
+        <ng-content></ng-content>
+    </div>
+</div>

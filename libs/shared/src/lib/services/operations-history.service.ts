@@ -1,0 +1,37 @@
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { APP_CONFIG, AppConfig } from '@zambon/framework';
+import { IListParameters } from '@zambon/library';
+import { Observable } from 'rxjs';
+import { IOperationsHistoryList } from '../models';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class OperationsHistoryService {
+  //#region ViewChilds, Inputs, Outputs
+  //#endregion
+
+  //#region Variables
+  private config: AppConfig = inject(APP_CONFIG);
+  private http: HttpClient = inject(HttpClient);
+  //#endregion
+
+  //#region Properties
+  //#endregion
+
+  //#region Constructor and Angular life cycle methods
+  //#endregion
+
+  //#region Event handlers
+  //#endregion
+
+  //#region Public methods
+  public list(controllerName: string, entityID: number, serviceHistoryID: number, parameters: IListParameters): Observable<IOperationsHistoryList[]> {
+    return this.http.post<IOperationsHistoryList[]>(`${this.config.BASE_URL}/${controllerName}/${entityID}/Audit/${serviceHistoryID}`, parameters);
+  }
+  //#endregion
+
+  //#region Private methods
+  //#endregion
+}

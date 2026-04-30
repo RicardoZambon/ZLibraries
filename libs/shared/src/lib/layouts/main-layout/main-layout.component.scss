@@ -1,0 +1,36 @@
+@reference "tailwindcss";
+
+.main-container {
+    @apply grid h-screen w-screen max-h-screen max-w-full bg-gray-300;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+    "sidebar toolbar"
+    "sidebar content";
+
+    lib-sidebar {
+        @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
+        grid-area: sidebar;
+    }
+
+    .toolbar {
+        @apply flex justify-between p-2 border-b border-stone-300 bg-white/90;
+        @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
+        grid-area: toolbar;
+    }
+
+    .content {
+        @apply px-3 pt-3 pb-2 overflow-y-auto;
+        grid-area: content;
+    }
+
+    framework-tabs {
+        @apply h-full;
+    }
+}
+
+lib-modal {
+    h5 {
+        @apply mb-2 font-medium leading-5 text-lg;
+    }
+}

@@ -1,0 +1,37 @@
+/* @use 'tailwindcss'; */
+
+:host {
+    @apply grid grid-cols-subgrid col-span-2 gap-3;
+
+    &.full-height {
+        @apply max-h-full overflow-auto;
+    }
+}
+
+label {
+    @apply py-1 whitespace-nowrap;
+    @apply text-gray-700 text-xs font-bold text-right uppercase tracking-wide leading-6;
+}
+
+.field {
+    .validations {
+        @apply basis-full;
+        @apply text-red-600 text-sm;
+
+        &.show {
+            @apply mt-1;
+        }
+
+        span {
+            @apply block;
+        }
+    }
+
+    .loading {
+        @apply max-w-sm animate-pulse;
+
+        * {
+            @apply h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-full;
+        }
+    }
+}

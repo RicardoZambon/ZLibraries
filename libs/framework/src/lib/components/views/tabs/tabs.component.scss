@@ -1,0 +1,70 @@
+/* @use 'tailwindcss'; */
+
+:host {
+    @apply block relative h-full max-h-full max-w-full;
+}
+
+li .tab-item, .tab-content {
+    @apply border-x;
+    border-color: rgb(183 188 197);
+}
+
+li.active .tab-item, .tab-content {
+    background-color: rgb(246 247 248) !important;
+}
+
+.tabs-container {
+    @apply absolute top-0 h-11 w-full max-h-11 max-w-full z-[1] overflow-hidden;
+
+    .tabs-nav {
+        @apply flex flex-row;
+
+        &:after {
+            @apply content-[''] absolute bottom-0 left-0 right-0 h-[1px] border-t;
+            border-color: rgb(183 188 197);
+        }
+
+        li {
+            @apply flex relative;
+
+            &.active {
+                @apply z-[1];
+            }
+
+            .tab-item {
+                @apply py-2 pl-4 pr-11 max-w-xs select-none cursor-pointer text-xl font-medium text-ellipsis overflow-hidden;
+                @apply border-t text-gray-700 rounded-t-md;
+                @apply transition-colors ease-in-out;
+                background-color: rgb(223 225 230);
+
+                span {
+                    @apply whitespace-nowrap;
+                }
+
+                svg {
+                    @apply h-7 w-7 animate-spin;
+                }
+            }
+
+            .tab-close {
+                @apply text-gray-400;
+            }
+
+            &:hover {
+                .tab-item {
+                    background-color: rgb(250 251 251);
+                }
+            }
+
+            .tab-close {
+                @apply flex items-center absolute p-4 top-0 right-0 bottom-0 text-2xl cursor-pointer;
+                @apply transition-colors ease-in-out text-gray-400/80;
+            }
+        }
+    }
+}
+
+.tab-content {
+    @apply absolute flex flex-col p-2 top-11 bottom-0 w-full max-w-full rounded-b-lg overflow-y-auto;
+    @apply border-b;
+}
