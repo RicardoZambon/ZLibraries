@@ -2,6 +2,7 @@ export * from './lib/auth';
 export * from './lib/components';
 export { OperationsHistoryChildListComponent, OperationsHistoryModalComponent } from './lib/features/operations-history';
 export { ServicesHistoryChildListComponent, ServicesHistoryViewComponent } from './lib/features/services-history';
+export * from './lib/i18n';
 export * from './lib/layouts';
 export * from './lib/models';
 export * from './lib/pipes';
