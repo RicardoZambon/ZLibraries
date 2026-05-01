@@ -26,7 +26,6 @@ if (!isValidation) {
         pkgRoot: '../../dist/libs/library',
       },
     ],
-    '@semantic-release/github',
   );
 }
 

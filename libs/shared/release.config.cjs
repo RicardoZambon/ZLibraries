@@ -26,7 +26,6 @@ if (!isValidation) {
         pkgRoot: '../../dist/libs/shared',
       },
     ],
-    '@semantic-release/github',
   );
 }
 
