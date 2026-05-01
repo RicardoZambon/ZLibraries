@@ -37,5 +37,32 @@
   "sideEffects": [
     "**/*.scss"
   ],
-  "style": "styles/common.scss"
+  "style": "styles/common.scss",
+  "exports": {
+    "./styles": {
+      "sass": "./styles/common.scss",
+      "style": "./styles/common.scss",
+      "default": "./styles/common.scss"
+    },
+    "./styles/common": {
+      "sass": "./styles/common.scss",
+      "style": "./styles/common.scss",
+      "default": "./styles/common.scss"
+    },
+    "./styles/common.scss": {
+      "sass": "./styles/common.scss",
+      "style": "./styles/common.scss",
+      "default": "./styles/common.scss"
+    },
+    "./styles/variables": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    },
+    "./styles/variables.scss": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    }
+  }
 }
