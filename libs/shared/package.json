@@ -27,8 +27,8 @@
     "@angular/forms": "^19.1.0",
     "@angular/router": "^19.1.0",
     "@auth0/angular-jwt": "^5.2.0",
-    "@zambon-dev/framework": "^0.0.1",
-    "@zambon-dev/library": "^0.0.1",
+    "@zambon-dev/framework": "^1.0.0",
+    "@zambon-dev/library": "^1.0.0",
     "@ngx-translate/core": "^16.0.4"
   },
   "publishConfig": {
