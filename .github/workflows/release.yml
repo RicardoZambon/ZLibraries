@@ -18,9 +18,19 @@ concurrency:
 
 jobs:
   release:
-    name: Build and release packages
+    name: Release ${{ matrix.package.project }}
     runs-on: ubuntu-latest
     environment: npm
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - project: library
+            working-directory: libs/library
+          - project: framework
+            working-directory: libs/framework
+          - project: shared
+            working-directory: libs/shared
 
     steps:
       - name: Checkout
@@ -48,23 +58,11 @@ jobs:
             @semantic-release/npm \
             @semantic-release/github
 
-      - name: Build packages
-        run: npx nx run-many --target=build --projects=library,framework,shared --configuration=production
+      - name: Build ${{ matrix.package.project }}
+        run: npx nx run ${{ matrix.package.project }}:build --configuration=production
 
-      - name: Release library
-        working-directory: libs/library
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx --no-install semantic-release -e semantic-release-monorepo
-
-      - name: Release framework
-        working-directory: libs/framework
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx --no-install semantic-release -e semantic-release-monorepo
-
-      - name: Release shared
-        working-directory: libs/shared
+      - name: Release ${{ matrix.package.project }}
+        working-directory: ${{ matrix.package.working-directory }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx --no-install semantic-release -e semantic-release-monorepo
