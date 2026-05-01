@@ -52,7 +52,7 @@ export class LanguageSelectorComponent {
 
   //#region Private methods
   @HostListener('window:click', ['$event'])
-  private documentClick(event: MouseEvent) {
+  private documentClick(event: MouseEvent): void {
     if (this.showDropdown) {
       let target: HTMLElement = <HTMLElement>event.target;
       while (target !== null && target.tagName?.toUpperCase() !== 'BODY') {
