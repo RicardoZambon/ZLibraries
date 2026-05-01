@@ -10,5 +10,8 @@
     "@zambon/library": "^0.0.1",
     "@ngx-translate/core": "^16.0.4"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": false
 }

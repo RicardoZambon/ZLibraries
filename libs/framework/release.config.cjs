@@ -1,7 +1,6 @@
-module.exports = {
-  branches: ['main'],
-  tagFormat: 'framework-v${version}',
-  plugins: [
+const isValidation = process.env.SEMANTIC_RELEASE_VALIDATION === 'true';
+
+const plugins = [
     [
       '@semantic-release/commit-analyzer',
       {
@@ -17,6 +16,10 @@ module.exports = {
       },
     ],
     '@semantic-release/release-notes-generator',
+];
+
+if (!isValidation) {
+  plugins.push(
     [
       '@semantic-release/npm',
       {
@@ -24,5 +27,11 @@ module.exports = {
       },
     ],
     '@semantic-release/github',
-  ],
+  );
+}
+
+module.exports = {
+  branches: isValidation ? [process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || 'main'] : ['main'],
+  tagFormat: 'framework-v${version}',
+  plugins,
 };

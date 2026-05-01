@@ -33,6 +33,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install release tooling
+        run: |
+          npm install --no-save \
+            semantic-release \
+            semantic-release-monorepo \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator
+
       - name: Set Nx SHAs
         uses: nrwl/nx-set-shas@v4
 
@@ -41,3 +49,21 @@ jobs:
 
       - name: Build affected Storybooks
         run: npx nx affected --target=build-storybook --base=$NX_BASE --head=$NX_HEAD --configuration=ci
+
+      - name: Semantic release dry run - library
+        working-directory: libs/library
+        env:
+          SEMANTIC_RELEASE_VALIDATION: 'true'
+        run: npx --no-install semantic-release --dry-run --no-ci -e semantic-release-monorepo
+
+      - name: Semantic release dry run - framework
+        working-directory: libs/framework
+        env:
+          SEMANTIC_RELEASE_VALIDATION: 'true'
+        run: npx --no-install semantic-release --dry-run --no-ci -e semantic-release-monorepo
+
+      - name: Semantic release dry run - shared
+        working-directory: libs/shared
+        env:
+          SEMANTIC_RELEASE_VALIDATION: 'true'
+        run: npx --no-install semantic-release --dry-run --no-ci -e semantic-release-monorepo
