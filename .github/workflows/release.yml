@@ -7,6 +7,7 @@ on:
       - main
 
 permissions:
+  id-token: write
   contents: write
   issues: write
   pull-requests: write
@@ -19,6 +20,7 @@ jobs:
   release:
     name: Build and release packages
     runs-on: ubuntu-latest
+    environment: npm
 
     steps:
       - name: Checkout
@@ -29,7 +31,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: https://registry.npmjs.org
           cache: npm
 
@@ -53,19 +55,16 @@ jobs:
         working-directory: libs/library
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx --no-install semantic-release -e semantic-release-monorepo
 
       - name: Release framework
         working-directory: libs/framework
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx --no-install semantic-release -e semantic-release-monorepo
 
       - name: Release shared
         working-directory: libs/shared
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx --no-install semantic-release -e semantic-release-monorepo
