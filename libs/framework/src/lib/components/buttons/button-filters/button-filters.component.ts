@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { Component, inject, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
 import { FormGroupDirective } from '@angular/forms';
-import { DataGridDataset, FormService, ModalComponent, RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
+import { DataGridDataset, FormService, ModalComponent, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs';
 import { BaseButton } from '../base-button';

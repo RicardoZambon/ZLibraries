@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DataGridDataset } from '@zambon/library';
+import { DataGridDataset } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { TabService } from '../../services';
 import { LegacyTabViewBase } from './legacy-tabview-base';

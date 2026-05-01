@@ -1,7 +1,7 @@
 import { RouteReuseStrategy } from '@angular/router';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { CustomReuseStrategy, TabService } from '@zambon/framework';
-import { ISidebarProfile, SidebarMenu, SidebarService } from '@zambon/library';
+import { CustomReuseStrategy, TabService } from '@zambon-dev/framework';
+import { ISidebarProfile, SidebarMenu, SidebarService } from '@zambon-dev/library';
 import { Observable, of } from 'rxjs';
 import { LoginComponent } from '../../auth/components/login/login.component';
 import { LoginLayoutComponent } from '../../layouts/login-layout/login-layout.component';

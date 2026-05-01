@@ -2,7 +2,7 @@ import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, forwardRef, inject, Input, ViewChild } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import { DataProviderService, FormService, RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
+import { DataProviderService, FormService, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { Observable, take, throwError } from 'rxjs';
 import { RouteHelper } from '../../../helpers';
 import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, ITab, Tab } from '../../../models';

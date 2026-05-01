@@ -1,6 +1,25 @@
 {
-  "name": "@zambon/library",
+  "name": "@zambon-dev/library",
   "version": "0.0.1",
+  "description": "Angular UI components and shared presentation utilities for Zambon applications.",
+  "keywords": [
+    "angular",
+    "components",
+    "library",
+    "zambon",
+    "zlibraries"
+  ],
+  "author": "Ricardo Zambon",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RicardoZambon/ZLibraries.git",
+    "directory": "libs/library"
+  },
+  "bugs": {
+    "url": "https://github.com/RicardoZambon/ZLibraries/issues"
+  },
+  "homepage": "https://github.com/RicardoZambon/ZLibraries/tree/main/libs/library#readme",
   "peerDependencies": {
     "@angular/cdk": "^19.1.5",
     "@angular/common": "^19.1.0",

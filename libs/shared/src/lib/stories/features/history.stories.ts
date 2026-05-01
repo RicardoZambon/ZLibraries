@@ -1,5 +1,5 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { IListParameters } from '@zambon/library';
+import { IListParameters } from '@zambon-dev/library';
 import { Observable, of } from 'rxjs';
 import { OperationsHistoryModalComponent } from '../../features/operations-history/operations-history-modal/operations-history-modal.component';
 import { ServicesHistoryViewComponent } from '../../features/services-history/services-history-view/services-history-view.component';

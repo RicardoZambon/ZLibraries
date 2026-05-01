@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Input, TemplateRef, ViewChild } from '@angular/core';
-import { ChildList } from '@zambon/framework';
-import { DataGridComponent, DataGridDataset } from '@zambon/library';
+import { ChildList } from '@zambon-dev/framework';
+import { DataGridComponent, DataGridDataset } from '@zambon-dev/library';
 import { OperationsHistoryDataset } from '../../../datasets';
 import { IOperationsHistoryList } from '../../../models';
 import { OperationsHistoryModalComponent } from '../operations-history-modal/operations-history-modal.component';

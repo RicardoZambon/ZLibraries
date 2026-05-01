@@ -3,7 +3,7 @@ import { APP_INITIALIZER, EnvironmentProviders, Provider } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { APP_CONFIG, AppConfig, AuthService } from '@zambon/framework';
+import { APP_CONFIG, AppConfig, AuthService } from '@zambon-dev/framework';
 import {
   DataGridConfigsProvider,
   DataGridDataset,
@@ -11,8 +11,8 @@ import {
   FormService,
   GridConfigsProvider,
   MultiSelectResultDataset,
-} from '@zambon/library';
-import { AuthenticationService } from '@zambon/shared';
+} from '@zambon-dev/library';
+import { AuthenticationService } from '@zambon-dev/shared';
 import { provideTranslateService, TranslateFakeLoader, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 

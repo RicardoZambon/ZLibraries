@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { ITab, Tab, TabsComponent, TabService } from '@zambon/framework';
-import { ModalComponent, SidebarComponent, SidebarMenu, SidebarService } from '@zambon/library';
+import { ITab, Tab, TabsComponent, TabService } from '@zambon-dev/framework';
+import { ModalComponent, SidebarComponent, SidebarMenu, SidebarService } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, take, takeUntil } from 'rxjs';
 import { AuthenticationService } from '../../services';

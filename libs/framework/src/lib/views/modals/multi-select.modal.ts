@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
-import { MultiSelectComponent } from '@zambon/library';
+import { MultiSelectComponent } from '@zambon-dev/library';
 import { ModalBase } from './modal-base';
 
 @Component({ template: '' })

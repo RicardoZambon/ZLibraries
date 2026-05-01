@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { Component, forwardRef, inject, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
+import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { Tab } from '../../../models';
 import { TabService } from '../../../services';

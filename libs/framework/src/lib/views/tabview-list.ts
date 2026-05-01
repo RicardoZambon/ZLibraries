@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { DataGridDataset } from '@zambon/library';
+import { DataGridDataset } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { TabViewBase } from './tabview-base';
 

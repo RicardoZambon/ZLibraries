@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { APP_CONFIG, AppConfig } from '@zambon/framework';
-import { IListParameters } from '@zambon/library';
+import { APP_CONFIG, AppConfig } from '@zambon-dev/framework';
+import { IListParameters } from '@zambon-dev/library';
 import { Observable } from 'rxjs';
 import { IServicesHistoryList } from '../models';
 

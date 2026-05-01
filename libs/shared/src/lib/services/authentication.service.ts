@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { APP_CONFIG, AppConfig, AuthService, TabService } from '@zambon/framework';
+import { APP_CONFIG, AppConfig, AuthService, TabService } from '@zambon-dev/framework';
 import { Observable, catchError, interval, map, mergeMap, tap } from 'rxjs';
 import { IAuthResponse, ICurrentUserInfo } from '../models';
 

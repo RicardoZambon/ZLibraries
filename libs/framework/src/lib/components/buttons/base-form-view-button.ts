@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { DataProviderService, FormService } from '@zambon/library';
+import { DataProviderService, FormService } from '@zambon-dev/library';
 import { BaseButton } from './base-button';
 
 @Component({ template: '' })

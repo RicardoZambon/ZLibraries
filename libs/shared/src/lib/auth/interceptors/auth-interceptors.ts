@@ -2,7 +2,7 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtInterceptor } from '@auth0/angular-jwt';
-import { APP_CONFIG, AppConfig } from '@zambon/framework';
+import { APP_CONFIG, AppConfig } from '@zambon-dev/framework';
 import { catchError, Observable, shareReplay, switchMap, tap } from 'rxjs';
 import { AuthenticationService } from '../../services';
 

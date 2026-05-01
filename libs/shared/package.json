@@ -1,14 +1,34 @@
 {
-  "name": "@zambon/shared",
+  "name": "@zambon-dev/shared",
   "version": "0.0.1",
+  "description": "Shared Angular services, utilities, and styles for Zambon applications.",
+  "keywords": [
+    "angular",
+    "shared",
+    "utilities",
+    "styles",
+    "zambon",
+    "zlibraries"
+  ],
+  "author": "Ricardo Zambon",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RicardoZambon/ZLibraries.git",
+    "directory": "libs/shared"
+  },
+  "bugs": {
+    "url": "https://github.com/RicardoZambon/ZLibraries/issues"
+  },
+  "homepage": "https://github.com/RicardoZambon/ZLibraries/tree/main/libs/shared#readme",
   "peerDependencies": {
     "@angular/common": "^19.1.0",
     "@angular/core": "^19.1.0",
     "@angular/forms": "^19.1.0",
     "@angular/router": "^19.1.0",
     "@auth0/angular-jwt": "^5.2.0",
-    "@zambon/framework": "^0.0.1",
-    "@zambon/library": "^0.0.1",
+    "@zambon-dev/framework": "^0.0.1",
+    "@zambon-dev/library": "^0.0.1",
     "@ngx-translate/core": "^16.0.4"
   },
   "publishConfig": {
