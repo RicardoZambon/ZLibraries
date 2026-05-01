@@ -1,5 +1,5 @@
 import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
-import { IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
+import { IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { BaseButton } from '../../base-button';
 
 @Component({

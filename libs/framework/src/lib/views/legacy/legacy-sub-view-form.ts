@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { DataProviderService, FormService } from '@zambon/library';
+import { DataProviderService, FormService } from '@zambon-dev/library';
 import { Observable, take, tap, throwError } from 'rxjs';
 import { ViewBase } from '../view-base';
 

@@ -2,7 +2,7 @@ import { NgClass, NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, Input, ViewChild } from '@angular/core';
 import { ControlContainer, FormGroup } from '@angular/forms';
-import { FormService, IModal, ModalComponent } from '@zambon/library';
+import { FormService, IModal, ModalComponent } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BackendFormValidationHelper } from '../../../helpers';
 

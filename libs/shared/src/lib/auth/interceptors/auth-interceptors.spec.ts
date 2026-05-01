@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { JwtInterceptor } from '@auth0/angular-jwt';
 import { of, throwError } from 'rxjs';
 
-// Mock @zambon/framework to avoid symlink resolution issues
-jest.mock('@zambon/framework', () => ({
+// Mock @zambon-dev/framework to avoid symlink resolution issues
+jest.mock('@zambon-dev/framework', () => ({
   APP_CONFIG: 'APP_CONFIG_TOKEN',
   AppConfig: class AppConfig {
     public BASE_URL: string;

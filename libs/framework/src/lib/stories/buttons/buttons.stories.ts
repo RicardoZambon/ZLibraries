@@ -1,7 +1,7 @@
 import { RouteReuseStrategy } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { RibbonComponent, RibbonGroupComponent } from '@zambon/library';
+import { RibbonComponent, RibbonGroupComponent } from '@zambon-dev/library';
 import { of } from 'rxjs';
 import { ButtonComponent } from '../../components/buttons/button/button.component';
 import { ButtonConfirmComponent } from '../../components/buttons/button-confirm/button-confirm.component';

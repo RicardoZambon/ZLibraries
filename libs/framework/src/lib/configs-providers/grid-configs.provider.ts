@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DataGridConfigs, DataGridConfigsProvider } from '@zambon/library';
+import { DataGridConfigs, DataGridConfigsProvider } from '@zambon-dev/library';
 
 @Injectable()
 export class FrameworkGridConfigsProvider extends DataGridConfigsProvider {

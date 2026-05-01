@@ -18,13 +18,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@zambon/framework": [
+      "@zambon-dev/framework": [
         "libs/framework/src/index.ts"
       ],
-      "@zambon/library": [
+      "@zambon-dev/library": [
         "libs/library/src/index.ts"
       ],
-      "@zambon/shared": [
+      "@zambon-dev/shared": [
         "libs/shared/src/index.ts"
       ]
     }

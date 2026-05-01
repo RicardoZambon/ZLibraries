@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { DataGridDataset, IGridColumn, IListParameters } from '@zambon/library';
+import { DataGridDataset, IGridColumn, IListParameters } from '@zambon-dev/library';
 import { Observable, of } from 'rxjs';
 import { IServicesHistoryList } from '../models';
 import { ServicesHistoryService } from '../services';

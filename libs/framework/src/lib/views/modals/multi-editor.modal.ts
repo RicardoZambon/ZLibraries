@@ -1,6 +1,6 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { DataGridDataset, DataProviderService, FormService, MultiEditorComponent, MultiEditorDataset } from '@zambon/library';
+import { DataGridDataset, DataProviderService, FormService, MultiEditorComponent, MultiEditorDataset } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { ModalBase } from './modal-base';
 

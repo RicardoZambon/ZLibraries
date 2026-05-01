@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, forwardRef, inject, Input, ViewChild } from '@angular/core';
-import { FormService, RibbonButtonComponent, RibbonGroupChild } from '@zambon/library';
+import { FormService, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { take } from 'rxjs';
 import { BackendFormValidationHelper } from '../../../../helpers';
 import { TabService } from '../../../../services';

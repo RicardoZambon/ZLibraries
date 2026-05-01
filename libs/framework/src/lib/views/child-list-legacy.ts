@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { DataGridDataset, MultiSelectResultDataset } from '@zambon/library';
+import { DataGridDataset, MultiSelectResultDataset } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { ViewBase } from './view-base';
 
