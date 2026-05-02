@@ -31,5 +31,25 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": false
+  "sideEffects": [
+    "**/*.scss"
+  ],
+  "style": "styles/variables.scss",
+  "exports": {
+    "./styles": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    },
+    "./styles/variables": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    },
+    "./styles/variables.scss": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    }
+  }
 }

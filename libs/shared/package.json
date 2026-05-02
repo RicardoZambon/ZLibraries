@@ -29,7 +29,8 @@
     "@auth0/angular-jwt": "^5.2.0",
     "@zambon-dev/framework": "^1.0.0",
     "@zambon-dev/library": "^1.0.0",
-    "@ngx-translate/core": "^16.0.4"
+    "@ngx-translate/core": "^16.0.4",
+    "ngx-translate-multi-http-loader": "^19.0.2"
   },
   "publishConfig": {
     "access": "public"
@@ -37,5 +38,35 @@
   "sideEffects": [
     "**/*.scss"
   ],
-  "style": "styles/common.scss"
+  "style": "styles/common.scss",
+  "exports": {
+    "./styles": {
+      "sass": "./styles/common.scss",
+      "style": "./styles/common.scss",
+      "default": "./styles/common.scss"
+    },
+    "./styles/common": {
+      "sass": "./styles/common.scss",
+      "style": "./styles/common.scss",
+      "default": "./styles/common.scss"
+    },
+    "./styles/common.scss": {
+      "sass": "./styles/common.scss",
+      "style": "./styles/common.scss",
+      "default": "./styles/common.scss"
+    },
+    "./styles/variables": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    },
+    "./styles/variables.scss": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    },
+    "./i18n/*": {
+      "default": "./i18n/*"
+    }
+  }
 }

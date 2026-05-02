@@ -6,6 +6,11 @@
       "glob": "**/*.scss",
       "input": "src/styles",
       "output": "styles"
+    },
+    {
+      "glob": "**/*.json",
+      "input": "src/i18n",
+      "output": "i18n"
     }
   ],
   "lib": {
