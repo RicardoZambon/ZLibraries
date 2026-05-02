@@ -3,6 +3,7 @@ export * from './lib/configs';
 export * from './lib/configs-providers';
 export * from './lib/framework.module';
 export * from './lib/helpers';
+export * from './lib/i18n';
 export * from './lib/models';
 export * from './lib/services';
 export * from './lib/validators';
