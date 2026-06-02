@@ -3,6 +3,7 @@ export { BaseFormViewButton } from './base-form-view-button';
 export { ButtonConfirmComponent } from './button-confirm/button-confirm.component';
 export { ButtonDeleteComponent } from './button-delete/button-delete.component';
 export { ButtonEditComponent } from './button-edit/button-edit.component';
+export { ButtonExportComponent, ExportFormat, MaxExportRows } from './button-export/button-export.component';
 export { ButtonFiltersComponent } from './button-filters/button-filters.component';
 export { ButtonNewComponent } from './button-new/button-new.component';
 export { ButtonOpenRecordComponent } from './button-open-record/button-open-record.component';

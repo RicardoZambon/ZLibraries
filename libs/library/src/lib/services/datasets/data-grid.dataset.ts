@@ -1,5 +1,8 @@
+import { HttpResponse } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
 import { DataGridConfigs } from '../../models/configs/data-grid-configs';
+import { IListParameters } from '../../models/data-grid-parameters';
 import { IGridColumn } from '../../models/grid-column';
 import { GridDataset } from './grid.dataset';
 
@@ -61,6 +64,10 @@ export abstract class DataGridDataset extends GridDataset {
       };
       return keys;
     }, {}));
+  }
+
+  public export(_format: string, _parameters: IListParameters): Observable<HttpResponse<Blob>> {
+    return throwError(() => new Error(`Export is not implemented for ${this.constructor.name}.`));
   }
 
   public deselectRow(key: string): void {
