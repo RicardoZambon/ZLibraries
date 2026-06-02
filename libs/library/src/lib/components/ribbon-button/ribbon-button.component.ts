@@ -28,6 +28,7 @@ export class RibbonButtonComponent {
   @Input() public label: string = '';
   @Input() public loading: boolean = false;
   @Input() public options: IRibbonButtonOption[] = [];
+  @Input() public tooltip: string = '';
 
   @Output() public action = new EventEmitter<string | undefined>();
   //#endregion

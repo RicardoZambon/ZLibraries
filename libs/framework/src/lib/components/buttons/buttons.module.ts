@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { ButtonDeleteComponent } from './button-delete/button-delete.component';
 import { ButtonEditComponent } from './button-edit/button-edit.component';
+import { ButtonExportComponent } from './button-export/button-export.component';
 import { ButtonFiltersComponent } from './button-filters/button-filters.component';
 import { ButtonNewComponent } from './button-new/button-new.component';
 import { ButtonOpenRecordComponent } from './button-open-record/button-open-record.component';
@@ -15,6 +16,7 @@ import { ButtonEditLegacyComponent, ButtonNewLegacyComponent, ButtonOpenRecordLe
   imports: [
     ButtonDeleteComponent,
     ButtonEditComponent,
+    ButtonExportComponent,
     ButtonFiltersComponent,
     ButtonNewComponent,
     ButtonOpenRecordComponent,
@@ -31,6 +33,7 @@ import { ButtonEditLegacyComponent, ButtonNewLegacyComponent, ButtonOpenRecordLe
   exports: [
     ButtonDeleteComponent,
     ButtonEditComponent,
+    ButtonExportComponent,
     ButtonFiltersComponent,
     ButtonNewComponent,
     ButtonOpenRecordComponent,

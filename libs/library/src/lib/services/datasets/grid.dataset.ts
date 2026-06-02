@@ -19,6 +19,7 @@ export abstract class GridDataset extends BaseDataset {
   public loadedLastRow: boolean = false;
   public loadFinished: EventEmitter<boolean> = new EventEmitter<boolean>();
   public loadStarted: EventEmitter<void> = new EventEmitter<void>();
+  public totalRows?: number;
 
   protected compareProperty: string = 'id';
   protected configsProvider: GridConfigsProvider;
@@ -145,7 +146,15 @@ export abstract class GridDataset extends BaseDataset {
     this.getData(parameters)
       .pipe(take(1))
       .subscribe({
-        next: (rows: any[]) => {
+        next: (response: any[] | { items: any[]; totalRows: number }) => {
+          let rows: any[];
+          if (Array.isArray(response)) {
+            rows = response;
+          } else {
+            rows = response?.items ?? [];
+            this.totalRows = response?.totalRows;
+          }
+
           this.updateLoadedRows(rows ?? []);
 
           this.isLoading = false;
@@ -222,6 +231,7 @@ export abstract class GridDataset extends BaseDataset {
     this._loadedKeys = undefined;
     this.recordBlock = 0;
     this.loadedLastRow = false;
+    this.totalRows = undefined;
   }
 
   protected updateLoadedRows(rows: any[]): void {
@@ -241,6 +251,6 @@ export abstract class GridDataset extends BaseDataset {
   //#endregion
 
   //#region Abstract methods
-  abstract getData(params?: any): Observable<any[]>;
+  abstract getData(params?: any): Observable<any[] | { items: any[]; totalRows: number }>;
   //#endregion
 }

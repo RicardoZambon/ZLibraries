@@ -14,6 +14,7 @@ describe('RibbonButtonComponent', () => {
     component.label = 'Test';
     component.loading = false;
     component.options = [];
+    component.tooltip = '';
     component.action = { emit: jest.fn() } as any;
     (component as any).showDropdown = false;
     (component as any).clickedOutside = false;
@@ -138,6 +139,12 @@ describe('RibbonButtonComponent', () => {
       component.startLoading();
 
       expect(component.loading).toBe(true);
+    });
+  });
+
+  describe('tooltip', () => {
+    it('should expose an empty tooltip by default', () => {
+      expect(component.tooltip).toBe('');
     });
   });
 
