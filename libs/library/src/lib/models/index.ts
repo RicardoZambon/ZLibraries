@@ -4,6 +4,7 @@ export { ICatalogResult } from './catalog-result';
 export * from './configs';
 export { IListParameters, ISummaryParameters } from './data-grid-parameters';
 export { IGridColumn } from './grid-column';
+export { IListResult } from './list-result';
 export { IModal } from './modal.interface';
 export { IMultiEditorChanges } from './multi-editor-changes';
 export { IMultiSelectorChanges } from './multi-selector-changes';
