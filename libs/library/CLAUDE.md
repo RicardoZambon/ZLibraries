@@ -173,6 +173,7 @@ All datasets extend `BaseDataset` (abstract base with `destroy$` for cleanup).
 | `IModal` | Modal contract (isShown, toggleModal, closeModal) |
 | `IMultiEditorChanges` / `IMultiSelectorChanges` | Change tracking for multi-editor/multi-select |
 | `IListParameters` | Query parameters for paginated list/summary endpoints |
+| `IListResult<T>` | Paginated list response wrapper (`items`, `totalRows`) |
 | `DataGridConfigs` / `GridConfigs` | Grid rendering configuration (rowHeight, multiSelect, messages) |
 | `SidebarMenu` / `SidebarProfile` / `SidebarConfigs` | Sidebar data types |
 
