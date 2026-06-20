@@ -13,6 +13,22 @@ npx nx test library          # Run Jest tests
 npx jest --config libs/library/jest.config.ts --testPathPattern="my-component"  # Single test
 ```
 
+## Changelog (required)
+
+Every change to this library MUST be recorded in `libs/library/CHANGELOG.md` under the
+`## [Unreleased]` section before the task is considered complete. Write the entry for the
+**package consumer**, not for us:
+
+- **What changed / what's new** — under `Added` / `Changed` / `Fixed` / `Deprecated` / `Removed`.
+- **How to upgrade** — under `⚠ Breaking Changes / Migration`, list the concrete steps a
+  consumer must take when moving to this version (renamed `@Input()`s, new required providers,
+  changed selectors, peer-dependency bumps, etc.). If there are none, write "None".
+
+Do **not** set the version number or date — the release pipeline stamps `[Unreleased]` into
+`## [x.y.z] - date` (tag `library-vx.y.z`) on publish. Follow
+[Conventional Commits](https://www.conventionalcommits.org/) so `semantic-release` picks the
+correct bump (`fix`/`refactor` → patch, `feat` → minor, breaking → major).
+
 ## Architecture Overview
 
 The library provides foundational UI building blocks consumed by `@framework` and application code. It has no dependency on `@framework` or `@shared`.
@@ -173,6 +189,7 @@ All datasets extend `BaseDataset` (abstract base with `destroy$` for cleanup).
 | `IModal` | Modal contract (isShown, toggleModal, closeModal) |
 | `IMultiEditorChanges` / `IMultiSelectorChanges` | Change tracking for multi-editor/multi-select |
 | `IListParameters` | Query parameters for paginated list/summary endpoints |
+| `IListResult<T>` | Paginated list response wrapper (`items`, `totalRows`) |
 | `DataGridConfigs` / `GridConfigs` | Grid rendering configuration (rowHeight, multiSelect, messages) |
 | `SidebarMenu` / `SidebarProfile` / `SidebarConfigs` | Sidebar data types |
 

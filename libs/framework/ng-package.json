@@ -3,6 +3,11 @@
   "dest": "../../dist/libs/framework",
   "assets": [
     {
+      "glob": "CHANGELOG.md",
+      "input": ".",
+      "output": "."
+    },
+    {
       "glob": "**/*.json",
       "input": "src/i18n",
       "output": "i18n"
