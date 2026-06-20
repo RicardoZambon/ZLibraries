@@ -21,7 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `framework-button-export` now forwards its `iconSize` input to the underlying ribbon button,
+  so setting `iconSize` correctly resizes the export button's icon. Previously the input was
+  ignored and the icon always rendered at the default size.
+
 ### ⚠ Breaking Changes / Migration
+
+None.
 
 ## [1.1.0] - 2026-06-02
 
