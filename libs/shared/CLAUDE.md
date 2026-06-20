@@ -12,6 +12,22 @@ npx nx lint shared            # Run ESLint
 npx nx test shared            # Run Jest tests
 ```
 
+## Changelog (required)
+
+Every change to this library MUST be recorded in `libs/shared/CHANGELOG.md` under the
+`## [Unreleased]` section before the task is considered complete. Write the entry for the
+**package consumer**, not for us:
+
+- **What changed / what's new** — under `Added` / `Changed` / `Fixed` / `Deprecated` / `Removed`.
+- **How to upgrade** — under `⚠ Breaking Changes / Migration`, list the concrete steps a
+  consumer must take when moving to this version (renamed `@Input()`s, new required providers,
+  changed selectors, peer-dependency bumps, etc.). If there are none, write "None".
+
+Do **not** set the version number or date — the release pipeline stamps `[Unreleased]` into
+`## [x.y.z] - date` (tag `shared-vx.y.z`) on publish. Follow
+[Conventional Commits](https://www.conventionalcommits.org/) so `semantic-release` picks the
+correct bump (`fix`/`refactor` → patch, `feat` → minor, breaking → major).
+
 ## Architecture Overview
 
 The shared library sits between the framework and application layers. It provides concrete implementations of framework abstractions (e.g., `AuthenticationService` extends `AuthService`) and reusable features consumed by multiple apps.

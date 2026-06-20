@@ -12,6 +12,22 @@ npx nx lint framework         # Run ESLint
 npx nx test framework         # Run Jest tests
 ```
 
+## Changelog (required)
+
+Every change to this library MUST be recorded in `libs/framework/CHANGELOG.md` under the
+`## [Unreleased]` section before the task is considered complete. Write the entry for the
+**package consumer**, not for us:
+
+- **What changed / what's new** — under `Added` / `Changed` / `Fixed` / `Deprecated` / `Removed`.
+- **How to upgrade** — under `⚠ Breaking Changes / Migration`, list the concrete steps a
+  consumer must take when moving to this version (renamed `@Input()`s, new required providers,
+  changed selectors, peer-dependency bumps, etc.). If there are none, write "None".
+
+Do **not** set the version number or date — the release pipeline stamps `[Unreleased]` into
+`## [x.y.z] - date` (tag `framework-vx.y.z`) on publish. Follow
+[Conventional Commits](https://www.conventionalcommits.org/) so `semantic-release` picks the
+correct bump (`fix`/`refactor` → patch, `feat` → minor, breaking → major).
+
 ## Architecture Overview
 
 The framework follows a layered architecture:

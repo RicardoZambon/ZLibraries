@@ -67,3 +67,45 @@ jobs:
         env:
           SEMANTIC_RELEASE_VALIDATION: 'true'
         run: npx --no-install semantic-release --dry-run --no-ci -e semantic-release-monorepo
+
+  changelog-check:
+    name: Changelog check
+    runs-on: ubuntu-latest
+    # Tooling/CI-only PRs can skip this by adding the "no-changelog" label.
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-changelog') }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify CHANGELOG updates
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+
+          git fetch --no-tags origin "$BASE_REF"
+          base="origin/$BASE_REF"
+
+          changed="$(git diff --name-only "$base"...HEAD)"
+
+          missing=()
+          for lib in library framework shared; do
+            if echo "$changed" | grep -q "^libs/$lib/src/"; then
+              if ! echo "$changed" | grep -q "^libs/$lib/CHANGELOG.md$"; then
+                missing+=("$lib")
+              fi
+            fi
+          done
+
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::These packages changed but their CHANGELOG.md was not updated: ${missing[*]}"
+            echo "Add an entry under '## [Unreleased]' in libs/<package>/CHANGELOG.md."
+            echo "If this PR genuinely needs no changelog (tooling/CI only), add the 'no-changelog' label."
+            exit 1
+          fi
+
+          echo "Changelog check passed."
