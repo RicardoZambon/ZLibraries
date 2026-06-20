@@ -21,6 +21,13 @@ const plugins = [
 if (!isValidation) {
   plugins.push(
     [
+      '@semantic-release/exec',
+      {
+        // Stamp the published package's CHANGELOG with the resolved version.
+        prepareCmd: 'node ../../scripts/stamp-changelog.mjs shared ${nextRelease.version} --dist',
+      },
+    ],
+    [
       '@semantic-release/npm',
       {
         pkgRoot: '../../dist/libs/shared',

@@ -3,6 +3,11 @@
   "dest": "../../dist/libs/shared",
   "assets": [
     {
+      "glob": "CHANGELOG.md",
+      "input": ".",
+      "output": "."
+    },
+    {
       "glob": "**/*.scss",
       "input": "src/styles",
       "output": "styles"

@@ -56,7 +56,8 @@ jobs:
             semantic-release-monorepo \
             @semantic-release/commit-analyzer \
             @semantic-release/release-notes-generator \
-            @semantic-release/npm
+            @semantic-release/npm \
+            @semantic-release/exec
 
       - name: Build ${{ matrix.package.project }}
         run: npx nx run ${{ matrix.package.project }}:build --configuration=production
@@ -136,6 +137,43 @@ jobs:
             printf '%s\n' "$tags"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node.js
+        if: steps.package-tags.outputs.released == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Stamp and commit package changelogs
+        if: steps.package-tags.outputs.released == 'true'
+        shell: bash
+        env:
+          PACKAGE_TAGS: ${{ steps.package-tags.outputs.tags }}
+        run: |
+          set -euo pipefail
+
+          # Turn each released package's `[Unreleased]` section into its version.
+          while IFS= read -r tag; do
+            [ -n "$tag" ] || continue
+            case "$tag" in
+              library-v*)   node scripts/stamp-changelog.mjs library   "${tag#library-v}"   --source ;;
+              framework-v*) node scripts/stamp-changelog.mjs framework "${tag#framework-v}" --source ;;
+              shared-v*)    node scripts/stamp-changelog.mjs shared    "${tag#shared-v}"    --source ;;
+              *) ;;
+            esac
+          done <<< "$PACKAGE_TAGS"
+
+          if git diff --quiet -- libs/*/CHANGELOG.md; then
+            echo "No changelog changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add libs/*/CHANGELOG.md
+          git commit -m "chore(release): stamp package changelogs [skip ci]"
+          # Single push back to the branch — avoids the race of per-package commits.
+          git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - name: Create aggregate GitHub release
         if: steps.package-tags.outputs.released == 'true'
