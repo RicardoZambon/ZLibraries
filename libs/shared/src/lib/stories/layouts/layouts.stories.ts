@@ -1,7 +1,8 @@
 import { RouteReuseStrategy } from '@angular/router';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { CustomReuseStrategy, TabService } from '@zambon-dev/framework';
+import { APP_CONFIG, AppConfig, CustomReuseStrategy, TabService } from '@zambon-dev/framework';
 import { ISidebarProfile, SidebarMenu, SidebarService } from '@zambon-dev/library';
+import { AuthenticationService } from '@zambon-dev/shared';
 import { Observable, of } from 'rxjs';
 import { LoginComponent } from '../../auth/components/login/login.component';
 import { LoginLayoutComponent } from '../../layouts/login-layout/login-layout.component';
@@ -56,6 +57,44 @@ export default meta;
 type Story = StoryObj<MainLayoutComponent>;
 
 export const MainLayout: Story = {
+  render: () => ({
+    template: `
+      <div class="h-[40rem] bg-slate-100">
+        <shared-main-layout></shared-main-layout>
+      </div>
+    `,
+  }),
+};
+
+// Renders the full layout with a populated AppConfig and a user that has a position,
+// so the top bar shows the brand (app + company), the environment badge, the language
+// selector, the notifications bell (empty placeholder), and the user profile.
+export const TopBar: Story = {
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: APP_CONFIG,
+          useValue: new AppConfig('', {
+            appName: 'Engineering Change',
+            companyName: 'Zilia Technologies',
+            environment: 'QA',
+          }),
+        },
+        {
+          provide: AuthenticationService,
+          useValue: {
+            getUserInfo: () => ({
+              name: 'Fernando Vasconcelos',
+              costCenterName: 'TI',
+              position: 'Gerente Sistemas TI II',
+            }),
+            signOut: () => undefined,
+          },
+        },
+      ],
+    }),
+  ],
   render: () => ({
     template: `
       <div class="h-[40rem] bg-slate-100">
