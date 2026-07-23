@@ -1,0 +1,30 @@
+@reference "tailwindcss";
+
+.user-profile {
+    @apply flex items-center gap-2 min-w-0;
+
+    .user-avatar {
+        @apply flex items-center justify-center h-9 w-9 rounded-full shrink-0 overflow-hidden;
+        @apply bg-primary-100 text-primary-700;
+    }
+
+    .user-avatar-img {
+        @apply h-full w-full object-cover;
+    }
+
+    .user-avatar-initials {
+        @apply text-sm font-semibold uppercase;
+    }
+
+    .user-text {
+        @apply flex flex-col min-w-0 leading-tight;
+    }
+
+    .user-name {
+        @apply font-medium text-sm truncate;
+    }
+
+    .user-position {
+        @apply text-xs text-stone-500 truncate;
+    }
+}

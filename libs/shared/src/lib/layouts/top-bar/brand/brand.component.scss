@@ -1,0 +1,21 @@
+@reference "tailwindcss";
+
+.brand {
+    @apply flex items-center gap-2 min-w-0;
+
+    .brand-logo {
+        @apply h-8 w-8 object-contain shrink-0;
+    }
+
+    .brand-text {
+        @apply flex flex-col min-w-0 leading-tight;
+    }
+
+    .brand-app {
+        @apply font-semibold text-sm truncate;
+    }
+
+    .brand-company {
+        @apply text-xs text-stone-500 truncate;
+    }
+}

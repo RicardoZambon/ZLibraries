@@ -1,19 +1,7 @@
 <div class="main-container">
     <lib-sidebar #sidebar></lib-sidebar>
 
-    <div class="toolbar">
-        <div>
-            <button class="btn" (click)="sidebar.collapse()">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-        </div>
-        <div>
-            <button class="btn gray-300" (click)="onLogoutClick()">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                <span>{{ 'Main-Logout' | translate }}</span>
-            </button>
-        </div>
-    </div>
+    <shared-top-bar class="toolbar" (collapse)="sidebar.collapse()" (logout)="onLogoutClick()"></shared-top-bar>
 
     <div class="content">
         <framework-tabs>

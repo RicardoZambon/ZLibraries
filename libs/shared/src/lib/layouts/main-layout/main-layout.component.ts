@@ -5,6 +5,7 @@ import { ModalComponent, SidebarComponent, SidebarMenu, SidebarService } from '@
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, take, takeUntil } from 'rxjs';
 import { AuthenticationService } from '../../services';
+import { TopBarComponent } from '../top-bar';
 
 @Component({
   selector: 'shared-main-layout',
@@ -16,6 +17,7 @@ import { AuthenticationService } from '../../services';
     RouterModule,
     TabsComponent,
     TranslatePipe,
+    TopBarComponent,
   ]
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {

@@ -1,0 +1,59 @@
+@reference "tailwindcss";
+
+.notifications {
+    @apply relative;
+
+    .notifications-toggle {
+        @apply relative;
+    }
+
+    .notifications-badge {
+        @apply absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full;
+        @apply flex items-center justify-center text-[10px] font-bold leading-none;
+        @apply bg-red-600 text-white;
+    }
+
+    .notifications-panel {
+        @apply absolute right-0 top-full mt-1 z-50 w-80 max-w-[90vw];
+        @apply rounded-md border border-stone-200 bg-white;
+        @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
+    }
+
+    .notifications-header {
+        @apply flex items-center justify-between px-3 py-2 border-b border-stone-200;
+        @apply text-sm font-semibold;
+    }
+
+    .notifications-mark-all {
+        @apply text-xs font-medium text-primary-400 hover:text-primary-500;
+    }
+
+    .notifications-list {
+        @apply max-h-80 overflow-y-auto;
+
+        .notifications-item {
+            @apply border-b border-stone-100 last:border-b-0;
+
+            &.unread {
+                @apply bg-primary-50/60;
+            }
+
+            .notifications-item-btn {
+                @apply flex flex-col gap-0.5 w-full px-3 py-2 text-left cursor-pointer;
+                @apply hover:bg-stone-50;
+            }
+
+            .notifications-item-title {
+                @apply text-sm font-medium;
+            }
+
+            .notifications-item-message {
+                @apply text-xs text-stone-500;
+            }
+        }
+    }
+
+    .notifications-empty {
+        @apply px-3 py-6 text-center text-sm text-stone-500;
+    }
+}

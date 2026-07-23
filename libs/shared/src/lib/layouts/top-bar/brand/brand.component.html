@@ -1,0 +1,12 @@
+<div class="brand">
+    @if (logoUrl) {
+        <img class="brand-logo" [src]="logoUrl" [alt]="appName" />
+    }
+
+    <div class="brand-text">
+        <span class="brand-app">{{ appName }}</span>
+        @if (companyName) {
+            <span class="brand-company">{{ companyName }}</span>
+        }
+    </div>
+</div>

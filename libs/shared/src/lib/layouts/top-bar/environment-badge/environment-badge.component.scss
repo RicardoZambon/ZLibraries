@@ -1,0 +1,21 @@
+@reference "tailwindcss";
+
+.env-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide;
+
+    &.env-dev {
+        @apply bg-blue-100 text-blue-700;
+    }
+
+    &.env-qa {
+        @apply bg-amber-100 text-amber-700;
+    }
+
+    &.env-stg {
+        @apply bg-violet-100 text-violet-700;
+    }
+
+    &.env-neutral {
+        @apply bg-stone-200 text-stone-600;
+    }
+}

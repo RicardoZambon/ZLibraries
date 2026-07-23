@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `AppConfig` now accepts optional application metadata through a second `options` argument:
+  `appName`, `companyName`, `environment`, and `logoUrl`. These are consumed by the shared
+  application top bar. Existing `new AppConfig(baseUrl)` calls continue to work unchanged.
+
 ### Changed
 
 ### Deprecated
