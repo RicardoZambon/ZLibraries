@@ -1,0 +1,20 @@
+<div class="top-bar">
+    <div class="top-bar-section top-bar-start">
+        <shared-brand></shared-brand>
+        <shared-environment-badge></shared-environment-badge>
+    </div>
+
+    <div class="top-bar-section top-bar-end">
+        <shared-notifications></shared-notifications>
+        <shared-language-selector [showFlag]="true"></shared-language-selector>
+
+        <!-- Theme switch slot (deferred — see 2026-07-23-top-bar-update-design.md) -->
+
+        <shared-user-profile></shared-user-profile>
+
+        <button class="btn gray-300 top-bar-logout" type="button" (click)="onLogoutClick()"
+            [attr.aria-label]="'Main-Logout' | translate">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </button>
+    </div>
+</div>

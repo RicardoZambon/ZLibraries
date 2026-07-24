@@ -1,4 +1,3 @@
-import { NgClass, NgFor } from '@angular/common';
 import { Component, ElementRef, HostListener, inject, Input, ViewChild } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
@@ -7,14 +6,15 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
   imports: [
-    NgClass,
-    NgFor,
     TranslatePipe,
   ]
 })
 export class LanguageSelectorComponent {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('dropdown') public dropdown!: ElementRef<HTMLDivElement>;
+
+  /** When true, the toggle shows the current language's flag (light-gray button) instead of text. */
+  @Input() public showFlag = false;
 
   @Input() public title: string = 'LanguageSelector-Title';
   //#endregion

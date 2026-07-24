@@ -1,43 +1,51 @@
 .dropdown {
-    
+
     .btn {
         @apply w-full font-medium;
     }
 
-    ul {
-        @apply max-w-[188px] w-full;
+    .flag {
+        @apply inline-block w-6 h-4 bg-center bg-cover rounded-sm shrink-0 ring-1 ring-black/10;
 
-        li {
-            @apply my-1 first:mt-0 last:mb-0;
-            @apply shadow-[0_0_3px_0_rgba(0,0,0,0.3),0_0_10px_0_rgba(0,0,0,0.3)];
+        &.flag-en {
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 40"%3E%3Crect width="76" height="40" fill="%23b22234"/%3E%3Cg fill="%23fff"%3E%3Crect y="3" width="76" height="3"/%3E%3Crect y="9" width="76" height="3"/%3E%3Crect y="15" width="76" height="3"/%3E%3Crect y="22" width="76" height="3"/%3E%3Crect y="28" width="76" height="3"/%3E%3Crect y="34" width="76" height="3"/%3E%3C/g%3E%3Crect width="30" height="22" fill="%233c3b6e"/%3E%3C/svg%3E');
         }
 
+        &.flag-pt {
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 49"%3E%3Crect width="70" height="49" fill="%23009c3b"/%3E%3Cpath d="M35 6L64 24.5L35 43L6 24.5Z" fill="%23ffdf00"/%3E%3Ccircle cx="35" cy="24.5" r="9.8" fill="%23002776"/%3E%3C/svg%3E');
+        }
+    }
+
+    .lang-flag-toggle {
+        @apply w-auto flex items-center justify-center h-9 px-2.5 border-0;
+
+        // Match the dropdown caret color to the other top-bar icons (currentColor),
+        // and add a little more space between the flag and the caret.
+        &:after {
+            border-top-color: currentColor;
+            margin-left: 0.325rem;
+        }
+    }
+
+    // Match the notifications dropdown chrome (border, radius, background, shadow) for consistency.
+    ul {
+        @apply min-w-[11rem] mt-1 p-1 z-50;
+        @apply rounded-md border border-stone-200 bg-white backdrop-blur-none;
+        @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
+
         .dropdown-item {
-            @apply relative contrast-125 font-bold;
+            @apply flex items-center gap-2 w-full px-3 py-2 rounded cursor-pointer select-none;
+            @apply text-sm text-left text-stone-700;
+            @apply hover:bg-stone-100 hover:text-stone-700;
+            @apply focus:bg-stone-100 focus:outline-none;
+            @apply active:bg-stone-200 active:text-stone-700;
 
-            &:before {
-                @apply absolute inset-0 content-[''] -z-10;
-                @apply bg-gradient-to-r from-white/80 to-white/30;
-            }
-            
-            &:hover:before, &:focus:before {
-                @apply bg-gradient-to-r from-neutral-200/80 to-neutral-200/30;
-            }
+            &.selected {
+                @apply bg-primary-50 text-primary-700 font-semibold;
 
-            &:active:before {
-                @apply bg-gradient-to-r from-primary-400/80 to-primary-400/30;
-            }
-
-            &:not(.selected):before {
-                @apply backdrop-grayscale;
-            }
-
-            &.flag-en {
-                @apply bg-[url('/flags/en.png')];
-            }
-
-            &.flag-pt {
-                @apply bg-[url('/flags/pt.png')];
+                &:hover {
+                    @apply bg-primary-100;
+                }
             }
         }
     }

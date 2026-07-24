@@ -3,23 +3,6 @@
 @mixin expanded {
     width: var(--sidebar-expanded-width);
 
-    .header {
-        .logo-container img {
-            &.collapsed {
-                @apply opacity-0;
-            }
-
-            &.expanded {
-                @apply opacity-100;
-            }
-        }
-
-        .profile-container .profile {
-            @apply opacity-100 pl-2;
-            width: calc(var(--sidebar-expanded-width) - var(--sidebar-picture-size) - 24px); /* 24px = mx-3 (12px each side) */
-        }
-    }
-
     .loading, .error {
         i {
             @apply text-lg ml-0;
@@ -37,17 +20,19 @@
 }
 
 :host {
-    @apply grid h-full select-none overflow-x-hidden;
+    // Position/z-index so the collapse handle can straddle the right edge and sit above the content.
+    @apply grid h-full select-none relative z-20;
     @apply bg-primary-600;
     @apply transition-[margin-left,width] ease-in-out;
     margin-left: calc(var(--sidebar-collapsed-width) * -1);
     transition-duration: var(--sidebar-animation-duration);
     width: var(--sidebar-collapsed-width);
     will-change: margin-left, width;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
     grid-template-areas:
-        "header"
-        "nav";
+        "toolbar"
+        "nav"
+        "footer";
 
     @screen md {
         @apply ml-0;
@@ -66,67 +51,46 @@
     }
 }
 
-.header {
-    @apply pt-2 pb-3;
-    grid-area: header;
+.sidebar-toolbar {
+    // Symmetric vertical padding so the handle sits equidistant from the top bar and the first item.
+    @apply flex justify-end pt-2 pb-2;
+    grid-area: toolbar;
 
-    .logo-container {
-        @apply relative text-center w-full overflow-hidden;
-        height: var(--sidebar-logo-height);
+    // A light circular "handle" that straddles the sidebar's right edge (sits on the divider),
+    // pointing left to collapse and right to expand. High contrast against the blue rail.
+    .sidebar-toggle {
+        @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 cursor-pointer z-20;
+        @apply bg-white text-primary-600 shadow-md ring-1 ring-black/5 transition-colors;
+        @apply hover:bg-gray-100 hover:text-primary-700;
+        transform: translateX(40%);
 
-        img {
-            @apply m-auto max-h-full min-w-fit;
-            @apply transition-opacity ease-in-out;
-            transition-duration: var(--sidebar-animation-duration);
-            will-change: opacity;
-
-            &.expanded {
-                @apply absolute top-0 left-1/2 -translate-x-1/2;
-                @apply opacity-0;
-            }
-        }
-    }
-
-    .profile-container {
-        @apply mt-2 mx-3 flex flex-nowrap;
-        height: var(--sidebar-picture-size);
-
-        .picture {
-            @apply rounded-full overflow-hidden flex-shrink-0;
-            min-width: var(--sidebar-picture-size);
-            width: var(--sidebar-picture-size);
-
-            img {
-                min-width: var(--sidebar-picture-size);
-            }
-        }
-
-        .profile {
-            @apply pl-0 whitespace-nowrap w-0 opacity-0 ease-in-out overflow-hidden;
-            transition: opacity var(--sidebar-animation-duration) ease-in-out,
-                        padding-left var(--sidebar-animation-duration) ease-in-out,
-                        width var(--sidebar-animation-duration) ease-in-out;
-            will-change: width, opacity, padding-left;
-
-            h4, h5 {
-                @apply overflow-hidden text-ellipsis;
-                height: calc(var(--sidebar-picture-size) / 2);
-                animation: text-clip 200ms forwards;
-            }
-            
-            h4 {
-                @apply font-medium text-white;
-            }
-
-            h5 {
-                @apply text-sm text-gray-300;
-            }
+        i {
+            @apply text-sm;
         }
     }
 }
 
+// Content-projection slot at the bottom of the sidebar (e.g. the app version). Hidden when the
+// rail is collapsed, and collapsed entirely when nothing is projected.
+.sidebar-footer {
+    @apply px-4 py-2 text-xs text-center text-gray-300/60 whitespace-nowrap overflow-hidden;
+    @apply opacity-0 transition-opacity ease-in-out;
+    transition-duration: var(--sidebar-animation-duration);
+    grid-area: footer;
+
+    &:empty {
+        @apply hidden;
+    }
+}
+
+:host(.expanded) .sidebar-footer,
+:host(.active) .sidebar-footer {
+    @apply opacity-100;
+}
+
 nav {
-    @apply overflow-y-auto;
+    // Clip the horizontal overflow here (moved off :host so the collapse handle can overhang the edge).
+    @apply overflow-y-auto overflow-x-hidden;
     grid-area: nav;
     
     /* Firefox support */

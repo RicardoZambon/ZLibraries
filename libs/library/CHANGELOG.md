@@ -13,7 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `SidebarComponent` now renders its own collapse/expand toggle: a light circular chevron "handle"
+  that straddles the sidebar's right edge (`angle-left` to collapse when expanded, `angle-right` to
+  expand when collapsed), matching the conventional rail-collapse affordance.
+- `SidebarComponent` now has a content-projection slot (`<ng-content>`) rendered as a footer at the
+  bottom of the sidebar — for extra elements after the menu (e.g. an app version). It is hidden when
+  the rail is collapsed and collapses entirely when nothing is projected.
+
 ### Changed
+
+- `SidebarComponent` no longer renders the logo or the user-profile header — it now shows only the
+  navigation toggle and menu. Application branding and user identity are expected to live in the top
+  bar (`shared-top-bar` in `@shared`).
+- Sidebar menu items now use an on-palette hover surface (a subtle light overlay) instead of the
+  previous off-palette `slate-700`.
 
 ### Deprecated
 
@@ -22,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+If you relied on the sidebar's logo (`SidebarConfigs.logoCollapsedPath` / `logoExpandedPath`) or its
+user profile (`SidebarService.getUserProfile()`), move that presentation to the top bar. Those
+config options and the `getUserProfile()` method still exist but are no longer consumed by
+`SidebarComponent`.
 
 ## [1.3.0] - 2026-05-01
 

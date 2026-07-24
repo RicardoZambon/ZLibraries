@@ -1,0 +1,17 @@
+@reference "tailwindcss";
+
+.top-bar {
+    @apply flex items-center justify-between gap-3 w-full;
+
+    .top-bar-end {
+        @apply shrink-0;
+    }
+
+    .top-bar-section {
+        @apply flex items-center gap-3 min-w-0;
+    }
+
+    .top-bar-start {
+        @apply min-w-0;
+    }
+}

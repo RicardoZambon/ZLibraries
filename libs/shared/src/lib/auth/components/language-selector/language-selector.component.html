@@ -1,16 +1,23 @@
 <div #dropdown class="dropdown right" [class.show]="showDropdown">
-    <button class="btn" type="button" (click)="onDropdownClick()">
-        {{ title | translate }}
+    <button class="btn" type="button" (click)="onDropdownClick()"
+        [class.gray-300]="showFlag" [class.lang-flag-toggle]="showFlag"
+        [attr.aria-label]="showFlag ? (title | translate) : null">
+        @if (showFlag) {
+            <span class="flag flag-{{ selectedLanguage }}"></span>
+        } @else {
+            {{ title | translate }}
+        }
     </button>
 
     <ul>
-        <li *ngFor="let lang of languages">
-            <a class="dropdown-item flag-{{ lang }}"
-            [ngClass]="{'selected': lang === selectedLanguage}"
-            (click)="onSelectLanguage(lang)"
-            >
-                {{ 'Language-' + lang | translate }}
-            </a>
-        </li>
+        @for (lang of languages; track lang) {
+            <li>
+                <button type="button" class="dropdown-item" [class.selected]="lang === selectedLanguage"
+                    (click)="onSelectLanguage(lang)">
+                    <span class="flag flag-{{ lang }}"></span>
+                    <span class="dropdown-label">{{ 'Language-' + lang | translate }}</span>
+                </button>
+            </li>
+        }
     </ul>
 </div>

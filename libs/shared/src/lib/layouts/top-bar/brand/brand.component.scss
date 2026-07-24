@@ -1,0 +1,26 @@
+@reference "tailwindcss";
+
+.brand {
+    @apply flex items-center gap-2 min-w-0;
+
+    .brand-app {
+        @apply font-semibold text-sm truncate;
+    }
+
+    .brand-company {
+        @apply text-xs text-stone-500 truncate;
+    }
+
+    .brand-logo {
+        @apply h-8 w-8 object-contain shrink-0;
+    }
+
+    .brand-text {
+        @apply flex flex-col min-w-0 leading-tight;
+
+        // Hide the app name / company on small screens; keep the logo (if any).
+        @media (max-width: 767px) {
+            @apply hidden;
+        }
+    }
+}
