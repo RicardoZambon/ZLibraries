@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { ITab, Tab, TabsComponent, TabService } from '@zambon-dev/framework';
+import { APP_CONFIG, ITab, Tab, TabsComponent, TabService } from '@zambon-dev/framework';
 import { ModalComponent, SidebarComponent, SidebarMenu, SidebarService } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, take, takeUntil } from 'rxjs';
@@ -31,6 +31,9 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private router: Router = inject(Router);
   private sidebarService: SidebarService = inject(SidebarService);
   private tabService: TabService = inject(TabService);
+
+  /** Application version (from AppConfig) projected into the sidebar footer. */
+  protected appVersion: string = inject(APP_CONFIG).version;
   //#endregion
 
   //#region Properties

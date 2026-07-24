@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LanguageSelectorComponent` gained a `showFlag` input; when `true` the toggle shows the current
   language's flag on a light-gray button instead of the text label (used by the top bar; the login
   page keeps the text label).
+- `MainLayoutComponent` projects the application version (`AppConfig.version`) into the sidebar's
+  footer slot, shown at the bottom of the navigation when set.
 
 ### Changed
 

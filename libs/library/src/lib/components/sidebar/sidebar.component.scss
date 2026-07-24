@@ -28,10 +28,11 @@
     transition-duration: var(--sidebar-animation-duration);
     width: var(--sidebar-collapsed-width);
     will-change: margin-left, width;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
     grid-template-areas:
         "toolbar"
-        "nav";
+        "nav"
+        "footer";
 
     @screen md {
         @apply ml-0;
@@ -67,6 +68,24 @@
             @apply text-sm;
         }
     }
+}
+
+// Content-projection slot at the bottom of the sidebar (e.g. the app version). Hidden when the
+// rail is collapsed, and collapsed entirely when nothing is projected.
+.sidebar-footer {
+    @apply px-4 py-2 text-xs text-center text-gray-300/60 whitespace-nowrap overflow-hidden;
+    @apply opacity-0 transition-opacity ease-in-out;
+    transition-duration: var(--sidebar-animation-duration);
+    grid-area: footer;
+
+    &:empty {
+        @apply hidden;
+    }
+}
+
+:host(.expanded) .sidebar-footer,
+:host(.active) .sidebar-footer {
+    @apply opacity-100;
 }
 
 nav {

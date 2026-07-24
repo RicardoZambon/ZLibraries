@@ -87,6 +87,7 @@ interface TopBarArgs {
   appName: string;
   companyName: string;
   environment: string;
+  version: string;
   notificationsEnabled: boolean;
   notificationCount: number;
   userName: string;
@@ -100,6 +101,7 @@ export const TopBar: StoryObj<TopBarArgs> = {
     appName: 'Application name',
     companyName: 'Company name',
     environment: 'QA',
+    version: '1.4.0',
     notificationsEnabled: true,
     notificationCount: 0,
     userName: 'John Doe',
@@ -115,6 +117,7 @@ export const TopBar: StoryObj<TopBarArgs> = {
       options: ['DEV', 'QA', 'STG', 'PROD', ''],
       name: 'Environment (PROD/empty hides badge)',
     },
+    version: { control: 'text', name: 'App version (sidebar footer)' },
     notificationsEnabled: {
       control: 'boolean',
       name: 'Notifications enabled (off hides the bell)',
@@ -137,6 +140,7 @@ export const TopBar: StoryObj<TopBarArgs> = {
             companyName: args.companyName,
             environment: args.environment,
             logoUrl: args.logoUrl || undefined,
+            version: args.version,
           }),
         },
         {

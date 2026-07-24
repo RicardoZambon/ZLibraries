@@ -10,6 +10,7 @@ export interface AppConfigOptions {
   companyName?: string;
   environment?: string;
   logoUrl?: string;
+  version?: string;
   notificationsEnabled?: boolean;
   notificationsUrl?: string;
 }
@@ -29,6 +30,9 @@ export class AppConfig {
   /** Optional brand logo URL shown in the top bar. */
   public logoUrl?: string;
 
+  /** Application version string (e.g. '1.4.0'), shown at the bottom of the navigation. */
+  public version: string;
+
   /** Whether the top-bar notifications feature (bell + badge) is enabled. */
   public notificationsEnabled: boolean;
 
@@ -41,6 +45,7 @@ export class AppConfig {
     this.companyName = options?.companyName ?? '';
     this.environment = options?.environment ?? '';
     this.logoUrl = options?.logoUrl;
+    this.version = options?.version ?? '';
     this.notificationsEnabled = options?.notificationsEnabled ?? false;
     this.notificationsUrl = options?.notificationsUrl ?? '';
   }

@@ -38,6 +38,7 @@ export const appConfig: ApplicationConfig = {
         companyName: 'Zilia Technologies',
         environment: environment.name,        // 'DEV' | 'QA' | 'STG' | 'PROD'
         logoUrl: '/assets/logo.svg',          // optional
+        version: '1.4.0',                      // shown at the bottom of the sidebar
         notificationsEnabled: environment.notificationsEnabled,
         notificationsUrl: environment.notificationsHubUrl, // e.g. `${apiBaseUrl}/hubs/notifications`
       }),
@@ -53,6 +54,7 @@ export const appConfig: ApplicationConfig = {
 | `companyName` | `string` | Line under the app name |
 | `environment` | `string` | Environment badge. `DEV`/`QA`/`STG` are colored; any other non-empty value uses a neutral style; **`PROD` or empty hides the badge** |
 | `logoUrl` | `string?` | Optional brand logo |
+| `version` | `string` | App version string, shown at the bottom of the sidebar navigation |
 | `notificationsEnabled` | `boolean` | Turns the notifications bell on/off (default `false`) |
 | `notificationsUrl` | `string` | SignalR hub URL; the bell is only shown when enabled **and** this is set |
 
