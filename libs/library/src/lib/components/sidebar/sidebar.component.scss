@@ -20,7 +20,8 @@
 }
 
 :host {
-    @apply grid h-full select-none overflow-x-hidden;
+    // Position/z-index so the collapse handle can straddle the right edge and sit above the content.
+    @apply grid h-full select-none relative z-20;
     @apply bg-primary-600;
     @apply transition-[margin-left,width] ease-in-out;
     margin-left: calc(var(--sidebar-collapsed-width) * -1);
@@ -50,14 +51,16 @@
 }
 
 .sidebar-toolbar {
-    @apply flex justify-end pt-3 px-3;
+    @apply flex justify-end pt-3;
     grid-area: toolbar;
 
-    // Circular chevron on the right edge: points left to collapse, right to expand.
+    // A light circular "handle" that straddles the sidebar's right edge (sits on the divider),
+    // pointing left to collapse and right to expand. High contrast against the blue rail.
     .sidebar-toggle {
-        @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 cursor-pointer;
-        @apply bg-white/10 text-gray-100 transition-colors;
-        @apply hover:bg-white/20 hover:text-white;
+        @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 cursor-pointer z-20;
+        @apply bg-white text-primary-600 shadow-md ring-1 ring-black/5 transition-colors;
+        @apply hover:bg-gray-100 hover:text-primary-700;
+        transform: translateX(50%);
 
         i {
             @apply text-sm;
@@ -66,7 +69,8 @@
 }
 
 nav {
-    @apply overflow-y-auto;
+    // Clip the horizontal overflow here (moved off :host so the collapse handle can overhang the edge).
+    @apply overflow-y-auto overflow-x-hidden;
     grid-area: nav;
     
     /* Firefox support */

@@ -13,9 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `SidebarComponent` now renders its own collapse/expand toggle: a circular chevron button on the
-  sidebar's right edge (`angle-left` to collapse when expanded, `angle-right` to expand when
-  collapsed).
+- `SidebarComponent` now renders its own collapse/expand toggle: a light circular chevron "handle"
+  that straddles the sidebar's right edge (`angle-left` to collapse when expanded, `angle-right` to
+  expand when collapsed), matching the conventional rail-collapse affordance.
 
 ### Changed
 
