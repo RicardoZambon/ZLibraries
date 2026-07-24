@@ -53,16 +53,22 @@
     @apply pt-2;
     grid-area: toolbar;
 
+    // Collapsed: the toggle is centered in the rail (aligned with the centered item icons).
     .sidebar-toggle {
-        @apply flex items-center w-full px-3 cursor-pointer text-gray-200;
+        @apply flex items-center justify-center w-full px-3 cursor-pointer text-gray-200;
         @apply transition-colors hover:bg-black/10 hover:text-white;
         height: var(--sidebar-item-height);
 
         i {
             @apply text-xl;
-            margin-left: var(--sidebar-icon-collapsed-margin);
         }
     }
+}
+
+// Expanded: the toggle sits at the right edge, pointing left toward collapsing.
+:host(.expanded) .sidebar-toolbar .sidebar-toggle,
+:host(.active) .sidebar-toolbar .sidebar-toggle {
+    @apply justify-end pr-4;
 }
 
 nav {

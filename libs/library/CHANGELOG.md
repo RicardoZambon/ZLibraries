@@ -13,8 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `SidebarComponent` now renders its own collapse/expand toggle at the top of the sidebar (the
-  hamburger aligns with the menu-item icons and stays put between collapsed/expanded states).
+- `SidebarComponent` now renders its own collapse/expand toggle at the top of the sidebar. It uses
+  a state-aware panel icon (`square-caret-left` when expanded, `square-caret-right` when collapsed):
+  right-aligned when expanded (points left to collapse) and centered in the rail when collapsed.
 
 ### Changed
 
