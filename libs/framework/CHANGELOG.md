@@ -13,17 +13,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `AppConfig` now accepts optional application metadata through a second `options` argument:
-  `appName`, `companyName`, `environment`, `logoUrl`, `version`, `notificationsEnabled`, and
-  `notificationsUrl`. These are consumed by the shared application shell (top bar + navigation).
-  Existing `new AppConfig(baseUrl)` calls continue to work unchanged (`notificationsEnabled`
-  defaults to `false`, other new fields to empty strings).
-
 ### Changed
 
 ### Deprecated
 
 ### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.2.0] - 2026-07-24
+
+### Added
+
+- `AppConfig` now accepts optional application metadata through a second `options` argument:
+  `appName`, `companyName`, `environment`, `logoUrl`, `version`, `notificationsEnabled`, and
+  `notificationsUrl`. These are consumed by the shared application shell (top bar + navigation).
+  Existing `new AppConfig(baseUrl)` calls continue to work unchanged (`notificationsEnabled`
+  defaults to `false`, other new fields to empty strings).
 
 ### Fixed
 
@@ -41,5 +49,6 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.1.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.2.0...HEAD
+[1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.0
 [1.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.1.0
