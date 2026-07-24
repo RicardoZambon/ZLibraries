@@ -1,11 +1,11 @@
 <div class="main-container">
-    <lib-sidebar #sidebar>
+    <lib-sidebar>
         @if (appVersion) {
             <span>v{{ appVersion }}</span>
         }
     </lib-sidebar>
 
-    <shared-top-bar class="toolbar" (collapse)="sidebar.collapse()" (logout)="onLogoutClick()"></shared-top-bar>
+    <shared-top-bar class="toolbar" (logout)="onLogoutClick()"></shared-top-bar>
 
     <div class="content">
         <framework-tabs>

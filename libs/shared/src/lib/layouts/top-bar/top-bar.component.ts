@@ -21,18 +21,11 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 })
 export class TopBarComponent {
   //#region ViewChilds, Inputs, Outputs
-  /** Emitted when the sidebar collapse button is clicked. */
-  @Output() public collapse: EventEmitter<void> = new EventEmitter<void>();
-
   /** Emitted when the logout button is clicked. */
   @Output() public logout: EventEmitter<void> = new EventEmitter<void>();
   //#endregion
 
   //#region Event handlers
-  public onCollapseClick(): void {
-    this.collapse.emit();
-  }
-
   public onLogoutClick(): void {
     this.logout.emit();
   }

@@ -3,14 +3,6 @@
 .top-bar {
     @apply flex items-center justify-between gap-3 w-full;
 
-    // The collapse button is a mobile-only affordance to open the off-canvas sidebar; on desktop
-    // the sidebar renders its own toggle. Component-scoped so it outranks the global `.btn` display.
-    .top-bar-collapse {
-        @media (min-width: 768px) {
-            @apply hidden;
-        }
-    }
-
     .top-bar-end {
         @apply shrink-0;
     }

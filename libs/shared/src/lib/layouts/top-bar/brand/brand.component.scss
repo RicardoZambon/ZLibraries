@@ -17,5 +17,10 @@
 
     .brand-text {
         @apply flex flex-col min-w-0 leading-tight;
+
+        // Hide the app name / company on small screens; keep the logo (if any).
+        @media (max-width: 767px) {
+            @apply hidden;
+        }
     }
 }

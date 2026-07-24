@@ -1,5 +1,12 @@
 @reference "tailwindcss";
 
+// Hide the whole user profile on small screens.
+:host {
+    @media (max-width: 767px) {
+        @apply hidden;
+    }
+}
+
 .user-profile {
     @apply flex items-center gap-2 min-w-0 h-9 rounded px-2 select-none;
     @apply bg-black/5 transition-colors hover:bg-black/10;
