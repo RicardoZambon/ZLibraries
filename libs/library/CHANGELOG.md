@@ -13,15 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `SidebarComponent` now renders its own collapse/expand toggle at the top of the sidebar. It uses
-  a state-aware panel icon (`square-caret-left` when expanded, `square-caret-right` when collapsed):
-  right-aligned when expanded (points left to collapse) and centered in the rail when collapsed.
+- `SidebarComponent` now renders its own collapse/expand toggle: a circular chevron button on the
+  sidebar's right edge (`angle-left` to collapse when expanded, `angle-right` to expand when
+  collapsed).
 
 ### Changed
 
 - `SidebarComponent` no longer renders the logo or the user-profile header — it now shows only the
   navigation toggle and menu. Application branding and user identity are expected to live in the top
   bar (`shared-top-bar` in `@shared`).
+- Sidebar menu items now use an on-palette hover surface (a subtle light overlay) instead of the
+  previous off-palette `slate-700`.
 
 ### Deprecated
 

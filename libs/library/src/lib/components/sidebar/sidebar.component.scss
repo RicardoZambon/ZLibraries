@@ -50,25 +50,19 @@
 }
 
 .sidebar-toolbar {
-    @apply pt-2;
+    @apply flex justify-end pt-3 px-3;
     grid-area: toolbar;
 
-    // Collapsed: the toggle is centered in the rail (aligned with the centered item icons).
+    // Circular chevron on the right edge: points left to collapse, right to expand.
     .sidebar-toggle {
-        @apply flex items-center justify-center w-full px-3 cursor-pointer text-gray-200;
-        @apply transition-colors hover:bg-black/10 hover:text-white;
-        height: var(--sidebar-item-height);
+        @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 cursor-pointer;
+        @apply bg-white/10 text-gray-100 transition-colors;
+        @apply hover:bg-white/20 hover:text-white;
 
         i {
-            @apply text-xl;
+            @apply text-sm;
         }
     }
-}
-
-// Expanded: the toggle sits at the right edge, pointing left toward collapsing.
-:host(.expanded) .sidebar-toolbar .sidebar-toggle,
-:host(.active) .sidebar-toolbar .sidebar-toggle {
-    @apply justify-end pr-4;
 }
 
 nav {
