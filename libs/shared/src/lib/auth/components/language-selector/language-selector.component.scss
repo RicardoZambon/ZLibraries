@@ -5,7 +5,12 @@
     }
 
     .lang-flag-toggle {
-        @apply w-auto flex items-center justify-center h-9 px-2.5;
+        @apply w-auto flex items-center justify-center h-9 px-2.5 border-0;
+
+        // Match the dropdown caret color to the other top-bar icons (currentColor).
+        &:after {
+            border-top-color: currentColor;
+        }
     }
 
     .flag {

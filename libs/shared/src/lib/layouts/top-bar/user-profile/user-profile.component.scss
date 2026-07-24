@@ -1,19 +1,19 @@
 @reference "tailwindcss";
 
 .user-profile {
-    @apply flex items-center gap-2 min-w-0 h-9 rounded px-2;
+    @apply flex items-center gap-2 min-w-0 h-9 rounded px-2 select-none;
     @apply bg-slate-700 text-white;
 
     .user-text {
-        @apply flex flex-col min-w-0 leading-tight text-right;
+        @apply flex flex-col min-w-0 text-right;
     }
 
     .user-name {
-        @apply font-medium text-sm truncate;
+        @apply font-medium text-sm truncate leading-4;
     }
 
     .user-position {
-        @apply text-xs text-slate-300 truncate;
+        @apply text-xs text-slate-300 truncate leading-4;
     }
 
     .user-avatar {

@@ -1,8 +1,8 @@
 @reference "tailwindcss";
 
 .env-badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full;
-    @apply text-xs font-semibold uppercase tracking-wide ring-1 ring-inset;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-[0.325rem] rounded-full;
+    @apply text-sm font-semibold uppercase tracking-wide ring-1 ring-inset;
 
     .env-dot {
         @apply w-1.5 h-1.5 rounded-full shrink-0;
