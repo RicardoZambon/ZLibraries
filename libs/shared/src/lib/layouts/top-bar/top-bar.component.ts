@@ -11,11 +11,11 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.scss'],
   imports: [
-    TranslatePipe,
-    LanguageSelectorComponent,
     BrandComponent,
     EnvironmentBadgeComponent,
+    LanguageSelectorComponent,
     NotificationsComponent,
+    TranslatePipe,
     UserProfileComponent,
   ],
 })

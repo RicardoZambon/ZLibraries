@@ -13,11 +13,11 @@ import { TopBarComponent } from '../top-bar';
   styleUrls: ['./main-layout.component.scss'],
   imports: [
     ModalComponent,
-    SidebarComponent,
     RouterModule,
+    SidebarComponent,
     TabsComponent,
-    TranslatePipe,
     TopBarComponent,
+    TranslatePipe,
   ]
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {

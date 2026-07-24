@@ -12,16 +12,6 @@ export class EnvironmentBadgeComponent {
   //#endregion
 
   //#region Properties
-  /** Normalized environment key (uppercase, trimmed). */
-  protected get environment(): string {
-    return (this.config.environment ?? '').trim().toUpperCase();
-  }
-
-  /** The badge is hidden in production and when no environment is configured. */
-  protected get isVisible(): boolean {
-    return this.environment.length > 0 && this.environment !== 'PROD';
-  }
-
   /** CSS modifier class for the current environment, falling back to a neutral style. */
   protected get badgeClass(): string {
     const colorByEnvironment: Record<string, string> = {
@@ -30,6 +20,16 @@ export class EnvironmentBadgeComponent {
       STG: 'env-stg',
     };
     return colorByEnvironment[this.environment] ?? 'env-neutral';
+  }
+
+  /** Normalized environment key (uppercase, trimmed). */
+  protected get environment(): string {
+    return (this.config.environment ?? '').trim().toUpperCase();
+  }
+
+  /** The badge is hidden in production and when no environment is configured. */
+  protected get isVisible(): boolean {
+    return this.environment.length > 0 && this.environment !== 'PROD';
   }
   //#endregion
 }

@@ -17,11 +17,11 @@ import { INotification } from '../models';
 })
 export class NotificationsService {
   //#region Variables
-  private config: AppConfig = inject(APP_CONFIG);
   private authService: AuthService = inject(AuthService);
+  private config: AppConfig = inject(APP_CONFIG);
 
-  private notifications$: BehaviorSubject<INotification[]> = new BehaviorSubject<INotification[]>([]);
   private connection?: HubConnection;
+  private notifications$: BehaviorSubject<INotification[]> = new BehaviorSubject<INotification[]>([]);
   //#endregion
 
   //#region Properties
@@ -41,6 +41,24 @@ export class NotificationsService {
   public getUnreadCount(): Observable<number> {
     return this.notifications$.pipe(
       map((notifications: INotification[]) => notifications.filter((n: INotification) => !n.isRead).length),
+    );
+  }
+
+  /** Marks every notification as read and notifies the hub. */
+  public markAllAsRead(): void {
+    this.notifications$.next(this.notifications$.value.map((n: INotification) => ({ ...n, isRead: true })));
+
+    if (this.connection?.state === HubConnectionState.Connected) {
+      this.connection.invoke('MarkAllAsRead').catch((error: unknown) => {
+        console.error('Failed to mark notifications as read on the hub.', error);
+      });
+    }
+  }
+
+  /** Marks a single notification as read (optimistically; the server reconciles on the next push). */
+  public markAsRead(notification: INotification): void {
+    this.notifications$.next(
+      this.notifications$.value.map((n: INotification) => (n === notification ? { ...n, isRead: true } : n)),
     );
   }
 
@@ -71,24 +89,6 @@ export class NotificationsService {
     if (this.connection) {
       await this.connection.stop();
       this.connection = undefined;
-    }
-  }
-
-  /** Marks a single notification as read (optimistically; the server reconciles on the next push). */
-  public markAsRead(notification: INotification): void {
-    this.notifications$.next(
-      this.notifications$.value.map((n: INotification) => (n === notification ? { ...n, isRead: true } : n)),
-    );
-  }
-
-  /** Marks every notification as read and notifies the hub. */
-  public markAllAsRead(): void {
-    this.notifications$.next(this.notifications$.value.map((n: INotification) => ({ ...n, isRead: true })));
-
-    if (this.connection?.state === HubConnectionState.Connected) {
-      this.connection.invoke('MarkAllAsRead').catch((error: unknown) => {
-        console.error('Failed to mark notifications as read on the hub.', error);
-      });
     }
   }
   //#endregion

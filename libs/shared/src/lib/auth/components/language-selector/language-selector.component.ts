@@ -13,10 +13,10 @@ export class LanguageSelectorComponent {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('dropdown') public dropdown!: ElementRef<HTMLDivElement>;
 
-  @Input() public title: string = 'LanguageSelector-Title';
-
   /** When true, the toggle shows the current language's flag (light-gray button) instead of text. */
   @Input() public showFlag = false;
+
+  @Input() public title: string = 'LanguageSelector-Title';
   //#endregion
 
   //#region Variables

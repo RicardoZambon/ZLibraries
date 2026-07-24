@@ -25,8 +25,8 @@ export class NotificationsComponent implements OnInit {
   private router: Router = inject(Router);
 
   protected notifications$: Observable<INotification[]> = this.notificationsService.getNotifications();
-  protected unreadCount$: Observable<number> = this.notificationsService.getUnreadCount();
   protected showDropdown = false;
+  protected unreadCount$: Observable<number> = this.notificationsService.getUnreadCount();
   //#endregion
 
   //#region Properties
@@ -47,6 +47,10 @@ export class NotificationsComponent implements OnInit {
     this.showDropdown = !this.showDropdown;
   }
 
+  public onMarkAllAsRead(): void {
+    this.notificationsService.markAllAsRead();
+  }
+
   public onNotificationClick(notification: INotification): void {
     this.notificationsService.markAsRead(notification);
     this.showDropdown = false;
@@ -61,10 +65,6 @@ export class NotificationsComponent implements OnInit {
     } else {
       this.router.navigateByUrl(url);
     }
-  }
-
-  public onMarkAllAsRead(): void {
-    this.notificationsService.markAllAsRead();
   }
   //#endregion
 

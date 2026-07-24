@@ -15,18 +15,6 @@ export class UserProfileComponent implements OnInit {
   //#endregion
 
   //#region Properties
-  protected get name(): string {
-    return this.user?.name ?? '';
-  }
-
-  protected get position(): string {
-    return this.user?.position ?? '';
-  }
-
-  protected get pictureUrl(): string | undefined {
-    return this.user?.pictureUrl;
-  }
-
   /** Up to two uppercase initials derived from the user's name, used when no picture is set. */
   protected get initials(): string {
     const parts: string[] = this.name.trim().split(/\s+/).filter((p: string) => p.length > 0);
@@ -37,6 +25,18 @@ export class UserProfileComponent implements OnInit {
     const first: string = parts[0].charAt(0);
     const last: string = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
     return (first + last).toUpperCase();
+  }
+
+  protected get name(): string {
+    return this.user?.name ?? '';
+  }
+
+  protected get pictureUrl(): string | undefined {
+    return this.user?.pictureUrl;
+  }
+
+  protected get position(): string {
+    return this.user?.position ?? '';
   }
   //#endregion
 
