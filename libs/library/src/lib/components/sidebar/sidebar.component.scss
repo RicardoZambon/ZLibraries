@@ -62,7 +62,7 @@
         @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 cursor-pointer z-20;
         @apply bg-white text-primary-600 shadow-md ring-1 ring-black/5 transition-colors;
         @apply hover:bg-gray-100 hover:text-primary-700;
-        transform: translateX(50%);
+        transform: translateX(40%);
 
         i {
             @apply text-sm;
