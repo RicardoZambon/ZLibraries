@@ -1,7 +1,7 @@
 @reference "tailwindcss";
 
 .user-profile {
-    @apply flex items-center gap-2 min-w-0 rounded px-2 py-1;
+    @apply flex items-center gap-2 min-w-0 h-9 rounded px-2;
     @apply bg-slate-700 text-white;
 
     .user-text {
@@ -17,7 +17,7 @@
     }
 
     .user-avatar {
-        @apply flex items-center justify-center h-8 w-8 rounded-full shrink-0 overflow-hidden;
+        @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 overflow-hidden;
         @apply bg-primary-400 text-white;
     }
 

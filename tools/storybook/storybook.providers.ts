@@ -110,6 +110,7 @@ const authServiceMock = {
 
 function initializeTranslate(translateService: TranslateService): () => void {
   return () => {
+    translateService.addLangs(['en', 'pt']);
     translateService.setDefaultLang('en');
     translateService.use('en');
   };

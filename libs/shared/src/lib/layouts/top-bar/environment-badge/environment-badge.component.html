@@ -1,3 +1,6 @@
 @if (isVisible) {
-    <span class="env-badge {{ badgeClass }}">{{ environment }}</span>
+    <span class="env-badge {{ badgeClass }}">
+        <span class="env-dot"></span>
+        <span class="env-label">{{ environment }}</span>
+    </span>
 }

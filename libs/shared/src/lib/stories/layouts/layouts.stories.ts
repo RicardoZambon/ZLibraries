@@ -2,8 +2,18 @@ import { RouteReuseStrategy } from '@angular/router';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { APP_CONFIG, AppConfig, CustomReuseStrategy, TabService } from '@zambon-dev/framework';
 import { ISidebarProfile, SidebarMenu, SidebarService } from '@zambon-dev/library';
-import { AuthenticationService } from '@zambon-dev/shared';
+import { AuthenticationService, INotification, NotificationsService } from '@zambon-dev/shared';
 import { Observable, of } from 'rxjs';
+
+function buildMockNotifications(count: number): INotification[] {
+  return Array.from({ length: Math.max(0, count) }, (_, i) => ({
+    id: String(i + 1),
+    title: `Notification ${i + 1}`,
+    message: 'This is a sample notification message.',
+    read: false,
+    createdAt: '',
+  }));
+}
 import { LoginComponent } from '../../auth/components/login/login.component';
 import { LoginLayoutComponent } from '../../layouts/login-layout/login-layout.component';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
@@ -75,6 +85,7 @@ interface TopBarArgs {
   appName: string;
   companyName: string;
   environment: string;
+  notificationCount: number;
   userName: string;
   userPosition: string;
   userPictureUrl: string;
@@ -83,11 +94,12 @@ interface TopBarArgs {
 export const TopBar: StoryObj<TopBarArgs> = {
   args: {
     logoUrl: '',
-    appName: 'Engineering Change',
-    companyName: 'Zilia Technologies',
+    appName: 'Application name',
+    companyName: 'Company name',
     environment: 'QA',
-    userName: 'Fernando Vasconcelos',
-    userPosition: 'Gerente Sistemas TI II',
+    notificationCount: 3,
+    userName: 'John Doe',
+    userPosition: 'Software Engineer',
     userPictureUrl: '',
   },
   argTypes: {
@@ -99,8 +111,12 @@ export const TopBar: StoryObj<TopBarArgs> = {
       options: ['DEV', 'QA', 'STG', 'PROD', ''],
       name: 'Environment (PROD/empty hides badge)',
     },
+    notificationCount: {
+      control: { type: 'number', min: 0 },
+      name: 'Notification unread count (0 hides the number)',
+    },
     userName: { control: 'text', name: 'User name' },
-    userPosition: { control: 'text', name: 'User position' },
+    userPosition: { control: 'text', name: 'User subtitle (position)' },
     userPictureUrl: { control: 'text', name: 'User picture URL' },
   },
   render: (args: TopBarArgs) => ({
@@ -125,6 +141,15 @@ export const TopBar: StoryObj<TopBarArgs> = {
               pictureUrl: args.userPictureUrl || undefined,
             }),
             signOut: () => undefined,
+          },
+        },
+        {
+          provide: NotificationsService,
+          useValue: {
+            getNotifications: () => of(buildMockNotifications(args.notificationCount)),
+            getUnreadCount: () => of(Math.max(0, args.notificationCount)),
+            markAsRead: () => undefined,
+            markAllAsRead: () => undefined,
           },
         },
       ],

@@ -1,4 +1,3 @@
-import { NgClass, NgFor } from '@angular/common';
 import { Component, ElementRef, HostListener, inject, Input, ViewChild } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
@@ -7,8 +6,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
   imports: [
-    NgClass,
-    NgFor,
     TranslatePipe,
   ]
 })
