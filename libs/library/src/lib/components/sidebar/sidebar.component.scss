@@ -52,7 +52,7 @@
 
 .sidebar-toolbar {
     // Symmetric vertical padding so the handle sits equidistant from the top bar and the first item.
-    @apply flex justify-end pt-4 pb-4;
+    @apply flex justify-end pt-2 pb-2;
     grid-area: toolbar;
 
     // A light circular "handle" that straddles the sidebar's right edge (sits on the divider),
