@@ -10,6 +10,17 @@ import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.compo
 
 const NOTIFICATION_ICONS = ['fa-solid fa-circle-info', 'fa-solid fa-triangle-exclamation', 'fa-solid fa-envelope'];
 
+// Story-only: constrain the layout to its container (the app uses full-viewport sizing, which
+// forces a scrollbar inside the Storybook canvas).
+const FIT_TO_CONTAINER = `
+  <style>
+    /* ::ng-deep pierces the story component's style encapsulation so these reach into
+       shared-main-layout's own view; !important wins over the component's max-h-screen. */
+    ::ng-deep shared-main-layout { display: block; height: 100%; max-height: 100%; }
+    ::ng-deep shared-main-layout .main-container { max-height: 100% !important; }
+  </style>
+`;
+
 function buildMockNotifications(count: number): INotification[] {
   return Array.from({ length: Math.max(0, count) }, (_, i) => ({
     title: `Notification ${i + 1}`,
@@ -71,6 +82,7 @@ type Story = StoryObj<MainLayoutComponent>;
 export const MainLayout: Story = {
   render: () => ({
     template: `
+      ${FIT_TO_CONTAINER}
       <div class="h-[40rem] bg-slate-100">
         <shared-main-layout></shared-main-layout>
       </div>
@@ -170,6 +182,7 @@ export const TopBar: StoryObj<TopBarArgs> = {
       ],
     },
     template: `
+      ${FIT_TO_CONTAINER}
       <div class="h-[40rem] bg-slate-100">
         <shared-main-layout></shared-main-layout>
       </div>
