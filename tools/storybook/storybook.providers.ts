@@ -13,8 +13,45 @@ import {
   MultiSelectResultDataset,
 } from '@zambon-dev/library';
 import { AuthenticationService } from '@zambon-dev/shared';
-import { provideTranslateService, TranslateFakeLoader, TranslateLoader, TranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
+
+// Real translations for the keys used across the stories, so the `translate` pipe resolves
+// keys to text instead of echoing the key. Keys not listed here fall back to the key itself.
+const storybookTranslations: Record<string, Record<string, string>> = {
+  en: {
+    'TopBar-Sidebar-Toggle': 'Toggle menu',
+    'TopBar-Notifications-Title': 'Notifications',
+    'TopBar-Notifications-Empty': 'No notifications',
+    'TopBar-Notifications-MarkAllRead': 'Mark all as read',
+    'Main-Logout': 'Logout',
+    'Main-Logout-Modal-Message': 'Are you sure you want to log out?',
+    'Main-Logout-Modal-Message-Cancel': 'Cancel',
+    'Main-Logout-Modal-Message-Confirm': 'Logout',
+    'LanguageSelector-Title': 'Select language',
+    'Language-en': 'English',
+    'Language-pt': 'Portuguese',
+  },
+  pt: {
+    'TopBar-Sidebar-Toggle': 'Alternar menu',
+    'TopBar-Notifications-Title': 'Notificações',
+    'TopBar-Notifications-Empty': 'Nenhuma notificação',
+    'TopBar-Notifications-MarkAllRead': 'Marcar todas como lidas',
+    'Main-Logout': 'Sair',
+    'Main-Logout-Modal-Message': 'Tem certeza de que deseja sair?',
+    'Main-Logout-Modal-Message-Cancel': 'Cancelar',
+    'Main-Logout-Modal-Message-Confirm': 'Sair',
+    'LanguageSelector-Title': 'Selecionar idioma',
+    'Language-en': 'Inglês',
+    'Language-pt': 'Português',
+  },
+};
+
+class StorybookTranslateLoader implements TranslateLoader {
+  public getTranslation(lang: string): Observable<Record<string, string>> {
+    return of(storybookTranslations[lang] ?? {});
+  }
+}
 
 class StorybookDataGridDataset extends DataGridDataset {
   public override columns = [
@@ -86,7 +123,7 @@ export const storybookApplicationProviders: Array<Provider | EnvironmentProvider
     defaultLanguage: 'en',
     loader: {
       provide: TranslateLoader,
-      useClass: TranslateFakeLoader,
+      useClass: StorybookTranslateLoader,
     },
   }),
   {

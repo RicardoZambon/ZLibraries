@@ -66,36 +66,69 @@ export const MainLayout: Story = {
   }),
 };
 
-// Renders the full layout with a populated AppConfig and a user that has a position,
-// so the top bar shows the brand (app + company), the environment badge, the language
-// selector, the notifications bell (empty placeholder), and the user profile.
-export const TopBar: Story = {
-  decorators: [
-    moduleMetadata({
+// Renders the full layout and exposes Storybook Controls for the top-bar content
+// (logo, app name, subtitle/company, environment, and the user). The AppConfig and
+// AuthenticationService are rebuilt from the args on every render, so changing a control
+// updates the brand, environment badge, and user profile live.
+interface TopBarArgs {
+  logoUrl: string;
+  appName: string;
+  companyName: string;
+  environment: string;
+  userName: string;
+  userPosition: string;
+  userPictureUrl: string;
+}
+
+export const TopBar: StoryObj<TopBarArgs> = {
+  args: {
+    logoUrl: '',
+    appName: 'Engineering Change',
+    companyName: 'Zilia Technologies',
+    environment: 'QA',
+    userName: 'Fernando Vasconcelos',
+    userPosition: 'Gerente Sistemas TI II',
+    userPictureUrl: '',
+  },
+  argTypes: {
+    logoUrl: { control: 'text', name: 'Logo URL' },
+    appName: { control: 'text', name: 'App name' },
+    companyName: { control: 'text', name: 'App subtitle (company)' },
+    environment: {
+      control: 'select',
+      options: ['DEV', 'QA', 'STG', 'PROD', ''],
+      name: 'Environment (PROD/empty hides badge)',
+    },
+    userName: { control: 'text', name: 'User name' },
+    userPosition: { control: 'text', name: 'User position' },
+    userPictureUrl: { control: 'text', name: 'User picture URL' },
+  },
+  render: (args: TopBarArgs) => ({
+    moduleMetadata: {
       providers: [
         {
           provide: APP_CONFIG,
           useValue: new AppConfig('', {
-            appName: 'Engineering Change',
-            companyName: 'Zilia Technologies',
-            environment: 'QA',
+            appName: args.appName,
+            companyName: args.companyName,
+            environment: args.environment,
+            logoUrl: args.logoUrl || undefined,
           }),
         },
         {
           provide: AuthenticationService,
           useValue: {
             getUserInfo: () => ({
-              name: 'Fernando Vasconcelos',
+              name: args.userName,
               costCenterName: 'TI',
-              position: 'Gerente Sistemas TI II',
+              position: args.userPosition,
+              pictureUrl: args.userPictureUrl || undefined,
             }),
             signOut: () => undefined,
           },
         },
       ],
-    }),
-  ],
-  render: () => ({
+    },
     template: `
       <div class="h-[40rem] bg-slate-100">
         <shared-main-layout></shared-main-layout>
