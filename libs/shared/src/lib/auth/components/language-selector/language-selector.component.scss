@@ -25,16 +25,17 @@
         }
     }
 
+    // Match the notifications dropdown chrome (border, radius, background, shadow) for consistency.
     ul {
-        @apply min-w-[11rem];
-
-        li {
-            @apply my-0.5 first:mt-0 last:mb-0;
-        }
+        @apply min-w-[11rem] mt-1 p-1 z-50;
+        @apply rounded-md border border-stone-200 bg-white backdrop-blur-none;
+        @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
 
         .dropdown-item {
             @apply flex items-center gap-2 w-full px-3 py-2 rounded;
             @apply text-sm text-left text-stone-700;
+            @apply hover:bg-stone-100 hover:text-stone-700;
+            @apply active:bg-stone-200 active:text-stone-700;
 
             &.selected {
                 @apply bg-primary-50 text-primary-700 font-semibold;
