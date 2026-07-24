@@ -1,7 +1,7 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { AfterViewInit, Component, HostListener, inject, OnInit } from '@angular/core';
 import { take, takeUntil } from 'rxjs';
-import { ISidebarProfile, SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu } from '../../models';
+import { SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu } from '../../models';
 import { SidebarService } from '../../services';
 import { BaseComponent } from '../base.component';
 import { SidebarItemComponent } from '../sidebar-item/sidebar-item.component';
@@ -69,21 +69,14 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
 
   protected configErrorText: string = this.sidebarConfigs.errorText;
   protected configLoadingText: string = this.sidebarConfigs.loadingText;
-  protected configLogoCollapsedPath?: string = this.sidebarConfigs.logoCollapsedPath;
-  protected configLogoExpandedPath?: string = this.sidebarConfigs.logoExpandedPath;
   protected hasFailed: boolean = false;
   protected menus: SidebarMenu[] = [];
-  protected profile?: ISidebarProfile;
 
   private sidebarService: SidebarService = inject(SidebarService);
   private wasClickedOutside: boolean = false;
   //#endregion
 
   //#region Properties
-  protected get hasProfileImage(): boolean {
-    return this.isProfileLoaded && (this.profile!.image?.length ?? 0) > 0  
-  }
-
   protected get isActive(): boolean {
     return this.sidebarService.isActive;
   }
@@ -94,10 +87,6 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
 
   protected get isLoading(): boolean {
     return this.menus.length === 0;
-  }
-
-  protected get isProfileLoaded(): boolean {
-    return !!this.profile;
   }
   //#endregion
   
@@ -121,8 +110,6 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
         next: (menus: SidebarMenu[]) => this.menus = menus,
         error: () => this.hasFailed = true
       });
-
-    this.profile = this.sidebarService.getUserProfile();
   }
   //#endregion
 

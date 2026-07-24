@@ -1,5 +1,5 @@
 <div #dropdown class="notifications">
-    <button class="btn notifications-toggle" type="button" (click)="onDropdownClick()"
+    <button class="btn gray-300 notifications-toggle" type="button" (click)="onDropdownClick()"
         [attr.aria-label]="'TopBar-Notifications-Title' | translate">
         <i class="fa-solid fa-bell"></i>
         @if (unreadCount$ | async; as count) {

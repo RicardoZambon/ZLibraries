@@ -1,23 +1,11 @@
 @reference "tailwindcss";
 
 .user-profile {
-    @apply flex items-center gap-2 min-w-0;
-
-    .user-avatar {
-        @apply flex items-center justify-center h-9 w-9 rounded-full shrink-0 overflow-hidden;
-        @apply bg-primary-100 text-primary-700;
-    }
-
-    .user-avatar-img {
-        @apply h-full w-full object-cover;
-    }
-
-    .user-avatar-initials {
-        @apply text-sm font-semibold uppercase;
-    }
+    @apply flex items-center gap-2 min-w-0 rounded px-2 py-1;
+    @apply bg-slate-700 text-white;
 
     .user-text {
-        @apply flex flex-col min-w-0 leading-tight;
+        @apply flex flex-col min-w-0 leading-tight text-right;
     }
 
     .user-name {
@@ -25,6 +13,19 @@
     }
 
     .user-position {
-        @apply text-xs text-stone-500 truncate;
+        @apply text-xs text-slate-300 truncate;
+    }
+
+    .user-avatar {
+        @apply flex items-center justify-center h-8 w-8 rounded-full shrink-0 overflow-hidden;
+        @apply bg-primary-400 text-white;
+    }
+
+    .user-avatar-img {
+        @apply h-full w-full object-cover;
+    }
+
+    .user-avatar-initials {
+        @apply text-xs font-semibold uppercase;
     }
 }

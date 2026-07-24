@@ -1,7 +1,23 @@
 .dropdown {
-    
+
     .btn {
         @apply w-full font-medium;
+    }
+
+    .lang-flag-toggle {
+        @apply w-auto flex items-center justify-center px-2;
+    }
+
+    .flag {
+        @apply inline-block w-6 h-4 bg-center bg-cover rounded-sm;
+
+        &.flag-en {
+            @apply bg-[url('/flags/en.png')];
+        }
+
+        &.flag-pt {
+            @apply bg-[url('/flags/pt.png')];
+        }
     }
 
     ul {

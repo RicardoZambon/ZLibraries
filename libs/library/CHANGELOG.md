@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `SidebarComponent` no longer renders the logo or the user-profile header — it now shows only the
+  navigation menu. Application branding and user identity are expected to live in the top bar
+  (`shared-top-bar` in `@shared`).
+
 ### Deprecated
 
 ### Removed
@@ -22,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+If you relied on the sidebar's logo (`SidebarConfigs.logoCollapsedPath` / `logoExpandedPath`) or its
+user profile (`SidebarService.getUserProfile()`), move that presentation to the top bar. Those
+config options and the `getUserProfile()` method still exist but are no longer consumed by
+`SidebarComponent`.
 
 ## [1.3.0] - 2026-05-01
 

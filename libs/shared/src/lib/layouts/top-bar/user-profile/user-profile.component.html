@@ -1,16 +1,16 @@
 <div class="user-profile">
+    <div class="user-text">
+        <span class="user-name">{{ name }}</span>
+        @if (position) {
+            <span class="user-position">{{ position }}</span>
+        }
+    </div>
+
     <div class="user-avatar">
         @if (pictureUrl) {
             <img class="user-avatar-img" [src]="pictureUrl" [alt]="name" />
         } @else {
             <span class="user-avatar-initials">{{ initials }}</span>
-        }
-    </div>
-
-    <div class="user-text">
-        <span class="user-name">{{ name }}</span>
-        @if (position) {
-            <span class="user-position">{{ position }}</span>
         }
     </div>
 </div>

@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Individually reusable top-bar components: `BrandComponent`, `EnvironmentBadgeComponent`,
   `NotificationsComponent`, `UserProfileComponent`, and the composing `TopBarComponent`.
 - `top-bar` i18n bundle (`en`/`pt`) registered in `ZAMBON_SHARED_I18N_RESOURCES`.
+- `LanguageSelectorComponent` gained a `showFlag` input; when `true` the toggle shows the current
+  language's flag on a light-gray button instead of the text label (used by the top bar; the login
+  page keeps the text label).
 
 ### Changed
 

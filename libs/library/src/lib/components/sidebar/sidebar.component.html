@@ -1,21 +1,3 @@
-<div class="header">
-    <div class="logo-container">
-        <img class="collapsed" [src]="configLogoCollapsedPath" />
-        <img class="expanded" [src]="configLogoExpandedPath" />
-    </div>
-
-    <div class="profile-container" *ngIf="isProfileLoaded">
-        <div class="picture" *ngIf="hasProfileImage">
-            <img [src]="profile!.image" />
-        </div>
-
-        <div class="profile">
-            <h4>{{ profile!.name }}</h4>
-            <h5>{{ profile!.title }}</h5>
-        </div>
-    </div>
-</div>    
-
 <nav>
     <ul *ngIf="!isLoading; else loading">
         <lib-sidebar-item *ngFor="let menu of menus; trackBy: trackByFn"
