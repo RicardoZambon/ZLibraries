@@ -40,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   position line is hidden when `position` is empty.
 - **`INotification` redefined** to `{ title, description, icon, callToActionUrl?, isRead }` (was
   `{ id, title, message, read, createdAt }`) to match the SignalR hub contract.
+- The top bar's sidebar-collapse button is now shown only on mobile (`md:hidden`); on desktop the
+  sidebar renders its own collapse/expand toggle. The user profile now uses a light, on-palette
+  surface (neutral chip + brand-colored avatar) instead of the previous dark chip.
 
 ### Deprecated
 

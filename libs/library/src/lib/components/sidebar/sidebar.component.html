@@ -1,3 +1,9 @@
+<div class="sidebar-toolbar">
+    <button type="button" class="sidebar-toggle" (click)="collapse()" aria-label="Toggle navigation">
+        <i class="fa-solid fa-fw fa-bars"></i>
+    </button>
+</div>
+
 <nav>
     <ul *ngIf="!isLoading; else loading">
         <lib-sidebar-item *ngFor="let menu of menus; trackBy: trackByFn"

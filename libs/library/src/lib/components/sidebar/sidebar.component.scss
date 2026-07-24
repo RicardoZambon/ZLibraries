@@ -27,8 +27,10 @@
     transition-duration: var(--sidebar-animation-duration);
     width: var(--sidebar-collapsed-width);
     will-change: margin-left, width;
-    grid-template-rows: minmax(0, 1fr);
-    grid-template-areas: "nav";
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+        "toolbar"
+        "nav";
 
     @screen md {
         @apply ml-0;
@@ -44,6 +46,22 @@
 
     &.expanded, &.active {
         @apply ml-0;
+    }
+}
+
+.sidebar-toolbar {
+    @apply pt-2;
+    grid-area: toolbar;
+
+    .sidebar-toggle {
+        @apply flex items-center w-full px-3 cursor-pointer text-gray-200;
+        @apply transition-colors hover:bg-black/10 hover:text-white;
+        height: var(--sidebar-item-height);
+
+        i {
+            @apply text-xl;
+            margin-left: var(--sidebar-icon-collapsed-margin);
+        }
     }
 }
 

@@ -13,11 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `SidebarComponent` now renders its own collapse/expand toggle at the top of the sidebar (the
+  hamburger aligns with the menu-item icons and stays put between collapsed/expanded states).
+
 ### Changed
 
 - `SidebarComponent` no longer renders the logo or the user-profile header — it now shows only the
-  navigation menu. Application branding and user identity are expected to live in the top bar
-  (`shared-top-bar` in `@shared`).
+  navigation toggle and menu. Application branding and user identity are expected to live in the top
+  bar (`shared-top-bar` in `@shared`).
 
 ### Deprecated
 

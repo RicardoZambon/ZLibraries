@@ -2,23 +2,23 @@
 
 .user-profile {
     @apply flex items-center gap-2 min-w-0 h-9 rounded px-2 select-none;
-    @apply bg-slate-700 text-white;
+    @apply bg-black/5 transition-colors hover:bg-black/10;
 
     .user-text {
         @apply flex flex-col min-w-0 text-right;
     }
 
     .user-name {
-        @apply font-medium text-sm truncate leading-4;
+        @apply font-medium text-sm truncate leading-4 text-stone-800;
     }
 
     .user-position {
-        @apply text-xs text-slate-300 truncate leading-4;
+        @apply text-xs truncate leading-4 text-stone-500;
     }
 
     .user-avatar {
         @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 overflow-hidden;
-        @apply bg-primary-400 text-white;
+        @apply bg-primary-500 text-white;
     }
 
     .user-avatar-img {
