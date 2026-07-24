@@ -45,6 +45,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The top bar's sidebar-collapse button is now shown only on mobile (`md:hidden`); on desktop the
   sidebar renders its own collapse/expand toggle. The user profile now uses a light, on-palette
   surface (neutral chip + brand-colored avatar) instead of the previous dark chip.
+- `LanguageSelectorComponent` now renders language flags as self-contained inline SVGs (US for `en`,
+  Brazil for `pt`) instead of `/flags/*.png` background images, in both the flag toggle and the
+  dropdown. The selector no longer depends on app-provided flag assets; apps that supplied custom
+  `/flags/*.png` images will no longer see them in the language selector.
 
 ### Deprecated
 
