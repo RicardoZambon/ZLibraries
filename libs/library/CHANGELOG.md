@@ -49,7 +49,7 @@ user profile (`SidebarService.getUserProfile()`), move that presentation to the 
 config options and the `getUserProfile()` method still exist but are no longer consumed by
 `SidebarComponent`.
 
-## [1.3.0] - 2026-05-01
+## [1.1.1] - 2026-06-17
 
 - Baseline release: the changelog starts being tracked from this version. Earlier history is
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
@@ -57,4 +57,4 @@ config options and the `getUserProfile()` method still exist but are no longer c
 
 [Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.2.0...HEAD
 [1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.2.0
-[1.3.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.3.0
+[1.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.1.1

@@ -33,15 +33,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Existing `new AppConfig(baseUrl)` calls continue to work unchanged (`notificationsEnabled`
   defaults to `false`, other new fields to empty strings).
 
+### ⚠ Breaking Changes / Migration
+
+None.
+
+## [1.1.1] - 2026-06-20
+
 ### Fixed
 
 - `framework-button-export` now forwards its `iconSize` input to the underlying ribbon button,
   so setting `iconSize` correctly resizes the export button's icon. Previously the input was
   ignored and the icon always rendered at the default size.
-
-### ⚠ Breaking Changes / Migration
-
-None.
 
 ## [1.1.0] - 2026-06-02
 
@@ -51,4 +53,5 @@ None.
 
 [Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.2.0...HEAD
 [1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.0
+[1.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.1.1
 [1.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.1.0
