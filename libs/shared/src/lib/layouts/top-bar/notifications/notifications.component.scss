@@ -39,16 +39,29 @@
             }
 
             .notifications-item-btn {
-                @apply flex flex-col gap-0.5 w-full px-3 py-2 text-left cursor-pointer;
+                @apply flex items-start gap-2.5 w-full px-3 py-2 text-left cursor-pointer;
                 @apply hover:bg-stone-50;
             }
 
-            .notifications-item-title {
-                @apply text-sm font-medium;
+            .notifications-item-icon {
+                @apply flex items-center justify-center w-6 h-6 mt-0.5 shrink-0 rounded-full;
+                @apply bg-stone-100 text-stone-600 text-xs;
             }
 
-            .notifications-item-message {
+            .notifications-item-body {
+                @apply flex flex-col min-w-0 flex-1;
+            }
+
+            .notifications-item-title {
+                @apply text-sm font-medium text-stone-800;
+            }
+
+            .notifications-item-description {
                 @apply text-xs text-stone-500;
+            }
+
+            .notifications-item-cta {
+                @apply mt-1 shrink-0 text-xs text-stone-400;
             }
         }
     }

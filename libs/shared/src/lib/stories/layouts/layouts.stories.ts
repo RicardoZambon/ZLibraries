@@ -4,19 +4,21 @@ import { APP_CONFIG, AppConfig, CustomReuseStrategy, TabService } from '@zambon-
 import { ISidebarProfile, SidebarMenu, SidebarService } from '@zambon-dev/library';
 import { AuthenticationService, INotification, NotificationsService } from '@zambon-dev/shared';
 import { Observable, of } from 'rxjs';
-
-function buildMockNotifications(count: number): INotification[] {
-  return Array.from({ length: Math.max(0, count) }, (_, i) => ({
-    id: String(i + 1),
-    title: `Notification ${i + 1}`,
-    message: 'This is a sample notification message.',
-    read: false,
-    createdAt: '',
-  }));
-}
 import { LoginComponent } from '../../auth/components/login/login.component';
 import { LoginLayoutComponent } from '../../layouts/login-layout/login-layout.component';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
+
+const NOTIFICATION_ICONS = ['fa-solid fa-circle-info', 'fa-solid fa-triangle-exclamation', 'fa-solid fa-envelope'];
+
+function buildMockNotifications(count: number): INotification[] {
+  return Array.from({ length: Math.max(0, count) }, (_, i) => ({
+    title: `Notification ${i + 1}`,
+    description: 'This is a sample notification message.',
+    icon: NOTIFICATION_ICONS[i % NOTIFICATION_ICONS.length],
+    callToActionUrl: i % 2 === 0 ? `/records/${i + 1}` : undefined,
+    isRead: false,
+  }));
+}
 
 class StorybookSidebarService extends SidebarService {
   public getMenuFromUrl(url: string): Observable<SidebarMenu> {
@@ -85,6 +87,7 @@ interface TopBarArgs {
   appName: string;
   companyName: string;
   environment: string;
+  notificationsEnabled: boolean;
   notificationCount: number;
   userName: string;
   userPosition: string;
@@ -97,7 +100,8 @@ export const TopBar: StoryObj<TopBarArgs> = {
     appName: 'Application name',
     companyName: 'Company name',
     environment: 'QA',
-    notificationCount: 3,
+    notificationsEnabled: true,
+    notificationCount: 0,
     userName: 'John Doe',
     userPosition: 'Software Engineer',
     userPictureUrl: '',
@@ -110,6 +114,10 @@ export const TopBar: StoryObj<TopBarArgs> = {
       control: 'select',
       options: ['DEV', 'QA', 'STG', 'PROD', ''],
       name: 'Environment (PROD/empty hides badge)',
+    },
+    notificationsEnabled: {
+      control: 'boolean',
+      name: 'Notifications enabled (off hides the bell)',
     },
     notificationCount: {
       control: { type: 'number', min: 0 },
@@ -146,6 +154,9 @@ export const TopBar: StoryObj<TopBarArgs> = {
         {
           provide: NotificationsService,
           useValue: {
+            isEnabled: args.notificationsEnabled,
+            start: () => undefined,
+            stop: () => Promise.resolve(),
             getNotifications: () => of(buildMockNotifications(args.notificationCount)),
             getUnreadCount: () => of(Math.max(0, args.notificationCount)),
             markAsRead: () => undefined,

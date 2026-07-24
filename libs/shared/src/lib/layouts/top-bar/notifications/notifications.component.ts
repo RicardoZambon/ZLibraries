@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ElementRef, HostListener, inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { INotification } from '../../../models';
@@ -14,17 +15,31 @@ import { NotificationsService } from '../../../services';
     TranslatePipe,
   ],
 })
-export class NotificationsComponent {
+export class NotificationsComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('dropdown') public dropdown!: ElementRef<HTMLDivElement>;
   //#endregion
 
   //#region Variables
   private notificationsService: NotificationsService = inject(NotificationsService);
+  private router: Router = inject(Router);
 
   protected notifications$: Observable<INotification[]> = this.notificationsService.getNotifications();
   protected unreadCount$: Observable<number> = this.notificationsService.getUnreadCount();
   protected showDropdown = false;
+  //#endregion
+
+  //#region Properties
+  /** Whether the notifications feature is enabled; when false the bell is not rendered. */
+  public get isEnabled(): boolean {
+    return this.notificationsService.isEnabled;
+  }
+  //#endregion
+
+  //#region Constructor and Angular life cycle methods
+  public ngOnInit(): void {
+    this.notificationsService.start();
+  }
   //#endregion
 
   //#region Event handlers
@@ -33,7 +48,19 @@ export class NotificationsComponent {
   }
 
   public onNotificationClick(notification: INotification): void {
-    this.notificationsService.markAsRead(notification.id);
+    this.notificationsService.markAsRead(notification);
+    this.showDropdown = false;
+
+    const url: string | undefined = notification.callToActionUrl;
+    if (!url) {
+      return;
+    }
+
+    if (/^https?:\/\//i.test(url)) {
+      window.open(url, '_blank', 'noopener');
+    } else {
+      this.router.navigateByUrl(url);
+    }
   }
 
   public onMarkAllAsRead(): void {

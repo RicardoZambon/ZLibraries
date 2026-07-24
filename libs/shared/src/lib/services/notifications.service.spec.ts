@@ -1,66 +1,62 @@
+import { BehaviorSubject } from 'rxjs';
 import { INotification } from '../models';
 import { NotificationsService } from './notifications.service';
 
+function makeService(config: unknown, seed: INotification[] = []): NotificationsService {
+  const service: NotificationsService = Object.create(NotificationsService.prototype);
+  (service as any).config = config;
+  (service as any).notifications$ = new BehaviorSubject<INotification[]>(seed);
+  return service;
+}
+
+function notification(title: string, isRead: boolean): INotification {
+  return { title, description: 'desc', icon: 'fa-solid fa-bell', isRead };
+}
+
 describe(NotificationsService.name, () => {
-  let service: NotificationsService;
-
-  function seed(notifications: INotification[]): void {
-    (service as any).notifications$.next(notifications);
-  }
-
-  function latestNotifications(): INotification[] {
-    let result: INotification[] = [];
-    service.getNotifications().subscribe((n: INotification[]) => (result = n));
-    return result;
-  }
-
-  function latestUnreadCount(): number {
-    let result = -1;
-    service.getUnreadCount().subscribe((c: number) => (result = c));
-    return result;
-  }
-
-  beforeEach(() => {
-    service = new NotificationsService();
+  it('is disabled when the feature flag is off', () => {
+    expect(makeService({ notificationsEnabled: false, notificationsUrl: 'https://h/hub' }).isEnabled).toBe(false);
   });
 
-  it('starts with no notifications and a zero unread count', () => {
-    expect(latestNotifications()).toEqual([]);
-    expect(latestUnreadCount()).toBe(0);
+  it('is disabled when no hub url is configured', () => {
+    expect(makeService({ notificationsEnabled: true, notificationsUrl: '' }).isEnabled).toBe(false);
   });
 
-  it('computes the unread count from the current notifications', () => {
-    seed([
-      { id: '1', title: 'a', message: '', read: false, createdAt: '' },
-      { id: '2', title: 'b', message: '', read: true, createdAt: '' },
-      { id: '3', title: 'c', message: '', read: false, createdAt: '' },
+  it('is enabled when toggled on with a hub url', () => {
+    expect(makeService({ notificationsEnabled: true, notificationsUrl: 'https://h/hub' }).isEnabled).toBe(true);
+  });
+
+  it('counts unread notifications', () => {
+    const service: NotificationsService = makeService({}, [
+      notification('a', false),
+      notification('b', true),
+      notification('c', false),
     ]);
 
-    expect(latestUnreadCount()).toBe(2);
+    let count = -1;
+    service.getUnreadCount().subscribe((c: number) => (count = c));
+    expect(count).toBe(2);
   });
 
   it('marks a single notification as read', () => {
-    seed([
-      { id: '1', title: 'a', message: '', read: false, createdAt: '' },
-      { id: '2', title: 'b', message: '', read: false, createdAt: '' },
-    ]);
+    const items: INotification[] = [notification('a', false), notification('b', false)];
+    const service: NotificationsService = makeService({}, items);
 
-    service.markAsRead('1');
+    service.markAsRead(items[0]);
 
-    const items: INotification[] = latestNotifications();
-    expect(items.find((n: INotification) => n.id === '1')?.read).toBe(true);
-    expect(items.find((n: INotification) => n.id === '2')?.read).toBe(false);
-    expect(latestUnreadCount()).toBe(1);
+    let list: INotification[] = [];
+    service.getNotifications().subscribe((l: INotification[]) => (list = l));
+    expect(list[0].isRead).toBe(true);
+    expect(list[1].isRead).toBe(false);
   });
 
   it('marks every notification as read', () => {
-    seed([
-      { id: '1', title: 'a', message: '', read: false, createdAt: '' },
-      { id: '2', title: 'b', message: '', read: false, createdAt: '' },
-    ]);
+    const service: NotificationsService = makeService({}, [notification('a', false), notification('b', false)]);
 
     service.markAllAsRead();
 
-    expect(latestUnreadCount()).toBe(0);
+    let count = -1;
+    service.getUnreadCount().subscribe((c: number) => (count = c));
+    expect(count).toBe(0);
   });
 });

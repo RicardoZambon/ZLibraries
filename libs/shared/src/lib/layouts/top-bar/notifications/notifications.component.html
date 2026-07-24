@@ -1,39 +1,48 @@
-<div #dropdown class="notifications">
-    <button class="btn gray-300 notifications-toggle" type="button" (click)="onDropdownClick()"
-        [attr.aria-label]="'TopBar-Notifications-Title' | translate">
-        <i class="fa-solid fa-bell"></i>
-        @if (unreadCount$ | async; as count) {
-            <span class="notifications-badge">{{ count }}</span>
-        }
-    </button>
+@if (isEnabled) {
+    <div #dropdown class="notifications">
+        <button class="btn gray-300 notifications-toggle" type="button" (click)="onDropdownClick()"
+            [attr.aria-label]="'TopBar-Notifications-Title' | translate">
+            <i class="fa-solid fa-bell"></i>
+            @if (unreadCount$ | async; as count) {
+                <span class="notifications-badge">{{ count }}</span>
+            }
+        </button>
 
-    @if (showDropdown) {
-        <div class="notifications-panel">
-            @let items = (notifications$ | async) ?? [];
+        @if (showDropdown) {
+            <div class="notifications-panel">
+                @let items = (notifications$ | async) ?? [];
 
-            <div class="notifications-header">
-                <span>{{ 'TopBar-Notifications-Title' | translate }}</span>
+                <div class="notifications-header">
+                    <span>{{ 'TopBar-Notifications-Title' | translate }}</span>
+                    @if (items.length > 0) {
+                        <button type="button" class="notifications-mark-all" (click)="onMarkAllAsRead()">
+                            {{ 'TopBar-Notifications-MarkAllRead' | translate }}
+                        </button>
+                    }
+                </div>
+
                 @if (items.length > 0) {
-                    <button type="button" class="notifications-mark-all" (click)="onMarkAllAsRead()">
-                        {{ 'TopBar-Notifications-MarkAllRead' | translate }}
-                    </button>
+                    <ul class="notifications-list">
+                        @for (item of items; track $index) {
+                            <li class="notifications-item" [class.unread]="!item.isRead">
+                                <button type="button" class="notifications-item-btn"
+                                    [class.has-cta]="!!item.callToActionUrl" (click)="onNotificationClick(item)">
+                                    <span class="notifications-item-icon"><i class="{{ item.icon }}"></i></span>
+                                    <span class="notifications-item-body">
+                                        <span class="notifications-item-title">{{ item.title }}</span>
+                                        <span class="notifications-item-description">{{ item.description }}</span>
+                                    </span>
+                                    @if (item.callToActionUrl) {
+                                        <i class="notifications-item-cta fa-solid fa-chevron-right"></i>
+                                    }
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                } @else {
+                    <div class="notifications-empty">{{ 'TopBar-Notifications-Empty' | translate }}</div>
                 }
             </div>
-
-            @if (items.length > 0) {
-                <ul class="notifications-list">
-                    @for (item of items; track item.id) {
-                        <li class="notifications-item" [class.unread]="!item.read">
-                            <button type="button" class="notifications-item-btn" (click)="onNotificationClick(item)">
-                                <span class="notifications-item-title">{{ item.title }}</span>
-                                <span class="notifications-item-message">{{ item.message }}</span>
-                            </button>
-                        </li>
-                    }
-                </ul>
-            } @else {
-                <div class="notifications-empty">{{ 'TopBar-Notifications-Empty' | translate }}</div>
-            }
-        </div>
-    }
-</div>
+        }
+    </div>
+}

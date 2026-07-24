@@ -1,32 +1,38 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
+import { APP_CONFIG, AppConfig, AuthService } from '@zambon-dev/framework';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { INotification } from '../models';
 
 /**
- * Provides the notifications shown in the top bar.
+ * Streams top-bar notifications from a SignalR hub.
  *
- * The data is currently seeded with placeholder notifications. When the ZWebAPI
- * notifications endpoint is available, replace the body of {@link loadNotifications}
- * with the corresponding HTTP call (inject `HttpClient` + `APP_CONFIG` and POST/GET
- * against `${config.BASE_URL}/Notifications`, following `AuthenticationService`). No
- * consumer of this service needs to change.
+ * The hub is configured via `AppConfig.notificationsEnabled` and `AppConfig.notificationsUrl`.
+ * When enabled, {@link start} opens a connection (authenticated with the current JWT) and
+ * listens for the server to push the notification list via the `ReceiveNotifications` client
+ * method. Consuming apps do not interact with this service directly — the top bar drives it.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationsService {
   //#region Variables
+  private config: AppConfig = inject(APP_CONFIG);
+  private authService: AuthService = inject(AuthService);
+
   private notifications$: BehaviorSubject<INotification[]> = new BehaviorSubject<INotification[]>([]);
+  private connection?: HubConnection;
   //#endregion
 
-  //#region Constructor and Angular life cycle methods
-  constructor() {
-    this.notifications$.next(this.loadNotifications());
+  //#region Properties
+  /** Whether the notifications feature is enabled (toggled on and given a hub URL). */
+  public get isEnabled(): boolean {
+    return this.config.notificationsEnabled && this.config.notificationsUrl.length > 0;
   }
   //#endregion
 
   //#region Public methods
-  /** Emits the current list of notifications, most recent first. */
+  /** Emits the current list of notifications. */
   public getNotifications(): Observable<INotification[]> {
     return this.notifications$.asObservable();
   }
@@ -34,31 +40,56 @@ export class NotificationsService {
   /** Emits the number of unread notifications. */
   public getUnreadCount(): Observable<number> {
     return this.notifications$.pipe(
-      map((notifications: INotification[]) => notifications.filter((n: INotification) => !n.read).length),
+      map((notifications: INotification[]) => notifications.filter((n: INotification) => !n.isRead).length),
     );
   }
 
-  /** Marks a single notification as read. */
-  public markAsRead(id: string): void {
+  /** Opens the SignalR connection and starts receiving notifications. Idempotent and a no-op when disabled. */
+  public start(): void {
+    if (!this.isEnabled || !!this.connection) {
+      return;
+    }
+
+    this.connection = new HubConnectionBuilder()
+      .withUrl(this.config.notificationsUrl, {
+        accessTokenFactory: () => this.authService.token ?? '',
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    this.connection.on('ReceiveNotifications', (notifications: INotification[]) => {
+      this.notifications$.next(notifications ?? []);
+    });
+
+    this.connection.start().catch((error: unknown) => {
+      console.error('Failed to connect to the notifications hub.', error);
+    });
+  }
+
+  /** Closes the SignalR connection. */
+  public async stop(): Promise<void> {
+    if (this.connection) {
+      await this.connection.stop();
+      this.connection = undefined;
+    }
+  }
+
+  /** Marks a single notification as read (optimistically; the server reconciles on the next push). */
+  public markAsRead(notification: INotification): void {
     this.notifications$.next(
-      this.notifications$.value.map((n: INotification) => (n.id === id ? { ...n, read: true } : n)),
+      this.notifications$.value.map((n: INotification) => (n === notification ? { ...n, isRead: true } : n)),
     );
   }
 
-  /** Marks every notification as read. */
+  /** Marks every notification as read and notifies the hub. */
   public markAllAsRead(): void {
-    this.notifications$.next(this.notifications$.value.map((n: INotification) => ({ ...n, read: true })));
-  }
-  //#endregion
+    this.notifications$.next(this.notifications$.value.map((n: INotification) => ({ ...n, isRead: true })));
 
-  //#region Private methods
-  /**
-   * Returns the placeholder notifications.
-   *
-   * TODO: replace with the ZWebAPI notifications endpoint call once available.
-   */
-  private loadNotifications(): INotification[] {
-    return [];
+    if (this.connection?.state === HubConnectionState.Connected) {
+      this.connection.invoke('MarkAllAsRead').catch((error: unknown) => {
+        console.error('Failed to mark notifications as read on the hub.', error);
+      });
+    }
   }
   //#endregion
 }

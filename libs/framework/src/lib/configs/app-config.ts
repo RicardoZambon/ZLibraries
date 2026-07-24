@@ -10,6 +10,8 @@ export interface AppConfigOptions {
   companyName?: string;
   environment?: string;
   logoUrl?: string;
+  notificationsEnabled?: boolean;
+  notificationsUrl?: string;
 }
 
 export class AppConfig {
@@ -27,11 +29,19 @@ export class AppConfig {
   /** Optional brand logo URL shown in the top bar. */
   public logoUrl?: string;
 
+  /** Whether the top-bar notifications feature (bell + badge) is enabled. */
+  public notificationsEnabled: boolean;
+
+  /** SignalR hub URL the notifications service connects to when enabled. */
+  public notificationsUrl: string;
+
   constructor(baseUrl: string, options?: AppConfigOptions) {
     this.BASE_URL = baseUrl;
     this.appName = options?.appName ?? '';
     this.companyName = options?.companyName ?? '';
     this.environment = options?.environment ?? '';
     this.logoUrl = options?.logoUrl;
+    this.notificationsEnabled = options?.notificationsEnabled ?? false;
+    this.notificationsUrl = options?.notificationsUrl ?? '';
   }
 }
