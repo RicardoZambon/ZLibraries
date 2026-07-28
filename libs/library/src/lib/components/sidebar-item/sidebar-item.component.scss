@@ -148,14 +148,15 @@ li {
         padding-left: 1.5rem;
 
         // Continuous vertical spine — runs top-to-bottom so adjacent siblings join with no gap.
+        // Uses border-left (not a background fill) so its 1px width matches the elbow's borders.
         &::before {
             content: '';
             @apply absolute;
             left: 0.6rem;
             top: 0;
             bottom: 0;
-            width: 1px;
-            background: var(--sidebar-tree-line);
+            width: 0;
+            border-left: 1px solid var(--sidebar-tree-line);
         }
 
         // Rounded elbow to the label — both borders for a solid (non-faded) curve. The
