@@ -82,7 +82,7 @@ li {
         line-height: var(--sidebar-item-height);
 
         &:hover {
-            @apply bg-white/10;
+            background-color: var(--sidebar-item-hover-bg);
         }
 
         &.parent:after {

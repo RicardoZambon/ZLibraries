@@ -22,7 +22,7 @@
 :host {
     // Position/z-index so the collapse handle can straddle the right edge and sit above the content.
     @apply grid h-full select-none relative z-20;
-    @apply bg-primary-600;
+    background-color: var(--sidebar-bg);
     @apply transition-[margin-left,width] ease-in-out;
     margin-left: calc(var(--sidebar-collapsed-width) * -1);
     transition-duration: var(--sidebar-animation-duration);
@@ -73,7 +73,8 @@
 // Content-projection slot at the bottom of the sidebar (e.g. the app version). Hidden when the
 // rail is collapsed, and collapsed entirely when nothing is projected.
 .sidebar-footer {
-    @apply px-4 py-2 text-xs text-center text-gray-300/60 whitespace-nowrap overflow-hidden;
+    @apply px-4 py-2 text-xs text-center whitespace-nowrap overflow-hidden;
+    color: var(--sidebar-text-muted);
     @apply opacity-0 transition-opacity ease-in-out;
     transition-duration: var(--sidebar-animation-duration);
     grid-area: footer;
@@ -131,11 +132,13 @@ nav {
 }
 
 ul, .loading {
-    @apply bg-primary-700/80 relative;
+    @apply relative;
+    background-color: var(--sidebar-nav-bg);
 }
 
 ul lib-sidebar-item, .loading, .error {
-    @apply font-medium text-gray-200;
+    @apply font-medium;
+    color: var(--sidebar-text);
 }
 
 .loading, .error {
