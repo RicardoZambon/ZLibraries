@@ -70,14 +70,14 @@
 
         i {
             @apply text-sm;
-            // Individual `rotate` property (not transform) so 0->180deg interpolates
-            // directionally: clockwise to collapse, counter-clockwise to expand —
-            // matching the sub-menu caret. transform: rotate(180deg) is ambiguous.
+            // Individual `rotate` property (not transform) so the 180deg turn interpolates
+            // directionally and sweeps the same way as the sub-menu caret.
+            // (transform: rotate(180deg) is the ambiguous/flippy case.)
             rotate: 0deg;
             transition: rotate var(--sidebar-animation-duration) ease-in-out;
 
             &.is-collapsed {
-                rotate: 180deg;
+                rotate: -180deg;
             }
         }
     }
