@@ -19,15 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `SidebarComponent` now has a content-projection slot (`<ng-content>`) rendered as a footer at the
   bottom of the sidebar — for extra elements after the menu (e.g. an app version). It is hidden when
   the rail is collapsed and collapses entirely when nothing is projected.
-- When the rail is **collapsed** on desktop, a parent menu item now opens its children in a
-  right-anchored **flyout popover** (CDK overlay) on hover or click — instead of expanding the whole
-  rail. Dismisses on outside click or `Escape`.
-- Optional `[sidebar-action]` projection slot for a persistent primary action (e.g. an "Add" button),
-  rendered above the footer and shown in both collapsed and expanded states.
-- Semantic `--sidebar-*` surface tokens (`--sidebar-bg`, `--sidebar-nav-bg`, `--sidebar-text`,
-  `--sidebar-item-hover-bg`, `--sidebar-item-selected-bg`, `--sidebar-flyout-bg`,
-  `--sidebar-item-radius`, and more) so consumers can re-theme the sidebar via CSS custom properties.
-- `SidebarItemComponent` `displayMode` input (`'rail' | 'flyout'`) controlling rail vs. flyout rendering.
+- Semantic `--sidebar-*` design tokens for the sidebar's surfaces, text, selection, and corner radii
+  (`--sidebar-bg`, `--sidebar-nav-bg`, `--sidebar-text`, `--sidebar-item-hover-bg`,
+  `--sidebar-item-selected-bg`, `--sidebar-radius`, `--sidebar-item-radius`, …) so consumers can
+  re-theme the sidebar via CSS custom properties.
 
 ### Changed
 
@@ -36,8 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   bar (`shared-top-bar` in `@shared`).
 - Sidebar menu items now use an on-palette hover surface (a subtle light overlay) instead of the
   previous off-palette `slate-700`.
-- Selected menu items now render as a rounded **pill** highlight (inset in expanded/flyout states)
-  instead of the previous 4px left accent bar.
+- Selected menu items now render as a rounded **pill** highlight (inset when expanded) instead of the
+  previous 4px left accent bar.
+- The sidebar panel and its items now have rounded corners (`--sidebar-radius`, `--sidebar-item-radius`).
 
 ### Deprecated
 

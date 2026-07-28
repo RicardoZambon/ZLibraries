@@ -4,9 +4,7 @@
     [class.loading]="isLoading"
     [class.parent]="isParent"
     [class.selected]="isSelected"
-    (click)="onSelectItem()"
-    (mouseenter)="onAnchorEnter()"
-    (mouseleave)="onAnchorLeave()">
+    (click)="onSelectItem()">
         <a>
             <i *ngIf="hasIcon" class="fa-solid fa-fw {{ menu.icon }}"></i>
             <span>{{ menu.label | translate }}</span>
@@ -32,18 +30,3 @@
         </lib-sidebar-item>
     </ul>
 </li>
-
-<ng-template #flyoutTemplate>
-    <div class="sidebar-flyout"
-    (mouseenter)="onFlyoutEnter()"
-    (mouseleave)="onFlyoutLeave()">
-        <div class="sidebar-flyout-header">{{ menu.label | translate }}</div>
-        <ul>
-            <lib-sidebar-item *ngFor="let child of menu.children; trackBy: trackByFn"
-            [menu]="child"
-            [level]="level + 1"
-            [displayMode]="'flyout'">
-            </lib-sidebar-item>
-        </ul>
-    </div>
-</ng-template>

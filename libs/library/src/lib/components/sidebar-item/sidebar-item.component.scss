@@ -55,10 +55,6 @@
         @include expanded;
     }
 
-    &.flyout {
-        @include expanded;
-    }
-
     &.expanded, &.active {
         li .selected:not(.loading).parent:after {
             @apply -rotate-90;
@@ -142,22 +138,5 @@ li {
         a {
             @apply pl-5;
         }
-    }
-}
-
-.sidebar-flyout {
-    @apply overflow-hidden py-1;
-    min-width: var(--sidebar-expanded-width);
-    background-color: var(--sidebar-flyout-bg);
-    color: var(--sidebar-flyout-text);
-    border-radius: var(--sidebar-flyout-radius);
-    box-shadow: var(--sidebar-flyout-shadow);
-
-    ul {
-        @apply list-none m-0 p-0;
-    }
-
-    .sidebar-flyout-header {
-        @apply px-3 py-1 text-xs font-semibold uppercase tracking-wide opacity-70;
     }
 }

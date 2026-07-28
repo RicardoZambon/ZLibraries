@@ -1,4 +1,3 @@
-import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -18,16 +17,10 @@ class MockSidebarService extends SidebarService {
   }
 }
 
-@Component({
-  imports: [SidebarComponent],
-  template: `<lib-sidebar><button sidebar-action>Add</button></lib-sidebar>`,
-})
-class HostComponent {}
-
 describe(SidebarComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SidebarComponent, HostComponent, TranslateModule.forRoot()],
+      imports: [SidebarComponent, TranslateModule.forRoot()],
       providers: [
         { provide: SidebarService, useClass: MockSidebarService },
         { provide: SIDEBAR_CONFIGS, useValue: new SidebarConfigs() },
@@ -38,14 +31,5 @@ describe(SidebarComponent.name, () => {
   it('should create', () => {
     const fixture: ComponentFixture<SidebarComponent> = TestBed.createComponent(SidebarComponent);
     expect(fixture.componentInstance).toBeTruthy();
-  });
-
-  it('projects a [sidebar-action] element into the sidebar footer area', () => {
-    const fixture: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
-    fixture.detectChanges();
-
-    const action: HTMLElement | null = fixture.nativeElement.querySelector('.sidebar-action [sidebar-action]');
-    expect(action).toBeTruthy();
-    expect(action?.textContent).toContain('Add');
   });
 });

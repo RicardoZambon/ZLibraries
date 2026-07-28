@@ -8,7 +8,7 @@
     --sidebar-logo-height: 50px;
     --sidebar-picture-size: 50px;
 
-    /* Surfaces & colors (Phase 1 rework — brand-equivalent defaults) */
+    /* Surfaces & colors (brand-equivalent defaults) */
     --sidebar-bg: theme('colors.primary.600');
     --sidebar-nav-bg: color-mix(in srgb, theme('colors.primary.700') 80%, transparent);
     --sidebar-text: theme('colors.gray.200');
@@ -17,9 +17,8 @@
     --sidebar-item-selected-bg: color-mix(in srgb, white 15%, transparent);
     --sidebar-item-selected-text: theme('colors.white');
     --sidebar-accent: theme('colors.gray.100');
-    --sidebar-flyout-bg: theme('colors.primary.700');
-    --sidebar-flyout-text: theme('colors.gray.100');
-    --sidebar-flyout-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.19);
-    --sidebar-item-radius: 8px;
-    --sidebar-flyout-radius: 10px;
+
+    /* Radii (rounded restyle) */
+    --sidebar-radius: 1.25rem;
+    --sidebar-item-radius: 10px;
 }
