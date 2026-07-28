@@ -145,6 +145,19 @@ ul lib-sidebar-item, .loading, .error {
     color: var(--sidebar-text);
 }
 
+// Region group header (e.g. "MAIN"). Fades and collapses when the rail is collapsed.
+.sidebar-region-header {
+    @apply px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider whitespace-nowrap overflow-hidden;
+    color: var(--sidebar-text-muted);
+    @apply transition-[opacity,height,padding] ease-in-out;
+    transition-duration: var(--sidebar-animation-duration);
+}
+
+:host(:not(.expanded):not(.active)) .sidebar-region-header {
+    @apply opacity-0 py-0;
+    height: 0;
+}
+
 .loading, .error {
     @apply overflow-hidden;
     height: var(--sidebar-item-height);

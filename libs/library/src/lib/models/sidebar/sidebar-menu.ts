@@ -7,6 +7,7 @@ export class SidebarMenu {
   public label: string = '';
   public isSelected: boolean = false;
   public parent: SidebarMenu | null = null;
+  public region?: string;
   public url?: string;
 
   constructor(options: Partial<SidebarMenu> = {}) {

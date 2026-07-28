@@ -8,9 +8,13 @@
 
 <nav>
     <ul *ngIf="!isLoading; else loading">
-        <lib-sidebar-item *ngFor="let menu of menus; trackBy: trackByFn"
-        [menu]="menu">
-        </lib-sidebar-item>
+        <ng-container *ngFor="let region of regions; trackBy: trackByRegion">
+            <li class="sidebar-region-header" *ngIf="region.name">{{ region.name | translate }}</li>
+
+            <lib-sidebar-item *ngFor="let menu of region.items; trackBy: trackByFn"
+            [menu]="menu">
+            </lib-sidebar-item>
+        </ng-container>
 
         <div class="error" *ngIf="hasFailed">
             <div>
