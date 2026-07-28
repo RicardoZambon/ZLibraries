@@ -39,4 +39,13 @@ describe(SidebarComponent.name, () => {
     const fixture: ComponentFixture<SidebarComponent> = TestBed.createComponent(SidebarComponent);
     expect(fixture.componentInstance).toBeTruthy();
   });
+
+  it('projects a [sidebar-action] element into the sidebar footer area', () => {
+    const fixture: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
+    fixture.detectChanges();
+
+    const action: HTMLElement | null = fixture.nativeElement.querySelector('.sidebar-action [sidebar-action]');
+    expect(action).toBeTruthy();
+    expect(action?.textContent).toContain('Add');
+  });
 });
