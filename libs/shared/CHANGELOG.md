@@ -34,6 +34,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   page keeps the text label).
 - `MainLayoutComponent` projects the application version (`AppConfig.version`) into the sidebar's
   footer slot, shown at the bottom of the navigation when set.
+- A tokenized app backdrop — `--app-backdrop`, a subtle light-gray gradient — rendered behind the
+  whole layout shell so the sidebar's new translucent "glass" surface (from `@library`) reads against
+  a colored background.
 
 ### Changed
 
@@ -51,6 +54,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Brazil for `pt`) instead of `/flags/*.png` background images, in both the flag toggle and the
   dropdown. The selector no longer depends on app-provided flag assets; apps that supplied custom
   `/flags/*.png` images will no longer see them in the language selector.
+- `MainLayoutComponent` now floats the sidebar in a padded region over the shared `--app-backdrop`
+  gradient (the shell background was a flat gray). This gives the `@library` glass sidebar a colored
+  surface to read against; the content area shares the same subtle backdrop.
 
 ### Deprecated
 

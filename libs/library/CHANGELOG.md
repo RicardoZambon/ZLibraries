@@ -19,10 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `SidebarComponent` now has a content-projection slot (`<ng-content>`) rendered as a footer at the
   bottom of the sidebar — for extra elements after the menu (e.g. an app version). It is hidden when
   the rail is collapsed and collapses entirely when nothing is projected.
-- Semantic `--sidebar-*` design tokens for the sidebar's surfaces, text, selection, and corner radii
-  (`--sidebar-bg`, `--sidebar-nav-bg`, `--sidebar-text`, `--sidebar-item-hover-bg`,
-  `--sidebar-item-selected-bg`, `--sidebar-radius`, `--sidebar-item-radius`, …) so consumers can
-  re-theme the sidebar via CSS custom properties.
+- Semantic `--sidebar-*` design tokens covering the sidebar's surfaces, text, selection, glass, and
+  radii (`--sidebar-bg`, `--sidebar-nav-bg`, `--sidebar-text`, `--sidebar-text-muted`,
+  `--sidebar-item-hover-bg`, `--sidebar-item-selected-bg`, `--sidebar-blur`, `--sidebar-shadow`,
+  `--sidebar-tree-line`, `--sidebar-radius`, `--sidebar-item-radius`, …) so consumers can re-theme
+  the sidebar entirely via CSS custom properties.
+- **Menu regions**: an optional `SidebarMenu.region` label groups top-level items under an uppercase
+  group header (e.g. "MAIN"). Items without a `region` render ungrouped, so it stays
+  backward-compatible. When the rail is collapsed, each header cross-fades to a short separator line
+  so the groups remain visually distinct.
 
 ### Changed
 
@@ -33,7 +38,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   previous off-palette `slate-700`.
 - Selected menu items now render as a rounded **pill** highlight (inset when expanded) instead of the
   previous 4px left accent bar.
-- The sidebar panel and its items now have rounded corners (`--sidebar-radius`, `--sidebar-item-radius`).
+- The sidebar is now a **translucent, blurred "glass" panel** — rounded corners, a soft drop shadow,
+  and a semi-transparent brand surface — rather than a solid, square, edge-to-edge rail (all
+  token-driven via `--sidebar-bg`, `--sidebar-blur`, `--sidebar-shadow`, `--sidebar-radius`).
+- **Child (sub-menu) items** now render a rounded **tree-connector** line instead of a menu icon;
+  top-level items keep their icons.
+- Collapsing/expanding the rail is now **animated end to end**: the toggle chevron and the
+  expandable-parent caret rotate in the same direction, the selection pill inset and item icons ease
+  into place, and region headers cross-fade to their separators — all in sync with the rail width.
 
 ### Deprecated
 
@@ -47,6 +59,12 @@ If you relied on the sidebar's logo (`SidebarConfigs.logoCollapsedPath` / `logoE
 user profile (`SidebarService.getUserProfile()`), move that presentation to the top bar. Those
 config options and the `getUserProfile()` method still exist but are no longer consumed by
 `SidebarComponent`.
+
+The sidebar surface is now **translucent** ("glass"). If your app does not place a colored backdrop
+behind the sidebar, the rail will look faint over plain/neutral content — either add a
+colored/gradient backdrop behind it (see `@shared`'s `--app-backdrop` in `MainLayoutComponent`) or
+override `--sidebar-bg` (and the other `--sidebar-*` surface tokens) with opaque values to keep a
+solid rail.
 
 ## [1.3.0] - 2026-05-01
 
