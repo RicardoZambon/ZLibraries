@@ -3,6 +3,8 @@
 @mixin expanded {
     li {
         > div {
+            margin-inline: 0.5rem;
+
             &.parent {
                 &:not(.loading):after {
                     @apply opacity-100;
@@ -58,19 +60,6 @@
             @apply -rotate-90;
         }
     }
-
-    &.first-level {
-        &:before {
-            @apply content-[''] absolute top-0 left-0 bottom-0 w-0 bg-gray-100 z-10;
-            @apply transition-[width] ease-in-out;
-            transition-duration: var(--sidebar-animation-duration);
-            will-change: width;
-        }
-
-        &.selected:before {
-            @apply w-[4px];
-        }
-    }
 }
 
 li {
@@ -80,9 +69,15 @@ li {
         @apply relative overflow-hidden;
         height: var(--sidebar-item-height);
         line-height: var(--sidebar-item-height);
+        border-radius: var(--sidebar-item-radius);
 
         &:hover {
             background-color: var(--sidebar-item-hover-bg);
+        }
+
+        &.selected {
+            background-color: var(--sidebar-item-selected-bg);
+            color: var(--sidebar-item-selected-text);
         }
 
         &.parent:after {

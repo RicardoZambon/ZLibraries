@@ -58,4 +58,15 @@ describe(SidebarItemComponent.name, () => {
   it('should create', () => {
     expect(createComponent(leafMenu()).componentInstance).toBeTruthy();
   });
+
+  it('reflects selection to the state class for the pill highlight', () => {
+    const fixture = createComponent(leafMenu());
+    fixture.componentInstance.menu.isSelected = true;
+    service.selectionChanged.emit(fixture.componentInstance.menu);
+    fixture.detectChanges();
+
+    const host: HTMLElement = fixture.nativeElement;
+    expect(host.classList.contains('selected')).toBe(true);
+    expect(host.querySelector('li > div')).toBeTruthy();
+  });
 });
