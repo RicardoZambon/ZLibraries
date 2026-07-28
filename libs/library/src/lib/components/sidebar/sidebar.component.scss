@@ -70,11 +70,14 @@
 
         i {
             @apply text-sm;
-            @apply transition-transform ease-in-out;
-            transition-duration: var(--sidebar-animation-duration);
+            // Individual `rotate` property (not transform) so 0->180deg interpolates
+            // directionally: clockwise to collapse, counter-clockwise to expand —
+            // matching the sub-menu caret. transform: rotate(180deg) is ambiguous.
+            rotate: 0deg;
+            transition: rotate var(--sidebar-animation-duration) ease-in-out;
 
             &.is-collapsed {
-                @apply rotate-180;
+                rotate: 180deg;
             }
         }
     }
