@@ -70,6 +70,10 @@ li {
         height: var(--sidebar-item-height);
         line-height: var(--sidebar-item-height);
         border-radius: var(--sidebar-item-radius);
+        // Animate the pill inset (margin-inline, added when expanded) in sync with the icon,
+        // so the row doesn't snap sideways; also fades hover/selected pills.
+        @apply transition-[margin,background-color] ease-in-out;
+        transition-duration: var(--sidebar-animation-duration);
 
         &:hover {
             background-color: var(--sidebar-item-hover-bg);
