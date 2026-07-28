@@ -28,9 +28,9 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('menuContainer') private menuContainer!: ElementRef<HTMLAnchorElement>;
 
-  @Input() public menu!: SidebarMenu;
-  @Input() public level: number = 0;
   @Input() public isLast: boolean = false;
+  @Input() public level: number = 0;
+  @Input() public menu!: SidebarMenu;
   //#endregion
 
   //#region Variables

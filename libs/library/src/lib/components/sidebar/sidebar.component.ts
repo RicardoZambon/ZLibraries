@@ -2,15 +2,10 @@ import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { AfterViewInit, Component, HostListener, inject, OnInit } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
-import { SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu } from '../../models';
+import { SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu, SidebarRegion } from '../../models';
 import { SidebarService } from '../../services';
 import { BaseComponent } from '../base.component';
 import { SidebarItemComponent } from '../sidebar-item/sidebar-item.component';
-
-interface SidebarRegion {
-  name?: string;
-  items: SidebarMenu[];
-}
 
 @Component({
   selector: 'lib-sidebar',
