@@ -6,7 +6,7 @@
     [class.selected]="isSelected"
     (click)="onSelectItem()">
         <a>
-            <i *ngIf="hasIcon" class="fa-solid fa-fw {{ menu.icon }}"></i>
+            <i *ngIf="hasIcon && level === 0" class="fa-solid fa-fw {{ menu.icon }}"></i>
             <span>{{ menu.label | translate }}</span>
         </a>
 

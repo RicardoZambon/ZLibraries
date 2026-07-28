@@ -140,3 +140,36 @@ li {
         }
     }
 }
+
+// Child items (level > 0): the menu concept uses a tree connector, not an icon.
+:host(:not(.first-level)) {
+    li > div > a {
+        @apply relative;
+        padding-left: 1.5rem;
+
+        // vertical branch line spanning the row (joins adjacent siblings)
+        &::before {
+            content: '';
+            @apply absolute top-0 bottom-0;
+            left: 0.6rem;
+            width: 1px;
+            background: var(--sidebar-tree-line);
+        }
+
+        // horizontal elbow from the branch line to the label
+        &::after {
+            content: '';
+            @apply absolute;
+            left: 0.6rem;
+            top: 50%;
+            width: 0.5rem;
+            height: 1px;
+            background: var(--sidebar-tree-line);
+        }
+    }
+}
+
+// Last child: the branch line stops at the elbow.
+:host(:not(.first-level):last-child) li > div > a::before {
+    bottom: 50%;
+}
