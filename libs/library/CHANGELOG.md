@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.2.0] - 2026-07-24
+
+### Added
+
 - `SidebarComponent` now renders its own collapse/expand toggle: a light circular chevron "handle"
   that straddles the sidebar's right edge (`angle-left` to collapse when expanded, `angle-right` to
   expand when collapsed), matching the conventional rail-collapse affordance.
@@ -28,12 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sidebar menu items now use an on-palette hover surface (a subtle light overlay) instead of the
   previous off-palette `slate-700`.
 
-### Deprecated
-
-### Removed
-
-### Fixed
-
 ### ⚠ Breaking Changes / Migration
 
 If you relied on the sidebar's logo (`SidebarConfigs.logoCollapsedPath` / `logoExpandedPath`) or its
@@ -41,11 +49,12 @@ user profile (`SidebarService.getUserProfile()`), move that presentation to the 
 config options and the `getUserProfile()` method still exist but are no longer consumed by
 `SidebarComponent`.
 
-## [1.3.0] - 2026-05-01
+## [1.1.1] - 2026-06-17
 
 - Baseline release: the changelog starts being tracked from this version. Earlier history is
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.3.0...HEAD
-[1.3.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.3.0
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.2.0...HEAD
+[1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.2.0
+[1.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.1.1

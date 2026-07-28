@@ -97,6 +97,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # PAT with bypass on the main ruleset, so the changelog-stamp commit can be pushed
+          # back to the protected branch (the default GITHUB_TOKEN cannot bypass the rules).
+          token: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Download released package tags
         uses: actions/download-artifact@v4
