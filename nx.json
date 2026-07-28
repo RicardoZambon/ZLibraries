@@ -22,6 +22,17 @@
     "sharedGlobals": []
   },
   "nxCloudAccessToken": "YmQ5ODM3ZTUtY2MyMy00NWMxLTljYTgtNWE2OGNhZGI0ZTZhfHJlYWQtd3JpdGU=",
+  "plugins": [
+    {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "serveStorybookTargetName": "storybook",
+        "buildStorybookTargetName": "build-storybook",
+        "testStorybookTargetName": "test-storybook",
+        "staticStorybookTargetName": "static-storybook"
+      }
+    }
+  ],
   "targetDefaults": {
     "@angular-devkit/build-angular:application": {
       "cache": true,
