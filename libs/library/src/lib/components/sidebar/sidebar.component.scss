@@ -154,17 +154,45 @@ ul lib-sidebar-item, .loading, .error {
     color: var(--sidebar-text);
 }
 
-// Region group header (e.g. "MAIN"). Fades and collapses when the rail is collapsed.
+// Region group header (e.g. "MAIN"). Expanded: shows the label. Collapsed: the label
+// cross-fades to a short centred divider so groups stay visually separated. Heights are
+// fixed values (not auto -> 0) so the change animates smoothly.
 .sidebar-region-header {
-    @apply px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider whitespace-nowrap overflow-hidden;
+    @apply relative flex items-center px-4 whitespace-nowrap overflow-hidden;
+    height: 2rem;
     color: var(--sidebar-text-muted);
-    @apply transition-[opacity,height,padding] ease-in-out;
+    @apply transition-[height] ease-in-out;
     transition-duration: var(--sidebar-animation-duration);
+
+    span {
+        @apply text-xs font-semibold uppercase tracking-wider;
+        @apply transition-opacity ease-in-out;
+        transition-duration: var(--sidebar-animation-duration);
+    }
+
+    // Collapsed-state group separator (hidden while expanded).
+    &::after {
+        content: '';
+        @apply absolute left-1/2 top-1/2 opacity-0;
+        width: 1.75rem;
+        height: 1px;
+        transform: translate(-50%, -50%);
+        background: var(--sidebar-text-muted);
+        @apply transition-opacity ease-in-out;
+        transition-duration: var(--sidebar-animation-duration);
+    }
 }
 
 :host(:not(.expanded):not(.active)) .sidebar-region-header {
-    @apply opacity-0 py-0;
-    height: 0;
+    height: 1.25rem;
+
+    span {
+        @apply opacity-0;
+    }
+
+    &::after {
+        @apply opacity-100;
+    }
 }
 
 .loading, .error {

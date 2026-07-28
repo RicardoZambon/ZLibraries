@@ -7,7 +7,9 @@
 <nav>
     <ul *ngIf="!isLoading; else loading">
         <ng-container *ngFor="let region of regions; trackBy: trackByRegion">
-            <li class="sidebar-region-header" *ngIf="region.name">{{ region.name | translate }}</li>
+            <li class="sidebar-region-header" *ngIf="region.name">
+                <span>{{ region.name | translate }}</span>
+            </li>
 
             <lib-sidebar-item *ngFor="let menu of region.items; trackBy: trackByFn"
             [menu]="menu">
