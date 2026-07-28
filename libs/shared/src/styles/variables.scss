@@ -21,8 +21,8 @@
     /* Glass */
     --sidebar-blur: 16px;
     --sidebar-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.45);
-    /* App-level backdrop the glass sidebar floats over (tune to taste). */
-    --sidebar-backdrop: linear-gradient(160deg, theme('colors.gray.200') 0%, theme('colors.gray.400') 100%);
+    /* App background the glass sidebar floats over (tune to taste). */
+    --app-backdrop: linear-gradient(160deg, theme('colors.gray.100') 0%, theme('colors.gray.300') 100%);
 
     /* Radii (rounded restyle) */
     --sidebar-radius: 1.25rem;
