@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.2.0] - 2026-07-28
+
+### Added
+
 - A tokenized app backdrop — `--app-backdrop`, a subtle light-gray gradient — rendered behind the
   whole layout shell so the sidebar's new translucent "glass" surface (from `@library`) reads against
   a colored background.
@@ -22,12 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `MainLayoutComponent` now floats the sidebar in a padded region over the shared `--app-backdrop`
   gradient (the shell background was a flat gray). This gives the `@library` glass sidebar a colored
   surface to read against; the content area shares the same subtle backdrop.
-
-### Deprecated
-
-### Removed
-
-### Fixed
 
 ### ⚠ Breaking Changes / Migration
 
@@ -101,6 +109,7 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v1.1.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v1.2.0...HEAD
+[1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v1.2.0
 [1.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v1.1.0
 [1.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v1.0.2
