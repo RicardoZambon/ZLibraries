@@ -20,6 +20,7 @@ import { BaseComponent } from '../base.component';
     '[class.active]': 'isActive',
     '[class.expanded]': '!isCollapsed',
     '[class.first-level]': 'level === 0',
+    '[class.last-child]': 'isLast',
     '[class.selected]': 'isSelected',
   }
 })
@@ -29,6 +30,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
 
   @Input() public menu!: SidebarMenu;
   @Input() public level: number = 0;
+  @Input() public isLast: boolean = false;
   //#endregion
 
   //#region Variables
