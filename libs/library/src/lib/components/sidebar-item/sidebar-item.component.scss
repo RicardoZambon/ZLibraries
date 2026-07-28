@@ -158,22 +158,22 @@ li {
             background: var(--sidebar-tree-line);
         }
 
-        // Rounded branch from the spine out to the label, centred on the row.
+        // Rounded branch to the label. Only a bottom border (+ corner radius) so it
+        // curves off the spine without laying a second line on top of it.
         &::after {
             content: '';
             @apply absolute;
             left: 0.6rem;
             top: calc(50% - 0.5rem);
-            width: 0.6rem;
+            width: 0.55rem;
             height: 0.5rem;
-            border-left: 1px solid var(--sidebar-tree-line);
             border-bottom: 1px solid var(--sidebar-tree-line);
-            border-bottom-left-radius: 0.4rem;
+            border-bottom-left-radius: 0.5rem;
         }
     }
 }
 
-// Last child: the spine ends at the branch, so no line hangs below the last item.
+// Last child: the spine ends exactly where the branch curve begins — no stub below, no overlap.
 :host(.last-child:not(.first-level)) li > div > a::before {
-    bottom: 50%;
+    bottom: calc(50% + 0.5rem);
 }
