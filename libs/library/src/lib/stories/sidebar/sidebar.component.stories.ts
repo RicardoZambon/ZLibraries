@@ -61,7 +61,9 @@ export const Primary: Story = {
     props: args,
     template: `
       <div class="h-[36rem] w-80 bg-slate-100">
-        <lib-sidebar></lib-sidebar>
+        <lib-sidebar>
+          <button sidebar-action class="btn amber-500 w-full">+ Add New Task</button>
+        </lib-sidebar>
       </div>
     `,
   }),
