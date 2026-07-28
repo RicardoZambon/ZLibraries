@@ -17,7 +17,7 @@
     --sidebar-item-selected-bg: color-mix(in srgb, white 22%, transparent);
     --sidebar-item-selected-text: theme('colors.white');
     --sidebar-accent: theme('colors.gray.100');
-    --sidebar-tree-line: color-mix(in srgb, white 28%, transparent);
+    --sidebar-tree-line: color-mix(in srgb, white 28%, theme('colors.primary.600'));
 
     /* Glass */
     --sidebar-blur: 16px;

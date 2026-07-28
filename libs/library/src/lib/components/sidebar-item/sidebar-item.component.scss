@@ -158,22 +158,23 @@ li {
             background: var(--sidebar-tree-line);
         }
 
-        // Rounded branch to the label. Only a bottom border (+ corner radius) so it
-        // curves off the spine without laying a second line on top of it.
+        // Rounded elbow to the label — both borders for a solid (non-faded) curve. The
+        // tree line is opaque, so where this overlaps the spine it doesn't read brighter.
         &::after {
             content: '';
             @apply absolute;
             left: 0.6rem;
-            top: calc(50% - 0.5rem);
-            width: 0.55rem;
-            height: 0.5rem;
+            top: calc(50% - 0.55rem);
+            width: 0.6rem;
+            height: 0.55rem;
+            border-left: 1px solid var(--sidebar-tree-line);
             border-bottom: 1px solid var(--sidebar-tree-line);
-            border-bottom-left-radius: 0.5rem;
+            border-bottom-left-radius: 0.4rem;
         }
     }
 }
 
-// Last child: the spine ends exactly where the branch curve begins — no stub below, no overlap.
+// Last child: spine stops where the elbow curve begins (radius above centre) so nothing hangs below.
 :host(.last-child:not(.first-level)) li > div > a::before {
-    bottom: calc(50% + 0.5rem);
+    bottom: calc(50% + 0.4rem);
 }
