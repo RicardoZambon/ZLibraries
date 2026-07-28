@@ -13,7 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A tokenized app backdrop — `--app-backdrop`, a subtle light-gray gradient — rendered behind the
+  whole layout shell so the sidebar's new translucent "glass" surface (from `@library`) reads against
+  a colored background.
+
 ### Changed
+
+- `MainLayoutComponent` now floats the sidebar in a padded region over the shared `--app-backdrop`
+  gradient (the shell background was a flat gray). This gives the `@library` glass sidebar a colored
+  surface to read against; the content area shares the same subtle backdrop.
 
 ### Deprecated
 
@@ -22,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+None. The `--app-backdrop` and floating sidebar region are applied automatically by
+`MainLayoutComponent`; no consumer action is required.
 
 ## [1.1.0] - 2026-07-24
 

@@ -1,16 +1,20 @@
 <div class="sidebar-toolbar">
     <button type="button" class="sidebar-toggle" (click)="collapse()" aria-label="Toggle navigation">
-        <i class="fa-solid"
-            [class.fa-angle-left]="!isCollapsed"
-            [class.fa-angle-right]="isCollapsed"></i>
+        <i class="fa-solid fa-angle-left" [class.is-collapsed]="isCollapsed"></i>
     </button>
 </div>
 
 <nav>
     <ul *ngIf="!isLoading; else loading">
-        <lib-sidebar-item *ngFor="let menu of menus; trackBy: trackByFn"
-        [menu]="menu">
-        </lib-sidebar-item>
+        <ng-container *ngFor="let region of regions; trackBy: trackByRegion">
+            <li class="sidebar-region-header" *ngIf="region.name">
+                <span>{{ region.name | translate }}</span>
+            </li>
+
+            <lib-sidebar-item *ngFor="let menu of region.items; trackBy: trackByFn"
+            [menu]="menu">
+            </lib-sidebar-item>
+        </ng-container>
 
         <div class="error" *ngIf="hasFailed">
             <div>

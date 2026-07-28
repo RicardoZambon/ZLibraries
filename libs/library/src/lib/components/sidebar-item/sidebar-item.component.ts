@@ -20,6 +20,7 @@ import { BaseComponent } from '../base.component';
     '[class.active]': 'isActive',
     '[class.expanded]': '!isCollapsed',
     '[class.first-level]': 'level === 0',
+    '[class.last-child]': 'isLast',
     '[class.selected]': 'isSelected',
   }
 })
@@ -27,8 +28,9 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('menuContainer') private menuContainer!: ElementRef<HTMLAnchorElement>;
 
-  @Input() public menu!: SidebarMenu;
+  @Input() public isLast: boolean = false;
   @Input() public level: number = 0;
+  @Input() public menu!: SidebarMenu;
   //#endregion
 
   //#region Variables

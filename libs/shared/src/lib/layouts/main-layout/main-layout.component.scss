@@ -1,15 +1,16 @@
 @reference "tailwindcss";
 
 .main-container {
-    @apply grid h-screen w-screen max-h-screen max-w-full bg-gray-300;
+    @apply grid h-screen w-screen max-h-screen max-w-full;
+    background: var(--app-backdrop);
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
     grid-template-areas:
     "toolbar toolbar"
     "sidebar content";
 
-    lib-sidebar {
-        @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
+    .sidebar-region {
+        @apply p-3;
         grid-area: sidebar;
     }
 

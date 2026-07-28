@@ -1,7 +1,8 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { AfterViewInit, Component, HostListener, inject, OnInit } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
-import { SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu } from '../../models';
+import { SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu, SidebarRegion } from '../../models';
 import { SidebarService } from '../../services';
 import { BaseComponent } from '../base.component';
 import { SidebarItemComponent } from '../sidebar-item/sidebar-item.component';
@@ -15,6 +16,7 @@ import { SidebarItemComponent } from '../sidebar-item/sidebar-item.component';
     NgFor,
     NgIf,
     SidebarItemComponent,
+    TranslatePipe,
   ],
   host: {
     '[class.active]': 'isActive',
@@ -71,6 +73,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   protected configLoadingText: string = this.sidebarConfigs.loadingText;
   protected hasFailed: boolean = false;
   protected menus: SidebarMenu[] = [];
+  protected regions: SidebarRegion[] = [];
 
   private sidebarService: SidebarService = inject(SidebarService);
   private wasClickedOutside: boolean = false;
@@ -107,7 +110,10 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
     this.sidebarService.loadRoot()
       .pipe(take(1))
       .subscribe({
-        next: (menus: SidebarMenu[]) => this.menus = menus,
+        next: (menus: SidebarMenu[]) => {
+          this.menus = menus;
+          this.regions = this.groupIntoRegions(menus);
+        },
         error: () => this.hasFailed = true
       });
   }
@@ -132,6 +138,29 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   //#region Private methods
   protected trackByFn(_index: number, item: SidebarMenu): number {
     return item.id;
+  }
+
+  protected trackByRegion(_index: number, region: SidebarRegion): string {
+    return region.name ?? '';
+  }
+
+  // Group top-level menus into regions by their optional `region` label, preserving
+  // first-appearance order. Ungrouped menus fall into a single header-less region.
+  private groupIntoRegions(menus: SidebarMenu[]): SidebarRegion[] {
+    const regions: SidebarRegion[] = [];
+    const byName: Map<string | undefined, SidebarRegion> = new Map<string | undefined, SidebarRegion>();
+
+    menus.forEach((menu: SidebarMenu) => {
+      let region: SidebarRegion | undefined = byName.get(menu.region);
+      if (!region) {
+        region = { name: menu.region, items: [] };
+        byName.set(menu.region, region);
+        regions.push(region);
+      }
+      region.items.push(menu);
+    });
+
+    return regions;
   }
 
   private deactivate(): void {

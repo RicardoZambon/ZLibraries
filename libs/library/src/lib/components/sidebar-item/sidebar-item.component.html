@@ -6,7 +6,7 @@
     [class.selected]="isSelected"
     (click)="onSelectItem()">
         <a>
-            <i *ngIf="hasIcon" class="fa-solid fa-fw {{ menu.icon }}"></i>
+            <i *ngIf="hasIcon && level === 0" class="fa-solid fa-fw {{ menu.icon }}"></i>
             <span>{{ menu.label | translate }}</span>
         </a>
 
@@ -24,9 +24,10 @@
         'height.px': childHeight,
         'max-height.px': childHeight
     }">
-        <lib-sidebar-item *ngFor="let child of menu.children; trackBy: trackByFn"
+        <lib-sidebar-item *ngFor="let child of menu.children; trackBy: trackByFn; let last = last"
         [menu]="child"
-        [level]="level+1">
+        [level]="level+1"
+        [isLast]="last">
         </lib-sidebar-item>
     </ul>
 </li>

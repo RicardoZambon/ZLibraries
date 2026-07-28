@@ -13,7 +13,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Semantic `--sidebar-*` design tokens covering the sidebar's surfaces, text, selection, glass, and
+  radii (`--sidebar-bg`, `--sidebar-nav-bg`, `--sidebar-text`, `--sidebar-text-muted`,
+  `--sidebar-item-hover-bg`, `--sidebar-item-selected-bg`, `--sidebar-blur`, `--sidebar-shadow`,
+  `--sidebar-tree-line`, `--sidebar-radius`, `--sidebar-item-radius`, …) so consumers can re-theme
+  the sidebar entirely via CSS custom properties.
+- **Menu regions**: an optional `SidebarMenu.region` label groups top-level items under an uppercase
+  group header (e.g. "MAIN"). Items without a `region` render ungrouped, so it stays
+  backward-compatible. When the rail is collapsed, each header cross-fades to a short separator line
+  so the groups remain visually distinct. The grouping type is exported as `SidebarRegion`.
+
 ### Changed
+
+- Selected menu items now render as a rounded **pill** highlight (inset when expanded) instead of the
+  previous 4px left accent bar.
+- The sidebar is now a **translucent, blurred "glass" panel** — rounded corners, a soft drop shadow,
+  and a semi-transparent brand surface — rather than a solid, square, edge-to-edge rail (all
+  token-driven via `--sidebar-bg`, `--sidebar-blur`, `--sidebar-shadow`, `--sidebar-radius`).
+- **Child (sub-menu) items** now render a rounded **tree-connector** line instead of a menu icon;
+  top-level items keep their icons.
+- Collapsing/expanding the rail is now **animated end to end**: the toggle chevron and the
+  expandable-parent caret rotate in the same direction, the selection pill inset and item icons ease
+  into place, and region headers cross-fade to their separators — all in sync with the rail width.
 
 ### Deprecated
 
@@ -22,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+The sidebar surface is now **translucent** ("glass"). If your app does not place a colored backdrop
+behind the sidebar, the rail will look faint over plain/neutral content — either add a
+colored/gradient backdrop behind it (see `@shared`'s `--app-backdrop` in `MainLayoutComponent`) or
+override `--sidebar-bg` (and the other `--sidebar-*` surface tokens) with opaque values to keep a
+solid rail.
 
 ## [1.2.0] - 2026-07-24
 

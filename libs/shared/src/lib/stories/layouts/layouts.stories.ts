@@ -52,9 +52,9 @@ class StorybookSidebarService extends SidebarService {
     }
 
     return of([
-      new SidebarMenu({ id: 1, label: 'Dashboard', icon: 'fa-chart-line', url: '/dashboard' }),
-      new SidebarMenu({ id: 2, label: 'General', icon: 'fa-layer-group', childCount: 2 }),
-      new SidebarMenu({ id: 3, label: 'Security', icon: 'fa-shield-halved', url: '/security' }),
+      new SidebarMenu({ id: 1, label: 'Dashboard', icon: 'fa-chart-line', url: '/dashboard', region: 'MAIN' }),
+      new SidebarMenu({ id: 2, label: 'General', icon: 'fa-layer-group', childCount: 2, region: 'MAIN' }),
+      new SidebarMenu({ id: 3, label: 'Security', icon: 'fa-shield-halved', url: '/security', region: 'ADMINISTRATION' }),
     ]);
   }
 }

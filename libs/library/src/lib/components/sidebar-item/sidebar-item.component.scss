@@ -3,6 +3,8 @@
 @mixin expanded {
     li {
         > div {
+            margin-inline: 0.5rem;
+
             &.parent {
                 &:not(.loading):after {
                     @apply opacity-100;
@@ -58,19 +60,6 @@
             @apply -rotate-90;
         }
     }
-
-    &.first-level {
-        &:before {
-            @apply content-[''] absolute top-0 left-0 bottom-0 w-0 bg-gray-100 z-10;
-            @apply transition-[width] ease-in-out;
-            transition-duration: var(--sidebar-animation-duration);
-            will-change: width;
-        }
-
-        &.selected:before {
-            @apply w-[4px];
-        }
-    }
 }
 
 li {
@@ -80,18 +69,28 @@ li {
         @apply relative overflow-hidden;
         height: var(--sidebar-item-height);
         line-height: var(--sidebar-item-height);
+        border-radius: var(--sidebar-item-radius);
+        // Animate the pill inset (margin-inline, added when expanded) in sync with the icon,
+        // so the row doesn't snap sideways; also fades hover/selected pills.
+        @apply transition-[margin,background-color] ease-in-out;
+        transition-duration: var(--sidebar-animation-duration);
 
         &:hover {
-            @apply bg-white/10;
+            background-color: var(--sidebar-item-hover-bg);
+        }
+
+        &.selected {
+            background-color: var(--sidebar-item-selected-bg);
+            color: var(--sidebar-item-selected-text);
         }
 
         &.parent:after {
             @apply absolute font-extrabold w-[10px] top-0 right-3;
-            @apply transition-[opacity] ease-in-out;
+            @apply transition-[opacity,transform] ease-in-out;
             @apply opacity-0;
             font-family: "Font Awesome 6 Free";
             transition-duration: var(--sidebar-animation-duration);
-            will-change: opacity;
+            will-change: opacity, transform;
 
             &:not(.failed) {
                 @apply content-['\f104'];
@@ -144,4 +143,43 @@ li {
             @apply pl-5;
         }
     }
+}
+
+// Child items (level > 0): the menu concept uses a rounded tree connector, not an icon.
+:host(:not(.first-level)) {
+    li > div > a {
+        @apply relative;
+        padding-left: 1.5rem;
+
+        // Continuous vertical spine — runs top-to-bottom so adjacent siblings join with no gap.
+        // Uses border-left (not a background fill) so its 1px width matches the elbow's borders.
+        &::before {
+            content: '';
+            @apply absolute;
+            left: 0.6rem;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            border-left: 1px solid var(--sidebar-tree-line);
+        }
+
+        // Rounded elbow to the label — both borders for a solid (non-faded) curve. The
+        // tree line is opaque, so where this overlaps the spine it doesn't read brighter.
+        &::after {
+            content: '';
+            @apply absolute;
+            left: 0.6rem;
+            top: calc(50% - 0.55rem);
+            width: 0.6rem;
+            height: 0.55rem;
+            border-left: 1px solid var(--sidebar-tree-line);
+            border-bottom: 1px solid var(--sidebar-tree-line);
+            border-bottom-left-radius: 0.4rem;
+        }
+    }
+}
+
+// Last child: spine stops where the elbow curve begins (radius above centre) so nothing hangs below.
+:host(.last-child:not(.first-level)) li > div > a::before {
+    bottom: calc(50% + 0.4rem);
 }

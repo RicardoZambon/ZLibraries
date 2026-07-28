@@ -22,7 +22,11 @@
 :host {
     // Position/z-index so the collapse handle can straddle the right edge and sit above the content.
     @apply grid h-full select-none relative z-20;
-    @apply bg-primary-600;
+    background-color: var(--sidebar-bg);
+    border-radius: var(--sidebar-radius, 1.25rem);
+    backdrop-filter: blur(var(--sidebar-blur, 16px));
+    -webkit-backdrop-filter: blur(var(--sidebar-blur, 16px));
+    box-shadow: var(--sidebar-shadow, 0 10px 40px -12px rgba(0, 0, 0, 0.45));
     @apply transition-[margin-left,width] ease-in-out;
     margin-left: calc(var(--sidebar-collapsed-width) * -1);
     transition-duration: var(--sidebar-animation-duration);
@@ -66,6 +70,15 @@
 
         i {
             @apply text-sm;
+            // Individual `rotate` property (not transform) so the 180deg turn interpolates
+            // directionally and sweeps the same way as the sub-menu caret.
+            // (transform: rotate(180deg) is the ambiguous/flippy case.)
+            rotate: 0deg;
+            transition: rotate var(--sidebar-animation-duration) ease-in-out;
+
+            &.is-collapsed {
+                rotate: -180deg;
+            }
         }
     }
 }
@@ -73,7 +86,8 @@
 // Content-projection slot at the bottom of the sidebar (e.g. the app version). Hidden when the
 // rail is collapsed, and collapsed entirely when nothing is projected.
 .sidebar-footer {
-    @apply px-4 py-2 text-xs text-center text-gray-300/60 whitespace-nowrap overflow-hidden;
+    @apply px-4 py-2 text-xs text-center whitespace-nowrap overflow-hidden;
+    color: var(--sidebar-text-muted);
     @apply opacity-0 transition-opacity ease-in-out;
     transition-duration: var(--sidebar-animation-duration);
     grid-area: footer;
@@ -131,11 +145,54 @@ nav {
 }
 
 ul, .loading {
-    @apply bg-primary-700/80 relative;
+    @apply relative;
+    background-color: var(--sidebar-nav-bg);
 }
 
 ul lib-sidebar-item, .loading, .error {
-    @apply font-medium text-gray-200;
+    @apply font-medium;
+    color: var(--sidebar-text);
+}
+
+// Region group header (e.g. "MAIN"). Expanded: shows the label. Collapsed: the label
+// cross-fades to a short centred divider so groups stay visually separated. Heights are
+// fixed values (not auto -> 0) so the change animates smoothly.
+.sidebar-region-header {
+    @apply relative flex items-center px-4 whitespace-nowrap overflow-hidden;
+    height: 2rem;
+    color: var(--sidebar-text-muted);
+    @apply transition-[height] ease-in-out;
+    transition-duration: var(--sidebar-animation-duration);
+
+    span {
+        @apply text-xs font-semibold uppercase tracking-wider;
+        @apply transition-opacity ease-in-out;
+        transition-duration: var(--sidebar-animation-duration);
+    }
+
+    // Collapsed-state group separator (hidden while expanded).
+    &::after {
+        content: '';
+        @apply absolute left-1/2 top-1/2 opacity-0;
+        width: 1.75rem;
+        height: 1px;
+        transform: translate(-50%, -50%);
+        background: var(--sidebar-text-muted);
+        @apply transition-opacity ease-in-out;
+        transition-duration: var(--sidebar-animation-duration);
+    }
+}
+
+:host(:not(.expanded):not(.active)) .sidebar-region-header {
+    height: 1.25rem;
+
+    span {
+        @apply opacity-0;
+    }
+
+    &::after {
+        @apply opacity-100;
+    }
 }
 
 .loading, .error {

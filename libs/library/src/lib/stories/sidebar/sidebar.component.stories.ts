@@ -25,10 +25,10 @@ class StorybookSidebarService extends SidebarService {
     }
 
     return of([
-      new SidebarMenu({ id: 1, label: 'Dashboard', icon: 'fa-chart-line', url: '/dashboard' }),
-      new SidebarMenu({ id: 2, label: 'Catalogs', icon: 'fa-layer-group', childCount: 2 }),
-      new SidebarMenu({ id: 3, label: 'Reports', icon: 'fa-file-lines', url: '/reports' }),
-      new SidebarMenu({ id: 4, label: 'Settings', icon: 'fa-gear', url: '/settings' }),
+      new SidebarMenu({ id: 1, label: 'Dashboard', icon: 'fa-chart-line', url: '/dashboard', region: 'MAIN' }),
+      new SidebarMenu({ id: 2, label: 'Catalogs', icon: 'fa-layer-group', childCount: 2, region: 'MAIN' }),
+      new SidebarMenu({ id: 3, label: 'Reports', icon: 'fa-file-lines', url: '/reports', region: 'DATA' }),
+      new SidebarMenu({ id: 4, label: 'Settings', icon: 'fa-gear', url: '/settings', region: 'DATA' }),
     ]);
   }
 }
@@ -60,7 +60,7 @@ export const Primary: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <div class="h-[36rem] w-80 bg-slate-100">
+      <div style="height: 40rem; padding: 1.5rem; display: flex; background: var(--app-backdrop);">
         <lib-sidebar></lib-sidebar>
       </div>
     `,
