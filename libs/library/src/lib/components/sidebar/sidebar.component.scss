@@ -70,6 +70,12 @@
 
         i {
             @apply text-sm;
+            @apply transition-transform ease-in-out;
+            transition-duration: var(--sidebar-animation-duration);
+
+            &.is-collapsed {
+                @apply rotate-180;
+            }
         }
     }
 }

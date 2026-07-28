@@ -1,8 +1,6 @@
 <div class="sidebar-toolbar">
     <button type="button" class="sidebar-toggle" (click)="collapse()" aria-label="Toggle navigation">
-        <i class="fa-solid"
-            [class.fa-angle-left]="!isCollapsed"
-            [class.fa-angle-right]="isCollapsed"></i>
+        <i class="fa-solid fa-angle-left" [class.is-collapsed]="isCollapsed"></i>
     </button>
 </div>
 

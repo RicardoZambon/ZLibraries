@@ -82,11 +82,11 @@ li {
 
         &.parent:after {
             @apply absolute font-extrabold w-[10px] top-0 right-3;
-            @apply transition-[opacity] ease-in-out;
+            @apply transition-[opacity,transform] ease-in-out;
             @apply opacity-0;
             font-family: "Font Awesome 6 Free";
             transition-duration: var(--sidebar-animation-duration);
-            will-change: opacity;
+            will-change: opacity, transform;
 
             &:not(.failed) {
                 @apply content-['\f104'];
