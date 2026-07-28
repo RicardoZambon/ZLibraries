@@ -60,7 +60,7 @@ export const Primary: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <div class="h-[36rem] w-80 bg-slate-100">
+      <div style="height: 40rem; padding: 1.5rem; display: flex; background: var(--sidebar-backdrop);">
         <lib-sidebar></lib-sidebar>
       </div>
     `,

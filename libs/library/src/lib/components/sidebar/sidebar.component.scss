@@ -24,6 +24,9 @@
     @apply grid h-full select-none relative z-20;
     background-color: var(--sidebar-bg);
     border-radius: var(--sidebar-radius, 1.25rem);
+    backdrop-filter: blur(var(--sidebar-blur, 16px));
+    -webkit-backdrop-filter: blur(var(--sidebar-blur, 16px));
+    box-shadow: var(--sidebar-shadow, 0 10px 40px -12px rgba(0, 0, 0, 0.45));
     @apply transition-[margin-left,width] ease-in-out;
     margin-left: calc(var(--sidebar-collapsed-width) * -1);
     transition-duration: var(--sidebar-animation-duration);

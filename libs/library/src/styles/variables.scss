@@ -8,15 +8,21 @@
     --sidebar-logo-height: 50px;
     --sidebar-picture-size: 50px;
 
-    /* Surfaces & colors (brand-equivalent defaults) */
-    --sidebar-bg: theme('colors.primary.600');
-    --sidebar-nav-bg: color-mix(in srgb, theme('colors.primary.700') 80%, transparent);
-    --sidebar-text: theme('colors.gray.200');
-    --sidebar-text-muted: color-mix(in srgb, theme('colors.gray.300') 60%, transparent);
-    --sidebar-item-hover-bg: color-mix(in srgb, white 10%, transparent);
-    --sidebar-item-selected-bg: color-mix(in srgb, white 15%, transparent);
+    /* Surfaces & colors — translucent "glass" (brand-tinted) */
+    --sidebar-bg: color-mix(in srgb, theme('colors.primary.600') 70%, transparent);
+    --sidebar-nav-bg: color-mix(in srgb, white 5%, transparent);
+    --sidebar-text: theme('colors.gray.100');
+    --sidebar-text-muted: color-mix(in srgb, theme('colors.gray.100') 60%, transparent);
+    --sidebar-item-hover-bg: color-mix(in srgb, white 12%, transparent);
+    --sidebar-item-selected-bg: color-mix(in srgb, white 22%, transparent);
     --sidebar-item-selected-text: theme('colors.white');
     --sidebar-accent: theme('colors.gray.100');
+
+    /* Glass */
+    --sidebar-blur: 16px;
+    --sidebar-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.45);
+    /* App-level backdrop the glass sidebar floats over (tune to taste). */
+    --sidebar-backdrop: linear-gradient(135deg, theme('colors.orange.400') 0%, theme('colors.rose.500') 45%, theme('colors.purple.500') 100%);
 
     /* Radii (rounded restyle) */
     --sidebar-radius: 1.25rem;
