@@ -147,33 +147,33 @@ li {
         @apply relative;
         padding-left: 1.5rem;
 
-        // Rounded elbow: down the branch, curve, then out toward the label.
+        // Continuous vertical spine — runs top-to-bottom so adjacent siblings join with no gap.
         &::before {
             content: '';
             @apply absolute;
             left: 0.6rem;
             top: 0;
-            height: 50%;
-            width: 0.55rem;
-            border-left: 1px solid var(--sidebar-tree-line);
-            border-bottom: 1px solid var(--sidebar-tree-line);
-            border-bottom-left-radius: 0.5rem;
-        }
-
-        // Continuation of the branch line down to the next sibling.
-        &::after {
-            content: '';
-            @apply absolute;
-            left: 0.6rem;
-            top: 50%;
             bottom: 0;
             width: 1px;
             background: var(--sidebar-tree-line);
         }
+
+        // Rounded branch from the spine out to the label, centred on the row.
+        &::after {
+            content: '';
+            @apply absolute;
+            left: 0.6rem;
+            top: calc(50% - 0.5rem);
+            width: 0.6rem;
+            height: 0.5rem;
+            border-left: 1px solid var(--sidebar-tree-line);
+            border-bottom: 1px solid var(--sidebar-tree-line);
+            border-bottom-left-radius: 0.4rem;
+        }
     }
 }
 
-// Last child: no continuation line — the rounded elbow ends the branch.
-:host(:not(.first-level):last-child) li > div > a::after {
-    @apply hidden;
+// Last child: the spine ends at the branch, so no line hangs below the last item.
+:host(:not(.first-level):last-child) li > div > a::before {
+    bottom: 50%;
 }
