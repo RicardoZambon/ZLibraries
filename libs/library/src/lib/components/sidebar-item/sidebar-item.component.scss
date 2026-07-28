@@ -55,6 +55,10 @@
         @include expanded;
     }
 
+    &.flyout {
+        @include expanded;
+    }
+
     &.expanded, &.active {
         li .selected:not(.loading).parent:after {
             @apply -rotate-90;

@@ -69,4 +69,14 @@ describe(SidebarItemComponent.name, () => {
     expect(host.classList.contains('selected')).toBe(true);
     expect(host.querySelector('li > div')).toBeTruthy();
   });
+
+  it('renders expanded-style (flyout host class) when displayMode is flyout while collapsed', () => {
+    service.isCollapsed = true;
+    const fixture = TestBed.createComponent(SidebarItemComponent);
+    fixture.componentInstance.menu = leafMenu();
+    fixture.componentInstance.displayMode = 'flyout';
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).classList.contains('flyout')).toBe(true);
+  });
 });
