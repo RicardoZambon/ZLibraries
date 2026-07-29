@@ -33,6 +33,7 @@ import {
   GroupAccordionComponent,
   GroupScrollSpyComponent,
   IGridColumn,
+  IListParameters,
   IListResult,
   ISidebarProfile,
   RibbonGroupComponent,
@@ -40,9 +41,10 @@ import {
   SidebarService,
 } from '@zambon-dev/library';
 import { BehaviorSubject, defer, delay, map, Observable, of } from 'rxjs';
+import { ServicesHistoryViewComponent } from '../../features/services-history/services-history-view/services-history-view.component';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
-import { INotification } from '../../models';
-import { AuthenticationService, NotificationsService } from '../../services';
+import { INotification, IOperationsHistoryList, IServicesHistoryList } from '../../models';
+import { AuthenticationService, NotificationsService, OperationsHistoryService, ServicesHistoryService } from '../../services';
 
 // ---------------------------------------------------------------------------
 // Mock backend — latency
@@ -352,6 +354,65 @@ class UnitsDataset extends ShowcaseDataset<IUnitsList> {
 
   protected rows(): IUnitsList[] {
     return UNITS;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Mock backend — audit history
+// ---------------------------------------------------------------------------
+
+// Fixed timestamps, not new Date(), so the story renders identically on every load.
+const SHOWCASE_AUDIT_DATES: Date[] = [
+  new Date('2026-07-20T14:05:00Z'),
+  new Date('2026-07-24T09:30:00Z'),
+  new Date('2026-07-28T16:45:00Z'),
+];
+
+// Rows carry BOTH `ID` and `id`. The models declare `ID`, but GridDataset.compareProperty defaults
+// to 'id', so getRowID() reads the lowercase key — without it, selecting a service row never
+// propagates and the operations grid stays empty. Emitting both keeps the declared model satisfied
+// and the grid working; the underlying @shared mismatch is filed separately.
+interface IShowcaseServiceHistoryRow extends IServicesHistoryList {
+  id: number;
+}
+
+interface IShowcaseOperationHistoryRow extends IOperationsHistoryList {
+  id: number;
+}
+
+function showcaseServiceHistory(controllerName: string): IShowcaseServiceHistoryRow[] {
+  const entity: string = controllerName === 'Customers' ? 'Customer' : 'User';
+  return [
+    { ID: 1, id: 1, name: `${entity} created`, changedByName: 'Ada Lovelace', changedOn: SHOWCASE_AUDIT_DATES[0] },
+    { ID: 2, id: 2, name: `${entity} updated`, changedByName: 'Grace Hopper', changedOn: SHOWCASE_AUDIT_DATES[1] },
+    { ID: 3, id: 3, name: `${entity} deactivated`, changedByName: 'Alan Turing', changedOn: SHOWCASE_AUDIT_DATES[2] },
+  ];
+}
+
+@Injectable()
+class ShowcaseServicesHistoryService {
+  public list(controllerName: string, _entityID: number, _parameters: IListParameters): Observable<IServicesHistoryList[]> {
+    return of(showcaseServiceHistory(controllerName)).pipe(delay(SHOWCASE_READ_LATENCY_MS));
+  }
+}
+
+@Injectable()
+class ShowcaseOperationsHistoryService {
+  public list(_controllerName: string, _entityID: number, serviceHistoryID: number, _parameters: IListParameters): Observable<IOperationsHistoryList[]> {
+    const rows: IShowcaseOperationHistoryRow[] = [
+      {
+        ID: 1, id: 1, entityName: 'Record', operationType: 'Modified',
+        oldValues: JSON.stringify({ isActive: true, name: 'Globex Corporation' }, null, 2),
+        newValues: JSON.stringify({ isActive: false, name: 'Globex Corporation Ltd' }, null, 2),
+      },
+      {
+        ID: 2, id: 2, entityName: 'Contact', operationType: 'Added',
+        oldValues: JSON.stringify({}, null, 2),
+        newValues: JSON.stringify({ phone: '+1 514 555 0102' }, null, 2),
+      },
+    ];
+    // Vary by selected service row so drilling into different entries shows different operations.
+    return of(serviceHistoryID === 1 ? rows.slice(1) : rows).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
 }
 
@@ -798,6 +859,8 @@ const showcaseRoutes: Routes = [
                 },
                 children: [
                   { path: '', component: CustomersFormComponent, data: { icon: 'fa-address-book', title: 'Button-Views-Details' } },
+                  { path: 'audit', component: ServicesHistoryViewComponent,
+                    data: { controllerName: 'Customers', icon: 'fa-history', title: 'Button-Views-History' } },
                 ],
               },
             ],
@@ -841,6 +904,8 @@ const showcaseRoutes: Routes = [
                 },
                 children: [
                   { path: '', component: UsersFormComponent, data: { icon: 'fa-user', title: 'Button-Views-Details' } },
+                  { path: 'audit', component: ServicesHistoryViewComponent,
+                    data: { controllerName: 'Users', icon: 'fa-history', title: 'Button-Views-History' } },
                 ],
               },
             ],
@@ -898,6 +963,8 @@ const meta: Meta<MainLayoutComponent> = {
         },
         { provide: AuthenticationService, useValue: authenticationServiceMock },
         { provide: NotificationsService, useValue: notificationsServiceMock },
+        { provide: OperationsHistoryService, useClass: ShowcaseOperationsHistoryService },
+        { provide: ServicesHistoryService, useClass: ShowcaseServicesHistoryService },
       ],
     }),
   ],
