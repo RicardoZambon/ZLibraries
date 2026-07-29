@@ -59,8 +59,7 @@ const USERS: IUsersList[] = [
   { id: 5, name: 'Barbara Liskov', username: 'barbara.liskov', email: 'barbara@example.com', isActive: true },
 ];
 
-// Detail-only field: mustChangePassword isn't part of the list row, so it lives beside the
-// seed array.
+// Detail-only field: mustChangePassword isn't a list row column, so it lives beside the seed array.
 const USERS_MUST_CHANGE_PASSWORD: Set<number> = new Set<number>();
 
 interface IUsersDisplay extends IUsersList {
@@ -209,7 +208,7 @@ class ShowcaseSidebarService extends SidebarService {
 }
 
 // ---------------------------------------------------------------------------
-// Mock backend — grid datasets
+// Mock backend — grid datasets, data providers and shared write helpers
 // ---------------------------------------------------------------------------
 
 // Serves rows straight from an in-memory array. Rows are copied on every read so the grid's
@@ -615,8 +614,11 @@ class CustomersFormComponent extends FormView<ICustomersDisplay> {
     <lib-data-grid></lib-data-grid>
   `,
 })
-class UnitsListComponent extends TabViewList<IUnitsList> {
-}
+class UnitsListComponent extends TabViewList<IUnitsList> {}
+
+// ---------------------------------------------------------------------------
+// Story shell — hosts the router outlet and seeds the first tab
+// ---------------------------------------------------------------------------
 
 // The story renders this, and the router puts MainLayoutComponent inside it. This mirrors the
 // real app (app.routes.ts), where MainLayoutComponent is a routed component with the screens as
