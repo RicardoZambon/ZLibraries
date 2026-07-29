@@ -12,9 +12,9 @@ import {
   CustomReuseStrategy,
   DefaultDetailsTabViewComponent,
   DefaultTabViewComponent,
-  FormView,
   FRAMEWORK_VIEW_TYPE,
   FrameworkViewType,
+  FormView,
   Tab,
   TabService,
   TabViewBase,
@@ -59,33 +59,38 @@ const USERS: IUsersList[] = [
   { id: 5, name: 'Barbara Liskov', username: 'barbara.liskov', email: 'barbara@example.com', isActive: true },
 ];
 
+// Detail-only field: it isn't part of the list row, so it lives beside the seed array.
+const USERS_MUST_CHANGE_PASSWORD: Set<number> = new Set<number>();
+
 interface IUsersDisplay extends IUsersList {
   mustChangePassword: boolean;
 }
 
 function findUser(id: number): IUsersDisplay | null {
   const user: IUsersList | undefined = USERS.find((row: IUsersList) => row.id === id);
-  return user ? { ...user, mustChangePassword: false } : null;
+  return user ? { ...user, mustChangePassword: USERS_MUST_CHANGE_PASSWORD.has(id) } : null;
 }
 
 // Writes the saved user back to the seed array, the way a real backend would persist it, so the
 // list view reflects both edits and newly created records.
-function saveUser(model: IUsersDisplay, entityID?: number): IUsersDisplay {
+function saveUser(model: Omit<IUsersDisplay, 'id'>, entityID?: number): IUsersDisplay {
   const id: number = entityID ?? nextId(USERS);
-  const saved: IUsersList = {
-    email: model.email,
+
+  if (model.mustChangePassword) {
+    USERS_MUST_CHANGE_PASSWORD.add(id);
+  } else {
+    USERS_MUST_CHANGE_PASSWORD.delete(id);
+  }
+
+  // Built field-by-field rather than spread: `model` is the form's raw value, so it carries no
+  // id, and spreading would also drag mustChangePassword into the persisted list row.
+  const saved: IUsersList = upsertById(USERS, {
+    email: model.email ?? '',
     id,
     isActive: model.isActive,
     name: model.name,
     username: model.username,
-  };
-
-  const index: number = USERS.findIndex((row: IUsersList) => row.id === id);
-  if (index >= 0) {
-    USERS[index] = saved;
-  } else {
-    USERS.push(saved);
-  }
+  });
 
   return { ...saved, mustChangePassword: model.mustChangePassword };
 }
@@ -202,6 +207,18 @@ function nextId(rows: { id: number }[]): number {
   return rows.reduce((max: number, row: { id: number }) => Math.max(max, row.id), 0) + 1;
 }
 
+// Replaces the row with a matching id, or appends it — a real backend's update-or-insert — so the
+// list views reflect saves. Assigns in place rather than splice+push so edits keep row order.
+function upsertById<TListModel extends { id: number }>(rows: TListModel[], row: TListModel): TListModel {
+  const index: number = rows.findIndex((existing: TListModel) => existing.id === row.id);
+  if (index >= 0) {
+    rows[index] = row;
+  } else {
+    rows.push(row);
+  }
+  return row;
+}
+
 @Injectable()
 class UsersDataset extends ShowcaseDataset<IUsersList> {
   public override columns: IGridColumn[] = [
@@ -221,7 +238,7 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
     return entity?.name ?? '';
   }
 
-  public saveModel(model: IUsersDisplay): Observable<IUsersDisplay> {
+  public saveModel(model: Omit<IUsersDisplay, 'id'>): Observable<IUsersDisplay> {
     // `hasEntityID`, not `entityID ?? …`: on the /new route entityID is NaN (Number('new')), and
     // NaN is neither null nor undefined, so `??` would pass NaN straight through as the id.
     return of(saveUser(model, this.hasEntityID ? this.entityID : undefined));
