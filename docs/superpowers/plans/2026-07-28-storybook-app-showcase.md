@@ -19,6 +19,9 @@ These were confirmed by reading source. Trust them.
 3. **Row selection needs no config.** Default `DataGridConfigs.multiSelect` is `false`; a row click calls `setFocusedRow(key)` which, when `multiSelect` is false, calls `selectRow(key)`. `getRowID(key)` returns `row.id` (`compareProperty` is `'id'`).
 4. **`allowedActions` can be omitted.** `BaseButton.checkAccessIsAllowed()` sets `isAccessLoaded = true; visible = true` when `allowedActions.length === 0`. `lib-ribbon-group` hides itself unless a child is `visible`, so omitting actions is required for the group to show.
 5. **`ButtonSaveComponent` reads `model.id` from the saved model** to build the post-save URL. `FormService.getModelFromForm()` returns `form.getRawValue()`, which has **no `id`** (no `id` control). Therefore mock `saveModel` **must** return an object that includes `id`.
+   - **Guard on `hasEntityID`, never `entityID ?? fallback`.** On a `/new` route the base sets `_entityID = Number('new')` = `NaN`, and `NaN ?? x` yields **`NaN`** (`??` only falls back on `null`/`undefined`), producing a `/entity/NaN` URL. `hasEntityID` is `!!entityID`, so it is correctly `false` for `NaN`. This bug was hit and fixed in Task 3.
+   - **Generate new ids from the max, not `length + 1`** — after a delete, `length + 1` can collide with an existing row. Use the shared `nextId(rows)` helper.
+   - **`saveModel` should upsert into the seed array**, the way a real backend persists, so the list view reflects edits and newly created records. Build the saved row field-by-field rather than spreading the incoming model (which carries no `id`).
 6. **`/new` works naturally.** `Number('new')` is `NaN`, so `hasEntityID` is `false` and `loadModel(NaN)` receives a falsy id → return `of(null)` → `FormView` calls `beginEdit()`.
 7. **`SIDEBAR_CONFIGS` has a root factory default** — do not provide it.
 8. **`override` usage** (repo has `noImplicitOverride: true`): use `override` when replacing a *concrete* member (`columns`, `configs`), and **omit** it when implementing an *abstract* member (`getData`, `getTitle`, `saveModel`, `loadModel`). This matches `tools/storybook/storybook.providers.ts`. If `tsc` disagrees on any member, follow the compiler.
@@ -773,8 +776,10 @@ class CustomersDataProvider extends DataProviderService<ICustomersDisplay> {
     return entity?.name ?? '';
   }
 
+  // Mirrors saveUser: guard on hasEntityID (entityID is NaN on /new), derive new ids from the
+  // max via nextId, and upsert into CUSTOMERS so the list reflects the save. See fact #5.
   public saveModel(model: ICustomersDisplay): Observable<ICustomersDisplay> {
-    return of({ ...model, id: this.entityID ?? CUSTOMERS.length + 1 });
+    return of(saveCustomer(model, this.hasEntityID ? this.entityID : undefined));
   }
 
   protected loadModel(entityID?: number): Observable<ICustomersDisplay | null> {
@@ -1119,7 +1124,9 @@ Likely snags and their fixes, so the implementer does not have to re-derive them
 | Console: `DEPRECATED: DI is instantiating a token "X" that inherits its @Injectable decorator` | Mock class missing its own decorator | Add `@Injectable()` to it (verified fact #14). |
 | Outlet empty; URL jumps to `/` | Route missing `FRAMEWORK_VIEW_TYPE` in `data` | `TabsComponent.ngOnInit` redirects to `/` when neither List nor Details is found. Add the key. |
 | Post-save URL looks like `//3` or `/customers/general/3` | A route path has more than one segment | Split into nested single-segment routes (verified fact #2). |
-| Save throws on `model.id` | Mock `saveModel` returned no `id` | Return `{ ...model, id: ... }` (verified fact #5). |
+| Save throws on `model.id` | Mock `saveModel` returned no `id` | Return a model carrying `id` (verified fact #5). |
+| Post-save URL is `/entity/NaN` | Used `entityID ?? fallback`; on `/new` `entityID` is `NaN`, which `??` passes through | Guard on `hasEntityID` instead (verified fact #5). |
+| Renaming a record updates the detail title but the list still shows the old value | `saveModel` doesn't write back to the seed array | Upsert into the seed array inside `saveModel` (verified fact #5). |
 | Ribbon group invisible | No visible children | Ensure buttons are present and `allowedActions` is omitted (verified fact #4). |
 | `lib-form-input-group` injection error | Not inside a `[formGroup]` | Wrap in `<form ngNoForm [formGroup]="dataForm">` and import `ReactiveFormsModule` (verified fact #9). |
 | Delete removes a row on mere render | Mutation ran when `onDelete()` was called | Keep the mutation inside `defer(...)` (`deleteById` already does). |
