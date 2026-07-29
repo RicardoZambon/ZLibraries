@@ -21,7 +21,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Routed list views now fill the available height automatically.** `DefaultTabViewComponent` gave its
+  routed child no layout and `lib-data-grid` has no `flex-grow` of its own, so a grid collapsed to its
+  `rowsToDisplay × rowHeight` minimum with empty space beneath it, and every consuming list component
+  had to repeat the same `:host { flex; flex-grow; overflow: hidden }` + `lib-data-grid { flex-grow }`
+  stylesheet to compensate. `TabViewList` now carries a `framework-view-list` host class — inherited by
+  every subclass — which `DefaultTabViewComponent` styles, so **consuming apps can delete those
+  per-component stylesheets**. Routed screens that do not extend `TabViewList` (forms, dashboards) are
+  unaffected.
+
 ### ⚠ Breaking Changes / Migration
+
+None.
 
 ## [1.2.0] - 2026-07-24
 

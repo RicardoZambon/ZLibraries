@@ -42,6 +42,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Form inputs no longer render a stray bordered box when `type` is set as a static attribute.**
+  Angular keeps static attributes in the DOM even when a directive consumes them as an `@Input()`, so
+  `<lib-form-input-group type="checkbox">` left a `type="checkbox"` attribute on the host element —
+  where `@tailwindcss/forms`' tag-agnostic `[type="checkbox"]` base rules styled the host itself as a
+  checkbox (1px border, white fill, `height: 1rem`), drawing an empty-input box around the field row
+  and tinting its icon. `FormInputGroupComponent` and `FormInputComponent` now clear the attribute via
+  a host binding. This affects every value of `type` (`checkbox`, `date`, `number`, `password`, …);
+  both `type="checkbox"` and `[type]="'checkbox'"` now render identically, so existing call sites are
+  fixed with no changes required.
+
 ### ⚠ Breaking Changes / Migration
 
 The sidebar surface is now **translucent** ("glass"). If your app does not place a colored backdrop

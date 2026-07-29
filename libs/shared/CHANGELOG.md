@@ -21,7 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   that render working list-views and detail-views through the real framework hosts
   (`DefaultTabViewComponent` / `DefaultDetailsTabViewComponent`, `TabViewList` / `FormView`, and the
   `framework-button-*` ribbon buttons), backed by in-memory mock data. Development-only: it lives
-  entirely in `app-showcase.stories.ts`, which is excluded from the package build.
+  entirely in `app-showcase.stories.ts`, which is excluded from the package build. The story now
+  also demonstrates a branded top bar (logo, app name, subtitle, environment badge and a working
+  notifications bell), a versioned sidebar footer, a mocked audit/history view reachable from the
+  detail views' Views button, mocked request latency so loading states are observable, and full
+  `en`/`pt` translation so the language selector switches the entire showcase.
 
 ### Changed
 
