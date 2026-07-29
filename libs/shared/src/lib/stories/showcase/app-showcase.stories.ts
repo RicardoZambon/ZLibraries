@@ -1,13 +1,18 @@
 import { Component, inject, Injectable, OnInit } from '@angular/core';
+import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ROUTES, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import {
   ButtonDeleteComponent,
+  ButtonEditComponent,
   ButtonNewComponent,
   ButtonOpenRecordComponent,
   ButtonRefreshComponent,
+  ButtonSaveComponent,
   CustomReuseStrategy,
+  DefaultDetailsTabViewComponent,
   DefaultTabViewComponent,
+  FormView,
   FRAMEWORK_VIEW_TYPE,
   FrameworkViewType,
   Tab,
@@ -18,6 +23,12 @@ import {
 import {
   DataGridComponent,
   DataGridDataset,
+  DataProviderService,
+  FormGroupComponent,
+  FormInputGroupComponent,
+  FormService,
+  GroupAccordionComponent,
+  GroupScrollSpyComponent,
   IGridColumn,
   IListResult,
   ISidebarProfile,
@@ -47,6 +58,15 @@ const USERS: IUsersList[] = [
   { id: 4, name: 'Edsger Dijkstra', username: 'edsger.dijkstra', email: 'edsger@example.com', isActive: false },
   { id: 5, name: 'Barbara Liskov', username: 'barbara.liskov', email: 'barbara@example.com', isActive: true },
 ];
+
+interface IUsersDisplay extends IUsersList {
+  mustChangePassword: boolean;
+}
+
+function findUser(id: number): IUsersDisplay | null {
+  const user: IUsersList | undefined = USERS.find((row: IUsersList) => row.id === id);
+  return user ? { ...user, mustChangePassword: false } : null;
+}
 
 interface ICustomersList {
   city: string;
@@ -167,6 +187,23 @@ class UsersDataset extends ShowcaseDataset<IUsersList> {
   }
 }
 
+@Injectable()
+class UsersDataProvider extends DataProviderService<IUsersDisplay> {
+  public getTitle(entity: IUsersDisplay): string {
+    return entity?.name ?? '';
+  }
+
+  public saveModel(model: IUsersDisplay): Observable<IUsersDisplay> {
+    // ButtonSaveComponent builds the post-save URL from `model.id`, and the form's raw value
+    // has no `id` control — so it must be supplied here.
+    return of({ ...model, id: this.entityID ?? USERS.length + 1 });
+  }
+
+  protected loadModel(entityID?: number): Observable<IUsersDisplay | null> {
+    return of(entityID ? findUser(entityID) : null);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Dashboard screen — a plain component (no grid, no form)
 // ---------------------------------------------------------------------------
@@ -264,6 +301,73 @@ class UsersListComponent extends TabViewList<IUsersList> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Users — detail view
+// ---------------------------------------------------------------------------
+
+@Component({
+  selector: 'showcase-users-form',
+  imports: [
+    ButtonEditComponent,
+    ButtonNewComponent,
+    ButtonSaveComponent,
+    FormGroupComponent,
+    FormInputGroupComponent,
+    GroupAccordionComponent,
+    GroupScrollSpyComponent,
+    ReactiveFormsModule,
+    RibbonGroupComponent,
+  ],
+  providers: [{ provide: FormService }],
+  template: `
+    <ng-template #ribbon>
+      <lib-ribbon-group label="Entity">
+        <framework-button-new></framework-button-new>
+        <framework-button-edit></framework-button-edit>
+        <framework-button-save></framework-button-save>
+      </lib-ribbon-group>
+    </ng-template>
+
+    <lib-group-scroll-spy>
+      <form ngNoForm [formGroup]="dataForm">
+        <lib-group-accordion label="Details">
+          <lib-form-group label="User">
+            <lib-form-input-group
+              controlName="name"
+              label="Name"
+              [maxLength]="200"
+              [validations]="{ 'required': 'Name is required' }">
+            </lib-form-input-group>
+            <lib-form-input-group
+              controlName="username"
+              label="Username"
+              [maxLength]="100"
+              [validations]="{ 'required': 'Username is required' }">
+            </lib-form-input-group>
+            <lib-form-input-group controlName="email" label="Email" [maxLength]="200">
+            </lib-form-input-group>
+            <lib-form-input-group controlName="isActive" label="Active" type="checkbox">
+            </lib-form-input-group>
+            <lib-form-input-group controlName="mustChangePassword" label="Must change password" type="checkbox">
+            </lib-form-input-group>
+          </lib-form-group>
+        </lib-group-accordion>
+      </form>
+    </lib-group-scroll-spy>
+  `,
+})
+class UsersFormComponent extends FormView<IUsersDisplay> {
+  protected formSetup(): FormGroup {
+    return this.formBuilder.group({
+      email: [null],
+      isActive: [true, { nonNullable: true }],
+      mustChangePassword: [false, { nonNullable: true }],
+      name: [null, Validators.required],
+      username: [null, Validators.required],
+    });
+  }
+}
+
 // The story renders this, and the router puts MainLayoutComponent inside it. This mirrors the
 // real app (app.routes.ts), where MainLayoutComponent is a routed component with the screens as
 // children — so TabsComponent initializes only after the router has matched a route and can find
@@ -322,6 +426,18 @@ const showcaseRoutes: Routes = [
                 data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
                 children: [
                   { path: '', component: UsersListComponent },
+                ],
+              },
+              {
+                path: ':id',
+                component: DefaultDetailsTabViewComponent,
+                data: {
+                  [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
+                  dataProvider: () => new UsersDataProvider(),
+                  defaultTitle: 'New user',
+                },
+                children: [
+                  { path: '', component: UsersFormComponent, data: { icon: 'fa-user', title: 'Details' } },
                 ],
               },
             ],
