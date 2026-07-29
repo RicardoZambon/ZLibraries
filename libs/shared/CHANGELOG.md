@@ -22,7 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   also demonstrates a branded top bar (logo, app name, subtitle, environment badge and a working
   notifications bell), a versioned sidebar footer, a mocked audit/history view reachable from the
   detail views' Views button, mocked request latency so loading states are observable, and full
-  `en`/`pt` translation so the language selector switches the entire showcase.
+  `en`/`pt` translation so the language selector switches the entire showcase. Every list view also
+  wires up `framework-button-filters` (via a `FiltersBase` component per entity) and
+  `framework-button-export`: the mock dataset honours `IListParameters.filters`, so filtering visibly
+  narrows the grid, and exporting downloads a real CSV of the currently filtered rows.
 
 ### Changed
 
