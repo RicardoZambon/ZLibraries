@@ -51,6 +51,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a host binding. This affects every value of `type` (`checkbox`, `date`, `number`, `password`, …);
   both `type="checkbox"` and `[type]="'checkbox'"` now render identically, so existing call sites are
   fixed with no changes required.
+- **`lib-ribbon` now hides itself when it contains no visible buttons.** A screen with no ribbon
+  actions — a dashboard, or any view that projects an empty `#ribbon` template — previously still
+  rendered the bar's border, background and padding around nothing, wasting vertical space at the top
+  of the page. This mirrors `lib-ribbon-group`, which already hid itself when none of its children
+  were visible. Ribbons with at least one visible group are unaffected.
 
 ### ⚠ Breaking Changes / Migration
 
