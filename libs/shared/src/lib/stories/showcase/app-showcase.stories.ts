@@ -343,7 +343,7 @@ interface IDashboardCard {
 }
 
 @Component({
-  selector: 'showcase-dashboard',
+  selector: 'shared-showcase-dashboard',
   imports: [],
   template: `
     <!-- Every screen publishes a ribbon template, even an empty one, so the ribbon bar is
@@ -398,7 +398,7 @@ class DashboardComponent extends TabViewBase {
 // ---------------------------------------------------------------------------
 
 @Component({
-  selector: 'showcase-users-list',
+  selector: 'shared-showcase-users-list',
   imports: [
     ButtonDeleteComponent,
     ButtonNewComponent,
@@ -430,7 +430,7 @@ class UsersListComponent extends TabViewList<IUsersList> {
 }
 
 @Component({
-  selector: 'showcase-users-form',
+  selector: 'shared-showcase-users-form',
   imports: [
     ButtonEditComponent,
     ButtonNewComponent,
@@ -497,7 +497,7 @@ class UsersFormComponent extends FormView<IUsersDisplay> {
 // ---------------------------------------------------------------------------
 
 @Component({
-  selector: 'showcase-customers-list',
+  selector: 'shared-showcase-customers-list',
   imports: [
     ButtonDeleteComponent,
     ButtonNewComponent,
@@ -529,7 +529,7 @@ class CustomersListComponent extends TabViewList<ICustomersList> {
 }
 
 @Component({
-  selector: 'showcase-customers-form',
+  selector: 'shared-showcase-customers-form',
   imports: [
     ButtonEditComponent,
     ButtonNewComponent,
@@ -598,7 +598,7 @@ class CustomersFormComponent extends FormView<ICustomersDisplay> {
 // ---------------------------------------------------------------------------
 
 @Component({
-  selector: 'showcase-units-list',
+  selector: 'shared-showcase-units-list',
   imports: [
     ButtonRefreshComponent,
     DataGridComponent,
@@ -623,7 +623,7 @@ class UnitsListComponent extends TabViewList<IUnitsList> {
 // children — so TabsComponent initializes only after the router has matched a route and can find
 // the FRAMEWORK_VIEW_TYPE it needs to open the first tab.
 @Component({
-  selector: 'showcase-root',
+  selector: 'shared-showcase-root',
   imports: [RouterModule],
   template: `<router-outlet></router-outlet>`,
 })
@@ -781,7 +781,7 @@ export const NavigableApp: StoryObj<MainLayoutComponent> = {
     template: `
       ${FIT_TO_CONTAINER}
       <div class="h-[40rem] bg-slate-100">
-        <showcase-root></showcase-root>
+        <shared-showcase-root></shared-showcase-root>
       </div>
     `,
   }),

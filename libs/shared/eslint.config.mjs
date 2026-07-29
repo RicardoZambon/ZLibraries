@@ -22,11 +22,13 @@ export default [
   {
     files: ['**/*.ts'],
     rules: {
+      // @shared components use the `shared-` prefix; `lib` stays allowed for parity with
+      // the scaffolded default and any lib-prefixed declarations.
       '@angular-eslint/directive-selector': [
         'error',
         {
           type: 'attribute',
-          prefix: 'lib',
+          prefix: ['lib', 'shared'],
           style: 'camelCase',
         },
       ],
@@ -34,7 +36,7 @@ export default [
         'error',
         {
           type: 'element',
-          prefix: 'lib',
+          prefix: ['lib', 'shared'],
           style: 'kebab-case',
         },
       ],
