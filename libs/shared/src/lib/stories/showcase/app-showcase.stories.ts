@@ -1,6 +1,7 @@
 import { Component, inject, Injectable, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ROUTES, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import {
   APP_CONFIG,
@@ -194,7 +195,7 @@ const MENU_SECURITY = 3;
 @Injectable()
 class ShowcaseSidebarService extends SidebarService {
   public getMenuFromUrl(url: string): Observable<SidebarMenu> {
-    return of(new SidebarMenu({ id: MENU_DASHBOARD, label: 'Dashboard', icon: 'fa-chart-line', url }));
+    return of(new SidebarMenu({ id: MENU_DASHBOARD, label: 'Showcase-Menus-Dashboard', icon: 'fa-chart-line', url }));
   }
 
   public getUserProfile(): ISidebarProfile {
@@ -207,21 +208,21 @@ class ShowcaseSidebarService extends SidebarService {
   protected loadMenus(parentMenu: SidebarMenu | null): Observable<SidebarMenu[]> {
     if (parentMenu?.id === MENU_GENERAL) {
       return of([
-        new SidebarMenu({ id: 21, label: 'Customers', icon: 'fa-address-book', url: '/general/customers', parent: parentMenu }),
-        new SidebarMenu({ id: 22, label: 'Units', icon: 'fa-building', url: '/general/units', parent: parentMenu }),
+        new SidebarMenu({ id: 21, label: 'Showcase-Menus-Customers', icon: 'fa-address-book', url: '/general/customers', parent: parentMenu }),
+        new SidebarMenu({ id: 22, label: 'Showcase-Menus-Units', icon: 'fa-building', url: '/general/units', parent: parentMenu }),
       ]).pipe(delay(SHOWCASE_READ_LATENCY_MS));
     }
 
     if (parentMenu?.id === MENU_SECURITY) {
       return of([
-        new SidebarMenu({ id: 31, label: 'Users', icon: 'fa-user', url: '/security/users', parent: parentMenu }),
+        new SidebarMenu({ id: 31, label: 'Showcase-Menus-Users', icon: 'fa-user', url: '/security/users', parent: parentMenu }),
       ]).pipe(delay(SHOWCASE_READ_LATENCY_MS));
     }
 
     return of([
-      new SidebarMenu({ id: MENU_DASHBOARD, label: 'Dashboard', icon: 'fa-chart-line', url: '/dashboard', region: 'MAIN' }),
-      new SidebarMenu({ id: MENU_GENERAL, label: 'General', icon: 'fa-layer-group', childCount: 2, region: 'MAIN' }),
-      new SidebarMenu({ id: MENU_SECURITY, label: 'Security', icon: 'fa-shield-halved', childCount: 1, region: 'ADMINISTRATION' }),
+      new SidebarMenu({ id: MENU_DASHBOARD, label: 'Showcase-Menus-Dashboard', icon: 'fa-chart-line', url: '/dashboard', region: 'Showcase-Region-Main' }),
+      new SidebarMenu({ id: MENU_GENERAL, label: 'Showcase-Menus-General', icon: 'fa-layer-group', childCount: 2, region: 'Showcase-Region-Main' }),
+      new SidebarMenu({ id: MENU_SECURITY, label: 'Showcase-Menus-Security', icon: 'fa-shield-halved', childCount: 1, region: 'Showcase-Region-Administration' }),
     ]).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
 }
@@ -279,9 +280,9 @@ function upsertById<TListModel extends { id: number }>(rows: TListModel[], row: 
 @Injectable()
 class UsersDataset extends ShowcaseDataset<IUsersList> {
   public override columns: IGridColumn[] = [
-    { field: 'name', headerName: 'Name' },
-    { field: 'username', headerName: 'Username' },
-    { field: 'email', headerName: 'Email' },
+    { field: 'name', headerName: 'Showcase-Users-Column-Name' },
+    { field: 'username', headerName: 'Showcase-Users-Column-Username' },
+    { field: 'email', headerName: 'Showcase-Users-Column-Email' },
   ];
 
   protected rows(): IUsersList[] {
@@ -311,10 +312,10 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
 @Injectable()
 class CustomersDataset extends ShowcaseDataset<ICustomersList> {
   public override columns: IGridColumn[] = [
-    { field: 'name', headerName: 'Name' },
-    { field: 'city', headerName: 'City' },
-    { field: 'email', headerName: 'Email' },
-    { field: 'isActive', headerName: 'Active', size: '6rem' },
+    { field: 'name', headerName: 'Showcase-Customers-Column-Name' },
+    { field: 'city', headerName: 'Showcase-Customers-Column-City' },
+    { field: 'email', headerName: 'Showcase-Customers-Column-Email' },
+    { field: 'isActive', headerName: 'Showcase-Customers-Column-IsActive', size: '6rem' },
   ];
 
   protected rows(): ICustomersList[] {
@@ -344,9 +345,9 @@ class CustomersDataProvider extends DataProviderService<ICustomersDisplay> {
 @Injectable()
 class UnitsDataset extends ShowcaseDataset<IUnitsList> {
   public override columns: IGridColumn[] = [
-    { field: 'code', headerName: 'Code', size: '8rem' },
-    { field: 'name', headerName: 'Name' },
-    { field: 'description', headerName: 'Description' },
+    { field: 'code', headerName: 'Showcase-Units-Column-Code', size: '8rem' },
+    { field: 'name', headerName: 'Showcase-Units-Column-Name' },
+    { field: 'description', headerName: 'Showcase-Units-Column-Description' },
   ];
 
   protected rows(): IUnitsList[] {
@@ -366,7 +367,7 @@ interface IDashboardCard {
 
 @Component({
   selector: 'shared-showcase-dashboard',
-  imports: [],
+  imports: [TranslatePipe],
   template: `
     <!-- Every screen publishes a ribbon template, even an empty one, so the ribbon bar is
          driven by the view rather than DefaultTabViewComponent's internal fallback. -->
@@ -380,7 +381,7 @@ interface IDashboardCard {
               <i class="fa-solid {{ card.icon }} text-xl text-slate-400"></i>
               <div>
                 <div class="text-2xl font-semibold text-slate-800">{{ card.value }}</div>
-                <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label }}</div>
+                <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label | translate }}</div>
               </div>
             </div>
           </div>
@@ -389,11 +390,11 @@ interface IDashboardCard {
 
       <div class="rounded-lg border border-slate-200 bg-white shadow-sm">
         <div class="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700">
-          Recent activity
+          {{ 'Showcase-Dashboard-RecentActivity' | translate }}
         </div>
         <ul class="divide-y divide-slate-100">
           @for (entry of activity; track entry) {
-            <li class="px-4 py-2 text-sm text-slate-600">{{ entry }}</li>
+            <li class="px-4 py-2 text-sm text-slate-600">{{ entry | translate }}</li>
           }
         </ul>
       </div>
@@ -402,16 +403,16 @@ interface IDashboardCard {
 })
 class DashboardComponent extends TabViewBase {
   protected activity: string[] = [
-    'Ada Lovelace updated customer Acme Industries',
-    'Alan Turing created unit BR-05 Downtown Branch',
-    'Grace Hopper deactivated user Edsger Dijkstra',
-    'Barbara Liskov exported the customers list',
+    'Showcase-Dashboard-Activity-1',
+    'Showcase-Dashboard-Activity-2',
+    'Showcase-Dashboard-Activity-3',
+    'Showcase-Dashboard-Activity-4',
   ];
 
   protected cards: IDashboardCard[] = [
-    { label: 'Users', value: `${USERS.length}`, icon: 'fa-user' },
-    { label: 'Customers', value: `${CUSTOMERS.length}`, icon: 'fa-address-book' },
-    { label: 'Units', value: `${UNITS.length}`, icon: 'fa-building' },
+    { label: 'Showcase-Dashboard-Card-Users', value: `${USERS.length}`, icon: 'fa-user' },
+    { label: 'Showcase-Dashboard-Card-Customers', value: `${CUSTOMERS.length}`, icon: 'fa-address-book' },
+    { label: 'Showcase-Dashboard-Card-Units', value: `${UNITS.length}`, icon: 'fa-building' },
   ];
 }
 
@@ -428,16 +429,17 @@ class DashboardComponent extends TabViewBase {
     ButtonRefreshComponent,
     DataGridComponent,
     RibbonGroupComponent,
+    TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: UsersDataset }],
   template: `
     <ng-template #ribbon>
-      <lib-ribbon-group label="Entity">
+      <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
         <framework-button-new></framework-button-new>
         <framework-button-open-record></framework-button-open-record>
         <framework-button-delete [action]="onDelete()" [disabled]="!hasRowsSelected"></framework-button-delete>
       </lib-ribbon-group>
-      <lib-ribbon-group label="General">
+      <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
         <framework-button-refresh></framework-button-refresh>
       </lib-ribbon-group>
     </ng-template>
@@ -463,11 +465,12 @@ class UsersListComponent extends TabViewList<IUsersList> {
     GroupScrollSpyComponent,
     ReactiveFormsModule,
     RibbonGroupComponent,
+    TranslatePipe,
   ],
   providers: [{ provide: FormService }],
   template: `
     <ng-template #ribbon>
-      <lib-ribbon-group label="Entity">
+      <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
         <framework-button-new></framework-button-new>
         <framework-button-edit></framework-button-edit>
         <framework-button-save></framework-button-save>
@@ -476,25 +479,25 @@ class UsersListComponent extends TabViewList<IUsersList> {
 
     <lib-group-scroll-spy>
       <form ngNoForm [formGroup]="dataForm">
-        <lib-group-accordion label="Details">
-          <lib-form-group label="User">
+        <lib-group-accordion [label]="'Showcase-EditSection-Details' | translate">
+          <lib-form-group label="Showcase-Users-FormGroup-User">
             <lib-form-input-group
               controlName="name"
-              label="Name"
+              label="Showcase-Users-Field-Name"
               [maxLength]="200"
-              [validations]="{ 'required': 'Name is required' }">
+              [validations]="{ 'required': 'Showcase-Users-Validations-Name-Required' }">
             </lib-form-input-group>
             <lib-form-input-group
               controlName="username"
-              label="Username"
+              label="Showcase-Users-Field-Username"
               [maxLength]="100"
-              [validations]="{ 'required': 'Username is required' }">
+              [validations]="{ 'required': 'Showcase-Users-Validations-Username-Required' }">
             </lib-form-input-group>
-            <lib-form-input-group controlName="email" label="Email" [maxLength]="200">
+            <lib-form-input-group controlName="email" label="Showcase-Users-Field-Email" [maxLength]="200">
             </lib-form-input-group>
-            <lib-form-input-group controlName="isActive" label="Active" type="checkbox">
+            <lib-form-input-group controlName="isActive" label="Showcase-Users-Field-IsActive" type="checkbox">
             </lib-form-input-group>
-            <lib-form-input-group controlName="mustChangePassword" label="Must change password" type="checkbox">
+            <lib-form-input-group controlName="mustChangePassword" label="Showcase-Users-Field-MustChangePassword" type="checkbox">
             </lib-form-input-group>
           </lib-form-group>
         </lib-group-accordion>
@@ -527,16 +530,17 @@ class UsersFormComponent extends FormView<IUsersDisplay> {
     ButtonRefreshComponent,
     DataGridComponent,
     RibbonGroupComponent,
+    TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: CustomersDataset }],
   template: `
     <ng-template #ribbon>
-      <lib-ribbon-group label="Entity">
+      <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
         <framework-button-new></framework-button-new>
         <framework-button-open-record></framework-button-open-record>
         <framework-button-delete [action]="onDelete()" [disabled]="!hasRowsSelected"></framework-button-delete>
       </lib-ribbon-group>
-      <lib-ribbon-group label="General">
+      <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
         <framework-button-refresh></framework-button-refresh>
       </lib-ribbon-group>
     </ng-template>
@@ -562,11 +566,12 @@ class CustomersListComponent extends TabViewList<ICustomersList> {
     GroupScrollSpyComponent,
     ReactiveFormsModule,
     RibbonGroupComponent,
+    TranslatePipe,
   ],
   providers: [{ provide: FormService }],
   template: `
     <ng-template #ribbon>
-      <lib-ribbon-group label="Entity">
+      <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
         <framework-button-new></framework-button-new>
         <framework-button-edit></framework-button-edit>
         <framework-button-save></framework-button-save>
@@ -575,26 +580,26 @@ class CustomersListComponent extends TabViewList<ICustomersList> {
 
     <lib-group-scroll-spy>
       <form ngNoForm [formGroup]="dataForm">
-        <lib-group-accordion label="Details">
-          <lib-form-group label="Customer">
+        <lib-group-accordion [label]="'Showcase-EditSection-Details' | translate">
+          <lib-form-group label="Showcase-Customers-FormGroup-Customer">
             <lib-form-input-group
               controlName="name"
-              label="Name"
+              label="Showcase-Customers-Field-Name"
               [maxLength]="200"
-              [validations]="{ 'required': 'Name is required' }">
+              [validations]="{ 'required': 'Showcase-Customers-Validations-Name-Required' }">
             </lib-form-input-group>
-            <lib-form-input-group controlName="email" label="Email" [maxLength]="200">
+            <lib-form-input-group controlName="email" label="Showcase-Customers-Field-Email" [maxLength]="200">
             </lib-form-input-group>
-            <lib-form-input-group controlName="phone" label="Phone" [maxLength]="40">
+            <lib-form-input-group controlName="phone" label="Showcase-Customers-Field-Phone" [maxLength]="40">
             </lib-form-input-group>
-            <lib-form-input-group controlName="isActive" label="Active" type="checkbox">
+            <lib-form-input-group controlName="isActive" label="Showcase-Customers-Field-IsActive" type="checkbox">
             </lib-form-input-group>
           </lib-form-group>
         </lib-group-accordion>
 
-        <lib-group-accordion label="Address">
-          <lib-form-group label="Location">
-            <lib-form-input-group controlName="city" label="City" [maxLength]="100">
+        <lib-group-accordion [label]="'Showcase-EditSection-Address' | translate">
+          <lib-form-group label="Showcase-Customers-FormGroup-Location">
+            <lib-form-input-group controlName="city" label="Showcase-Customers-Field-City" [maxLength]="100">
             </lib-form-input-group>
           </lib-form-group>
         </lib-group-accordion>
@@ -625,11 +630,12 @@ class CustomersFormComponent extends FormView<ICustomersDisplay> {
     ButtonRefreshComponent,
     DataGridComponent,
     RibbonGroupComponent,
+    TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: UnitsDataset }],
   template: `
     <ng-template #ribbon>
-      <lib-ribbon-group label="General">
+      <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
         <framework-button-refresh></framework-button-refresh>
       </lib-ribbon-group>
     </ng-template>
@@ -743,7 +749,7 @@ class ShowcaseRootComponent implements OnInit {
     // string and so never equals the tab's '/dashboard'. Seeding an exact-URL match means
     // TabsComponent focuses this tab rather than opening an untitled second one.
     this.tabService.closeAllTabs();
-    this.tabService.openTab(new Tab({ isTitleLoading: false, title: 'Dashboard', url: '/dashboard' }));
+    this.tabService.openTab(new Tab({ isTitleLoading: false, title: 'Showcase-Menus-Dashboard', url: '/dashboard' }));
   }
 }
 
@@ -788,10 +794,10 @@ const showcaseRoutes: Routes = [
                 data: {
                   [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
                   dataProvider: () => new CustomersDataProvider(),
-                  defaultTitle: 'New customer',
+                  defaultTitle: 'Showcase-Customers-Details-Title-New',
                 },
                 children: [
-                  { path: '', component: CustomersFormComponent, data: { icon: 'fa-address-book', title: 'Details' } },
+                  { path: '', component: CustomersFormComponent, data: { icon: 'fa-address-book', title: 'Button-Views-Details' } },
                 ],
               },
             ],
@@ -831,10 +837,10 @@ const showcaseRoutes: Routes = [
                 data: {
                   [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
                   dataProvider: () => new UsersDataProvider(),
-                  defaultTitle: 'New user',
+                  defaultTitle: 'Showcase-Users-Details-Title-New',
                 },
                 children: [
-                  { path: '', component: UsersFormComponent, data: { icon: 'fa-user', title: 'Details' } },
+                  { path: '', component: UsersFormComponent, data: { icon: 'fa-user', title: 'Button-Views-Details' } },
                 ],
               },
             ],
