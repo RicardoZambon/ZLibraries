@@ -36,6 +36,20 @@ None. Optional cleanup: components extending `TabViewList` can now delete their
 `:host { display: flex; flex-grow: 1; overflow: hidden }` / `lib-data-grid { flex-grow: 1 }`
 stylesheets — `DefaultTabViewComponent` styles the inherited `framework-view-list` host class.
 
+## [1.2.1] - 2026-07-29
+
+### Fixed
+
+- Lint configuration only: the library's ESLint selector rules now accept the `framework-` prefix
+  that every `@framework` component already uses. They previously still expected the Angular
+  scaffold's `lib` prefix, so the entire component surface reported
+  `@angular-eslint/component-selector` errors. No selector was renamed, and no published API or
+  runtime behavior changed — nothing to do on upgrade.
+
+### ⚠ Breaking Changes / Migration
+
+None.
+
 ## [1.2.0] - 2026-07-24
 
 ### Added
@@ -64,7 +78,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.2.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.2.1...HEAD
+[1.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.1
 [1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.0
 [1.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.1.1
 [1.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.1.0
