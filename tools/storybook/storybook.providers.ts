@@ -111,6 +111,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Showcase-Units-Column-Code': 'Code',
     'Showcase-Units-Column-Name': 'Name',
     'Showcase-Units-Column-Description': 'Description',
+    // Shared across entities, unlike the entity-prefixed keys above.
     'Showcase-EditSection-Details': 'Details',
     'Showcase-EditSection-Address': 'Address',
   },
@@ -182,7 +183,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Showcase-Users-Column-Username': 'Usuário',
     'Showcase-Users-Column-Email': 'E-mail',
     'Showcase-Users-Field-Name': 'Nome',
-    'Showcase-Users-Field-Username': 'Usuário',
+    'Showcase-Users-Field-Username': 'Nome de usuário',
     'Showcase-Users-Field-Email': 'E-mail',
     'Showcase-Users-Field-IsActive': 'Ativo',
     'Showcase-Users-Field-MustChangePassword': 'Deve alterar a senha',
@@ -206,6 +207,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Showcase-Units-Column-Code': 'Código',
     'Showcase-Units-Column-Name': 'Nome',
     'Showcase-Units-Column-Description': 'Descrição',
+    // Shared across entities, unlike the entity-prefixed keys above.
     'Showcase-EditSection-Details': 'Detalhes',
     'Showcase-EditSection-Address': 'Endereço',
   },
