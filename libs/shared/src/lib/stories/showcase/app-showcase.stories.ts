@@ -68,6 +68,28 @@ function findUser(id: number): IUsersDisplay | null {
   return user ? { ...user, mustChangePassword: false } : null;
 }
 
+// Writes the saved user back to the seed array, the way a real backend would persist it, so the
+// list view reflects both edits and newly created records.
+function saveUser(model: IUsersDisplay, entityID?: number): IUsersDisplay {
+  const id: number = entityID ?? nextId(USERS);
+  const saved: IUsersList = {
+    email: model.email,
+    id,
+    isActive: model.isActive,
+    name: model.name,
+    username: model.username,
+  };
+
+  const index: number = USERS.findIndex((row: IUsersList) => row.id === id);
+  if (index >= 0) {
+    USERS[index] = saved;
+  } else {
+    USERS.push(saved);
+  }
+
+  return { ...saved, mustChangePassword: model.mustChangePassword };
+}
+
 interface ICustomersList {
   city: string;
   email: string;
@@ -174,6 +196,12 @@ function deleteById<TListModel extends { id: number }>(rows: TListModel[], id: n
   });
 }
 
+// Next free id for an in-memory seed array. Derived from the max rather than the length so it
+// cannot collide with an existing row after a delete.
+function nextId(rows: { id: number }[]): number {
+  return rows.reduce((max: number, row: { id: number }) => Math.max(max, row.id), 0) + 1;
+}
+
 @Injectable()
 class UsersDataset extends ShowcaseDataset<IUsersList> {
   public override columns: IGridColumn[] = [
@@ -194,9 +222,9 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
   }
 
   public saveModel(model: IUsersDisplay): Observable<IUsersDisplay> {
-    // ButtonSaveComponent builds the post-save URL from `model.id`, and the form's raw value
-    // has no `id` control — so it must be supplied here.
-    return of({ ...model, id: this.entityID ?? USERS.length + 1 });
+    // `hasEntityID`, not `entityID ?? …`: on the /new route entityID is NaN (Number('new')), and
+    // NaN is neither null nor undefined, so `??` would pass NaN straight through as the id.
+    return of(saveUser(model, this.hasEntityID ? this.entityID : undefined));
   }
 
   protected loadModel(entityID?: number): Observable<IUsersDisplay | null> {
