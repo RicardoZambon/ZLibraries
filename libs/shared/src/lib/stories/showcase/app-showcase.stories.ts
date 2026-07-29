@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
-import { ROUTES, RouteReuseStrategy, Routes } from '@angular/router';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { Component, Injectable } from '@angular/core';
+import { ROUTES, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
+import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import {
   CustomReuseStrategy,
   DefaultTabViewComponent,
   FRAMEWORK_VIEW_TYPE,
   FrameworkViewType,
   TabService,
+  TabViewBase,
 } from '@zambon-dev/framework';
 import { ISidebarProfile, SidebarMenu, SidebarService } from '@zambon-dev/library';
 import { Observable, of } from 'rxjs';
@@ -71,6 +72,7 @@ const MENU_DASHBOARD = 1;
 const MENU_GENERAL = 2;
 const MENU_SECURITY = 3;
 
+@Injectable()
 class ShowcaseSidebarService extends SidebarService {
   public getMenuFromUrl(url: string): Observable<SidebarMenu> {
     return of(new SidebarMenu({ id: MENU_DASHBOARD, label: 'Dashboard', icon: 'fa-chart-line', url }));
@@ -119,6 +121,10 @@ interface IDashboardCard {
   selector: 'showcase-dashboard',
   imports: [],
   template: `
+    <!-- Dashboard has no ribbon actions, but it must still publish a template: DefaultTabViewComponent
+         falls back to its own empty template otherwise, which trips NG0100 in dev mode. -->
+    <ng-template #ribbon></ng-template>
+
     <div class="p-6 flex flex-col gap-6">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         @for (card of cards; track card.label) {
@@ -147,7 +153,7 @@ interface IDashboardCard {
     </div>
   `,
 })
-class DashboardComponent {
+class DashboardComponent extends TabViewBase {
   protected activity: string[] = [
     'Ada Lovelace updated customer Acme Industries',
     'Alan Turing created unit BR-05 Downtown Branch',
@@ -162,6 +168,17 @@ class DashboardComponent {
   ];
 }
 
+// The story renders this, and the router puts MainLayoutComponent inside it. This mirrors the
+// real app (app.routes.ts), where MainLayoutComponent is a routed component with the screens as
+// children — so TabsComponent initializes only after the router has matched a route and can find
+// the FRAMEWORK_VIEW_TYPE it needs to open the first tab.
+@Component({
+  selector: 'showcase-root',
+  imports: [RouterModule],
+  template: `<router-outlet></router-outlet>`,
+})
+class ShowcaseRootComponent {}
+
 // ---------------------------------------------------------------------------
 // Routes — one path segment per route, nested. RouteHelper.getRouteURL() collects each
 // route's segments walking up the parent chain and then reverses the flat list, so a
@@ -170,18 +187,23 @@ class DashboardComponent {
 // ---------------------------------------------------------------------------
 
 const showcaseRoutes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   {
-    path: 'dashboard',
-    component: DefaultTabViewComponent,
-    data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+    path: '',
+    component: MainLayoutComponent,
     children: [
-      { path: '', component: DashboardComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        component: DefaultTabViewComponent,
+        data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+        children: [
+          { path: '', component: DashboardComponent },
+        ],
+      },
     ],
   },
-  // Storybook bootstraps the app at /iframe.html, which matches none of the routes above.
-  // This catch-all lands the story on the dashboard instead of relying on TabsComponent's
-  // fallback redirect. Keep it LAST — Angular matches routes in order.
+  // Storybook bootstraps the app at /iframe.html, which matches nothing above.
+  // Keep this LAST — Angular matches routes in order.
   { path: '**', redirectTo: 'dashboard' },
 ];
 
@@ -201,6 +223,7 @@ const FIT_TO_CONTAINER = `
 const meta: Meta<MainLayoutComponent> = {
   component: MainLayoutComponent,
   decorators: [
+    moduleMetadata({ imports: [ShowcaseRootComponent] }),
     applicationConfig({
       providers: [
         // Adds the showcase routes to the router configured globally in
@@ -221,7 +244,7 @@ export const NavigableApp: StoryObj<MainLayoutComponent> = {
     template: `
       ${FIT_TO_CONTAINER}
       <div class="h-[40rem] bg-slate-100">
-        <shared-main-layout></shared-main-layout>
+        <showcase-root></showcase-root>
       </div>
     `,
   }),
