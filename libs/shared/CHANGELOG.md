@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A tokenized app backdrop — `--app-backdrop`, a subtle light-gray gradient — rendered behind the
   whole layout shell so the sidebar's new translucent "glass" surface (from `@library`) reads against
   a colored background.
+- **Storybook: `Shared/App Showcase` story** — a navigable demo of the full application shell.
+  Clicking the sidebar entries (Dashboard, General ▸ Customers/Units, Security ▸ Users) opens tabs
+  that render working list-views and detail-views through the real framework hosts
+  (`DefaultTabViewComponent` / `DefaultDetailsTabViewComponent`, `TabViewList` / `FormView`, and the
+  `framework-button-*` ribbon buttons), backed by in-memory mock data. Development-only: it lives
+  entirely in `app-showcase.stories.ts`, which is excluded from the package build.
 
 ### Changed
 
@@ -28,6 +34,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- **Lint: `shared-` component/directive selector prefix is now accepted.**
+  `libs/shared/eslint.config.mjs` still carried the scaffolded `prefix: 'lib'`, so the library's own
+  `shared-`-prefixed components (`shared-main-layout`, `shared-login-layout`) failed
+  `@angular-eslint/component-selector`. Both selector rules now accept `['lib', 'shared']`.
 
 ### ⚠ Breaking Changes / Migration
 
