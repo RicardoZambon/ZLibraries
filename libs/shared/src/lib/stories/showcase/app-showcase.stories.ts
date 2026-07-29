@@ -3,6 +3,8 @@ import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ROUTES, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import {
+  APP_CONFIG,
+  AppConfig,
   ButtonDeleteComponent,
   ButtonEditComponent,
   ButtonNewComponent,
@@ -36,6 +38,7 @@ import {
   SidebarMenu,
   SidebarService,
 } from '@zambon-dev/library';
+import { AuthenticationService, INotification, NotificationsService } from '@zambon-dev/shared';
 import { defer, delay, Observable, of } from 'rxjs';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 
@@ -633,6 +636,71 @@ class CustomersFormComponent extends FormView<ICustomersDisplay> {
 class UnitsListComponent extends TabViewList<IUnitsList> {}
 
 // ---------------------------------------------------------------------------
+// Story shell — brand, notifications and user identity
+// ---------------------------------------------------------------------------
+
+// Inline data URI, not a URL: the story must stay self-contained with no external requests.
+const SHOWCASE_LOGO =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">' +
+      '<rect width="32" height="32" rx="7" fill="#006bb6"/>' +
+      '<path d="M9 22.5 17.5 9.5h5.5L14.5 22.5z" fill="#ffffff"/>' +
+      '<circle cx="11" cy="11" r="2.5" fill="#ffffff"/>' +
+    '</svg>'
+  );
+
+// Plain text, NOT translation keys: NotificationsComponent renders `{{ item.title }}` and
+// `{{ item.description }}` raw — only its own chrome is piped. That is correct by design, since
+// real notifications arrive from the backend already localized.
+const SHOWCASE_NOTIFICATIONS: INotification[] = [
+  {
+    title: 'Customer updated',
+    description: 'Acme Industries was updated by Ada Lovelace.',
+    icon: 'fa-solid fa-circle-info',
+    callToActionUrl: '/general/customers/1',
+    isRead: false,
+  },
+  {
+    title: 'Unit needs review',
+    description: 'Assembly Plant has no active supervisor.',
+    icon: 'fa-solid fa-triangle-exclamation',
+    isRead: false,
+  },
+  {
+    title: 'Export finished',
+    description: 'The customers list export is ready to download.',
+    icon: 'fa-solid fa-envelope',
+    isRead: true,
+  },
+];
+
+// Mocked so the bell renders without the real service opening a SignalR connection.
+// getNotifications()/getUnreadCount() are read in NotificationsComponent field initializers,
+// so they must exist and return immediately.
+const notificationsServiceMock = {
+  isEnabled: true,
+  getNotifications: () => of(SHOWCASE_NOTIFICATIONS),
+  getUnreadCount: () => of(SHOWCASE_NOTIFICATIONS.filter((notification: INotification) => !notification.isRead).length),
+  markAllAsRead: () => undefined,
+  markAsRead: () => undefined,
+  start: () => undefined,
+  stop: () => Promise.resolve(),
+};
+
+// The globally provided auth mock has no position/pictureUrl, so the user block renders bare.
+// pictureUrl is deliberately omitted so the initials fallback renders — one fewer inline asset.
+const authenticationServiceMock = {
+  getUserInfo: () => ({
+    costCenterName: 'IT',
+    name: 'Ada Lovelace',
+    position: 'System Administrator',
+  }),
+  isAuthenticated: true,
+  signOut: () => undefined,
+};
+
+// ---------------------------------------------------------------------------
 // Story shell — hosts the router outlet and seeds the first tab
 // ---------------------------------------------------------------------------
 
@@ -787,6 +855,25 @@ const meta: Meta<MainLayoutComponent> = {
         TabService,
         { provide: RouteReuseStrategy, useClass: CustomReuseStrategy },
         { provide: SidebarService, useClass: ShowcaseSidebarService },
+        {
+          provide: APP_CONFIG,
+          useValue: new AppConfig('', {
+            // Plain text, NOT translation keys: BrandComponent renders `{{ appName }}` and
+            // `{{ companyName }}` raw, with no translate pipe, so a key would be shown literally.
+            appName: 'ZLibraries Showcase',
+            companyName: 'Zambon Dev',
+            environment: 'QA',
+            logoUrl: SHOWCASE_LOGO,
+            notificationsEnabled: true,
+            // Non-empty so the real service's isEnabled getter would also pass; the mock below
+            // is what actually answers, so no connection is attempted.
+            notificationsUrl: 'https://showcase.invalid/notifications',
+            // No 'v' prefix — MainLayoutComponent's template renders `v{{ appVersion }}`.
+            version: '1.0.0',
+          }),
+        },
+        { provide: AuthenticationService, useValue: authenticationServiceMock },
+        { provide: NotificationsService, useValue: notificationsServiceMock },
       ],
     }),
   ],
