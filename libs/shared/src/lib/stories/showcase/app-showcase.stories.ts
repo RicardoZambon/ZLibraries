@@ -38,9 +38,10 @@ import {
   SidebarMenu,
   SidebarService,
 } from '@zambon-dev/library';
-import { AuthenticationService, INotification, NotificationsService } from '@zambon-dev/shared';
 import { defer, delay, Observable, of } from 'rxjs';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
+import { INotification } from '../../models';
+import { AuthenticationService, NotificationsService } from '../../services';
 
 // ---------------------------------------------------------------------------
 // Mock backend — latency
