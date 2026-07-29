@@ -19,7 +19,10 @@ import { BaseComponent } from '../base.component';
   ],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
   host: {
-    '[class.full-height]': 'isFullHeight'
+    '[class.full-height]': 'isFullHeight',
+    // Clears a stray `type` attribute for the same reason as FormInputGroupComponent — see the
+    // comment there. Applies when a consumer sets `type` on `lib-form-input` directly.
+    '[attr.type]': 'null'
   }
 })
 export class FormInputComponent extends BaseComponent implements OnInit {
