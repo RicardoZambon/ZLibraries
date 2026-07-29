@@ -14,18 +14,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Storybook: `Shared/App Showcase` story** — a navigable demo of the full application shell.
-  Clicking the sidebar entries (Dashboard, General ▸ Customers/Units, Security ▸ Users) opens tabs
-  that render working list-views and detail-views through the real framework hosts
-  (`DefaultTabViewComponent` / `DefaultDetailsTabViewComponent`, `TabViewList` / `FormView`, and the
-  `framework-button-*` ribbon buttons), backed by in-memory mock data. Development-only: it lives
-  entirely in `app-showcase.stories.ts`, which is excluded from the package build. The story now
-  also demonstrates a branded top bar (logo, app name, subtitle, environment badge and a working
-  notifications bell), a versioned sidebar footer, a mocked audit/history view reachable from the
-  detail views' Views button, mocked request latency so loading states are observable, and full
-  `en`/`pt` translation so the language selector switches the entire showcase. Every list view also
-  wires up `framework-button-filters` (via a `FiltersBase` component per entity) and
-  `framework-button-export`: the mock dataset honours `IListParameters.filters`, so filtering visibly
-  narrows the grid, and exporting downloads a real CSV of the currently filtered rows.
+  - Clicking the sidebar entries (Dashboard, General ▸ Customers/Units, Security ▸ Users)
+    opens tabs that render working list-views and detail-views through the real framework hosts
+    (`DefaultTabViewComponent` / `DefaultDetailsTabViewComponent`, `TabViewList` / `FormView`,
+    and the `framework-button-*` ribbon buttons), backed by in-memory mock data.
+  - Development-only: it lives entirely in `app-showcase.stories.ts`, which is excluded from
+    the package build.
+  - The story now also demonstrates a branded top bar (logo, app name, subtitle, environment
+    badge and a working notifications bell), a versioned sidebar footer, a mocked audit/history
+    view reachable from the detail views' Views button, mocked request latency so loading
+    states are observable, and full `en`/`pt` translation so the language selector switches the
+    entire showcase.
+  - Every list view also wires up `framework-button-filters` (via a `FiltersBase` component per
+    entity) and `framework-button-export`: the mock dataset honours `IListParameters.filters`,
+    so filtering visibly narrows the grid, and exporting downloads a real CSV of the currently
+    filtered rows.
 
 ### Changed
 

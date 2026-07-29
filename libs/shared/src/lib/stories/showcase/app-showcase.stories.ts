@@ -1,6 +1,6 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Component, inject, Injectable, OnInit } from '@angular/core';
-import { FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ROUTES, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
@@ -241,7 +241,11 @@ class ShowcaseSidebarService extends SidebarService {
 // internal `_key` bookkeeping never leaks back into the seed arrays.
 @Injectable()
 abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
-  /** File base name used in the exported file's Content-Disposition header. */
+  /**
+   * File base name used in the exported file's Content-Disposition header. This header takes
+   * precedence over `ButtonExportComponent`'s own `fileBaseName` input, so if they ever diverge,
+   * the header wins.
+   */
   protected abstract exportBaseName(): string;
 
   public getData(parameters?: IListParameters): Observable<IListResult<TListModel>> {
@@ -259,11 +263,15 @@ abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
     const fields: string[] = this.columns.map((column: IGridColumn) => column.field);
     const rows: TListModel[] = this.matching(parameters);
 
+    // RFC 4180 quoting: every cell is wrapped, and an embedded quote is doubled rather than
+    // backslash-escaped the way JSON.stringify would.
+    const csvCell = (value: unknown): string => `"${`${value ?? ''}`.replace(/"/g, '""')}"`;
+
     // Field names, not headerName: those are translation keys now, not display text.
     const lines: string[] = [
-      fields.join(','),
+      fields.map((field: string) => csvCell(field)).join(','),
       ...rows.map((row: TListModel) =>
-        fields.map((field: string) => JSON.stringify(`${(row as Record<string, unknown>)[field] ?? ''}`)).join(',')),
+        fields.map((field: string) => csvCell((row as Record<string, unknown>)[field])).join(',')),
     ];
 
     const response: HttpResponse<Blob> = new HttpResponse({
@@ -277,8 +285,11 @@ abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
 
   protected abstract rows(): TListModel[];
 
-  // Case-insensitive "contains" across whichever fields the filter modal supplied — enough to make
-  // the Filters button visibly change the grid, which an in-memory mock otherwise wouldn't.
+  // Case-insensitive "contains" across whichever fields the filter modal supplied — enough to
+  // make the Filters button visibly change the grid, which an in-memory mock otherwise wouldn't.
+  // The filter forms deliberately expose only text fields: a "contains" match over a boolean column
+  // such as Customers' `isActive` would match both "true" and "false" on a letter like "e", so
+  // booleans are intentionally left out of the filter forms.
   private matching(parameters?: IListParameters): TListModel[] {
     const active: [string, string][] = Object.entries(parameters?.filters ?? {})
       .filter(([, value]: [string, string]) => value !== null && value !== undefined && `${value}`.trim() !== '');
@@ -549,7 +560,6 @@ class DashboardComponent extends TabViewBase {
     ButtonFiltersComponent,
     FormGroupComponent,
     FormInputGroupComponent,
-    FormsModule,
     ReactiveFormsModule,
   ],
   template: `
@@ -581,7 +591,6 @@ class ShowcaseUsersFilterComponent extends FiltersBase {
     ButtonFiltersComponent,
     FormGroupComponent,
     FormInputGroupComponent,
-    FormsModule,
     ReactiveFormsModule,
   ],
   template: `
@@ -613,7 +622,6 @@ class ShowcaseCustomersFilterComponent extends FiltersBase {
     ButtonFiltersComponent,
     FormGroupComponent,
     FormInputGroupComponent,
-    FormsModule,
     ReactiveFormsModule,
   ],
   template: `
@@ -667,7 +675,9 @@ class ShowcaseUnitsFilterComponent extends FiltersBase {
       <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
         <shared-showcase-users-filter></shared-showcase-users-filter>
         <framework-button-refresh></framework-button-refresh>
-        <framework-button-export fileBaseName="users"></framework-button-export>
+        <!-- CSV (index 2), not the button's xlsx default: the mock emits CSV bytes, so a single
+             click must not download a file named .xlsx that Excel then rejects. -->
+        <framework-button-export fileBaseName="users" [defaultOption]="2"></framework-button-export>
       </lib-ribbon-group>
     </ng-template>
 
@@ -772,7 +782,7 @@ class UsersFormComponent extends FormView<IUsersDisplay> {
       <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
         <shared-showcase-customers-filter></shared-showcase-customers-filter>
         <framework-button-refresh></framework-button-refresh>
-        <framework-button-export fileBaseName="customers"></framework-button-export>
+        <framework-button-export fileBaseName="customers" [defaultOption]="2"></framework-button-export>
       </lib-ribbon-group>
     </ng-template>
 
@@ -871,7 +881,7 @@ class CustomersFormComponent extends FormView<ICustomersDisplay> {
       <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
         <shared-showcase-units-filter></shared-showcase-units-filter>
         <framework-button-refresh></framework-button-refresh>
-        <framework-button-export fileBaseName="units"></framework-button-export>
+        <framework-button-export fileBaseName="units" [defaultOption]="2"></framework-button-export>
       </lib-ribbon-group>
     </ng-template>
 
