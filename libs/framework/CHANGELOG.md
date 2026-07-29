@@ -21,7 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Lint configuration only: the library's ESLint selector rules now accept the `framework-` prefix
+  that every `@framework` component already uses. They previously still expected the Angular
+  scaffold's `lib` prefix, so the entire component surface reported
+  `@angular-eslint/component-selector` errors. No selector was renamed, and no published API or
+  runtime behavior changed — nothing to do on upgrade.
+
 ### ⚠ Breaking Changes / Migration
+
+None.
 
 ## [1.2.0] - 2026-07-24
 
