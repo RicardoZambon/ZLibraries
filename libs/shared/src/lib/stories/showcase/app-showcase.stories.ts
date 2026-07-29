@@ -1,5 +1,6 @@
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Component, inject, Injectable, OnInit } from '@angular/core';
-import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ROUTES, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
@@ -8,6 +9,8 @@ import {
   AppConfig,
   ButtonDeleteComponent,
   ButtonEditComponent,
+  ButtonExportComponent,
+  ButtonFiltersComponent,
   ButtonNewComponent,
   ButtonOpenRecordComponent,
   ButtonRefreshComponent,
@@ -41,6 +44,7 @@ import {
   SidebarService,
 } from '@zambon-dev/library';
 import { BehaviorSubject, defer, delay, map, Observable, of } from 'rxjs';
+import { FiltersBase } from '../../components';
 import { ServicesHistoryViewComponent } from '../../features/services-history/services-history-view/services-history-view.component';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 import { INotification, IOperationsHistoryList, IServicesHistoryList } from '../../models';
@@ -237,15 +241,55 @@ class ShowcaseSidebarService extends SidebarService {
 // internal `_key` bookkeeping never leaks back into the seed arrays.
 @Injectable()
 abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
-  public getData(): Observable<IListResult<TListModel>> {
-    const items: TListModel[] = this.rows();
+  /** File base name used in the exported file's Content-Disposition header. */
+  protected abstract exportBaseName(): string;
+
+  public getData(parameters?: IListParameters): Observable<IListResult<TListModel>> {
+    const items: TListModel[] = this.matching(parameters);
     return of({
       items: items.map((row: TListModel) => ({ ...row })),
       totalRows: items.length,
     }).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
 
+  // A real backend renders the requested format server-side; this mock always emits CSV and only
+  // varies the file extension, which is enough to exercise the button end to end (loading spinner,
+  // success tick, and a genuine browser download).
+  public override export(format: string, parameters: IListParameters): Observable<HttpResponse<Blob>> {
+    const fields: string[] = this.columns.map((column: IGridColumn) => column.field);
+    const rows: TListModel[] = this.matching(parameters);
+
+    // Field names, not headerName: those are translation keys now, not display text.
+    const lines: string[] = [
+      fields.join(','),
+      ...rows.map((row: TListModel) =>
+        fields.map((field: string) => JSON.stringify(`${(row as Record<string, unknown>)[field] ?? ''}`)).join(',')),
+    ];
+
+    const response: HttpResponse<Blob> = new HttpResponse({
+      body: new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' }),
+      headers: new HttpHeaders({ 'Content-Disposition': `attachment; filename="${this.exportBaseName()}.${format}"` }),
+      status: 200,
+    });
+
+    return of(response).pipe(delay(SHOWCASE_WRITE_LATENCY_MS));
+  }
+
   protected abstract rows(): TListModel[];
+
+  // Case-insensitive "contains" across whichever fields the filter modal supplied — enough to make
+  // the Filters button visibly change the grid, which an in-memory mock otherwise wouldn't.
+  private matching(parameters?: IListParameters): TListModel[] {
+    const active: [string, string][] = Object.entries(parameters?.filters ?? {})
+      .filter(([, value]: [string, string]) => value !== null && value !== undefined && `${value}`.trim() !== '');
+
+    if (active.length === 0) {
+      return this.rows();
+    }
+
+    return this.rows().filter((row: TListModel) => active.every(([field, value]: [string, string]) =>
+      `${(row as Record<string, unknown>)[field] ?? ''}`.toLowerCase().includes(`${value}`.toLowerCase())));
+  }
 }
 
 // Removes a row from an in-memory array. Deferred so the mutation runs when the delete button
@@ -287,6 +331,10 @@ class UsersDataset extends ShowcaseDataset<IUsersList> {
     { field: 'email', headerName: 'Showcase-Users-Column-Email' },
   ];
 
+  protected exportBaseName(): string {
+    return 'users';
+  }
+
   protected rows(): IUsersList[] {
     return USERS;
   }
@@ -320,6 +368,10 @@ class CustomersDataset extends ShowcaseDataset<ICustomersList> {
     { field: 'isActive', headerName: 'Showcase-Customers-Column-IsActive', size: '6rem' },
   ];
 
+  protected exportBaseName(): string {
+    return 'customers';
+  }
+
   protected rows(): ICustomersList[] {
     return CUSTOMERS;
   }
@@ -351,6 +403,10 @@ class UnitsDataset extends ShowcaseDataset<IUnitsList> {
     { field: 'name', headerName: 'Showcase-Units-Column-Name' },
     { field: 'description', headerName: 'Showcase-Units-Column-Description' },
   ];
+
+  protected exportBaseName(): string {
+    return 'units';
+  }
 
   protected rows(): IUnitsList[] {
     return UNITS;
@@ -480,6 +536,110 @@ class DashboardComponent extends TabViewBase {
 }
 
 // ---------------------------------------------------------------------------
+// Filter components — one per list. Each is a FiltersBase subclass wrapping a single
+// framework-button-filters, mirroring Panthor's UsersFilterComponent shape: the
+// [formGroup]="filterForm" binding satisfies ButtonFiltersComponent's FormGroupDirective
+// injection, and ButtonFiltersComponent resolves DataGridDataset from its declaration site,
+// so placing it inside a list's #ribbon template wires it to that list's own dataset.
+// ---------------------------------------------------------------------------
+
+@Component({
+  selector: 'shared-showcase-users-filter',
+  imports: [
+    ButtonFiltersComponent,
+    FormGroupComponent,
+    FormInputGroupComponent,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
+  template: `
+    <framework-button-filters modalSize="xl" modalTitle="Showcase-Users-Filters-Title" [formGroup]="filterForm">
+      <lib-form-group>
+        <lib-form-input-group controlName="name" label="Showcase-Users-Field-Name" [maxLength]="200">
+        </lib-form-input-group>
+        <lib-form-input-group controlName="username" label="Showcase-Users-Field-Username" [maxLength]="100">
+        </lib-form-input-group>
+        <lib-form-input-group controlName="email" label="Showcase-Users-Field-Email" [maxLength]="200">
+        </lib-form-input-group>
+      </lib-form-group>
+    </framework-button-filters>
+  `,
+})
+class ShowcaseUsersFilterComponent extends FiltersBase {
+  protected formSetup(): FormGroup {
+    return this.formBuilder.group({
+      email: [null],
+      name: [null],
+      username: [null],
+    });
+  }
+}
+
+@Component({
+  selector: 'shared-showcase-customers-filter',
+  imports: [
+    ButtonFiltersComponent,
+    FormGroupComponent,
+    FormInputGroupComponent,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
+  template: `
+    <framework-button-filters modalSize="xl" modalTitle="Showcase-Customers-Filters-Title" [formGroup]="filterForm">
+      <lib-form-group>
+        <lib-form-input-group controlName="name" label="Showcase-Customers-Field-Name" [maxLength]="200">
+        </lib-form-input-group>
+        <lib-form-input-group controlName="city" label="Showcase-Customers-Field-City" [maxLength]="100">
+        </lib-form-input-group>
+        <lib-form-input-group controlName="email" label="Showcase-Customers-Field-Email" [maxLength]="200">
+        </lib-form-input-group>
+      </lib-form-group>
+    </framework-button-filters>
+  `,
+})
+class ShowcaseCustomersFilterComponent extends FiltersBase {
+  protected formSetup(): FormGroup {
+    return this.formBuilder.group({
+      city: [null],
+      email: [null],
+      name: [null],
+    });
+  }
+}
+
+@Component({
+  selector: 'shared-showcase-units-filter',
+  imports: [
+    ButtonFiltersComponent,
+    FormGroupComponent,
+    FormInputGroupComponent,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
+  template: `
+    <framework-button-filters modalSize="xl" modalTitle="Showcase-Units-Filters-Title" [formGroup]="filterForm">
+      <lib-form-group>
+        <lib-form-input-group controlName="code" label="Showcase-Units-Column-Code" [maxLength]="20">
+        </lib-form-input-group>
+        <lib-form-input-group controlName="name" label="Showcase-Units-Column-Name" [maxLength]="200">
+        </lib-form-input-group>
+        <lib-form-input-group controlName="description" label="Showcase-Units-Column-Description" [maxLength]="200">
+        </lib-form-input-group>
+      </lib-form-group>
+    </framework-button-filters>
+  `,
+})
+class ShowcaseUnitsFilterComponent extends FiltersBase {
+  protected formSetup(): FormGroup {
+    return this.formBuilder.group({
+      code: [null],
+      description: [null],
+      name: [null],
+    });
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Users — list and detail views
 // ---------------------------------------------------------------------------
 
@@ -487,11 +647,13 @@ class DashboardComponent extends TabViewBase {
   selector: 'shared-showcase-users-list',
   imports: [
     ButtonDeleteComponent,
+    ButtonExportComponent,
     ButtonNewComponent,
     ButtonOpenRecordComponent,
     ButtonRefreshComponent,
     DataGridComponent,
     RibbonGroupComponent,
+    ShowcaseUsersFilterComponent,
     TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: UsersDataset }],
@@ -503,7 +665,9 @@ class DashboardComponent extends TabViewBase {
         <framework-button-delete [action]="onDelete()" [disabled]="!hasRowsSelected"></framework-button-delete>
       </lib-ribbon-group>
       <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
+        <shared-showcase-users-filter></shared-showcase-users-filter>
         <framework-button-refresh></framework-button-refresh>
+        <framework-button-export fileBaseName="users"></framework-button-export>
       </lib-ribbon-group>
     </ng-template>
 
@@ -588,11 +752,13 @@ class UsersFormComponent extends FormView<IUsersDisplay> {
   selector: 'shared-showcase-customers-list',
   imports: [
     ButtonDeleteComponent,
+    ButtonExportComponent,
     ButtonNewComponent,
     ButtonOpenRecordComponent,
     ButtonRefreshComponent,
     DataGridComponent,
     RibbonGroupComponent,
+    ShowcaseCustomersFilterComponent,
     TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: CustomersDataset }],
@@ -604,7 +770,9 @@ class UsersFormComponent extends FormView<IUsersDisplay> {
         <framework-button-delete [action]="onDelete()" [disabled]="!hasRowsSelected"></framework-button-delete>
       </lib-ribbon-group>
       <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
+        <shared-showcase-customers-filter></shared-showcase-customers-filter>
         <framework-button-refresh></framework-button-refresh>
+        <framework-button-export fileBaseName="customers"></framework-button-export>
       </lib-ribbon-group>
     </ng-template>
 
@@ -690,16 +858,20 @@ class CustomersFormComponent extends FormView<ICustomersDisplay> {
 @Component({
   selector: 'shared-showcase-units-list',
   imports: [
+    ButtonExportComponent,
     ButtonRefreshComponent,
     DataGridComponent,
     RibbonGroupComponent,
+    ShowcaseUnitsFilterComponent,
     TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: UnitsDataset }],
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
+        <shared-showcase-units-filter></shared-showcase-units-filter>
         <framework-button-refresh></framework-button-refresh>
+        <framework-button-export fileBaseName="units"></framework-button-export>
       </lib-ribbon-group>
     </ng-template>
 
