@@ -59,7 +59,8 @@ const USERS: IUsersList[] = [
   { id: 5, name: 'Barbara Liskov', username: 'barbara.liskov', email: 'barbara@example.com', isActive: true },
 ];
 
-// Detail-only field: it isn't part of the list row, so it lives beside the seed array.
+// Detail-only field: mustChangePassword isn't part of the list row, so it lives beside the
+// seed array.
 const USERS_MUST_CHANGE_PASSWORD: Set<number> = new Set<number>();
 
 interface IUsersDisplay extends IUsersList {
@@ -112,7 +113,7 @@ const CUSTOMERS: ICustomersList[] = [
 ];
 
 // Detail-only field: phone isn't part of the list row, so it lives beside the seed array.
-const CUSTOMER_PHONES: Map<number, string> = new Map<number, string>([
+const CUSTOMERS_PHONES: Map<number, string> = new Map<number, string>([
   [1, '+1 416 555 0101'],
   [2, '+1 514 555 0102'],
   [3, '+1 604 555 0103'],
@@ -126,7 +127,7 @@ interface ICustomersDisplay extends ICustomersList {
 
 function findCustomer(id: number): ICustomersDisplay | null {
   const customer: ICustomersList | undefined = CUSTOMERS.find((row: ICustomersList) => row.id === id);
-  return customer ? { ...customer, phone: CUSTOMER_PHONES.get(id) ?? '' } : null;
+  return customer ? { ...customer, phone: CUSTOMERS_PHONES.get(id) ?? '' } : null;
 }
 
 // Writes the saved customer back to the seed array, the way a real backend would persist it, so
@@ -134,7 +135,7 @@ function findCustomer(id: number): ICustomersDisplay | null {
 function saveCustomer(model: Omit<ICustomersDisplay, 'id'>, entityID?: number): ICustomersDisplay {
   const id: number = entityID ?? nextId(CUSTOMERS);
 
-  CUSTOMER_PHONES.set(id, model.phone ?? '');
+  CUSTOMERS_PHONES.set(id, model.phone ?? '');
 
   // Built field-by-field rather than spread: `model` is the form's raw value, so it carries no
   // id, and spreading would also drag phone into the persisted list row.
@@ -393,7 +394,7 @@ class DashboardComponent extends TabViewBase {
 }
 
 // ---------------------------------------------------------------------------
-// Users — list view
+// Users — list and detail views
 // ---------------------------------------------------------------------------
 
 @Component({
@@ -427,10 +428,6 @@ class UsersListComponent extends TabViewList<IUsersList> {
     return deleteById(USERS, this.selectedItem?.id ?? -1);
   }
 }
-
-// ---------------------------------------------------------------------------
-// Users — detail view
-// ---------------------------------------------------------------------------
 
 @Component({
   selector: 'showcase-users-form',
