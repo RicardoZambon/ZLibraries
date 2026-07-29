@@ -25,6 +25,9 @@ These were confirmed by reading source. Trust them.
 9. **`lib-form-input-group` injects `FormGroupDirective` (non-optional)** — it must be inside `<form ngNoForm [formGroup]="dataForm">`, and the component must import `ReactiveFormsModule`.
 10. **Unresolved i18n keys echo themselves.** The global `StorybookTranslateLoader` returns `{}` for unknown keys, so plain English strings like `'Name'` render as `Name`. Use plain strings, not i18n keys.
 11. **Do not override `ngOnInit`** in list/form screens — `TabViewList.ngOnInit` and `FormView.ngOnInit` do required setup. If you must, call `super.ngOnInit()` first.
+12. **`MainLayoutComponent` must be a ROUTED component, not rendered directly by the story.** (Discovered by live browser verification during Task 1.) `TabsComponent.ngOnInit` reads `router.routerState.snapshot.root` for a `FRAMEWORK_VIEW_TYPE` route and calls `openTab`; its template gates `<ng-content>` (which projects `<router-outlet>`) behind `*ngIf="hasTabs"`. If the story renders `<shared-main-layout>` directly, tabs initializes *before* initial navigation resolves, finds no view type, calls `router.navigate(['/'])`, opens no tab — and the canvas stays blank until the user clicks a menu item. The real app avoids this via `{ path: '', component: MainLayoutComponent, children: [...] }` (`Panthor/Frontend/apps/panthor/src/app/app.routes.ts:6`). So: the story renders a tiny `ShowcaseRootComponent` (`template: '<router-outlet></router-outlet>'`, registered via `moduleMetadata({ imports: [ShowcaseRootComponent] })`), and all screen routes are children of a `''` MainLayout route. That `''` route consumes no URL segments, so child paths remain `/dashboard`, `/general/customers`, … and still match the sidebar `url` values.
+13. **Every screen must publish a `#ribbon` template, even an empty one.** A child with no `#ribbon` makes `DefaultTabViewComponent.ngAfterViewInit` assign its fallback empty template via `markForCheck()`, which trips `NG0100: ExpressionChangedAfterItHasBeenCheckedError` on `*ngTemplateOutlet="ribbonTemplate"` in dev mode. Screens extending `TabViewBase`/`TabViewList`/`FormView` push theirs automatically — so the Dashboard extends `TabViewBase` and declares `<ng-template #ribbon></ng-template>`.
+14. **Add `@Injectable()` to every mock service/dataset/provider class you define.** Without it Angular logs `DEPRECATED: DI is instantiating a token "X" that inherits its @Injectable decorator but does not provide one itself. This will become an error in a future version of Angular.` (Pre-existing classes in `tools/storybook/storybook.providers.ts` have this warning; leave them alone — out of scope.)
 
 ## File Structure
 
@@ -56,6 +59,8 @@ Note: plain `tsc` does not type-check Angular inline templates. Template errors 
 ## Task 1: Story skeleton — sidebar, routes, Dashboard
 
 Gets the navigable shell working end-to-end with one screen, proving the routing/tab wiring before adding grids and forms.
+
+> **Amended after live browser verification.** The code block below is the original draft and is superseded in three places by verified facts #12–#14, which live browser testing forced: (a) the story renders a `ShowcaseRootComponent` (`<router-outlet>`) with `MainLayoutComponent` as a `''` routed parent — NOT `<shared-main-layout>` directly, which left the canvas blank until a menu click; (b) `DashboardComponent` extends `TabViewBase` and declares an empty `<ng-template #ribbon></ng-template>` to avoid NG0100; (c) `ShowcaseSidebarService` carries `@Injectable()`. Read facts #12–#14 before using this block as a reference.
 
 **Files:**
 - Create: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
@@ -456,27 +461,27 @@ class UsersListComponent extends TabViewList<IUsersList> {
 
 - [ ] **Step 4: Register the Users list route**
 
-In `showcaseRoutes`, add this entry after the `dashboard` entry:
+In `showcaseRoutes`, add this entry **inside the `''` MainLayout route's `children` array**, after the `dashboard` entry (see verified fact #12 — all screen routes are children of that `''` route):
 
 ```ts
-  {
-    path: 'security',
-    children: [
       {
-        path: 'users',
+        path: 'security',
         children: [
           {
-            path: '',
-            component: DefaultTabViewComponent,
-            data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+            path: 'users',
             children: [
-              { path: '', component: UsersListComponent },
+              {
+                path: '',
+                component: DefaultTabViewComponent,
+                data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+                children: [
+                  { path: '', component: UsersListComponent },
+                ],
+              },
             ],
           },
         ],
       },
-    ],
-  },
 ```
 
 - [ ] **Step 5: Type-check**
@@ -675,18 +680,18 @@ class UsersFormComponent extends FormView<IUsersDisplay> {
 In `showcaseRoutes`, inside the `path: 'users'` `children` array, add this entry **after** the existing `path: ''` entry:
 
 ```ts
-          {
-            path: ':id',
-            component: DefaultDetailsTabViewComponent,
-            data: {
-              [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
-              dataProvider: () => new UsersDataProvider(),
-              defaultTitle: 'New user',
-            },
-            children: [
-              { path: '', component: UsersFormComponent, data: { icon: 'fa-user', title: 'Details' } },
-            ],
-          },
+              {
+                path: ':id',
+                component: DefaultDetailsTabViewComponent,
+                data: {
+                  [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
+                  dataProvider: () => new UsersDataProvider(),
+                  defaultTitle: 'New user',
+                },
+                children: [
+                  { path: '', component: UsersFormComponent, data: { icon: 'fa-user', title: 'Details' } },
+                ],
+              },
 ```
 
 - [ ] **Step 6: Type-check**
@@ -885,39 +890,39 @@ class CustomersFormComponent extends FormView<ICustomersDisplay> {
 
 - [ ] **Step 4: Register the Customers routes**
 
-In `showcaseRoutes`, add this entry **between** the `dashboard` entry and the `security` entry:
+In `showcaseRoutes`, inside the `''` MainLayout route's `children` array, add this entry **between** the `dashboard` entry and the `security` entry:
 
 ```ts
-  {
-    path: 'general',
-    children: [
       {
-        path: 'customers',
+        path: 'general',
         children: [
           {
-            path: '',
-            component: DefaultTabViewComponent,
-            data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+            path: 'customers',
             children: [
-              { path: '', component: CustomersListComponent },
-            ],
-          },
-          {
-            path: ':id',
-            component: DefaultDetailsTabViewComponent,
-            data: {
-              [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
-              dataProvider: () => new CustomersDataProvider(),
-              defaultTitle: 'New customer',
-            },
-            children: [
-              { path: '', component: CustomersFormComponent, data: { icon: 'fa-address-book', title: 'Details' } },
+              {
+                path: '',
+                component: DefaultTabViewComponent,
+                data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+                children: [
+                  { path: '', component: CustomersListComponent },
+                ],
+              },
+              {
+                path: ':id',
+                component: DefaultDetailsTabViewComponent,
+                data: {
+                  [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
+                  dataProvider: () => new CustomersDataProvider(),
+                  defaultTitle: 'New customer',
+                },
+                children: [
+                  { path: '', component: CustomersFormComponent, data: { icon: 'fa-address-book', title: 'Details' } },
+                ],
+              },
             ],
           },
         ],
       },
-    ],
-  },
 ```
 
 - [ ] **Step 5: Type-check**
@@ -1003,19 +1008,19 @@ class UnitsListComponent extends TabViewList<IUnitsList> {
 In `showcaseRoutes`, inside the `path: 'general'` `children` array, add this entry **after** the `path: 'customers'` entry:
 
 ```ts
-      {
-        path: 'units',
-        children: [
           {
-            path: '',
-            component: DefaultTabViewComponent,
-            data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+            path: 'units',
             children: [
-              { path: '', component: UnitsListComponent },
+              {
+                path: '',
+                component: DefaultTabViewComponent,
+                data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+                children: [
+                  { path: '', component: UnitsListComponent },
+                ],
+              },
             ],
           },
-        ],
-      },
 ```
 
 - [ ] **Step 4: Type-check**
@@ -1107,6 +1112,9 @@ Likely snags and their fixes, so the implementer does not have to re-derive them
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | Console: `Cannot match any routes. URL Segment: 'iframe.html'` | Wildcard route missing or not last | Keep `{ path: '**', redirectTo: 'dashboard' }` as the final entry in `showcaseRoutes`. |
+| Story canvas blank until you click a menu item; `framework-tabs` renders with `*ngIf="hasTabs"` false and no `<router-outlet>` in the DOM | Story renders `<shared-main-layout>` directly, so tabs initializes before initial navigation and opens no tab | Route through `ShowcaseRootComponent` with MainLayout as a `''` routed parent (verified fact #12). |
+| `NG0100: ExpressionChangedAfterItHasBeenCheckedError` at `DefaultTabViewComponent` | A routed screen publishes no `#ribbon` template | Give the screen an `<ng-template #ribbon>` (empty is fine) and extend a `TabViewBase` descendant (verified fact #13). |
+| Console: `DEPRECATED: DI is instantiating a token "X" that inherits its @Injectable decorator` | Mock class missing its own decorator | Add `@Injectable()` to it (verified fact #14). |
 | Outlet empty; URL jumps to `/` | Route missing `FRAMEWORK_VIEW_TYPE` in `data` | `TabsComponent.ngOnInit` redirects to `/` when neither List nor Details is found. Add the key. |
 | Post-save URL looks like `//3` or `/customers/general/3` | A route path has more than one segment | Split into nested single-segment routes (verified fact #2). |
 | Save throws on `model.id` | Mock `saveModel` returned no `id` | Return `{ ...model, id: ... }` (verified fact #5). |
