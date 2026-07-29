@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`framework-button-export` now exports on a single click**, to Excel by default, instead of only
+  opening its format menu. `RibbonButtonComponent` treats a `defaultOption` of -1 as "no default" and
+  merely toggles the dropdown; Export never set one, so the common case took two clicks while
+  `framework-button-save` (which sets 0) took one. Export now sets 0 as well, and exposes
+  `defaultOption` as an `@Input()`. The format menu is unchanged and still reachable from the button's
+  dropdown caret, so every format remains available.
+
 ### Deprecated
 
 ### Removed
@@ -41,9 +48,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
-None. Optional cleanup: components extending `TabViewList` can now delete their
-`:host { display: flex; flex-grow: 1; overflow: hidden }` / `lib-data-grid { flex-grow: 1 }`
-stylesheets — `DefaultTabViewComponent` styles the inherited `framework-view-list` host class.
+None. Two optional adjustments:
+
+- Components extending `TabViewList` can now delete their
+  `:host { display: flex; flex-grow: 1; overflow: hidden }` / `lib-data-grid { flex-grow: 1 }`
+  stylesheets — `DefaultTabViewComponent` styles the inherited `framework-view-list` host class.
+- If you relied on `framework-button-export`'s first click opening the format menu rather than
+  exporting, set `[defaultOption]="-1"` to restore that behaviour.
 
 ## [1.2.1] - 2026-07-29
 
