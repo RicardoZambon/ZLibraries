@@ -2,6 +2,10 @@ import { Component, inject, Injectable, OnInit } from '@angular/core';
 import { ROUTES, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import {
+  ButtonDeleteComponent,
+  ButtonNewComponent,
+  ButtonOpenRecordComponent,
+  ButtonRefreshComponent,
   CustomReuseStrategy,
   DefaultTabViewComponent,
   FRAMEWORK_VIEW_TYPE,
@@ -9,9 +13,19 @@ import {
   Tab,
   TabService,
   TabViewBase,
+  TabViewList,
 } from '@zambon-dev/framework';
-import { ISidebarProfile, SidebarMenu, SidebarService } from '@zambon-dev/library';
-import { Observable, of } from 'rxjs';
+import {
+  DataGridComponent,
+  DataGridDataset,
+  IGridColumn,
+  IListResult,
+  ISidebarProfile,
+  RibbonGroupComponent,
+  SidebarMenu,
+  SidebarService,
+} from '@zambon-dev/library';
+import { defer, Observable, of } from 'rxjs';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 
 // ---------------------------------------------------------------------------
@@ -109,6 +123,51 @@ class ShowcaseSidebarService extends SidebarService {
 }
 
 // ---------------------------------------------------------------------------
+// Mock backend — grid datasets
+// ---------------------------------------------------------------------------
+
+// Serves rows straight from an in-memory array. Rows are copied on every read so the grid's
+// internal `_key` bookkeeping never leaks back into the seed arrays.
+@Injectable()
+abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
+  public getData(): Observable<IListResult<TListModel>> {
+    const items: TListModel[] = this.rows();
+    return of({
+      items: items.map((row: TListModel) => ({ ...row })),
+      totalRows: items.length,
+    });
+  }
+
+  protected abstract rows(): TListModel[];
+}
+
+// Removes a row from an in-memory array. Deferred so the mutation runs when the delete button
+// subscribes — NOT when the template evaluates `[action]="onDelete()"` on every change-detection
+// pass, which would delete rows just by rendering.
+function deleteById<TListModel extends { id: number }>(rows: TListModel[], id: number): Observable<unknown> {
+  return defer(() => {
+    const index: number = rows.findIndex((row: TListModel) => row.id === id);
+    if (index >= 0) {
+      rows.splice(index, 1);
+    }
+    return of(null);
+  });
+}
+
+@Injectable()
+class UsersDataset extends ShowcaseDataset<IUsersList> {
+  public override columns: IGridColumn[] = [
+    { field: 'name', headerName: 'Name' },
+    { field: 'username', headerName: 'Username' },
+    { field: 'email', headerName: 'Email' },
+  ];
+
+  protected rows(): IUsersList[] {
+    return USERS;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Dashboard screen — a plain component (no grid, no form)
 // ---------------------------------------------------------------------------
 
@@ -169,6 +228,42 @@ class DashboardComponent extends TabViewBase {
   ];
 }
 
+// ---------------------------------------------------------------------------
+// Users — list view
+// ---------------------------------------------------------------------------
+
+@Component({
+  selector: 'showcase-users-list',
+  imports: [
+    ButtonDeleteComponent,
+    ButtonNewComponent,
+    ButtonOpenRecordComponent,
+    ButtonRefreshComponent,
+    DataGridComponent,
+    RibbonGroupComponent,
+  ],
+  providers: [{ provide: DataGridDataset, useClass: UsersDataset }],
+  template: `
+    <ng-template #ribbon>
+      <lib-ribbon-group label="Entity">
+        <framework-button-new></framework-button-new>
+        <framework-button-open-record></framework-button-open-record>
+        <framework-button-delete [action]="onDelete()" [disabled]="!hasRowsSelected"></framework-button-delete>
+      </lib-ribbon-group>
+      <lib-ribbon-group label="General">
+        <framework-button-refresh></framework-button-refresh>
+      </lib-ribbon-group>
+    </ng-template>
+
+    <lib-data-grid></lib-data-grid>
+  `,
+})
+class UsersListComponent extends TabViewList<IUsersList> {
+  protected onDelete(): Observable<unknown> {
+    return deleteById(USERS, this.selectedItem?.id ?? -1);
+  }
+}
+
 // The story renders this, and the router puts MainLayoutComponent inside it. This mirrors the
 // real app (app.routes.ts), where MainLayoutComponent is a routed component with the screens as
 // children — so TabsComponent initializes only after the router has matched a route and can find
@@ -213,6 +308,24 @@ const showcaseRoutes: Routes = [
         data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
         children: [
           { path: '', component: DashboardComponent },
+        ],
+      },
+      {
+        path: 'security',
+        children: [
+          {
+            path: 'users',
+            children: [
+              {
+                path: '',
+                component: DefaultTabViewComponent,
+                data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+                children: [
+                  { path: '', component: UsersListComponent },
+                ],
+              },
+            ],
+          },
         ],
       },
     ],
