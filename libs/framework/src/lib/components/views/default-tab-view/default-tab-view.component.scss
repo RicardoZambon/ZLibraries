@@ -3,3 +3,21 @@
 :host-context {
     @apply flex flex-col flex-grow overflow-hidden gap-2;
 }
+
+/* Routed list screens (anything extending TabViewList) get a full-height layout here rather than
+   in each consuming component. ::ng-deep is required: a component created through router-outlet
+   does not carry this component's _ngcontent-* attribute. Mirrors what lib-group-container
+   already does for routed detail views. */
+::ng-deep .framework-view-list {
+    @apply flex flex-col flex-grow overflow-hidden;
+
+    /* min-height:0 lets the flex child shrink below its content height so the grid's own
+       scroll container takes over instead of overflowing the tab. */
+    min-height: 0;
+
+    /* Descendant, not child: a list screen may nest its grid inside a wrapper (e.g. filters
+       above the grid) and must still stretch. */
+    lib-data-grid {
+        @apply flex-grow;
+    }
+}
