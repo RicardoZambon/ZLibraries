@@ -1,4 +1,4 @@
-import { Component, Injectable } from '@angular/core';
+import { Component, inject, Injectable, OnInit } from '@angular/core';
 import { ROUTES, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import {
@@ -6,6 +6,7 @@ import {
   DefaultTabViewComponent,
   FRAMEWORK_VIEW_TYPE,
   FrameworkViewType,
+  Tab,
   TabService,
   TabViewBase,
 } from '@zambon-dev/framework';
@@ -121,8 +122,8 @@ interface IDashboardCard {
   selector: 'showcase-dashboard',
   imports: [],
   template: `
-    <!-- Dashboard has no ribbon actions, but it must still publish a template: DefaultTabViewComponent
-         falls back to its own empty template otherwise, which trips NG0100 in dev mode. -->
+    <!-- Every screen publishes a ribbon template, even an empty one, so the ribbon bar is
+         driven by the view rather than DefaultTabViewComponent's internal fallback. -->
     <ng-template #ribbon></ng-template>
 
     <div class="p-6 flex flex-col gap-6">
@@ -177,7 +178,21 @@ class DashboardComponent extends TabViewBase {
   imports: [RouterModule],
   template: `<router-outlet></router-outlet>`,
 })
-class ShowcaseRootComponent {}
+class ShowcaseRootComponent implements OnInit {
+  private tabService: TabService = inject(TabService);
+
+  public ngOnInit(): void {
+    // Seed the initial tab WITH its title. TabsComponent opens the first tab itself but
+    // supplies no title, and Tab.isTitleLoading defaults to true — so the tab would spin
+    // forever. MainLayoutComponent's normal title resolution (getMenuFromUrl ->
+    // updateTabTitle) cannot cover it here: it runs before TabsComponent creates the tab,
+    // and it matches on router.url, which in Storybook carries the ?id=&viewMode= query
+    // string and so never equals the tab's '/dashboard'. Seeding an exact-URL match means
+    // TabsComponent focuses this tab rather than opening an untitled second one.
+    this.tabService.closeAllTabs();
+    this.tabService.openTab(new Tab({ isTitleLoading: false, title: 'Dashboard', url: '/dashboard' }));
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Routes — one path segment per route, nested. RouteHelper.getRouteURL() collects each
