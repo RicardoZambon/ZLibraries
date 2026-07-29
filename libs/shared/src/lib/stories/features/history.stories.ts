@@ -11,18 +11,18 @@ class StorybookOperationsHistoryService {
     return of([
       {
         entityName: 'Customer',
-        ID: 1,
+        id: 1,
         newValues: JSON.stringify({ status: 'Active', amount: 149.9 }),
         oldValues: JSON.stringify({ status: 'Pending', amount: 99.9 }),
         operationType: 'Modified',
-      } as IOperationsHistoryList,
+      },
       {
         entityName: 'Payment method',
-        ID: 2,
+        id: 2,
         newValues: JSON.stringify({ type: 'Credit card' }),
         oldValues: JSON.stringify({}),
         operationType: 'Added',
-      } as IOperationsHistoryList,
+      },
     ]);
   }
 }
@@ -30,8 +30,8 @@ class StorybookOperationsHistoryService {
 class StorybookServicesHistoryService {
   public list(_controllerName: string, _entityID: number, _parameters: IListParameters): Observable<IServicesHistoryList[]> {
     return of([
-      { ID: 1, name: 'Record updated', changedByName: 'Ada Lovelace', changedOn: new Date() } as IServicesHistoryList,
-      { ID: 2, name: 'Payment recalculated', changedByName: 'Grace Hopper', changedOn: new Date() } as IServicesHistoryList,
+      { id: 1, name: 'Record updated', changedByName: 'Ada Lovelace', changedOn: new Date() },
+      { id: 2, name: 'Payment recalculated', changedByName: 'Grace Hopper', changedOn: new Date() },
     ]);
   }
 }

@@ -368,30 +368,16 @@ const SHOWCASE_AUDIT_DATES: Date[] = [
   new Date('2026-07-28T16:45:00Z'),
 ];
 
-// Rows carry BOTH `ID` and `id`. The models declare `ID`, but GridDataset.compareProperty defaults
-// to 'id', so getRowID() reads the lowercase key — without it, selecting a service row never
-// propagates and the operations grid stays empty. Emitting both keeps the declared model satisfied
-// and the grid working.
-// TODO(@shared): the history models declare 'ID' while every other @shared model is camelCase;
-// renaming to 'id' is the real fix (breaking — out of scope for a story).
-interface IShowcaseServiceHistoryRow extends IServicesHistoryList {
-  id: number;
-}
-
-interface IShowcaseOperationHistoryRow extends IOperationsHistoryList {
-  id: number;
-}
-
 // Falls back to the controller name itself, so a screen added later reads visibly imperfect
 // ("Units created") rather than silently wrong ("User created").
 const SHOWCASE_AUDIT_ENTITY_LABELS: Record<string, string> = { Customers: 'Customer', Users: 'User' };
 
-function showcaseServiceHistory(controllerName: string): IShowcaseServiceHistoryRow[] {
+function showcaseServiceHistory(controllerName: string): IServicesHistoryList[] {
   const entity: string = SHOWCASE_AUDIT_ENTITY_LABELS[controllerName] ?? controllerName;
   return [
-    { ID: 1, id: 1, name: `${entity} created`, changedByName: 'Ada Lovelace', changedOn: SHOWCASE_AUDIT_DATES[0] },
-    { ID: 2, id: 2, name: `${entity} updated`, changedByName: 'Grace Hopper', changedOn: SHOWCASE_AUDIT_DATES[1] },
-    { ID: 3, id: 3, name: `${entity} deactivated`, changedByName: 'Alan Turing', changedOn: SHOWCASE_AUDIT_DATES[2] },
+    { id: 1, name: `${entity} created`, changedByName: 'Ada Lovelace', changedOn: SHOWCASE_AUDIT_DATES[0] },
+    { id: 2, name: `${entity} updated`, changedByName: 'Grace Hopper', changedOn: SHOWCASE_AUDIT_DATES[1] },
+    { id: 3, name: `${entity} deactivated`, changedByName: 'Alan Turing', changedOn: SHOWCASE_AUDIT_DATES[2] },
   ];
 }
 
@@ -403,14 +389,14 @@ class ShowcaseServicesHistoryService {
 }
 
 // The two operations an audited service can produce, in the shape the child grid expects.
-const SHOWCASE_OPERATION_MODIFIED_RECORD: IShowcaseOperationHistoryRow = {
-  ID: 1, id: 1, entityName: 'Record', operationType: 'Modified',
+const SHOWCASE_OPERATION_MODIFIED_RECORD: IOperationsHistoryList = {
+  id: 1, entityName: 'Record', operationType: 'Modified',
   oldValues: JSON.stringify({ isActive: true, name: 'Globex Corporation' }, null, 2),
   newValues: JSON.stringify({ isActive: false, name: 'Globex Corporation Ltd' }, null, 2),
 };
 
-const SHOWCASE_OPERATION_ADDED_CONTACT: IShowcaseOperationHistoryRow = {
-  ID: 2, id: 2, entityName: 'Contact', operationType: 'Added',
+const SHOWCASE_OPERATION_ADDED_CONTACT: IOperationsHistoryList = {
+  id: 2, entityName: 'Contact', operationType: 'Added',
   oldValues: JSON.stringify({}, null, 2),
   newValues: JSON.stringify({ phone: '+1 514 555 0102' }, null, 2),
 };
@@ -418,7 +404,7 @@ const SHOWCASE_OPERATION_ADDED_CONTACT: IShowcaseOperationHistoryRow = {
 // Which operations each audited service produced. Keyed by service id so drilling into different
 // service rows visibly changes the child grid, and so the pairing is readable rather than implied
 // by a conditional.
-const SHOWCASE_OPERATIONS_BY_SERVICE: Record<number, IShowcaseOperationHistoryRow[]> = {
+const SHOWCASE_OPERATIONS_BY_SERVICE: Record<number, IOperationsHistoryList[]> = {
   1: [SHOWCASE_OPERATION_ADDED_CONTACT],
   2: [SHOWCASE_OPERATION_MODIFIED_RECORD, SHOWCASE_OPERATION_ADDED_CONTACT],
   3: [SHOWCASE_OPERATION_MODIFIED_RECORD],

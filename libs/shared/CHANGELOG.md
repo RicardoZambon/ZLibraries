@@ -32,6 +32,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Audit history models now match the JSON the audit endpoints actually return.**
+  `IServicesHistoryList` and `IOperationsHistoryList` declared an `ID` property, and
+  `IOperationsHistoryList` declared `entityId`. Neither key is ever sent. The audit endpoints
+  (`POST /{controller}/{entityID}/Audit` and `.../Audit/{serviceHistoryID}`) serialize under
+  ASP.NET Core's default camelCase policy, which lowercases only a *leading* run of capitals — so the
+  backend's `ID` goes out as `id` and its `EntityID` goes out as `entityID`. Typing a row against
+  `.ID` or `.entityId` therefore compiled fine and read `undefined` at run time. See
+  **⚠ Breaking Changes / Migration** below.
+
+  This was also a latent trap for anything supplying its own audit rows: the grid resolves row
+  identity through `compareProperty`, which is `'id'`, so a row carrying only `ID` could never be
+  selected — clicking a service entry left the operations grid empty. Rows shaped like the real
+  payload work unchanged; `@shared`'s own runtime behaviour is not affected by this release.
+
 - **Lint: `shared-` component/directive selector prefix is now accepted.**
   `libs/shared/eslint.config.mjs` still carried the scaffolded `prefix: 'lib'`, so the library's own
   `shared-`-prefixed components (`shared-main-layout`, `shared-login-layout`) failed
@@ -39,7 +53,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
-None.
+Two properties on the audit history models were renamed to the keys the backend actually sends. Both
+models are exported from the package root, so anything typed against the old names will now fail to
+compile. Nothing in `@shared` changes behaviour at run time — the fix is to the declared types.
+
+| Model | Before | After |
+|-------|--------|-------|
+| `IServicesHistoryList` | `ID: number` | `id: number` |
+| `IOperationsHistoryList` | `ID: number` | `id: number` |
+| `IOperationsHistoryList` | `entityId?: number` | `entityID?: number` |
+
+To upgrade:
+
+1. Rename `.ID` to `.id` wherever you read or construct an `IServicesHistoryList` or
+   `IOperationsHistoryList`. If the compiler now reports the property as missing, that code was
+   reading `undefined` before — it never matched the payload.
+2. Rename `.entityId` to `.entityID` on `IOperationsHistoryList`. The capitals are deliberate and
+   match the backend's `EntityID`; do not "correct" them back.
+3. If you supply audit rows yourself — a test double, a Storybook mock, a hand-rolled
+   `ServicesHistoryService` / `OperationsHistoryService` — emit `id`, not `ID`. Rows keyed only on
+   `ID` were never selectable, so a service row's selection could not reach the operations grid.
+4. If you worked around that by overriding `compareProperty` to `'ID'` in a `ServicesHistoryDataset`
+   or `OperationsHistoryDataset` subclass, remove the override. The inherited `'id'` is now correct.
 
 ## [1.2.0] - 2026-07-28
 
