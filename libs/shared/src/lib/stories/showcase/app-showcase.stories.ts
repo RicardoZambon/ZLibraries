@@ -38,7 +38,7 @@ import {
   SidebarMenu,
   SidebarService,
 } from '@zambon-dev/library';
-import { defer, delay, Observable, of } from 'rxjs';
+import { BehaviorSubject, defer, delay, map, Observable, of } from 'rxjs';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 import { INotification } from '../../models';
 import { AuthenticationService, NotificationsService } from '../../services';
@@ -49,11 +49,14 @@ import { AuthenticationService, NotificationsService } from '../../services';
 
 // Without a delay every mock resolves inside one change-detection pass, so the grid's loading
 // spinner, the Refresh button's spinner and the form's loading state are never actually seen.
-const SHOWCASE_LATENCY_MS = 400;
+const SHOWCASE_READ_LATENCY_MS = 400;
 
 // Longer for writes so ButtonSave's spinner and its one-second success tick, and the delete
 // confirmation modal's loading state, are comfortably visible.
 const SHOWCASE_WRITE_LATENCY_MS = 800;
+
+// Reads stay on plain `of(...)`: they snapshot at call time, which is harmless because nothing
+// mutates the seed arrays between call and emit. Only writes need `defer` to stay on-subscribe.
 
 // ---------------------------------------------------------------------------
 // Mock backend — in-memory seed data
@@ -206,20 +209,20 @@ class ShowcaseSidebarService extends SidebarService {
       return of([
         new SidebarMenu({ id: 21, label: 'Customers', icon: 'fa-address-book', url: '/general/customers', parent: parentMenu }),
         new SidebarMenu({ id: 22, label: 'Units', icon: 'fa-building', url: '/general/units', parent: parentMenu }),
-      ]).pipe(delay(SHOWCASE_LATENCY_MS));
+      ]).pipe(delay(SHOWCASE_READ_LATENCY_MS));
     }
 
     if (parentMenu?.id === MENU_SECURITY) {
       return of([
         new SidebarMenu({ id: 31, label: 'Users', icon: 'fa-user', url: '/security/users', parent: parentMenu }),
-      ]).pipe(delay(SHOWCASE_LATENCY_MS));
+      ]).pipe(delay(SHOWCASE_READ_LATENCY_MS));
     }
 
     return of([
       new SidebarMenu({ id: MENU_DASHBOARD, label: 'Dashboard', icon: 'fa-chart-line', url: '/dashboard', region: 'MAIN' }),
       new SidebarMenu({ id: MENU_GENERAL, label: 'General', icon: 'fa-layer-group', childCount: 2, region: 'MAIN' }),
       new SidebarMenu({ id: MENU_SECURITY, label: 'Security', icon: 'fa-shield-halved', childCount: 1, region: 'ADMINISTRATION' }),
-    ]).pipe(delay(SHOWCASE_LATENCY_MS));
+    ]).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
 }
 
@@ -236,7 +239,7 @@ abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
     return of({
       items: items.map((row: TListModel) => ({ ...row })),
       totalRows: items.length,
-    }).pipe(delay(SHOWCASE_LATENCY_MS));
+    }).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
 
   protected abstract rows(): TListModel[];
@@ -301,7 +304,7 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
   }
 
   protected loadModel(entityID?: number): Observable<IUsersDisplay | null> {
-    return of(entityID ? findUser(entityID) : null).pipe(delay(SHOWCASE_LATENCY_MS));
+    return of(entityID ? findUser(entityID) : null).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
 }
 
@@ -334,7 +337,7 @@ class CustomersDataProvider extends DataProviderService<ICustomersDisplay> {
   }
 
   protected loadModel(entityID?: number): Observable<ICustomersDisplay | null> {
-    return of(entityID ? findCustomer(entityID) : null).pipe(delay(SHOWCASE_LATENCY_MS));
+    return of(entityID ? findCustomer(entityID) : null).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
 }
 
@@ -642,7 +645,7 @@ class UnitsListComponent extends TabViewList<IUnitsList> {}
 
 // Inline data URI, not a URL: the story must stay self-contained with no external requests.
 const SHOWCASE_LOGO =
-  'data:image/svg+xml;utf8,' +
+  'data:image/svg+xml;charset=utf-8,' +
   encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">' +
       '<rect width="32" height="32" rx="7" fill="#006bb6"/>' +
@@ -679,19 +682,33 @@ const SHOWCASE_NOTIFICATIONS: INotification[] = [
 // Mocked so the bell renders without the real service opening a SignalR connection.
 // getNotifications()/getUnreadCount() are read in NotificationsComponent field initializers,
 // so they must exist and return immediately.
-const notificationsServiceMock = {
+//
+// Reactive like the real service, which re-emits from a BehaviorSubject — otherwise "Mark all as
+// read" and clicking an unread item would be visibly inert.
+const showcaseNotifications$ = new BehaviorSubject<INotification[]>(SHOWCASE_NOTIFICATIONS);
+
+const notificationsServiceMock: Pick<NotificationsService,
+  'getNotifications' | 'getUnreadCount' | 'isEnabled' | 'markAllAsRead' | 'markAsRead' | 'start' | 'stop'> = {
   isEnabled: true,
-  getNotifications: () => of(SHOWCASE_NOTIFICATIONS),
-  getUnreadCount: () => of(SHOWCASE_NOTIFICATIONS.filter((notification: INotification) => !notification.isRead).length),
-  markAllAsRead: () => undefined,
-  markAsRead: () => undefined,
+  getNotifications: () => showcaseNotifications$.asObservable(),
+  getUnreadCount: () => showcaseNotifications$.pipe(
+    map((items: INotification[]) => items.filter((item: INotification) => !item.isRead).length)),
+  markAllAsRead: () => showcaseNotifications$.next(
+    showcaseNotifications$.value.map((item: INotification) => ({ ...item, isRead: true }))),
+  markAsRead: (notification: INotification) => showcaseNotifications$.next(
+    showcaseNotifications$.value.map((item: INotification) =>
+      (item === notification ? { ...item, isRead: true } : item))),
   start: () => undefined,
   stop: () => Promise.resolve(),
 };
 
 // The globally provided auth mock has no position/pictureUrl, so the user block renders bare.
 // pictureUrl is deliberately omitted so the initials fallback renders — one fewer inline asset.
-const authenticationServiceMock = {
+//
+// Only AuthenticationService is overridden, deliberately: ribbon buttons inject the separate
+// AuthService token (see base-button.ts) which the global Storybook providers already mock for
+// permission checks. Aliasing the two would break every button with allowedActions.
+const authenticationServiceMock: Pick<AuthenticationService, 'getUserInfo' | 'isAuthenticated' | 'signOut'> = {
   getUserInfo: () => ({
     costCenterName: 'IT',
     name: 'Ada Lovelace',
