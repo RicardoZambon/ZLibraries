@@ -32,7 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
-None.
+None. Optional cleanup: components extending `TabViewList` can now delete their
+`:host { display: flex; flex-grow: 1; overflow: hidden }` / `lib-data-grid { flex-grow: 1 }`
+stylesheets — `DefaultTabViewComponent` styles the inherited `framework-view-list` host class.
 
 ## [1.2.0] - 2026-07-24
 
