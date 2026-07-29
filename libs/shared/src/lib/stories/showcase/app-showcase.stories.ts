@@ -318,6 +318,19 @@ class CustomersDataProvider extends DataProviderService<ICustomersDisplay> {
   }
 }
 
+@Injectable()
+class UnitsDataset extends ShowcaseDataset<IUnitsList> {
+  public override columns: IGridColumn[] = [
+    { field: 'code', headerName: 'Code', size: '8rem' },
+    { field: 'name', headerName: 'Name' },
+    { field: 'description', headerName: 'Description' },
+  ];
+
+  protected rows(): IUnitsList[] {
+    return UNITS;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Dashboard screen — a plain component (no grid, no form)
 // ---------------------------------------------------------------------------
@@ -582,6 +595,32 @@ class CustomersFormComponent extends FormView<ICustomersDisplay> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Units — list view only. No detail route exists, so the ribbon deliberately
+// omits New/Open/Delete rather than offering buttons that lead nowhere.
+// ---------------------------------------------------------------------------
+
+@Component({
+  selector: 'showcase-units-list',
+  imports: [
+    ButtonRefreshComponent,
+    DataGridComponent,
+    RibbonGroupComponent,
+  ],
+  providers: [{ provide: DataGridDataset, useClass: UnitsDataset }],
+  template: `
+    <ng-template #ribbon>
+      <lib-ribbon-group label="General">
+        <framework-button-refresh></framework-button-refresh>
+      </lib-ribbon-group>
+    </ng-template>
+
+    <lib-data-grid></lib-data-grid>
+  `,
+})
+class UnitsListComponent extends TabViewList<IUnitsList> {
+}
+
 // The story renders this, and the router puts MainLayoutComponent inside it. This mirrors the
 // real app (app.routes.ts), where MainLayoutComponent is a routed component with the screens as
 // children — so TabsComponent initializes only after the router has matched a route and can find
@@ -652,6 +691,19 @@ const showcaseRoutes: Routes = [
                 },
                 children: [
                   { path: '', component: CustomersFormComponent, data: { icon: 'fa-address-book', title: 'Details' } },
+                ],
+              },
+            ],
+          },
+          {
+            path: 'units',
+            children: [
+              {
+                path: '',
+                component: DefaultTabViewComponent,
+                data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+                children: [
+                  { path: '', component: UnitsListComponent },
                 ],
               },
             ],
