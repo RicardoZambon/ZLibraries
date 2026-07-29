@@ -19,7 +19,8 @@
 3. **Both components already have a `host` block** — `host: { '[class.full-height]': 'isFullHeight' }` — so the new binding slots into existing metadata. (`form-input-group.component.ts:23-25`, `form-input.component.ts:21-23`.)
 4. **Grid height is a floor, not a fill.** `data-grid.component.ts`'s `bodyMinHeight` = `min(loadedRows, rowsToDisplay) × rowHeight`, bound as `[style.min-height.px]`. Defaults `rowHeight: 41.6`, `rowsToDisplay: 6`.
 5. **The flex chain breaks in exactly two places:** the routed list component's host (a direct flex child of the `framework-default-tab-view` host, styled by nothing) and `lib-data-grid`'s host (`flex flex-col overflow-hidden`, no `flex-grow`). Both rules are required — `align-items: stretch` only stretches the cross axis.
-6. **`::ng-deep` is mandatory** for styling a routed host: dynamically created component hosts do not carry the parent's `_ngcontent-*` attribute. Precedent: `lib-group-container`'s `.content-container ::ng-deep > *`.
+6. **`::ng-deep` is mandatory** for styling a routed host: dynamically created component hosts do not carry the parent's `_ngcontent-*` attribute. Precedent: `lib-group-container`'s `.content-container ::ng-deep > *`. **Anchor it on `:host`** (`:host ::ng-deep .x`) — a bare `::ng-deep .x` emits a fully *global*, unscoped class selector, which in a shipped library reaches far more than intended (it would also catch `ListView` subclasses inside detail views, since `ListView extends TabViewList`).
+   - **Do NOT try to verify that scoping by grepping the library's `dist/` bundle.** Publishable Angular libraries build in **Ivy partial compilation mode**, so the linker that rewrites `:host`/`::ng-deep` into `[_nghost-*]`/`[_ngcontent-*]` runs in the *consuming application's* build, not the library's — `_nghost` appears zero times anywhere in `dist/libs/framework`, for every component. Verify in the consuming app's **live DOM** instead, by reading `document.styleSheets` for the emitted `selectorText`. Confirmed working: `[_nghost-ng-c3984974818] .framework-view-list`.
 7. **Angular merges `hostAttrs` from a base component into subclasses** via `ɵɵInheritDefinitionFeature`, so a static host class on `TabViewList` is inherited by every list view with zero consumer changes.
 8. **Use a plain class name in `host`, never Tailwind utilities.** Library SCSS resolves `@apply` at library-build time and is self-contained; a class named in `host` metadata would need each *consumer's* Tailwind to generate it.
 9. **`bare :host-context` (no parentheses) is functionally identical to `:host`** and is the house idiom in these libraries. Keep it for consistency in existing blocks.
@@ -271,6 +272,68 @@ Finally open a **detail** view and confirm the form still lays out correctly (it
 ```bash
 git add libs/framework/src/lib/views/tabview-list.ts libs/framework/src/lib/components/views/default-tab-view/default-tab-view.component.scss && git commit -m "fix(framework): give routed list views a full-height layout automatically"
 ```
+
+---
+
+## Task 2b: Showcase — mocked latency so loading states are visible
+
+Every mock currently returns `of(…)` synchronously, so the grid spinner, the Refresh button's
+spinner, the form's loading state and the Save button's spinner/success tick all complete within one
+change-detection pass and are never seen. Real backends are never instant; a small delay makes those
+states observable, which is part of showing "the full picture".
+
+**Files:**
+- Modify: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
+
+- [ ] **Step 1: Add the latency constants**
+
+Add `delay` to the existing `rxjs` import (keeping `defer`, `Observable`, `of`).
+
+Insert directly **above** the `Mock backend — in-memory seed data` banner:
+
+```ts
+// ---------------------------------------------------------------------------
+// Mock backend — latency
+// ---------------------------------------------------------------------------
+
+// Without a delay every mock resolves inside one change-detection pass, so the grid's loading
+// spinner, the Refresh button's spinner and the form's loading state are never actually seen.
+const SHOWCASE_LATENCY_MS: number = 400;
+
+// Longer for writes so ButtonSave's spinner and its one-second success tick, and the delete
+// confirmation modal's loading state, are comfortably visible.
+const SHOWCASE_WRITE_LATENCY_MS: number = 800;
+```
+
+- [ ] **Step 2: Delay the reads**
+
+- `ShowcaseDataset.getData()` — append `.pipe(delay(SHOWCASE_LATENCY_MS))` to the returned observable. This is what makes the grid spinner and the Refresh button's spinner visible on every list and on refresh.
+- `ShowcaseSidebarService.loadMenus()` — append the same to **every** returned observable (root and both child branches). The sidebar shows its own loading state while a parent's children load (`lib-sidebar-item` renders a spinner for parents), so this demonstrates that too.
+- `UsersDataProvider.loadModel()` and `CustomersDataProvider.loadModel()` — append the same. This makes `FormView`'s `formService.loading` state visible when opening a detail.
+
+- [ ] **Step 3: Delay the writes**
+
+- `UsersDataProvider.saveModel()` and `CustomersDataProvider.saveModel()` — append `.pipe(delay(SHOWCASE_WRITE_LATENCY_MS))`.
+  **Order matters:** the upsert must still run when the observable is subscribed, not when `saveModel` is called. `of(saveUser(...))` evaluates `saveUser` eagerly at call time, which is fine here because `saveModel` is only ever invoked from a click handler — but wrap it as `defer(() => of(saveUser(...))).pipe(delay(SHOWCASE_WRITE_LATENCY_MS))` so the write happens on subscribe, consistent with `deleteById`, and cannot fire twice if the observable is ever re-subscribed.
+- `deleteById()` — append `.pipe(delay(SHOWCASE_WRITE_LATENCY_MS))` to the `defer(...)`. Keep the mutation inside the `defer` callback so it still only runs on subscribe.
+
+- [ ] **Step 4: Type-check and lint**
+
+```bash
+npx tsc -p libs/shared/.storybook/tsconfig.json --noEmit
+npx eslint libs/shared/src/lib/stories/showcase/app-showcase.stories.ts
+```
+Expected: `tsc` exit 0; eslint 0 errors.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add libs/shared/src/lib/stories/showcase/app-showcase.stories.ts && git commit -m "feat(storybook): add mocked latency so showcase loading states are visible"
+```
+
+**Consequence for all later verification:** the showcase is no longer synchronous. Browser checks must
+wait for content rather than probing immediately after a click — poll for the expected element/text
+with a short timeout instead of reading straight after dispatching the event.
 
 ---
 
@@ -622,7 +685,7 @@ function showcaseServiceHistory(controllerName: string): IShowcaseServiceHistory
 @Injectable()
 class ShowcaseServicesHistoryService {
   public list(controllerName: string, _entityID: number, _parameters: IListParameters): Observable<IServicesHistoryList[]> {
-    return of(showcaseServiceHistory(controllerName));
+    return of(showcaseServiceHistory(controllerName)).pipe(delay(SHOWCASE_LATENCY_MS));
   }
 }
 
@@ -642,7 +705,7 @@ class ShowcaseOperationsHistoryService {
       },
     ];
     // Vary by selected service row so drilling into different entries shows different operations.
-    return of(serviceHistoryID === 1 ? rows.slice(1) : rows);
+    return of(serviceHistoryID === 1 ? rows.slice(1) : rows).pipe(delay(SHOWCASE_LATENCY_MS));
   }
 }
 ```
