@@ -30,6 +30,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   per-component stylesheets**. Routed screens that do not extend `TabViewList` (forms, dashboards) are
   unaffected.
 
+- `framework-default-tab-view` and `framework-default-details-tab-view` no longer log
+  `NG0100: ExpressionChangedAfterItHasBeenCheckedError` on every render in development mode.
+  Both views assigned a placeholder ribbon template from `ngAfterViewInit` — after Angular had
+  already checked the ribbon's `*ngTemplateOutlet` binding — which tripped the dev-mode change
+  detection check one to three times per load. The placeholder rendered no content, so it has
+  been removed and the outlet is now left empty until a view publishes its own `#ribbon`
+  template. The rendered output is unchanged, and ribbon buttons still appear immediately for
+  list and detail screens.
+
 ### ⚠ Breaking Changes / Migration
 
 None. Optional cleanup: components extending `TabViewList` can now delete their

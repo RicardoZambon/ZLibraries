@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterModule } from '@angular/router';
 import { DataProviderService, GroupContainerComponent, RibbonComponent, RibbonGroupComponent } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -35,7 +35,7 @@ function dataProviderFactory(route: ActivatedRoute): DataProviderService<any> {
     { provide: DataProviderService, useFactory: dataProviderFactory, deps: [ActivatedRoute] },
   ]
 })
-export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent implements AfterViewInit, OnDestroy, OnInit {
+export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent implements OnDestroy, OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ErrorModalComponent) private errorModal!: ErrorModalComponent;
   //#endregion
