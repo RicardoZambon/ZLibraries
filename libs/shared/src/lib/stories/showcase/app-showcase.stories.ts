@@ -36,8 +36,20 @@ import {
   SidebarMenu,
   SidebarService,
 } from '@zambon-dev/library';
-import { defer, Observable, of } from 'rxjs';
+import { defer, delay, Observable, of } from 'rxjs';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
+
+// ---------------------------------------------------------------------------
+// Mock backend — latency
+// ---------------------------------------------------------------------------
+
+// Without a delay every mock resolves inside one change-detection pass, so the grid's loading
+// spinner, the Refresh button's spinner and the form's loading state are never actually seen.
+const SHOWCASE_LATENCY_MS = 400;
+
+// Longer for writes so ButtonSave's spinner and its one-second success tick, and the delete
+// confirmation modal's loading state, are comfortably visible.
+const SHOWCASE_WRITE_LATENCY_MS = 800;
 
 // ---------------------------------------------------------------------------
 // Mock backend — in-memory seed data
@@ -190,20 +202,20 @@ class ShowcaseSidebarService extends SidebarService {
       return of([
         new SidebarMenu({ id: 21, label: 'Customers', icon: 'fa-address-book', url: '/general/customers', parent: parentMenu }),
         new SidebarMenu({ id: 22, label: 'Units', icon: 'fa-building', url: '/general/units', parent: parentMenu }),
-      ]);
+      ]).pipe(delay(SHOWCASE_LATENCY_MS));
     }
 
     if (parentMenu?.id === MENU_SECURITY) {
       return of([
         new SidebarMenu({ id: 31, label: 'Users', icon: 'fa-user', url: '/security/users', parent: parentMenu }),
-      ]);
+      ]).pipe(delay(SHOWCASE_LATENCY_MS));
     }
 
     return of([
       new SidebarMenu({ id: MENU_DASHBOARD, label: 'Dashboard', icon: 'fa-chart-line', url: '/dashboard', region: 'MAIN' }),
       new SidebarMenu({ id: MENU_GENERAL, label: 'General', icon: 'fa-layer-group', childCount: 2, region: 'MAIN' }),
       new SidebarMenu({ id: MENU_SECURITY, label: 'Security', icon: 'fa-shield-halved', childCount: 1, region: 'ADMINISTRATION' }),
-    ]);
+    ]).pipe(delay(SHOWCASE_LATENCY_MS));
   }
 }
 
@@ -220,7 +232,7 @@ abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
     return of({
       items: items.map((row: TListModel) => ({ ...row })),
       totalRows: items.length,
-    });
+    }).pipe(delay(SHOWCASE_LATENCY_MS));
   }
 
   protected abstract rows(): TListModel[];
@@ -236,7 +248,7 @@ function deleteById<TListModel extends { id: number }>(rows: TListModel[], id: n
       rows.splice(index, 1);
     }
     return of(null);
-  });
+  }).pipe(delay(SHOWCASE_WRITE_LATENCY_MS));
 }
 
 // Next free id for an in-memory seed array. Derived from the max rather than the length so it
@@ -279,11 +291,13 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
   public saveModel(model: Omit<IUsersDisplay, 'id'>): Observable<IUsersDisplay> {
     // `hasEntityID`, not `entityID ?? …`: on the /new route entityID is NaN (Number('new')), and
     // NaN is neither null nor undefined, so `??` would pass NaN straight through as the id.
-    return of(saveUser(model, this.hasEntityID ? this.entityID : undefined));
+    // `defer` keeps the write on-subscribe rather than evaluating eagerly at call time.
+    return defer(() => of(saveUser(model, this.hasEntityID ? this.entityID : undefined)))
+      .pipe(delay(SHOWCASE_WRITE_LATENCY_MS));
   }
 
   protected loadModel(entityID?: number): Observable<IUsersDisplay | null> {
-    return of(entityID ? findUser(entityID) : null);
+    return of(entityID ? findUser(entityID) : null).pipe(delay(SHOWCASE_LATENCY_MS));
   }
 }
 
@@ -310,11 +324,13 @@ class CustomersDataProvider extends DataProviderService<ICustomersDisplay> {
   public saveModel(model: Omit<ICustomersDisplay, 'id'>): Observable<ICustomersDisplay> {
     // `hasEntityID`, not `entityID ?? …`: on the /new route entityID is NaN (Number('new')), and
     // NaN is neither null nor undefined, so `??` would pass NaN straight through as the id.
-    return of(saveCustomer(model, this.hasEntityID ? this.entityID : undefined));
+    // `defer` keeps the write on-subscribe rather than evaluating eagerly at call time.
+    return defer(() => of(saveCustomer(model, this.hasEntityID ? this.entityID : undefined)))
+      .pipe(delay(SHOWCASE_WRITE_LATENCY_MS));
   }
 
   protected loadModel(entityID?: number): Observable<ICustomersDisplay | null> {
-    return of(entityID ? findCustomer(entityID) : null);
+    return of(entityID ? findCustomer(entityID) : null).pipe(delay(SHOWCASE_LATENCY_MS));
   }
 }
 
