@@ -22,11 +22,12 @@ export default [
   {
     files: ['**/*.ts'],
     rules: {
+      // @framework declarations use the `framework-` prefix; nothing here uses `lib-`.
       '@angular-eslint/directive-selector': [
         'error',
         {
           type: 'attribute',
-          prefix: 'lib',
+          prefix: 'framework',
           style: 'camelCase',
         },
       ],
@@ -34,7 +35,7 @@ export default [
         'error',
         {
           type: 'element',
-          prefix: 'lib',
+          prefix: 'framework',
           style: 'kebab-case',
         },
       ],

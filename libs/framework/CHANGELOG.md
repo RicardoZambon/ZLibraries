@@ -21,7 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Lint: the `framework-` component/directive selector prefix is now accepted.**
+  `libs/framework/eslint.config.mjs` still carried the scaffolded `prefix: 'lib'`, so every one of the
+  library's own `framework-`-prefixed components (`framework-button-save`, `framework-tabs`,
+  `framework-default-details-tab-view`, and 19 more) failed `@angular-eslint/component-selector` —
+  23 errors in all, taking `npx nx lint framework` from 155 errors down to 132. Both selector rules
+  now use `prefix: 'framework'`, the only prefix this library declares. Lint configuration only:
+  no selector was renamed, and there is no public API or runtime change.
+
 ### ⚠ Breaking Changes / Migration
+
+None.
 
 ## [1.2.0] - 2026-07-24
 
