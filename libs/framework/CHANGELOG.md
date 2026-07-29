@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.2.1] - 2026-07-29
+
+### Fixed
+
 - Lint configuration only: the library's ESLint selector rules now accept the `framework-` prefix
   that every `@framework` component already uses. They previously still expected the Angular
   scaffold's `lib` prefix, so the entire component surface reported
@@ -59,7 +65,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.2.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.2.1...HEAD
+[1.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.1
 [1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.0
 [1.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.1.1
 [1.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.1.0
