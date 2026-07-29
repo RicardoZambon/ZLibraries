@@ -111,6 +111,44 @@ const CUSTOMERS: ICustomersList[] = [
   { id: 5, name: 'Stark Manufacturing', city: 'Ottawa', email: 'sales@stark.com', isActive: true },
 ];
 
+// Detail-only field: phone isn't part of the list row, so it lives beside the seed array.
+const CUSTOMER_PHONES: Map<number, string> = new Map<number, string>([
+  [1, '+1 416 555 0101'],
+  [2, '+1 514 555 0102'],
+  [3, '+1 604 555 0103'],
+  [4, '+1 403 555 0104'],
+  [5, '+1 613 555 0105'],
+]);
+
+interface ICustomersDisplay extends ICustomersList {
+  phone: string;
+}
+
+function findCustomer(id: number): ICustomersDisplay | null {
+  const customer: ICustomersList | undefined = CUSTOMERS.find((row: ICustomersList) => row.id === id);
+  return customer ? { ...customer, phone: CUSTOMER_PHONES.get(id) ?? '' } : null;
+}
+
+// Writes the saved customer back to the seed array, the way a real backend would persist it, so
+// the list view reflects both edits and newly created records.
+function saveCustomer(model: Omit<ICustomersDisplay, 'id'>, entityID?: number): ICustomersDisplay {
+  const id: number = entityID ?? nextId(CUSTOMERS);
+
+  CUSTOMER_PHONES.set(id, model.phone ?? '');
+
+  // Built field-by-field rather than spread: `model` is the form's raw value, so it carries no
+  // id, and spreading would also drag phone into the persisted list row.
+  const saved: ICustomersList = upsertById(CUSTOMERS, {
+    city: model.city ?? '',
+    email: model.email ?? '',
+    id,
+    isActive: model.isActive,
+    name: model.name,
+  });
+
+  return { ...saved, phone: model.phone ?? '' };
+}
+
 interface IUnitsList {
   code: string;
   description: string;
@@ -246,6 +284,37 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
 
   protected loadModel(entityID?: number): Observable<IUsersDisplay | null> {
     return of(entityID ? findUser(entityID) : null);
+  }
+}
+
+@Injectable()
+class CustomersDataset extends ShowcaseDataset<ICustomersList> {
+  public override columns: IGridColumn[] = [
+    { field: 'name', headerName: 'Name' },
+    { field: 'city', headerName: 'City' },
+    { field: 'email', headerName: 'Email' },
+    { field: 'isActive', headerName: 'Active', size: '6rem' },
+  ];
+
+  protected rows(): ICustomersList[] {
+    return CUSTOMERS;
+  }
+}
+
+@Injectable()
+class CustomersDataProvider extends DataProviderService<ICustomersDisplay> {
+  public getTitle(entity: ICustomersDisplay): string {
+    return entity?.name ?? '';
+  }
+
+  public saveModel(model: Omit<ICustomersDisplay, 'id'>): Observable<ICustomersDisplay> {
+    // `hasEntityID`, not `entityID ?? …`: on the /new route entityID is NaN (Number('new')), and
+    // NaN is neither null nor undefined, so `??` would pass NaN straight through as the id.
+    return of(saveCustomer(model, this.hasEntityID ? this.entityID : undefined));
+  }
+
+  protected loadModel(entityID?: number): Observable<ICustomersDisplay | null> {
+    return of(entityID ? findCustomer(entityID) : null);
   }
 }
 
@@ -413,6 +482,106 @@ class UsersFormComponent extends FormView<IUsersDisplay> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Customers — list and detail views
+// ---------------------------------------------------------------------------
+
+@Component({
+  selector: 'showcase-customers-list',
+  imports: [
+    ButtonDeleteComponent,
+    ButtonNewComponent,
+    ButtonOpenRecordComponent,
+    ButtonRefreshComponent,
+    DataGridComponent,
+    RibbonGroupComponent,
+  ],
+  providers: [{ provide: DataGridDataset, useClass: CustomersDataset }],
+  template: `
+    <ng-template #ribbon>
+      <lib-ribbon-group label="Entity">
+        <framework-button-new></framework-button-new>
+        <framework-button-open-record></framework-button-open-record>
+        <framework-button-delete [action]="onDelete()" [disabled]="!hasRowsSelected"></framework-button-delete>
+      </lib-ribbon-group>
+      <lib-ribbon-group label="General">
+        <framework-button-refresh></framework-button-refresh>
+      </lib-ribbon-group>
+    </ng-template>
+
+    <lib-data-grid></lib-data-grid>
+  `,
+})
+class CustomersListComponent extends TabViewList<ICustomersList> {
+  protected onDelete(): Observable<unknown> {
+    return deleteById(CUSTOMERS, this.selectedItem?.id ?? -1);
+  }
+}
+
+@Component({
+  selector: 'showcase-customers-form',
+  imports: [
+    ButtonEditComponent,
+    ButtonNewComponent,
+    ButtonSaveComponent,
+    FormGroupComponent,
+    FormInputGroupComponent,
+    GroupAccordionComponent,
+    GroupScrollSpyComponent,
+    ReactiveFormsModule,
+    RibbonGroupComponent,
+  ],
+  providers: [{ provide: FormService }],
+  template: `
+    <ng-template #ribbon>
+      <lib-ribbon-group label="Entity">
+        <framework-button-new></framework-button-new>
+        <framework-button-edit></framework-button-edit>
+        <framework-button-save></framework-button-save>
+      </lib-ribbon-group>
+    </ng-template>
+
+    <lib-group-scroll-spy>
+      <form ngNoForm [formGroup]="dataForm">
+        <lib-group-accordion label="Details">
+          <lib-form-group label="Customer">
+            <lib-form-input-group
+              controlName="name"
+              label="Name"
+              [maxLength]="200"
+              [validations]="{ 'required': 'Name is required' }">
+            </lib-form-input-group>
+            <lib-form-input-group controlName="email" label="Email" [maxLength]="200">
+            </lib-form-input-group>
+            <lib-form-input-group controlName="phone" label="Phone" [maxLength]="40">
+            </lib-form-input-group>
+            <lib-form-input-group controlName="isActive" label="Active" type="checkbox">
+            </lib-form-input-group>
+          </lib-form-group>
+        </lib-group-accordion>
+
+        <lib-group-accordion label="Address">
+          <lib-form-group label="Location">
+            <lib-form-input-group controlName="city" label="City" [maxLength]="100">
+            </lib-form-input-group>
+          </lib-form-group>
+        </lib-group-accordion>
+      </form>
+    </lib-group-scroll-spy>
+  `,
+})
+class CustomersFormComponent extends FormView<ICustomersDisplay> {
+  protected formSetup(): FormGroup {
+    return this.formBuilder.group({
+      city: [null],
+      email: [null],
+      isActive: [true, { nonNullable: true }],
+      name: [null, Validators.required],
+      phone: [null],
+    });
+  }
+}
+
 // The story renders this, and the router puts MainLayoutComponent inside it. This mirrors the
 // real app (app.routes.ts), where MainLayoutComponent is a routed component with the screens as
 // children — so TabsComponent initializes only after the router has matched a route and can find
@@ -457,6 +626,36 @@ const showcaseRoutes: Routes = [
         data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
         children: [
           { path: '', component: DashboardComponent },
+        ],
+      },
+      {
+        path: 'general',
+        children: [
+          {
+            path: 'customers',
+            children: [
+              {
+                path: '',
+                component: DefaultTabViewComponent,
+                data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
+                children: [
+                  { path: '', component: CustomersListComponent },
+                ],
+              },
+              {
+                path: ':id',
+                component: DefaultDetailsTabViewComponent,
+                data: {
+                  [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
+                  dataProvider: () => new CustomersDataProvider(),
+                  defaultTitle: 'New customer',
+                },
+                children: [
+                  { path: '', component: CustomersFormComponent, data: { icon: 'fa-address-book', title: 'Details' } },
+                ],
+              },
+            ],
+          },
         ],
       },
       {
