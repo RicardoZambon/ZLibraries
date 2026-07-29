@@ -65,6 +65,12 @@ colored/gradient backdrop behind it (see `@shared`'s `--app-backdrop` in `MainLa
 override `--sidebar-bg` (and the other `--sidebar-*` surface tokens) with opaque values to keep a
 solid rail.
 
+`lib-ribbon` now hides itself when it has neither a visible `lib-ribbon-group` nor any other
+projected content. No action needed if your ribbons use groups (the normal case). The rule is a
+global selector at specificity (0,1,2), so overriding it requires `!important`. Because the bar can
+now appear and disappear rather than merely resize, anything positioned relative to the ribbon may
+shift when a button's visibility resolves (e.g. as permissions arrive).
+
 ## [1.2.0] - 2026-07-24
 
 ### Added
