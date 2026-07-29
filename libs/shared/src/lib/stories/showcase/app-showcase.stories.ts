@@ -163,7 +163,10 @@ class DashboardComponent {
 }
 
 // ---------------------------------------------------------------------------
-// Routes — MUST be nested one segment per route (see verified fact #2)
+// Routes — one path segment per route, nested. RouteHelper.getRouteURL() collects each
+// route's segments walking up the parent chain and then reverses the flat list, so a
+// multi-segment path like 'general/customers' would rebuild as '/customers/general' and
+// break the URLs that ButtonNew/ButtonOpenRecord/ButtonSave construct.
 // ---------------------------------------------------------------------------
 
 const showcaseRoutes: Routes = [
