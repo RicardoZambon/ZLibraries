@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.3.2] - 2026-07-30
+
+### Added
+
 - **Storybook: `Data Grid/Data Grid ▸ Multi Select Tall Rows` story** — multi-selection over rows
   taller than the default `rowHeight` (41.6px), the height a row needs once it shows a thumbnail.
   Misalignment in the selection column is obvious at that height, so this is the story to check the
@@ -26,10 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of the page. This mirrors `lib-ribbon-group`, which already hid itself when none of its children
   were visible. Ribbons with at least one visible group are unaffected. See
   **⚠ Breaking Changes / Migration** below.
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -145,7 +155,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.3.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.3.2...HEAD
+[1.3.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.3.2
 [1.3.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.3.1
 [1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.2.0
 [1.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.1.1
