@@ -1,5 +1,30 @@
 /* @use 'tailwindcss'; */
 
+/* A screen with no ribbon actions (e.g. a dashboard) would otherwise render this bar's border,
+   background and padding around nothing. `lib-ribbon-group` already hides itself when none of its
+   children are visible, so "contains no group without .hidden" means "there is nothing to show".
+
+   Done in CSS rather than with a @ContentChildren + [class.hidden] binding (the pattern
+   lib-ribbon-group itself uses) because the ribbon's content arrives through *ngTemplateOutlet
+   with a TemplateRef declared in a *different* component: Angular resolves content queries against
+   the declaration view, so a query here would never see the projected buttons. :has() matches on
+   the rendered DOM and is unaffected by that boundary.
+
+   Written through ::ng-deep rather than as `:host(:not(:has(...)))` because Angular's style
+   encapsulation silently DROPS that form — verified: a `:host(.probe)` control rule in this same
+   file compiled through fine while the `:has()` variant never reached the stylesheet at all.
+   ::ng-deep emits the selector untouched. Unscoped, but it names this component's own element so
+   it cannot match anything else. The second clause is what makes it safe: a ribbon is only hidden
+   when it has neither a visible group NOR any other projected element, so a consumer projecting a
+   bare button — or using the [right] slot for a counter or search box — keeps their bar. Note
+   the rule is global at specificity (0,1,2), so a consumer overriding it needs !important.
+
+   Raw `display: none` rather than `@apply hidden`: Tailwind rejects that here as a circular
+   dependency, since the utility it would inline is the same `.hidden` class this selector tests. */
+::ng-deep lib-ribbon:not(:has(lib-ribbon-group:not(.hidden))):not(:has(> div > *:not(lib-ribbon-group))) {
+    display: none;
+}
+
 :host-context {
     @apply flex flex-row border rounded-lg p-1 relative;
     @apply bg-gray-200/80 border-gray-300/90;

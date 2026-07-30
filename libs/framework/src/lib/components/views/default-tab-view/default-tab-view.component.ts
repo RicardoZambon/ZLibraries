@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { RibbonComponent } from '@zambon-dev/library';
 import { Subject, takeUntil } from 'rxjs';
@@ -16,14 +16,13 @@ import { TabViewService } from '../../../services';
   ],
   providers: [{ provide: TabViewService }]
 })
-export class DefaultTabViewComponent implements AfterViewInit, OnDestroy, OnInit {
+export class DefaultTabViewComponent implements OnDestroy, OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild('emptyRibbon') private emptyRibbonTemplate!: TemplateRef<any>;
   //#endregion
 
   //#region Variables
   protected destroy$: Subject<boolean> = new Subject<boolean>();
-  protected ribbonTemplate!: TemplateRef<any>;
+  protected ribbonTemplate?: TemplateRef<any>;
 
   private ribbonViewTemplate: { [viewId: string]: TemplateRef<any> | undefined } = {};
   //#endregion
@@ -37,13 +36,6 @@ export class DefaultTabViewComponent implements AfterViewInit, OnDestroy, OnInit
     protected tabViewService: TabViewService,
   ) {
     
-  }
-
-  public ngAfterViewInit(): void {
-    if (!this.ribbonTemplate) {
-      // If there are no template assigned to the ribbon, we use the empty template.
-      this.updateRibbonTemplate();
-    }
   }
 
   public ngOnDestroy(): void {
@@ -74,23 +66,21 @@ export class DefaultTabViewComponent implements AfterViewInit, OnDestroy, OnInit
   //#endregion
 
   //#region Private methods
-  private updateRibbonTemplate(template: TemplateRef<any> | undefined = undefined): void {
-    const isRealTemplate: boolean = !!template;
+  private updateRibbonTemplate(template: TemplateRef<any> | undefined): void {
+    this.ribbonTemplate = template;
 
-    if (!template) {
-      template = this.emptyRibbonTemplate;
-    }
-
-    this.ribbonTemplate = template!;
-
-    if (isRealTemplate) {
+    if (template) {
       // Real template from a child view — render immediately so buttons appear
       // without waiting for the next change detection cycle (user interaction).
       this.changeDetectorRef.detectChanges();
     } else {
-      // Empty/fallback template — defer rendering to avoid briefly flashing
-      // an empty ribbon during component creation (the child view will push
-      // the real template moments later in the same initialization cycle).
+      // No template for this view — defer clearing the ribbon to avoid tearing down
+      // an already rendered one for a frame while switching views (the incoming view
+      // pushes its real template moments later in the same initialization cycle).
+      //
+      // Never assign the ribbon template from a lifecycle hook that runs after the first
+      // change detection pass (e.g. ngAfterViewInit): the outlet below has already been
+      // checked by then, so mutating it there trips NG0100 in dev mode.
       this.changeDetectorRef.markForCheck();
     }
   }

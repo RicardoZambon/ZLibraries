@@ -258,7 +258,9 @@ Base for **multi-editor modals** (inline grid editing). Integrates with `MultiEd
 
 Wrapper for **list views**. Subscribes to `TabViewService` for ribbon template updates and view change events. Used in route config with `FrameworkViewType.List`.
 
-**Ribbon template rendering strategy**: `updateRibbonTemplate` uses `detectChanges()` for real templates (from child views) to render buttons immediately without waiting for the next change detection cycle. For empty/fallback templates, it uses `markForCheck()` instead to defer rendering — this avoids briefly flashing an empty ribbon during component creation, since the child view will push the real template moments later in the same initialization cycle.
+**Ribbon template rendering strategy**: `updateRibbonTemplate` uses `detectChanges()` when a child view publishes a real template, so buttons render immediately instead of waiting for the next change detection cycle. When a view publishes no template it sets `ribbonTemplate` to `undefined` and uses `markForCheck()` instead, deferring the clear — this avoids tearing an already rendered ribbon down for a frame while switching views, since the incoming view pushes its own template moments later in the same initialization cycle.
+
+`ribbonTemplate` must **never** be assigned from a lifecycle hook that runs after the first change detection pass (`ngAfterViewInit` in particular). The ribbon's `*ngTemplateOutlet` has already been checked by then, so mutating it there throws `NG0100: ExpressionChangedAfterItHasBeenCheckedError` in dev mode on every render. There is deliberately no placeholder/empty `TemplateRef` fallback: `*ngTemplateOutlet` renders nothing for `undefined`, and `RibbonComponent` is a pure `<ng-content>` wrapper with no content queries, so an empty template and no template produce identical DOM. `default-tab-view.component.spec.ts` guards this.
 
 ### DefaultDetailsTabViewComponent (extends DefaultTabViewComponent)
 

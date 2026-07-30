@@ -21,7 +21,13 @@ import { FormInputComponent } from '../form-input/form-input.component';
     TranslatePipe,
 ],
   host: {
-    '[class.full-height]': 'isFullHeight'
+    '[class.full-height]': 'isFullHeight',
+    // Angular keeps static attributes in the DOM even when a directive consumes them as an
+    // @Input(), so `type="checkbox"` would linger on this host element — where
+    // @tailwindcss/forms' tag-agnostic `[type="checkbox"]` base rules style the host itself as
+    // a checkbox (1px border, white fill, height:1rem). Clearing the attribute removes the
+    // stray box for every type while leaving the `type` @Input() untouched.
+    '[attr.type]': 'null'
   }
 })
 export class FormInputGroupComponent extends BaseComponent implements OnInit {

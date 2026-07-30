@@ -21,6 +21,13 @@ export const MaxExportRows: number = 50000;
 })
 export class ButtonExportComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
+  /**
+   * Index into `options` exported when the main button is clicked, defaulting to Excel.
+   * `RibbonButtonComponent` treats -1 as "no default" and merely toggles the dropdown, which left
+   * Export needing two clicks for the common case while Save (which sets 0) needed one. Set -1 to
+   * restore the dropdown-only behaviour.
+   */
+  @Input() public defaultOption: number = 0;
   @Input() public fileBaseName: string = 'export';
   //#endregion
 

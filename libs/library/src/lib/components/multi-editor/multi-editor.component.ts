@@ -130,11 +130,28 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
     const newModel: any = this.multiEditorDataset.newData(fakeNewID);
 
     if (!!newModel) {
+      // Read before addNewRow: it stamps the grid's internal key onto the row, so afterwards even a
+      // `{}` model reports one own key and the check below would never skip.
+      const hasPrefilledValues: boolean = Object.keys(newModel).length > 0;
+
       this.multiEditorDataset.storeFakeIDGenerated(fakeNewID);
-      
+
       this.dataGridDataset.addNewRow(newModel);
 
       const newKey: string = this.dataGridDataset.loadedKeys![this.dataGridDataset.loadedKeys!.length - 1];
+
+      // Record whatever `newData` pre-filled. `selectRow` below reaches the form through
+      // reset() + patchValue(), which leaves it pristine, and the `valueChanges` handler is gated on
+      // `formGroup.dirty` — so a row the user never types into is never recorded. Without this, values
+      // returned by `newData` show up in the grid but are dropped from the save batch, and adding
+      // several rows while only editing the last silently discards the earlier ones.
+      //
+      // Skipped for a value-less model (`{}`, the blank-row convention) so implementations that
+      // pre-fill nothing keep sending nothing for a row that was added and never touched.
+      if (hasPrefilledValues) {
+        this.multiEditorDataset.updateValues(newKey, newModel);
+      }
+
       this.dataGridDataset.selectRow(newKey);
     }
   }

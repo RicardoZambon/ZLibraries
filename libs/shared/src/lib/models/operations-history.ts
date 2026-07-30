@@ -1,7 +1,9 @@
 export interface IOperationsHistoryList {
-  entityId?: number;
+  /** Capitalised `ID` is intentional: the backend property is `EntityID`, and the camelCase
+   * serialization policy only lowercases a leading run of capitals — so the trailing ones survive. */
+  entityID?: number;
   entityName?: string;
-  ID: number;
+  id: number;
   newValues?: string;
   oldValues?: string;
   operationType?: string;

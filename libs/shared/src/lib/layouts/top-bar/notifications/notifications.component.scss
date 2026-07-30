@@ -68,5 +68,15 @@
 
     .notifications-toggle {
         @apply relative;
+
+        // The unread badge is an absolutely-positioned overlay, so it adds no width — but it is still
+        // a DOM sibling after the bell, which defeats the global `.btn i:not(:last-child)` margin
+        // guard in styles/components/button.scss. That put 8px of dead space to the bell's right and
+        // shifted it off-centre, but only while a count was showing, which is why it looked
+        // intermittent. The guard is right for icon-plus-label buttons, so it is neutralised here
+        // rather than changed for every button in the app.
+        i {
+            @apply mr-0;
+        }
     }
 }

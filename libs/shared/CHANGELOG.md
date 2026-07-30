@@ -13,6 +13,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Storybook: `Shared/App Showcase` story** — a full-height, navigable demo of the complete
+  application shell, backed by in-memory mock data. Clicking the sidebar entries (Dashboard,
+  General ▸ Customers/Units, Security ▸ Users) opens tabs that render working list-views and
+  detail-views through the real hosts (`DefaultTabViewComponent` /
+  `DefaultDetailsTabViewComponent`, `TabViewList` / `FormView`, and the `framework-button-*`
+  ribbon buttons). It covers:
+  - a branded top bar (logo, app name, subtitle, environment badge and a working notifications
+    bell) and a versioned sidebar footer;
+  - a mocked audit/history view, reachable from the detail views' Views button;
+  - `framework-button-filters` (via a `FiltersBase` component per entity) and
+    `framework-button-export` on every list: the mock dataset honours `IListParameters.filters`, so
+    filtering visibly narrows the grid, and exporting downloads a real CSV of the filtered rows;
+  - a **child list of addresses** on the Customers detail view, edited through `lib-multi-editor` —
+    `ChildList` and `MultiEditorModal` together, with the accordion gated on `hasEntityID` (a child
+    collection needs a persisted parent), the Edit button opening the multi-editor rather than
+    entering form edit mode, and add/remove/edit applied as one batch. The Customers grid's City
+    column is **derived** from the customer's first address, so editing an address is reflected in
+    the parent list and its filter with nothing to keep in sync;
+  - mocked request latency, so loading states are observable;
+  - full `en`/`pt` translation, so the language selector switches the entire showcase.
+
+  Development-only: it lives entirely in `app-showcase.stories.ts`, which is excluded from the
+  package build.
+
 ### Changed
 
 ### Deprecated
@@ -21,7 +45,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Audit history models now match the JSON the audit endpoints actually return.**
+  `IServicesHistoryList` and `IOperationsHistoryList` declared an `ID` property, and
+  `IOperationsHistoryList` declared `entityId`. Neither key is ever sent. The audit endpoints
+  (`POST /{controller}/{entityID}/Audit` and `.../Audit/{serviceHistoryID}`) serialize under
+  ASP.NET Core's default camelCase policy, which lowercases only a *leading* run of capitals — so the
+  backend's `ID` goes out as `id` and its `EntityID` goes out as `entityID`. Typing a row against
+  `.ID` or `.entityId` therefore compiled fine and read `undefined` at run time. See
+  **⚠ Breaking Changes / Migration** below.
+
+  This was also a latent trap for anything supplying its own audit rows: the grid resolves row
+  identity through `compareProperty`, which is `'id'`, so a row carrying only `ID` could never be
+  selected — clicking a service entry left the operations grid empty. Rows shaped like the real
+  payload work unchanged; `@shared`'s own runtime behaviour is not affected by this release.
+
+- **The top bar's notifications bell is no longer pushed off-centre by its unread badge.** The badge
+  is an absolutely-positioned overlay, so it adds no width — but it is still a DOM sibling after the
+  bell icon, which defeated the `.btn i:not(:last-child)` margin guard in the global button styles.
+  That left 8px of dead space to the icon's right and widened the button from 38px to 46px, but only
+  while an unread count was showing, so it came and went with the count. The margin is now cleared
+  for that button specifically; the shared guard, which is correct for icon-plus-label buttons, is
+  unchanged.
+
+- **Lint: `shared-` component/directive selector prefix is now accepted.**
+  `libs/shared/eslint.config.mjs` still carried the scaffolded `prefix: 'lib'`, so the library's own
+  `shared-`-prefixed components (`shared-main-layout`, `shared-login-layout`) failed
+  `@angular-eslint/component-selector`. Both selector rules now accept `['lib', 'shared']`.
+
 ### ⚠ Breaking Changes / Migration
+
+Two properties on the audit history models were renamed to the keys the backend actually sends. Both
+models are exported from the package root, so anything typed against the old names will now fail to
+compile. Nothing in `@shared` changes behaviour at run time — the fix is to the declared types.
+
+| Model | Before | After |
+|-------|--------|-------|
+| `IServicesHistoryList` | `ID: number` | `id: number` |
+| `IOperationsHistoryList` | `ID: number` | `id: number` |
+| `IOperationsHistoryList` | `entityId?: number` | `entityID?: number` |
+
+To upgrade:
+
+1. Rename `.ID` to `.id` wherever you read or construct an `IServicesHistoryList` or
+   `IOperationsHistoryList`. If the compiler now reports the property as missing, that code was
+   reading `undefined` before — it never matched the payload.
+2. Rename `.entityId` to `.entityID` on `IOperationsHistoryList`. The capitals are deliberate and
+   match the backend's `EntityID`; do not "correct" them back.
+3. If you supply audit rows yourself — a test double, a Storybook mock, a hand-rolled
+   `ServicesHistoryService` / `OperationsHistoryService` — emit `id`, not `ID`. Rows keyed only on
+   `ID` were never selectable, so a service row's selection could not reach the operations grid.
+4. If you worked around that by overriding `compareProperty` to `'ID'` in a `ServicesHistoryDataset`
+   or `OperationsHistoryDataset` subclass, remove the override. The inherited `'id'` is now correct.
 
 ## [1.2.0] - 2026-07-28
 

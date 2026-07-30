@@ -1,8 +1,5 @@
 <lib-ribbon>
-    <ng-container *ngTemplateOutlet="ribbonTemplate"></ng-container>
-
-    <ng-template #emptyRibbon>
-    </ng-template>
+    <ng-container *ngTemplateOutlet="ribbonTemplate ?? null"></ng-container>
 </lib-ribbon>
 
 <router-outlet>
