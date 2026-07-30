@@ -51,6 +51,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a host binding. This affects every value of `type` (`checkbox`, `date`, `number`, `password`, …);
   both `type="checkbox"` and `[type]="'checkbox'"` now render identically, so existing call sites are
   fixed with no changes required.
+- **`lib-multi-editor` no longer discards rows the user did not type into.** `MultiEditorDataset.newData()`
+  exists so implementations can pre-fill a new row, but `onNewClick` reached the form through
+  `reset()` + `patchValue()`, which leaves it pristine — and the change tracker only records a row
+  while `formGroup.dirty`. Pre-filled values were therefore shown in the grid and then dropped from
+  the save batch. The visible symptom was worse than lost defaults: adding several rows and editing
+  only the last one saved just that row, because `onSaveClick` validates the current selection only,
+  so the earlier rows silently vanished on refresh. `newData()`'s values are now registered when the
+  row is added.
 - **`lib-ribbon` now hides itself when it contains no visible buttons.** A screen with no ribbon
   actions — a dashboard, or any view that projects an empty `#ribbon` template — previously still
   rendered the bar's border, background and padding around nothing, wasting vertical space at the top
@@ -64,6 +72,13 @@ behind the sidebar, the rail will look faint over plain/neutral content — eith
 colored/gradient backdrop behind it (see `@shared`'s `--app-backdrop` in `MainLayoutComponent`) or
 override `--sidebar-bg` (and the other `--sidebar-*` surface tokens) with opaque values to keep a
 solid rail.
+
+`lib-multi-editor` now sends rows that `newData()` pre-filled but the user never edited. Nothing to do
+if your `newData()` returns an empty object (`{}`) — the common "blank row" convention — since a
+value-less row is still skipped and the posted batch is byte-for-byte what it was before. If your
+`newData()` *does* return field values, those rows now reach `saveData()` where they were previously
+dropped, so a batch may contain entries it did not before; verify your backend rejects or defaults
+them as you expect.
 
 `lib-ribbon` now hides itself when it has neither a visible `lib-ribbon-group` nor any other
 projected content. No action needed if your ribbons use groups (the normal case). The rule is a
