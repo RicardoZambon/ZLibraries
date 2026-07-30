@@ -1358,8 +1358,10 @@ const showcaseRoutes: Routes = [
 // Story
 // ---------------------------------------------------------------------------
 
-// Story-only: constrain the layout to its container (the app uses full-viewport sizing,
-// which forces a scrollbar inside the Storybook canvas).
+// Story-only: make the layout fill its container rather than size itself against the viewport.
+// The app's own full-viewport sizing would otherwise overflow the canvas and force a scrollbar,
+// because Storybook's default canvas adds body padding. Paired with `layout: 'fullscreen'` on the
+// story below, which removes that padding so the container can be a true 100vh.
 const FIT_TO_CONTAINER = `
   <style>
     ::ng-deep shared-main-layout { display: block; height: 100%; max-height: 100%; }
@@ -1403,6 +1405,9 @@ const meta: Meta<MainLayoutComponent> = {
       ],
     }),
   ],
+  // Drops the canvas's body padding, so the shell can fill the full viewport height the way it does
+  // in a real app instead of being inset and clipped.
+  parameters: { layout: 'fullscreen' },
   title: 'Shared/App Showcase',
 };
 export default meta;
@@ -1411,7 +1416,7 @@ export const NavigableApp: StoryObj<MainLayoutComponent> = {
   render: () => ({
     template: `
       ${FIT_TO_CONTAINER}
-      <div class="h-[40rem] bg-slate-100">
+      <div class="h-screen bg-slate-100">
         <shared-showcase-root></shared-showcase-root>
       </div>
     `,

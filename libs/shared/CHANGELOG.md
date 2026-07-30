@@ -36,6 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     multi-editor rather than entering form edit mode, and add/remove/edit are applied as one batch.
     The Customers grid keeps its City column, now **derived** from the customer's first address, so
     editing an address is reflected in the parent list and its filter with nothing to keep in sync.
+  - The story now fills the full canvas height (`layout: 'fullscreen'` plus a `100vh` container)
+    instead of being capped at a fixed `40rem`, so list grids get the room the framework's
+    full-height layout gives them in a real app.
 
 ### Changed
 
