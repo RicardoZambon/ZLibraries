@@ -42,6 +42,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`lib-data-grid`'s multi-selection checkbox is now vertically centred in the row.** The checkbox is
+  styled with `vertical-align: super`, which lifts it off the middle of its line box — roughly 6px at
+  the default font size. At the default `configs.rowHeight` (41.6px) the drift is easy to miss, but on
+  taller rows (say `rowHeight: 56` for a row showing a thumbnail) the checkbox visibly hugged the top
+  of the row while the text columns stayed centred. The selection cell now lays its checkbox out as a
+  flex item, so it is centred by the box model and `vertical-align` no longer applies to it. The cell
+  is also tagged with a `selection` class, mirroring the header's `header-cell selection`. Horizontal
+  placement is unchanged, and no consumer changes are required.
 - **Form inputs no longer render a stray bordered box when `type` is set as a static attribute.**
   Angular keeps static attributes in the DOM even when a directive consumes them as an `@Input()`, so
   `<lib-form-input-group type="checkbox">` left a `type="checkbox"` attribute on the host element —
