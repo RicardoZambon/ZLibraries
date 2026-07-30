@@ -62,6 +62,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   selected — clicking a service entry left the operations grid empty. Rows shaped like the real
   payload work unchanged; `@shared`'s own runtime behaviour is not affected by this release.
 
+- **The top bar's notifications bell is no longer pushed off-centre by its unread badge.** The badge
+  is an absolutely-positioned overlay, so it adds no width — but it is still a DOM sibling after the
+  bell icon, which defeated the `.btn i:not(:last-child)` margin guard in the global button styles.
+  That left 8px of dead space to the icon's right and widened the button from 38px to 46px, but only
+  while an unread count was showing, so it came and went with the count. The margin is now cleared
+  for that button specifically; the shared guard, which is correct for icon-plus-label buttons, is
+  unchanged.
+
 - **Lint: `shared-` component/directive selector prefix is now accepted.**
   `libs/shared/eslint.config.mjs` still carried the scaffolded `prefix: 'lib'`, so the library's own
   `shared-`-prefixed components (`shared-main-layout`, `shared-login-layout`) failed
