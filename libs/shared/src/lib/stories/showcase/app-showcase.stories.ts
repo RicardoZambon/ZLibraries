@@ -15,12 +15,14 @@ import {
   ButtonOpenRecordComponent,
   ButtonRefreshComponent,
   ButtonSaveComponent,
+  ChildList,
   CustomReuseStrategy,
   DefaultDetailsTabViewComponent,
   DefaultTabViewComponent,
   FRAMEWORK_VIEW_TYPE,
   FrameworkViewType,
   FormView,
+  MultiEditorModal,
   Tab,
   TabService,
   TabViewBase,
@@ -35,10 +37,13 @@ import {
   FormService,
   GroupAccordionComponent,
   GroupScrollSpyComponent,
+  IBatchUpdate,
   IGridColumn,
   IListParameters,
   IListResult,
   ISidebarProfile,
+  MultiEditorComponent,
+  MultiEditorDataset,
   RibbonGroupComponent,
   SidebarMenu,
   SidebarService,
@@ -121,20 +126,27 @@ function saveUser(model: Omit<IUsersDisplay, 'id'>, entityID?: number): IUsersDi
   return { ...saved, mustChangePassword: model.mustChangePassword };
 }
 
-interface ICustomersList {
-  city: string;
+// The stored customer — what the mock's "table" holds. `city` is deliberately absent: a customer's
+// location lives on its addresses now, and the list column is derived from them.
+interface ICustomersRow {
   email: string;
   id: number;
   isActive: boolean;
   name: string;
 }
 
-const CUSTOMERS: ICustomersList[] = [
-  { id: 1, name: 'Acme Industries', city: 'Toronto', email: 'contact@acme.com', isActive: true },
-  { id: 2, name: 'Globex Corporation', city: 'Montreal', email: 'hello@globex.com', isActive: true },
-  { id: 3, name: 'Initech Systems', city: 'Vancouver', email: 'info@initech.com', isActive: false },
-  { id: 4, name: 'Umbrella Health', city: 'Calgary', email: 'care@umbrella.com', isActive: true },
-  { id: 5, name: 'Stark Manufacturing', city: 'Ottawa', email: 'sales@stark.com', isActive: true },
+// The read model the grid, filter and export see. `city` is the first address's city, resolved on
+// every read, so editing an address is reflected in the parent list with nothing to keep in sync.
+interface ICustomersList extends ICustomersRow {
+  city: string;
+}
+
+const CUSTOMERS: ICustomersRow[] = [
+  { id: 1, name: 'Acme Industries', email: 'contact@acme.com', isActive: true },
+  { id: 2, name: 'Globex Corporation', email: 'hello@globex.com', isActive: true },
+  { id: 3, name: 'Initech Systems', email: 'info@initech.com', isActive: false },
+  { id: 4, name: 'Umbrella Health', email: 'care@umbrella.com', isActive: true },
+  { id: 5, name: 'Stark Manufacturing', email: 'sales@stark.com', isActive: true },
 ];
 
 // Detail-only field: phone isn't part of the list row, so it lives beside the seed array.
@@ -146,13 +158,54 @@ const CUSTOMERS_PHONES: Map<number, string> = new Map<number, string>([
   [5, '+1 613 555 0105'],
 ]);
 
+// A customer's addresses — the child collection edited through lib-multi-editor. Flat with a
+// customerID rather than nested per customer so `nextId`/`upsertById` apply unchanged, the way a
+// real table with a foreign key would behave.
+interface ICustomerAddressesList {
+  city: string;
+  country: string;
+  customerID: number;
+  id: number;
+  postalCode: string;
+  street: string;
+}
+
+const CUSTOMER_ADDRESSES: ICustomerAddressesList[] = [
+  { id: 1, customerID: 1, street: '100 King Street West', city: 'Toronto', postalCode: 'M5X 1A9', country: 'Canada' },
+  { id: 2, customerID: 1, street: '55 Front Street East', city: 'Toronto', postalCode: 'M5E 1B3', country: 'Canada' },
+  { id: 3, customerID: 2, street: '1200 Rue Sainte-Catherine', city: 'Montreal', postalCode: 'H3B 4W5', country: 'Canada' },
+  { id: 4, customerID: 3, street: '800 West Georgia Street', city: 'Vancouver', postalCode: 'V6C 3E8', country: 'Canada' },
+  { id: 5, customerID: 3, street: '17 Water Street', city: 'Vancouver', postalCode: 'V6B 1A1', country: 'Canada' },
+  { id: 6, customerID: 3, street: '9 Cordova Street', city: 'Vancouver', postalCode: 'V6B 1E1', country: 'Canada' },
+  { id: 7, customerID: 4, street: '333 7th Avenue SW', city: 'Calgary', postalCode: 'T2P 2Z1', country: 'Canada' },
+  // Customer 5 deliberately starts with no addresses, so the child list's empty state is on show
+  // and its derived City column stays blank until one is added.
+];
+
+function addressesOf(customerID: number): ICustomerAddressesList[] {
+  return CUSTOMER_ADDRESSES.filter((row: ICustomerAddressesList) => row.customerID === customerID);
+}
+
+// The customer a child address dataset belongs to. `entityID` is typed optional and `hasEntityID`
+// does not narrow it, so both address datasets resolve the parent through here rather than repeating
+// a non-null assertion. Falls back to 0, which matches no customer — so on the /new route, where
+// entityID is NaN, the list is empty instead of showing another customer's rows.
+function parentCustomerID(dataProvider: DataProviderService<ICustomersDisplay> | null): number {
+  return dataProvider?.hasEntityID ? dataProvider.entityID ?? 0 : 0;
+}
+
+// The customer's main city, taken from its first address. Blank when it has none.
+function primaryCityOf(customerID: number): string {
+  return addressesOf(customerID)[0]?.city ?? '';
+}
+
 interface ICustomersDisplay extends ICustomersList {
   phone: string;
 }
 
 function findCustomer(id: number): ICustomersDisplay | null {
-  const customer: ICustomersList | undefined = CUSTOMERS.find((row: ICustomersList) => row.id === id);
-  return customer ? { ...customer, phone: CUSTOMERS_PHONES.get(id) ?? '' } : null;
+  const customer: ICustomersRow | undefined = CUSTOMERS.find((row: ICustomersRow) => row.id === id);
+  return customer ? { ...customer, city: primaryCityOf(id), phone: CUSTOMERS_PHONES.get(id) ?? '' } : null;
 }
 
 // Writes the saved customer back to the seed array, the way a real backend would persist it, so
@@ -163,16 +216,68 @@ function saveCustomer(model: Omit<ICustomersDisplay, 'id'>, entityID?: number): 
   CUSTOMERS_PHONES.set(id, model.phone ?? '');
 
   // Built field-by-field rather than spread: `model` is the form's raw value, so it carries no
-  // id, and spreading would also drag phone into the persisted list row.
-  const saved: ICustomersList = upsertById(CUSTOMERS, {
-    city: model.city ?? '',
+  // id, and spreading would also drag phone into the persisted list row. `city` is not written at
+  // all — it is derived from the customer's addresses, which this form no longer edits.
+  const saved: ICustomersRow = upsertById(CUSTOMERS, {
     email: model.email ?? '',
     id,
     isActive: model.isActive,
     name: model.name,
   });
 
-  return { ...saved, phone: model.phone ?? '' };
+  return { ...saved, city: primaryCityOf(id), phone: model.phone ?? '' };
+}
+
+// Deleting a customer takes its addresses with it, the way a cascading foreign key would, so no
+// orphaned rows are left behind. Deferred for the same reason as `deleteById`.
+function deleteCustomer(id: number): Observable<unknown> {
+  return defer(() => {
+    for (let index: number = CUSTOMER_ADDRESSES.length - 1; index >= 0; index--) {
+      if (CUSTOMER_ADDRESSES[index].customerID === id) {
+        CUSTOMER_ADDRESSES.splice(index, 1);
+      }
+    }
+
+    const index: number = CUSTOMERS.findIndex((row: ICustomersRow) => row.id === id);
+    if (index >= 0) {
+      CUSTOMERS.splice(index, 1);
+    }
+
+    CUSTOMERS_PHONES.delete(id);
+
+    return of(null);
+  }).pipe(delay(SHOWCASE_WRITE_LATENCY_MS));
+}
+
+// Applies a multi-editor batch to the address seed array. An entry without an id is an insert (the
+// modal's `id` control is null for a new row); `entitiesToDelete` carries the ids of removed rows.
+function saveCustomerAddresses(
+  customerID: number,
+  batchUpdate: IBatchUpdate<Partial<ICustomerAddressesList>, number>,
+): Observable<unknown> {
+  return defer(() => {
+    batchUpdate.entitiesToDelete.forEach((addressID: number) => {
+      const index: number = CUSTOMER_ADDRESSES.findIndex((row: ICustomerAddressesList) => row.id === addressID);
+      if (index >= 0) {
+        CUSTOMER_ADDRESSES.splice(index, 1);
+      }
+    });
+
+    // Field-by-field rather than spread: entries are the modal form's raw values, so they also carry
+    // the grid's internal `_key`, and a new row has no id at all.
+    batchUpdate.entitiesToInsertOrUpdate.forEach((entity: Partial<ICustomerAddressesList>) => {
+      upsertById(CUSTOMER_ADDRESSES, {
+        city: entity.city ?? '',
+        country: entity.country ?? '',
+        customerID,
+        id: entity.id ?? nextId(CUSTOMER_ADDRESSES),
+        postalCode: entity.postalCode ?? '',
+        street: entity.street ?? '',
+      });
+    });
+
+    return of(null);
+  }).pipe(delay(SHOWCASE_WRITE_LATENCY_MS));
 }
 
 interface IUnitsList {
@@ -383,8 +488,11 @@ class CustomersDataset extends ShowcaseDataset<ICustomersList> {
     return 'customers';
   }
 
+  // `city` is resolved here rather than stored, so the grid, the city filter and the CSV export all
+  // see the current value the moment an address changes — `matching()` and `export()` both read
+  // through this method.
   protected rows(): ICustomersList[] {
-    return CUSTOMERS;
+    return CUSTOMERS.map((row: ICustomersRow) => ({ ...row, city: primaryCityOf(row.id) }));
   }
 }
 
@@ -404,6 +512,52 @@ class CustomersDataProvider extends DataProviderService<ICustomersDisplay> {
 
   protected loadModel(entityID?: number): Observable<ICustomersDisplay | null> {
     return of(entityID ? findCustomer(entityID) : null).pipe(delay(SHOWCASE_READ_LATENCY_MS));
+  }
+}
+
+@Injectable()
+class CustomerAddressesDataset extends ShowcaseDataset<ICustomerAddressesList> {
+  public override columns: IGridColumn[] = [
+    { field: 'street', headerName: 'Showcase-Addresses-Column-Street' },
+    { field: 'city', headerName: 'Showcase-Addresses-Column-City', size: 'minmax(8rem, 12rem)' },
+    { field: 'postalCode', headerName: 'Showcase-Addresses-Column-PostalCode', size: '9rem' },
+    { field: 'country', headerName: 'Showcase-Addresses-Column-Country', size: '10rem' },
+  ];
+
+  protected exportBaseName(): string {
+    return 'customer-addresses';
+  }
+
+  // Scoped to the customer whose detail view hosts this list, so an unsaved parent shows the grid's
+  // empty state rather than another customer's addresses.
+  protected rows(): ICustomerAddressesList[] {
+    return addressesOf(parentCustomerID(this.dataProvider));
+  }
+}
+
+@Injectable()
+class CustomerAddressesModalDataset extends CustomerAddressesDataset {
+  // Narrower than the child list's columns: inside the modal the grid sits beside the edit form, so
+  // it only needs enough to tell rows apart. The remaining fields are edited in the form.
+  public override columns: IGridColumn[] = [
+    { field: 'street', headerName: 'Showcase-Addresses-Column-Street' },
+    { field: 'city', headerName: 'Showcase-Addresses-Column-City', size: 'minmax(7rem, 10rem)' },
+  ];
+}
+
+@Injectable()
+class CustomerAddressesMultiEditorDataset extends MultiEditorDataset {
+  // A pre-filled template row rather than the more usual `{}`. Two reasons: it satisfies the required
+  // street/city so a freshly added row is valid immediately, and it exercises the @library fix that
+  // makes newData's values survive a save — before it, adding rows and editing only the last silently
+  // dropped the others. The fake negative id is deliberately ignored, as in Panthor: a row with no id
+  // is what marks it an insert.
+  public newData(): Partial<ICustomerAddressesList> {
+    return { city: 'Toronto', country: 'Canada', street: 'New address' };
+  }
+
+  public saveData(batchUpdate: IBatchUpdate<Partial<ICustomerAddressesList>, number>): Observable<unknown> {
+    return saveCustomerAddresses(parentCustomerID(this.dataProvider), batchUpdate);
   }
 }
 
@@ -791,7 +945,100 @@ class UsersFormComponent extends FormView<IUsersDisplay> {
 })
 class CustomersListComponent extends TabViewList<ICustomersList> {
   protected onDelete(): Observable<unknown> {
-    return deleteById(CUSTOMERS, this.selectedItem?.id ?? -1);
+    // Not the shared deleteById: a customer's addresses have to go with it.
+    return deleteCustomer(this.selectedItem?.id ?? -1);
+  }
+}
+
+// The multi-editor modal: a grid of the customer's addresses on the left, a form for the selected
+// row on the right. All three providers live here rather than on the child list — MultiEditorDataset
+// is not part of the global Storybook providers, and the modal's grid is deliberately a separate
+// instance from the child list's so refreshing one does not disturb the other.
+@Component({
+  selector: 'shared-showcase-customer-addresses-multi-editor',
+  imports: [
+    FormInputGroupComponent,
+    MultiEditorComponent,
+    ReactiveFormsModule,
+    TranslatePipe,
+  ],
+  providers: [
+    { provide: DataGridDataset, useClass: CustomerAddressesModalDataset },
+    { provide: FormService },
+    { provide: MultiEditorDataset, useClass: CustomerAddressesMultiEditorDataset },
+  ],
+  template: `
+    <lib-multi-editor
+      size="5xl"
+      [addButtonLabel]="'Showcase-Addresses-Button-Add' | translate"
+      [formGroup]="dataForm"
+      [removeButtonLabel]="'Showcase-Addresses-Button-Remove' | translate"
+      [title]="'Showcase-Addresses-Modal-Title' | translate">
+      <lib-form-input-group
+        controlName="street"
+        label="Showcase-Addresses-Field-Street"
+        [maxLength]="200"
+        [validations]="{ 'required': 'Showcase-Addresses-Validations-Street-Required' }">
+      </lib-form-input-group>
+      <lib-form-input-group
+        controlName="city"
+        label="Showcase-Addresses-Field-City"
+        [maxLength]="100"
+        [validations]="{ 'required': 'Showcase-Addresses-Validations-City-Required' }">
+      </lib-form-input-group>
+      <lib-form-input-group controlName="postalCode" label="Showcase-Addresses-Field-PostalCode" [maxLength]="20">
+      </lib-form-input-group>
+      <lib-form-input-group controlName="country" label="Showcase-Addresses-Field-Country" [maxLength]="100">
+      </lib-form-input-group>
+    </lib-multi-editor>
+  `,
+})
+class CustomerAddressesMultiEditorModalComponent extends MultiEditorModal<ICustomersDisplay> {
+  protected formSetup(): FormGroup {
+    // `id` is bound so an existing row round-trips its identity through the form and comes back in
+    // the save batch as an update; it stays null for a new row, which marks it an insert.
+    return this.formBuilder.group({
+      city: [null, Validators.required],
+      country: [null],
+      id: [null],
+      postalCode: [null],
+      street: [null, Validators.required],
+    });
+  }
+}
+
+// The child list itself. Edit opens the multi-editor rather than entering form edit mode — that is
+// what passing [modal] to framework-button-edit does.
+@Component({
+  selector: 'shared-showcase-customer-addresses-child-list',
+  imports: [
+    ButtonEditComponent,
+    ButtonExportComponent,
+    ButtonRefreshComponent,
+    CustomerAddressesMultiEditorModalComponent,
+    DataGridComponent,
+  ],
+  providers: [{ provide: DataGridDataset, useClass: CustomerAddressesDataset }],
+  template: `
+    <lib-data-grid [lazyLoadRows]="true" [showButtons]="true">
+      <ng-container buttons>
+        <framework-button-edit iconSize="small" [modal]="multiEditor"></framework-button-edit>
+        <framework-button-refresh iconSize="small" [disabled]="loading"></framework-button-refresh>
+        <framework-button-export fileBaseName="customer-addresses" iconSize="small" [defaultOption]="2">
+        </framework-button-export>
+      </ng-container>
+    </lib-data-grid>
+
+    <shared-showcase-customer-addresses-multi-editor #multiEditor (savedChanges)="onSavedChanges()">
+    </shared-showcase-customer-addresses-multi-editor>
+  `,
+  styles: [':host { grid-column: 1 / -1; }'],
+})
+class CustomerAddressesChildListComponent extends ChildList<ICustomersDisplay> {
+  // ChildList auto-refreshes on a MultiSelectResultDataset's savedChanges and on a parent save, but
+  // not on a multi-editor's — that one is wired up explicitly, as in Panthor.
+  protected onSavedChanges(): void {
+    this.dataGridDataset.refresh();
   }
 }
 
@@ -801,6 +1048,7 @@ class CustomersListComponent extends TabViewList<ICustomersList> {
     ButtonEditComponent,
     ButtonNewComponent,
     ButtonSaveComponent,
+    CustomerAddressesChildListComponent,
     FormGroupComponent,
     FormInputGroupComponent,
     GroupAccordionComponent,
@@ -838,20 +1086,23 @@ class CustomersListComponent extends TabViewList<ICustomersList> {
           </lib-form-group>
         </lib-group-accordion>
 
-        <lib-group-accordion [label]="'Showcase-EditSection-Address' | translate">
-          <lib-form-group label="Showcase-Customers-FormGroup-Location">
-            <lib-form-input-group controlName="city" label="Showcase-Customers-Field-City" [maxLength]="100">
-            </lib-form-input-group>
-          </lib-form-group>
-        </lib-group-accordion>
+        <!-- Gated on hasEntityID: a child collection needs a persisted parent to hang off, and
+             ChildList never loads without one, so on /new the section is hidden rather than shown
+             empty. It appears as soon as the customer is saved. -->
+        @if (hasEntityID) {
+          <lib-group-accordion [label]="'Showcase-EditSection-Addresses' | translate">
+            <shared-showcase-customer-addresses-child-list>
+            </shared-showcase-customer-addresses-child-list>
+          </lib-group-accordion>
+        }
       </form>
     </lib-group-scroll-spy>
   `,
 })
 class CustomersFormComponent extends FormView<ICustomersDisplay> {
+  // No `city` control: it is derived from the customer's addresses, which the child list edits.
   protected formSetup(): FormGroup {
     return this.formBuilder.group({
-      city: [null],
       email: [null],
       isActive: [true, { nonNullable: true }],
       name: [null, Validators.required],

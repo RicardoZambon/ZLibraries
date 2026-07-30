@@ -29,6 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     entity) and `framework-button-export`: the mock dataset honours `IListParameters.filters`,
     so filtering visibly narrows the grid, and exporting downloads a real CSV of the currently
     filtered rows.
+  - The Customers detail view now hosts a **child list of addresses** edited through
+    `lib-multi-editor`, so a customer can have several addresses instead of a single city field. It
+    demonstrates `ChildList` and `MultiEditorModal` together — the accordion is gated on
+    `hasEntityID` (a child collection needs a persisted parent), the Edit button opens the
+    multi-editor rather than entering form edit mode, and add/remove/edit are applied as one batch.
+    The Customers grid keeps its City column, now **derived** from the customer's first address, so
+    editing an address is reflected in the parent list and its filter with nothing to keep in sync.
 
 ### Changed
 
