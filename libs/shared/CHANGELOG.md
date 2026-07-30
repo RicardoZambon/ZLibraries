@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [2.0.0] - 2026-07-30
+
+### Added
+
 - **Storybook: `Shared/App Showcase` story** — a full-height, navigable demo of the complete
   application shell, backed by in-memory mock data. Clicking the sidebar entries (Dashboard,
   General ▸ Customers/Units, Security ▸ Users) opens tabs that render working list-views and
@@ -36,12 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   Development-only: it lives entirely in `app-showcase.stories.ts`, which is excluded from the
   package build.
-
-### Changed
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -183,7 +191,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v1.2.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v2.0.0...HEAD
+[2.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.0.0
 [1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v1.2.0
 [1.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v1.1.0
 [1.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v1.0.2

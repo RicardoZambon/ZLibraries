@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.3.0] - 2026-07-30
+
+### Added
+
 - `framework-button-export` now accepts a **`defaultOption` `@Input()`** — the index into `options`
   exported when the main button itself is clicked, defaulting to `0` (Excel). This mirrors the input
   `framework-button-save` already had; `-1` means "no default" and makes the button only toggle its
@@ -26,10 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `framework-button-save` (which sets 0) took one. Export now sets 0 as well, through the new
   `defaultOption` `@Input()`. The format menu is unchanged and still reachable from the button's
   dropdown caret, so every format remains available.
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -111,7 +121,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.2.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.3.0...HEAD
+[1.3.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.3.0
 [1.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.1
 [1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.0
 [1.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.1.1
