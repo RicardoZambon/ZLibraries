@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   group header (e.g. "MAIN"). Items without a `region` render ungrouped, so it stays
   backward-compatible. When the rail is collapsed, each header cross-fades to a short separator line
   so the groups remain visually distinct. The grouping type is exported as `SidebarRegion`.
+- **Storybook: `Data Grid/Data Grid ▸ Multi Select Tall Rows` story** — multi-selection over rows
+  taller than the default `rowHeight` (41.6px), the height a row needs once it shows a thumbnail.
+  Misalignment in the selection column is obvious at that height, so this is the story to check the
+  selection checkbox against. Development-only: stories are excluded from the package build.
 
 ### Changed
 
@@ -35,6 +39,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Collapsing/expanding the rail is now **animated end to end**: the toggle chevron and the
   expandable-parent caret rotate in the same direction, the selection pill inset and item icons ease
   into place, and region headers cross-fade to their separators — all in sync with the rail width.
+- **`lib-ribbon` now hides itself when it contains no visible buttons.** A screen with no ribbon
+  actions — a dashboard, or any view that projects an empty `#ribbon` template — previously still
+  rendered the bar's border, background and padding around nothing, wasting vertical space at the top
+  of the page. This mirrors `lib-ribbon-group`, which already hid itself when none of its children
+  were visible. Ribbons with at least one visible group are unaffected. See
+  **⚠ Breaking Changes / Migration** below.
 
 ### Deprecated
 
@@ -67,11 +77,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   only the last one saved just that row, because `onSaveClick` validates the current selection only,
   so the earlier rows silently vanished on refresh. `newData()`'s values are now registered when the
   row is added.
-- **`lib-ribbon` now hides itself when it contains no visible buttons.** A screen with no ribbon
-  actions — a dashboard, or any view that projects an empty `#ribbon` template — previously still
-  rendered the bar's border, background and padding around nothing, wasting vertical space at the top
-  of the page. This mirrors `lib-ribbon-group`, which already hid itself when none of its children
-  were visible. Ribbons with at least one visible group are unaffected.
 
 ### ⚠ Breaking Changes / Migration
 

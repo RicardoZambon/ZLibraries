@@ -13,32 +13,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Storybook: `Shared/App Showcase` story** — a navigable demo of the full application shell.
-  - Clicking the sidebar entries (Dashboard, General ▸ Customers/Units, Security ▸ Users)
-    opens tabs that render working list-views and detail-views through the real framework hosts
-    (`DefaultTabViewComponent` / `DefaultDetailsTabViewComponent`, `TabViewList` / `FormView`,
-    and the `framework-button-*` ribbon buttons), backed by in-memory mock data.
-  - Development-only: it lives entirely in `app-showcase.stories.ts`, which is excluded from
-    the package build.
-  - The story now also demonstrates a branded top bar (logo, app name, subtitle, environment
-    badge and a working notifications bell), a versioned sidebar footer, a mocked audit/history
-    view reachable from the detail views' Views button, mocked request latency so loading
-    states are observable, and full `en`/`pt` translation so the language selector switches the
-    entire showcase.
-  - Every list view also wires up `framework-button-filters` (via a `FiltersBase` component per
-    entity) and `framework-button-export`: the mock dataset honours `IListParameters.filters`,
-    so filtering visibly narrows the grid, and exporting downloads a real CSV of the currently
-    filtered rows.
-  - The Customers detail view now hosts a **child list of addresses** edited through
-    `lib-multi-editor`, so a customer can have several addresses instead of a single city field. It
-    demonstrates `ChildList` and `MultiEditorModal` together — the accordion is gated on
-    `hasEntityID` (a child collection needs a persisted parent), the Edit button opens the
-    multi-editor rather than entering form edit mode, and add/remove/edit are applied as one batch.
-    The Customers grid keeps its City column, now **derived** from the customer's first address, so
-    editing an address is reflected in the parent list and its filter with nothing to keep in sync.
-  - The story now fills the full canvas height (`layout: 'fullscreen'` plus a `100vh` container)
-    instead of being capped at a fixed `40rem`, so list grids get the room the framework's
-    full-height layout gives them in a real app.
+- **Storybook: `Shared/App Showcase` story** — a full-height, navigable demo of the complete
+  application shell, backed by in-memory mock data. Clicking the sidebar entries (Dashboard,
+  General ▸ Customers/Units, Security ▸ Users) opens tabs that render working list-views and
+  detail-views through the real hosts (`DefaultTabViewComponent` /
+  `DefaultDetailsTabViewComponent`, `TabViewList` / `FormView`, and the `framework-button-*`
+  ribbon buttons). It covers:
+  - a branded top bar (logo, app name, subtitle, environment badge and a working notifications
+    bell) and a versioned sidebar footer;
+  - a mocked audit/history view, reachable from the detail views' Views button;
+  - `framework-button-filters` (via a `FiltersBase` component per entity) and
+    `framework-button-export` on every list: the mock dataset honours `IListParameters.filters`, so
+    filtering visibly narrows the grid, and exporting downloads a real CSV of the filtered rows;
+  - a **child list of addresses** on the Customers detail view, edited through `lib-multi-editor` —
+    `ChildList` and `MultiEditorModal` together, with the accordion gated on `hasEntityID` (a child
+    collection needs a persisted parent), the Edit button opening the multi-editor rather than
+    entering form edit mode, and add/remove/edit applied as one batch. The Customers grid's City
+    column is **derived** from the customer's first address, so editing an address is reflected in
+    the parent list and its filter with nothing to keep in sync;
+  - mocked request latency, so loading states are observable;
+  - full `en`/`pt` translation, so the language selector switches the entire showcase.
+
+  Development-only: it lives entirely in `app-showcase.stories.ts`, which is excluded from the
+  package build.
 
 ### Changed
 

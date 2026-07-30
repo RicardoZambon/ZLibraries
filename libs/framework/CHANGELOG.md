@@ -13,13 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `framework-button-export` now accepts a **`defaultOption` `@Input()`** — the index into `options`
+  exported when the main button itself is clicked, defaulting to `0` (Excel). This mirrors the input
+  `framework-button-save` already had; `-1` means "no default" and makes the button only toggle its
+  dropdown. See **Changed** below for the behaviour this changes by default.
+
 ### Changed
 
 - **`framework-button-export` now exports on a single click**, to Excel by default, instead of only
   opening its format menu. `RibbonButtonComponent` treats a `defaultOption` of -1 as "no default" and
   merely toggles the dropdown; Export never set one, so the common case took two clicks while
-  `framework-button-save` (which sets 0) took one. Export now sets 0 as well, and exposes
-  `defaultOption` as an `@Input()`. The format menu is unchanged and still reachable from the button's
+  `framework-button-save` (which sets 0) took one. Export now sets 0 as well, through the new
+  `defaultOption` `@Input()`. The format menu is unchanged and still reachable from the button's
   dropdown caret, so every format remains available.
 
 ### Deprecated
@@ -48,13 +53,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
-None. Two optional adjustments:
+None — nothing has to change for your app to compile against this release. Two behaviour changes to
+check, and one optional cleanup:
 
-- Components extending `TabViewList` can now delete their
-  `:host { display: flex; flex-grow: 1; overflow: hidden }` / `lib-data-grid { flex-grow: 1 }`
-  stylesheets — `DefaultTabViewComponent` styles the inherited `framework-view-list` host class.
+- **Absolutely-positioned content inside a routed list view is now clipped.** The full-height layout
+  applied to `framework-view-list` includes `overflow: hidden`, so a popover, dropdown or tooltip that
+  a list screen renders with `position: absolute` inside its own host is now cut off at the host's
+  edges. Apps that had already written the equivalent `:host { overflow: hidden }` stylesheet by hand
+  are unaffected — the clipping was already in place there. Only list screens that had no such
+  stylesheet change. Fix by portaling the content out of the host (CDK Overlay, as `lib-catalog-select`
+  does) rather than relying on `position: absolute`.
 - If you relied on `framework-button-export`'s first click opening the format menu rather than
   exporting, set `[defaultOption]="-1"` to restore that behaviour.
+- *Optional cleanup:* components extending `TabViewList` can now delete their
+  `:host { display: flex; flex-grow: 1; overflow: hidden }` / `lib-data-grid { flex-grow: 1 }`
+  stylesheets — `DefaultTabViewComponent` styles the inherited `framework-view-list` host class.
 
 ## [1.2.1] - 2026-07-29
 
