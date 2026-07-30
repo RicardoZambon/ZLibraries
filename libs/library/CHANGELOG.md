@@ -13,15 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Semantic `--sidebar-*` design tokens covering the sidebar's surfaces, text, selection, glass, and
-  radii (`--sidebar-bg`, `--sidebar-nav-bg`, `--sidebar-text`, `--sidebar-text-muted`,
-  `--sidebar-item-hover-bg`, `--sidebar-item-selected-bg`, `--sidebar-blur`, `--sidebar-shadow`,
-  `--sidebar-tree-line`, `--sidebar-radius`, `--sidebar-item-radius`, …) so consumers can re-theme
-  the sidebar entirely via CSS custom properties.
-- **Menu regions**: an optional `SidebarMenu.region` label groups top-level items under an uppercase
-  group header (e.g. "MAIN"). Items without a `region` render ungrouped, so it stays
-  backward-compatible. When the rail is collapsed, each header cross-fades to a short separator line
-  so the groups remain visually distinct. The grouping type is exported as `SidebarRegion`.
 - **Storybook: `Data Grid/Data Grid ▸ Multi Select Tall Rows` story** — multi-selection over rows
   taller than the default `rowHeight` (41.6px), the height a row needs once it shows a thumbnail.
   Misalignment in the selection column is obvious at that height, so this is the story to check the
@@ -29,16 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Selected menu items now render as a rounded **pill** highlight (inset when expanded) instead of the
-  previous 4px left accent bar.
-- The sidebar is now a **translucent, blurred "glass" panel** — rounded corners, a soft drop shadow,
-  and a semi-transparent brand surface — rather than a solid, square, edge-to-edge rail (all
-  token-driven via `--sidebar-bg`, `--sidebar-blur`, `--sidebar-shadow`, `--sidebar-radius`).
-- **Child (sub-menu) items** now render a rounded **tree-connector** line instead of a menu icon;
-  top-level items keep their icons.
-- Collapsing/expanding the rail is now **animated end to end**: the toggle chevron and the
-  expandable-parent caret rotate in the same direction, the selection pill inset and item icons ease
-  into place, and region headers cross-fade to their separators — all in sync with the rail width.
 - **`lib-ribbon` now hides itself when it contains no visible buttons.** A screen with no ribbon
   actions — a dashboard, or any view that projects an empty `#ribbon` template — previously still
   rendered the bar's border, background and padding around nothing, wasting vertical space at the top
@@ -80,12 +61,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
-The sidebar surface is now **translucent** ("glass"). If your app does not place a colored backdrop
-behind the sidebar, the rail will look faint over plain/neutral content — either add a
-colored/gradient backdrop behind it (see `@shared`'s `--app-backdrop` in `MainLayoutComponent`) or
-override `--sidebar-bg` (and the other `--sidebar-*` surface tokens) with opaque values to keep a
-solid rail.
-
 `lib-multi-editor` now sends rows that `newData()` pre-filled but the user never edited. Nothing to do
 if your `newData()` returns an empty object (`{}`) — the common "blank row" convention — since a
 value-less row is still skipped and the posted batch is byte-for-byte what it was before. If your
@@ -98,6 +73,45 @@ projected content. No action needed if your ribbons use groups (the normal case)
 global selector at specificity (0,1,2), so overriding it requires `!important`. Because the bar can
 now appear and disappear rather than merely resize, anything positioned relative to the ribbon may
 shift when a button's visibility resolves (e.g. as permissions arrive).
+
+## [1.3.1] - 2026-07-28
+
+> There is no `1.3.0` on npm: the version number was taken by an early publish that was later
+> unpublished, and npm never allows a retired version number to be reused. The sidebar rework below
+> therefore shipped as `1.3.1`. Upgrade straight from `1.2.0` to `1.3.1`.
+
+### Added
+
+- Semantic `--sidebar-*` design tokens covering the sidebar's surfaces, text, selection, glass, and
+  radii (`--sidebar-bg`, `--sidebar-nav-bg`, `--sidebar-text`, `--sidebar-text-muted`,
+  `--sidebar-item-hover-bg`, `--sidebar-item-selected-bg`, `--sidebar-blur`, `--sidebar-shadow`,
+  `--sidebar-tree-line`, `--sidebar-radius`, `--sidebar-item-radius`, …) so consumers can re-theme
+  the sidebar entirely via CSS custom properties.
+- **Menu regions**: an optional `SidebarMenu.region` label groups top-level items under an uppercase
+  group header (e.g. "MAIN"). Items without a `region` render ungrouped, so it stays
+  backward-compatible. When the rail is collapsed, each header cross-fades to a short separator line
+  so the groups remain visually distinct. The grouping type is exported as `SidebarRegion`.
+
+### Changed
+
+- Selected menu items now render as a rounded **pill** highlight (inset when expanded) instead of the
+  previous 4px left accent bar.
+- The sidebar is now a **translucent, blurred "glass" panel** — rounded corners, a soft drop shadow,
+  and a semi-transparent brand surface — rather than a solid, square, edge-to-edge rail (all
+  token-driven via `--sidebar-bg`, `--sidebar-blur`, `--sidebar-shadow`, `--sidebar-radius`).
+- **Child (sub-menu) items** now render a rounded **tree-connector** line instead of a menu icon;
+  top-level items keep their icons.
+- Collapsing/expanding the rail is now **animated end to end**: the toggle chevron and the
+  expandable-parent caret rotate in the same direction, the selection pill inset and item icons ease
+  into place, and region headers cross-fade to their separators — all in sync with the rail width.
+
+### ⚠ Breaking Changes / Migration
+
+The sidebar surface is now **translucent** ("glass"). If your app does not place a colored backdrop
+behind the sidebar, the rail will look faint over plain/neutral content — either add a
+colored/gradient backdrop behind it (see `@shared`'s `--app-backdrop` in `MainLayoutComponent`) or
+override `--sidebar-bg` (and the other `--sidebar-*` surface tokens) with opaque values to keep a
+solid rail.
 
 ## [1.2.0] - 2026-07-24
 
@@ -131,6 +145,7 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.2.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.3.1...HEAD
+[1.3.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.3.1
 [1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.2.0
 [1.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.1.1
