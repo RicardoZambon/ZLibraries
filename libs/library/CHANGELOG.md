@@ -58,6 +58,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   only the last one saved just that row, because `onSaveClick` validates the current selection only,
   so the earlier rows silently vanished on refresh. `newData()`'s values are now registered when the
   row is added.
+- **`lib-catalog-select` no longer renders an empty caption after a form reset.** `FormService.resetForm()`
+  clears every control and then patches the model back, so the component receives the value it already
+  held. It skipped refreshing the caption in that case, on the assumption that an unchanged value means
+  the caption is still on screen — but the reset had emptied the display control a moment earlier. The
+  field therefore rendered blank whenever the stored value equalled the control's initial value, which
+  is why it only ever showed on the entry the form defaults to: a `nonNullable` control declared as
+  `new FormControl(0)` bound to an enum whose first member is `0`, for instance. Values differing from
+  the initial one refreshed normally and always looked right, which made the fault read like a
+  translation or data problem rather than a reset one. The caption is now rewritten whenever it has
+  drifted from the selected entry, so the value alone no longer decides. Selects backed by a
+  `searchEndpoint` are unaffected, since their caption comes from the server-side selection rather than
+  `entriesList`. No consumer changes are required.
 
 ### ⚠ Breaking Changes / Migration
 
