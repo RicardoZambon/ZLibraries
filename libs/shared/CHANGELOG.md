@@ -21,6 +21,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **An embedded destination served over `http` now says why it cannot be shown, instead of
+  rendering an empty frame.** A browser refuses to embed an `http://` frame inside an `https://`
+  page — an iframe is active mixed content, and the block is unconditional. Nothing on the page
+  can permit it: no attribute, no header, and not CSP, which only ever restricts further. The
+  frame was mounted anyway, the browser dropped it silently, and after the timeout the screen
+  offered the “still loading” hint, which pointed at the wrong cause.
+
+  Unlike a site refusing to be framed — which is genuinely unknowable from JavaScript — this one
+  is decidable up front, so `ExternalContentComponent` now compares the page’s protocol with the
+  destination’s and shows a message naming the real reason. **Open in a new browser tab keeps
+  working and is the way out:** a top-level navigation to `http://` is not mixed content. For a
+  destination that only speaks `http`, configure the menu item as *external, new tab* rather than
+  *external, embedded*; to embed it, put it behind an `https` reverse proxy.
+
+  Two new keys, `ExternalContent-Insecure-Title` and `ExternalContent-Insecure-Message`, ship in
+  `en` and `pt`. An application that overrides this feature’s translations needs to add them.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [2.1.0] - 2026-09-08
