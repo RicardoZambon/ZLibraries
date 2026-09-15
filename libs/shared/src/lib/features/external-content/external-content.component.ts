@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
@@ -36,6 +37,7 @@ export class ExternalContentComponent extends TabViewBase implements OnInit {
   protected frameUrl?: SafeResourceUrl;
   protected isBlocked: boolean = false;
   protected isFrameLoading: boolean = false;
+  protected isInsecure: boolean = false;
   protected isSlow: boolean = false;
   protected isUnavailable: boolean = false;
   protected label: string = '';
@@ -43,6 +45,7 @@ export class ExternalContentComponent extends TabViewBase implements OnInit {
 
   private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private configs: ExternalContentConfigs = inject(EXTERNAL_CONTENT_CONFIGS);
+  private document: Document = inject(DOCUMENT);
   private externalContentService: ExternalContentService = inject(ExternalContentService);
   private externalUrlResolverService: ExternalUrlResolverService = inject(ExternalUrlResolverService);
   private sanitizer: DomSanitizer = inject(DomSanitizer);
@@ -127,6 +130,18 @@ export class ExternalContentComponent extends TabViewBase implements OnInit {
     }
   }
 
+  private isMixedContent(url: string): boolean {
+    // A browser refuses to embed an http:// frame in an https:// page, unconditionally: an iframe
+    // is active mixed content. Nothing on this side can permit it -- no attribute, no header, and
+    // not CSP, which only ever restricts further. Left alone the frame renders empty, so this is
+    // checked up front to say so instead.
+    //
+    // Unlike a site refusing to be framed, this one IS knowable before trying: both protocols are
+    // in hand. `new URL` cannot throw here -- isAllowed has already parsed the same string -- and
+    // it normalises the scheme's case, which a prefix test would not.
+    return this.document.location.protocol === 'https:' && new URL(url).protocol === 'http:';
+  }
+
   private isOriginAllowed(url: string): boolean {
     if (this.configs.allowedOrigins.length === 0) {
       return true;
@@ -168,7 +183,15 @@ export class ExternalContentComponent extends TabViewBase implements OnInit {
       return;
     }
 
+    // Set before the mixed-content check, not after: that state still offers 'open in a new
+    // browser tab', and the button reads this to decide whether it has anywhere to go.
     this.resolvedUrl = url;
+
+    if (this.isMixedContent(url)) {
+      this.isInsecure = true;
+
+      return;
+    }
 
     // Trusted once, into a field. From a getter or a pipe this would hand back a new
     // SafeResourceUrl on every change-detection pass, and Angular would re-set the iframe's src

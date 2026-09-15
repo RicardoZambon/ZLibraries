@@ -15,6 +15,7 @@ describe(ExternalContentComponent.name, () => {
   let entry: IExternalContentEntry | undefined;
   let isAllowed: jest.Mock;
   let menuID: string | null;
+  let pageProtocol: string;
   let resolve: jest.Mock;
   let updateActiveTabRootTitle: jest.Mock;
 
@@ -32,8 +33,10 @@ describe(ExternalContentComponent.name, () => {
       destroy$: new Subject<boolean>(),
       externalContentService: { find: jest.fn(() => of(entry)) },
       externalUrlResolverService: { isAllowed, resolve },
+      document: { location: { protocol: pageProtocol } },
       isBlocked: false,
       isFrameLoading: false,
+      isInsecure: false,
       isSlow: false,
       isUnavailable: false,
       label: '',
@@ -52,6 +55,7 @@ describe(ExternalContentComponent.name, () => {
     entry = { id: 1, label: 'Monthly report', url: 'https://reports/r?u={userId}' };
     isAllowed = jest.fn(() => true);
     menuID = '1';
+    pageProtocol = 'https:';
     resolve = jest.fn((url: string) => url.replace('{userId}', '42'));
     updateActiveTabRootTitle = jest.fn();
 
@@ -141,6 +145,55 @@ describe(ExternalContentComponent.name, () => {
 
     expect(read('isBlocked')).toBe(false);
     expect(bypassSecurityTrustResourceUrl).toHaveBeenCalledTimes(1);
+  });
+
+  describe('insecure destination', () => {
+    beforeEach(() => {
+      entry = { id: 1, label: 'Legacy report', url: 'http://reports.intranet/r' };
+      build();
+    });
+
+    it('does not embed an http destination in an https page, which the browser blocks anyway', () => {
+      component.ngOnInit();
+
+      expect(read('isInsecure')).toBe(true);
+      expect(read('frameUrl')).toBeUndefined();
+      expect(bypassSecurityTrustResourceUrl).not.toHaveBeenCalled();
+    });
+
+    it('still offers the new browser tab, which is the only way out of this state', () => {
+      component.ngOnInit();
+
+      expect(read('resolvedUrl')).toBe('http://reports.intranet/r');
+    });
+
+    it('neither spins nor hints, so nothing promises a frame that can never arrive', () => {
+      component.ngOnInit();
+      jest.advanceTimersByTime(configs.slowFrameHintDelay);
+
+      expect(read('isFrameLoading')).toBe(false);
+      expect(read('isSlow')).toBe(false);
+    });
+
+    it('embeds that very destination when the page itself is http', () => {
+      pageProtocol = 'http:';
+      build();
+
+      component.ngOnInit();
+
+      expect(read('isInsecure')).toBe(false);
+      expect(bypassSecurityTrustResourceUrl).toHaveBeenCalledWith('http://reports.intranet/r');
+    });
+
+    it('leaves an https destination alone', () => {
+      entry = { id: 1, label: 'Report', url: 'https://reports.intranet/r' };
+      build();
+
+      component.ngOnInit();
+
+      expect(read('isInsecure')).toBe(false);
+      expect(bypassSecurityTrustResourceUrl).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('hints that framing may be refused once the frame has stayed silent', () => {

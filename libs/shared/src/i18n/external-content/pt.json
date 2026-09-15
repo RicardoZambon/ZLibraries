@@ -1,6 +1,8 @@
 {
   "ExternalContent-Blocked-Title": "Não é possível exibir",
   "ExternalContent-Blocked-Message": "Este item de menu aponta para um endereço não permitido. Peça a um administrador para revisá-lo.",
+  "ExternalContent-Insecure-Title": "Não pode ser incorporado",
+  "ExternalContent-Insecure-Message": "Este endereço é http, e o navegador não exibe conteúdo não seguro dentro de uma página segura. Abra em uma nova aba do navegador ou peça a um administrador um endereço https.",
   "ExternalContent-OpenInNewTab": "Abrir em nova aba do navegador",
   "ExternalContent-SlowHint": "Ainda carregando. Alguns sites não permitem ser exibidos dentro de outra aplicação — tente abrir em uma nova aba do navegador.",
   "ExternalContent-Unavailable-Title": "Conteúdo indisponível",

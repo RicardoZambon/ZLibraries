@@ -7,7 +7,7 @@
         <framework-button
         icon="fa-sync-alt"
         label="Button-Refresh"
-        [disabled]="!resolvedUrl"
+        [disabled]="!resolvedUrl || isInsecure"
         [loading]="isFrameLoading"
         (action)="onReload()">
         </framework-button>
@@ -26,6 +26,12 @@
         <i class="fa-solid fa-link-slash"></i>
         <span class="external-content-message-title">{{ 'ExternalContent-Unavailable-Title' | translate }}</span>
         <span>{{ 'ExternalContent-Unavailable-Message' | translate }}</span>
+    </div>
+} @else if (isInsecure) {
+    <div class="external-content-message">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span class="external-content-message-title">{{ 'ExternalContent-Insecure-Title' | translate }}</span>
+        <span>{{ 'ExternalContent-Insecure-Message' | translate }}</span>
     </div>
 } @else if (isBlocked) {
     <div class="external-content-message">
