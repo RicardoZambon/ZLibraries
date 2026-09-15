@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [2.1.1] - 2026-09-15
+
+### Fixed
+
 - **An embedded destination served over `http` now says why it cannot be shown, instead of
   rendering an empty frame.** A browser refuses to embed an `http://` frame inside an `https://`
   page — an iframe is active mixed content, and the block is unconditional. Nothing on the page
@@ -37,8 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   Two new keys, `ExternalContent-Insecure-Title` and `ExternalContent-Insecure-Message`, ship in
   `en` and `pt`. An application that overrides this feature’s translations needs to add them.
-
-### ⚠ Breaking Changes / Migration
 
 ## [2.1.0] - 2026-09-08
 
@@ -317,7 +321,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v2.1.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v2.1.1...HEAD
+[2.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.1
 [2.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.0
 [2.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.0.0
 [1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v1.2.0
