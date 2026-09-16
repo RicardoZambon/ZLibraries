@@ -15,6 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`framework-button-filters` no longer submits the labels of catalog selections.** A filters
+  form reads its values straight off the form, so the display control `lib-catalog-select` adds
+  for its own use went to the backend beside the real filters — a request filtering by employee
+  carried `employeeName: "753 - ADEMILSON LOPES MAGALHAES"` next to `employeeID: 125`.
+
+  They were ignored, being filters no service declares, but the day one does filter by a name it
+  would receive the formatted label rather than the stored value and quietly match nothing.
+
+  The labels are still **kept** for the modal: reopening it patches them back into the form, and a
+  catalog select backed by a `searchEndpoint` cannot recover its text from the identifier alone —
+  it only resolves a display out of a local entries list. Dropping them from what is stored would
+  have left the field showing a selection with nothing written in it. Requires
+  `@zambon-dev/library` with `DisplayControls`.
+
 ### Deprecated
 
 ### Removed

@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { Component, inject, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
 import { FormGroupDirective } from '@angular/forms';
-import { DataGridDataset, FormService, ModalComponent, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
+import { DataGridDataset, DisplayControls, FormService, ModalComponent, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs';
 import { BaseButton } from '../base-button';
@@ -111,10 +111,14 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
 
   //#region Public methods
   public setFilters(filters: { [key: string ] : any }): void {
+    // Kept whole, because reopening the modal patches this straight back into the form and a
+    // catalog select backed by a search endpoint cannot recover its label from the identifier --
+    // it only resolves a display from a local entries list. Dropping the labels here would leave
+    // the field showing a selection with no text.
     this.filters = filters;
 
     if (this.hasFiltersApplied) {
-      this.gridDataset.setFilters(filters);
+      this.gridDataset.setFilters(this.withoutDisplayControls(filters));
     } else {
       this.gridDataset.setFilters();
     }
@@ -122,5 +126,21 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   //#endregion
 
   //#region Private methods
+  /**
+   * Drops the controls that only hold a catalog selection's label.
+   *
+   * They are half of how `lib-catalog-select` works and are created by it, so a screen never asked
+   * for them and a backend has no filter behind them. Sent anyway they are dead weight, and worse:
+   * the day a service does filter by a name, it would receive the formatted label rather than the
+   * stored value and quietly match nothing.
+   *
+   * @param filters The filters as submitted.
+   * @returns The filters a backend should receive.
+   */
+  private withoutDisplayControls(filters: { [key: string ] : string }): { [key: string ] : string } {
+    return Object.fromEntries(
+      Object.entries(filters)
+        .filter(([key]: [string, string]) => !DisplayControls.isDisplayControl(this.formGroup.form.get(key))));
+  }
   //#endregion
 }
