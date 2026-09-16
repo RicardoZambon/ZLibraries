@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.6.0] - 2026-09-16
+
+### Added
+
 - **`DisplayControls`**, which records the form controls that exist only to show a catalog
   selection's label. `lib-catalog-select` works in pairs — `controlName` holds the identifier,
   `displayControlName` holds the text — and it creates the second itself when a screen does not
@@ -24,16 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   each have an `employeeName`, and only the one a catalog select drives is a display control.
   Nothing about an application changes — declaring the display control yourself still works, and
   it is marked just the same.
-
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.5.0] - 2026-09-09
 
@@ -261,7 +265,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.5.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.6.0...HEAD
+[1.6.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.0
 [1.5.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.5.0
 [1.4.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.4.1
 [1.4.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.4.0

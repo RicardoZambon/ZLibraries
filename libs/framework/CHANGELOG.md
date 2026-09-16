@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.4.0] - 2026-09-16
+
+### Changed
+
 - **`framework-button-filters` no longer submits the labels of catalog selections.** A filters
   form reads its values straight off the form, so the display control `lib-catalog-select` adds
   for its own use went to the backend beside the real filters — a request filtering by employee
@@ -27,12 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   catalog select backed by a `searchEndpoint` cannot recover its text from the identifier alone —
   it only resolves a display out of a local entries list. Dropping them from what is stored would
   have left the field showing a selection with nothing written in it.
-
-### Deprecated
-
-### Removed
-
-### Fixed
 
 ### ⚠ Breaking Changes / Migration
 
@@ -171,7 +177,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.3.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.0...HEAD
+[1.4.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.0
 [1.3.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.3.1
 [1.3.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.3.0
 [1.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.1
