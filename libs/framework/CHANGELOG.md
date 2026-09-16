@@ -15,6 +15,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`framework-button-filters` no longer submits the labels of catalog selections.** A filters
+  form reads its values straight off the form, so the display control `lib-catalog-select` adds
+  for its own use went to the backend beside the real filters — a request filtering by employee
+  carried `employeeName: "753 - ADEMILSON LOPES MAGALHAES"` next to `employeeID: 125`.
+
+  They were ignored, being filters no service declares, but the day one does filter by a name it
+  would receive the formatted label rather than the stored value and quietly match nothing.
+
+  The labels are still **kept** for the modal: reopening it patches them back into the form, and a
+  catalog select backed by a `searchEndpoint` cannot recover its text from the identifier alone —
+  it only resolves a display out of a local entries list. Dropping them from what is stored would
+  have left the field showing a selection with nothing written in it.
+
 ### Deprecated
 
 ### Removed
@@ -22,6 +35,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+- **Upgrade `@zambon-dev/library` together with this release.** The peer range moved from
+  `^1.0.0` to `^1.6.0`, because `framework-button-filters` now imports `DisplayControls` from it.
+  On an older library that export does not exist, and the filters button fails — at build time if
+  the bundler checks exports, otherwise the first time a filter is submitted. The old range would
+  have let npm resolve that combination without a word of warning.
+
+- **A backend no longer receives the label of a catalog selection.** If one of your services
+  filters by a key that a `lib-catalog-select` uses as its `displayControlName` — the `xxxName`
+  that comes paired with an `xxxID` — that filter now arrives empty and the query stops narrowing,
+  silently returning more rows than before rather than failing.
+
+  To check, take each filters form and, for every `lib-catalog-select` in it, note the
+  `displayControlName`. Then look for a `TryFilter` on that name in the service behind the list.
+  Any hit has to move to the identifier instead: the label was never the stored value — it is what
+  the catalog chose to display, so filtering by it was already matching on formatting.
 
 ## [1.3.1] - 2026-09-10
 

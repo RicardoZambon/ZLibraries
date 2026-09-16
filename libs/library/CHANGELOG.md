@@ -13,6 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`DisplayControls`**, which records the form controls that exist only to show a catalog
+  selection's label. `lib-catalog-select` works in pairs — `controlName` holds the identifier,
+  `displayControlName` holds the text — and it creates the second itself when a screen does not
+  declare one, so a form carries controls nobody wrote down. It now marks whichever control it
+  drives as its display, and `framework-button-filters` reads that mark to keep those out of what
+  it submits.
+
+  The mark is held in a `WeakSet` keyed by the control instance, not by its name: two forms may
+  each have an `employeeName`, and only the one a catalog select drives is a display control.
+  Nothing about an application changes — declaring the display control yourself still works, and
+  it is marked just the same.
+
 ### Changed
 
 ### Deprecated

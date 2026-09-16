@@ -25,7 +25,7 @@
     "@angular/forms": "^19.1.0",
     "@angular/router": "^19.1.0",
     "@auth0/angular-jwt": "^5.2.0",
-    "@zambon-dev/library": "^1.0.0",
+    "@zambon-dev/library": "^1.6.0",
     "@ngx-translate/core": "^16.0.4",
     "ngx-translate-multi-http-loader": "^19.0.2"
   },

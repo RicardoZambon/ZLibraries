@@ -5,6 +5,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, inject, Input, KeyV
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { debounceTime, forkJoin, Observable, of, pairwise, startWith, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { DisplayControls } from '../../helpers';
 import { ICatalogEntry, ICatalogResult } from '../../models';
 import { CatalogService, DataGridDataset } from '../../services';
 import { BaseComponent } from '../base.component';
@@ -388,6 +389,11 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
         if (!parent.get(name)) {
           parent.addControl(name, new FormControl(''));
         }
+
+        // Marked whether this component created it or the screen declared it: what makes a control
+        // a display control is being driven as one, not who wrote it down. A filters form reads the
+        // mark to keep it out of what it submits.
+        DisplayControls.markAsDisplayControl(parent.get(name));
       }
     });
   }
