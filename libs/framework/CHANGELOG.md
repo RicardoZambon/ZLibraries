@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.4.1] - 2026-09-19
+
+### Fixed
+
 - **A details tab with child views no longer loses its ribbon after you visit another tab and come
   back.** Every button of the child view disappeared -- filter, clear filters, refresh, export --
   while the grid below carried on showing its filtered rows, and nothing brought them back short of
@@ -33,8 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   run again and nothing publishes a second time.
 
   A list screen was unaffected: it has no view switching, so the lookup never happened.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.4.0] - 2026-09-16
 
@@ -190,7 +194,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.1...HEAD
+[1.4.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.1
 [1.4.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.0
 [1.3.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.3.1
 [1.3.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.3.0
