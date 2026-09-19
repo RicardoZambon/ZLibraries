@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 // Mock the @zambon-dev/framework module to avoid symlink resolution issues
@@ -8,6 +9,7 @@ jest.mock('../../services', () => ({
 }));
 
 // Import after mocks
+import { AuthenticationService } from '../../services';
 import { AuthGuard } from './auth-guard';
 
 describe('AuthGuard', () => {
@@ -24,10 +26,15 @@ describe('AuthGuard', () => {
       navigate: jest.fn(),
     };
 
-    guard = new (AuthGuard as any)(
-      mockAuthService,
-      mockRouter,
-    );
+    TestBed.configureTestingModule({
+      providers: [
+        AuthGuard,
+        { provide: AuthenticationService, useValue: mockAuthService },
+        { provide: Router, useValue: mockRouter },
+      ],
+    });
+
+    guard = TestBed.inject(AuthGuard);
   });
 
   it('should create', () => {

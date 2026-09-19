@@ -1,5 +1,10 @@
 import { UtcDatePipe } from './utc-date.pipe';
 
+// Pinned to a fixed, DST-free UTC-3 zone. The pipe's whole point is a timezone
+// shift, so under TZ=UTC the shift is zero and the assertions below cannot fail
+// — which is exactly how an inverted expectation survived here unnoticed.
+process.env.TZ = 'Etc/GMT+3';
+
 describe('UtcDatePipe', () => {
   let pipe: UtcDatePipe;
 
@@ -32,14 +37,15 @@ describe('UtcDatePipe', () => {
     expect(date.getTime()).toBe(originalTime);
   });
 
-  it('should adjust hours based on UTC offset', () => {
+  it('should re-express UTC wall-clock fields in local time', () => {
+    // A value whose fields carry a UTC time but which was parsed as local:
+    // 12:00 "UTC" is 09:00 for a viewer at UTC-3.
     const date: Date = new Date(2026, 5, 15, 12, 0, 0);
     const result: Date | null = pipe.transform(date);
+
     expect(result).not.toBeNull();
-    // The pipe adjusts by local-UTC offset difference
-    const offset: number = date.getHours() - date.getUTCHours();
-    const expectedHours: number = date.getHours() - offset;
-    expect(result!.getHours()).toBe(expectedHours >= 0 ? expectedHours : expectedHours + 24);
+    expect(result!.getHours()).toBe(9);
+    expect(result!.getHours()).toBe(new Date(Date.UTC(2026, 5, 15, 12, 0, 0)).getHours());
   });
 
   it('should preserve minutes and seconds', () => {

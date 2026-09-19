@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { BypassHtmlSanitizerPipe } from './bypass-html-sanitizer.pipe';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
@@ -15,7 +16,11 @@ describe('BypassHtmlSanitizerPipe', () => {
       bypassSecurityTrustResourceUrl: jest.fn(),
     } as unknown as jest.Mocked<DomSanitizer>;
 
-    pipe = new BypassHtmlSanitizerPipe(mockSanitizer);
+    TestBed.configureTestingModule({
+      providers: [BypassHtmlSanitizerPipe, { provide: DomSanitizer, useValue: mockSanitizer }],
+    });
+
+    pipe = TestBed.inject(BypassHtmlSanitizerPipe);
   });
 
   it('should create', () => {

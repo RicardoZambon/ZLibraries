@@ -27,13 +27,11 @@ describe(RibbonGroupComponent.name, () => {
   
   it('should have children content when has children buttons', async () => {
     TestBed.configureTestingModule({
-      declarations: [
-        RibbonGroupTestComponent,
-        RibbonGroupButtonTestComponent,
-      ],
       imports: [
         CommonModule,
         RibbonGroupComponent,
+        RibbonGroupTestComponent,
+        RibbonGroupButtonTestComponent,
       ],
     })
     .compileComponents();
@@ -52,13 +50,11 @@ describe(RibbonGroupComponent.name, () => {
 
   it('should remain visible when children are visible', async () => {
     TestBed.configureTestingModule({
-      declarations: [
-        RibbonGroupTestComponent,
-        RibbonGroupButtonTestComponent,
-      ],
       imports: [
         CommonModule,
         RibbonGroupComponent,
+        RibbonGroupTestComponent,
+        RibbonGroupButtonTestComponent,
       ],
     })
     .compileComponents();
@@ -89,18 +85,17 @@ describe(RibbonGroupComponent.name, () => {
 
     const label: HTMLDivElement = labelDebugElement.nativeElement;
     expect(label).toBeTruthy();
-    expect(label.innerText).toBe(component.label);
+    // jsdom does not implement innerText; textContent is the equivalent here.
+    expect(label.textContent?.trim()).toBe(component.label);
   });
 
   it('should stay hidden when children are NOT visible', async () => {
     TestBed.configureTestingModule({
-      declarations: [
-        RibbonGroupTestComponent,
-        RibbonGroupButtonTestComponent,
-      ],
       imports: [
         CommonModule,
         RibbonGroupComponent,
+        RibbonGroupTestComponent,
+        RibbonGroupButtonTestComponent,
       ],
     })
     .compileComponents();
@@ -135,7 +130,9 @@ class RibbonGroupButtonTestComponent extends RibbonGroupChild {
   public visible: boolean = true;
 }
 
-@Component({ template: `
+@Component({
+  imports: [RibbonGroupComponent, RibbonGroupButtonTestComponent],
+  template: `
 <lib-ribbon-group>
   <test-ribbon-button></test-ribbon-button>
 </lib-ribbon-group>
