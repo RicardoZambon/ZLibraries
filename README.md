@@ -62,8 +62,8 @@ secret. Without it, Nx falls back to the local cache and everything still works.
 2. Make the change, with tests.
 3. Add an entry under `## [Unreleased]` in the `CHANGELOG.md` of every package you touched under `libs/*/src/`.
    CI enforces this. Tooling-only PRs can carry the `no-changelog` label instead.
-4. Open a PR. `PR Validation` builds affected packages and Storybooks and dry-runs the release for each
-   package.
+4. Open a PR. `PR Validation` lints and tests affected projects, builds affected packages and Storybooks,
+   and dry-runs the release for each package.
 
 ### Commit messages
 
