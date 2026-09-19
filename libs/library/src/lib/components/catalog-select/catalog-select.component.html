@@ -15,9 +15,9 @@
         [controlName]="displayControlName"
         [invalid]="isInvalid && isTouched"
         [readOnly]="readOnly"
-        (blur)="onContainerBlur()"
+        (blurred)="onContainerBlur()"
         (click)="onContainerClick()"
-        (focus)="onContainerFocus()"
+        (focused)="onContainerFocus()"
         (keydown)="onKeyDown($event)">
         </lib-form-input>
         <button *ngIf="showClearButton"
@@ -35,30 +35,46 @@
         <ul class="dropdown"
         role="listbox"
         [attr.id]="listboxId">
+            <!-- Status rows are not options: role="presentation" keeps them out of the
+                 listbox's option set, and they carry no click handler. The dropdown already
+                 closes on Escape, on blur and on an outside click. -->
             <li *ngIf="isLoading"
-            (click)="onDropDownMessageClick()">
+            role="presentation"
+            aria-live="polite">
                 {{ 'CatalogSelect-Loading' | translate }}
             </li>
 
             <li *ngIf="shouldUseCriteria && showMinimumCharactersMessage"
-            title="{{ 'CatalogSelect-MinimumLengthSearch' | translate: { minimumLengthSearch: minimumLengthSearch } }}"
-            (click)="onDropDownMessageClick()">
+            role="presentation"
+            aria-live="polite"
+            title="{{ 'CatalogSelect-MinimumLengthSearch' | translate: { minimumLengthSearch: minimumLengthSearch } }}">
                 {{ 'CatalogSelect-MinimumLengthSearch' | translate: { minimumLengthSearch: minimumLengthSearch } }}
             </li>
 
             <li *ngIf="showNoResultsMessage"
-            title="{{ 'CatalogSelect-NoResultsFound' | translate }}"
-            (click)="onDropDownMessageClick()">
+            role="presentation"
+            aria-live="polite"
+            title="{{ 'CatalogSelect-NoResultsFound' | translate }}">
                 {{ 'CatalogSelect-NoResultsFound' | translate }}
             </li>
 
+            <!-- Retrying is a real action, so it is a real button and reachable by keyboard. -->
             <li *ngIf="showFailureMessage"
             class="error"
-            title="{{ 'CatalogSelect-FailureMessage' | translate }}"
-            (click)="onDropDownErrorClick()">
-                {{ 'CatalogSelect-FailureMessage' | translate }}
+            role="presentation">
+                <button class="retry"
+                type="button"
+                title="{{ 'CatalogSelect-FailureMessage' | translate }}"
+                (click)="onDropDownErrorClick()">
+                    {{ 'CatalogSelect-FailureMessage' | translate }}
+                </button>
             </li>
 
+            <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus --
+                 Options in a combobox listbox are deliberately not focusable. Keyboard
+                 interaction lives on the input, which owns ArrowUp/ArrowDown/Enter/Escape and
+                 points at the active option through aria-activedescendant. Giving each option
+                 its own tabindex and key handlers would break that pattern. -->
             <li class="dropdown-item" *ngFor="let entry of displayedEntries; let i = index"
             role="option"
             [attr.id]="getOptionId(i)"
@@ -68,6 +84,7 @@
             (click)="onDropDownItemClick(entry)">
                 {{ entry.display }}
             </li>
+            <!-- eslint-enable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
         </ul>
     </div>
 </ng-template>
