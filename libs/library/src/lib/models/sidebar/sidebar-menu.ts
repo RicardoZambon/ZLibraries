@@ -1,13 +1,13 @@
 import { SidebarMenuOpenMode } from './sidebar-menu-open-mode';
 
 export class SidebarMenu {
-  public childCount: number = 0;
+  public childCount = 0;
   public children: SidebarMenu[] = [];
   public height?: number;
   public icon?: string;
-  public id: number = 0;
-  public label: string = '';
-  public isSelected: boolean = false;
+  public id = 0;
+  public label = '';
+  public isSelected = false;
   /**
    * How {@link url} is opened. An absent value means {@link SidebarMenuOpenMode.Internal}.
    *

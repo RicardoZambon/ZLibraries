@@ -5,7 +5,7 @@ import { GridConfigs } from '../../models/configs/grid-configs';
 import { GridConfigsProvider } from '../configs-providers/grid-configs.provider';
 import { BaseDataset } from './base.dataset';
 
-const KEY_FIELD: string = '_key';
+const KEY_FIELD = '_key';
 
 @Injectable()
 export abstract class GridDataset extends BaseDataset {
@@ -15,18 +15,18 @@ export abstract class GridDataset extends BaseDataset {
   //#region Variables
   public configs: GridConfigs;
   public filtersChanged: EventEmitter<{ [key: string]: string }> = new EventEmitter<{ [key: string]: string }>();
-  public isLoading: boolean = false;
-  public loadedLastRow: boolean = false;
+  public isLoading = false;
+  public loadedLastRow = false;
   public loadFinished: EventEmitter<boolean> = new EventEmitter<boolean>();
   public loadStarted: EventEmitter<void> = new EventEmitter<void>();
   public totalRows?: number;
 
-  protected compareProperty: string = 'id';
+  protected compareProperty = 'id';
   protected configsProvider: GridConfigsProvider;
   protected focusedRow: string | null = null;
-  protected recordBlock: number = 0;
+  protected recordBlock = 0;
 
-  private _hasBeenLoaded: boolean = false;
+  private _hasBeenLoaded = false;
   private _loadedKeys?: string[];
   private _loadedRows?: any[];
   private queryFilters?: { [key: string]: string; };
@@ -63,7 +63,7 @@ export abstract class GridDataset extends BaseDataset {
 
   public override set parentEntityId(value: any) {
     super.parentEntityId = value;
-    if (!!this.loadedRows) {
+    if (this.loadedRows) {
       this.refresh();
     }
   }

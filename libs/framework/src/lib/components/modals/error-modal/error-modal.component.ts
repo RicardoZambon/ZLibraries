@@ -18,10 +18,10 @@ export class ErrorModalComponent {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ModalComponent) private modal!: ModalComponent;
 
-  @Input() public errorMessage: string = '';
+  @Input() public errorMessage = '';
   @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'xl';
-  @Input() public subtitle: string = 'Modal-Failed-Administrator';
-  @Input() public title: string = 'Modal-Failed-Title';
+  @Input() public subtitle = 'Modal-Failed-Administrator';
+  @Input() public title = 'Modal-Failed-Title';
 
   @Output() public closed: EventEmitter<void> = new EventEmitter<void>();
   //#endregion
@@ -47,7 +47,7 @@ export class ErrorModalComponent {
   }
 
   public showModal(error: string | HttpErrorResponse): void {
-    let errorMessage: string = 'Modal-Failed-DefaultMessage';
+    let errorMessage = 'Modal-Failed-DefaultMessage';
     if (typeof error === 'string') {
       errorMessage = error;
     } else if (typeof error.error === 'string') {

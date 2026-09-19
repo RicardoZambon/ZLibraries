@@ -18,8 +18,8 @@ export class GroupAccordionComponent {
   //#endregion
 
   //#region Variables
-  private _maxHeight: number = -1;
-  private collapsed: boolean = false;
+  private _maxHeight = -1;
+  private collapsed = false;
   //#endregion
 
   //#region Properties

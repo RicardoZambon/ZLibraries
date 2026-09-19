@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormService, IRibbonButtonOption } from '@zambon-dev/library';
 import { Observable, takeUntil } from 'rxjs';
@@ -13,15 +13,15 @@ import { LegacyTabViewBase } from './legacy-tabview-base';
  * with standalone component imports.
  */
 @Component({ template: '' })
-export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements AfterViewInit {
+export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements AfterViewInit, OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ButtonNewLegacyComponent) public buttonNew!: ButtonNewLegacyComponent;
   //#endregion
   
   //#region Variables
-  public override title: string = '';
+  public override title = '';
 
-  protected defaultView: string = 'details';
+  protected defaultView = 'details';
   protected entityId?: number;
   protected views: IRibbonButtonOption[] = [
     { id: 'details', label: 'Button-Views-Details', icon: 'fa-dice-d6' },
@@ -111,7 +111,7 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
     const currentID: string | null = this.route.snapshot.paramMap.get('id');
     this.entityId = currentID ? Number(currentID) : undefined;
 
-    let viewID: string | null = this.route.snapshot.paramMap.get('view');
+    const viewID: string | null = this.route.snapshot.paramMap.get('view');
     if (!viewID || !this.views.some((view: IRibbonButtonOption) => view.id === viewID)) {
       this.switchView(this.defaultView);
     } else {
@@ -132,7 +132,7 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
     if (newView) {
       newView.isDisabled = true;
 
-      let urlViewPath: string = viewId === this.defaultView ? '' : `/${viewId}`;
+      const urlViewPath: string = viewId === this.defaultView ? '' : `/${viewId}`;
       let url: string = this.url;
       if (this.activeView && url.endsWith(this.activeView)) {
         url = url.replace(`/${this.activeView}`, urlViewPath);

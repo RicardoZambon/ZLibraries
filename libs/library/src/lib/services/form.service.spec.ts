@@ -65,7 +65,7 @@ describe('FormService', () => {
     });
 
     it('should emit editCanceled', () => {
-      let canceled: boolean = false;
+      let canceled = false;
       service.editCanceled.subscribe(() => { canceled = true; });
 
       service.cancelEdit();
@@ -173,7 +173,7 @@ describe('FormService', () => {
       const obj: any = { id: 1 };
       service.model = obj;
 
-      let emitted: boolean = false;
+      let emitted = false;
       service.modelRefreshed.subscribe(() => { emitted = true; });
 
       service.model = obj;

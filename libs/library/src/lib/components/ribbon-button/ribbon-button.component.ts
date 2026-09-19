@@ -20,15 +20,15 @@ import { IRibbonButtonOption } from '../../models/ribbon-button-option';
 })
 export class RibbonButtonComponent {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public color: string = 'text-primary-500';
-  @Input() public defaultOption: number = -1;
-  @Input() public disabled: boolean = false;
+  @Input() public color = 'text-primary-500';
+  @Input() public defaultOption = -1;
+  @Input() public disabled = false;
   @Input() public icon?: string;
   @Input() public iconSize: 'small' | 'large' = 'large';
-  @Input() public label: string = '';
-  @Input() public loading: boolean = false;
+  @Input() public label = '';
+  @Input() public loading = false;
   @Input() public options: IRibbonButtonOption[] = [];
-  @Input() public tooltip: string = '';
+  @Input() public tooltip = '';
 
   @Output() public action = new EventEmitter<string | undefined>();
   //#endregion
@@ -61,7 +61,7 @@ export class RibbonButtonComponent {
   private documentKeyDown(event: KeyboardEvent): void {
     event = event || window.event;
     
-    let isEscape: boolean = false;
+    let isEscape = false;
     if ('key' in event) {
       isEscape = (event.key === 'Escape' || event.key === 'Esc');
     } else {
@@ -75,10 +75,10 @@ export class RibbonButtonComponent {
   //#endregion
 
   //#region Variables
-  protected showDropdown: boolean = false;
+  protected showDropdown = false;
   protected status: null | 'failure' | 'warning' | 'success' = null;
 
-  private clickedOutside: boolean = false;
+  private clickedOutside = false;
   //#endregion
 
   //#region Properties

@@ -27,8 +27,8 @@ import { BaseComponent } from '../base.component';
 })
 export class DataGridRowComponent extends BaseComponent implements OnInit {  
   //#region ViewChilds, Inputs, Outputs
-  @Input() public disabled: boolean = false;
-  @Input() public isFirstRow: boolean = false;
+  @Input() public disabled = false;
+  @Input() public isFirstRow = false;
   @Input() public set rowData(value: any) {
     this._rowData = value;
     this.refreshSelection();
@@ -53,7 +53,7 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   //#region Variables
   protected changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  protected selected: boolean = false;
+  protected selected = false;
 
   private _rowData!: any;
   private elementRef: ElementRef<HTMLElement> = inject(ElementRef);

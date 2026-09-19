@@ -51,7 +51,7 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
 
   private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
   private hasEntityID: boolean | null = null;
-  private hasLoadError: boolean = false;
+  private hasLoadError = false;
   private router: Router = inject(Router);
   private tabService: TabService = inject(TabService);
   //#endregion
@@ -85,7 +85,7 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
           this.detailsViewRoute = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
         }
 
-        if (!!this.detailsViewRoute) {
+        if (this.detailsViewRoute) {
           let title: string = this.detailsViewRoute.data['defaultTitle'];
           if (this.dataProviderService!.hasEntityID) {
             title = this.dataProviderService!.getTitle(model);

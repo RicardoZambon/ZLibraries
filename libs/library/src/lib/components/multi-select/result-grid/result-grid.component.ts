@@ -22,13 +22,13 @@ import { DataGridDataset } from '../../../services';
 })
 export class MultiSelectResultGridComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() isDisabled: boolean = false;
+  @Input() isDisabled = false;
   @Input() template!: TemplateRef<any>;
   //#endregion
 
   //#region Variables
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  protected isLoading: boolean = true;
+  protected isLoading = true;
   protected resultDataset: MultiSelectResultDataset = inject(MultiSelectResultDataset);
   //#endregion
 

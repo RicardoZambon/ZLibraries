@@ -27,15 +27,15 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ModalComponent) private modal!: ModalComponent;
 
-  @Input() public addButtonLabel: string = 'Add row';
+  @Input() public addButtonLabel = 'Add row';
   @Input() public formGroup!: FormGroup<any>;
-  @Input() public removeButtonLabel: string = 'Remove row';
-  @Input() public showAddButton: boolean = true;
-  @Input() public showDeleteButton: boolean = true;
+  @Input() public removeButtonLabel = 'Remove row';
+  @Input() public showAddButton = true;
+  @Input() public showDeleteButton = true;
   //#endregion
 
   //#region Variables
-  protected gridLoading: boolean = false;
+  protected gridLoading = false;
 
   private dataGridDataset: DataGridDataset = inject(DataGridDataset);
   private formService: FormService = inject(FormService);
@@ -129,7 +129,7 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
     const fakeNewID: number = (Math.floor(Math.random() * (999999 - 100000)) + 100000) * -1;
     const newModel: any = this.multiEditorDataset.newData(fakeNewID);
 
-    if (!!newModel) {
+    if (newModel) {
       // Read before addNewRow: it stamps the grid's internal key onto the row, so afterwards even a
       // `{}` model reports one own key and the check below would never skip.
       const hasPrefilledValues: boolean = Object.keys(newModel).length > 0;

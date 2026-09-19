@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ButtonComponent, TabService, TabViewBase } from '@zambon-dev/framework';
@@ -29,19 +29,19 @@ import { ExternalContentService, ExternalUrlResolverService } from '../../servic
     TranslatePipe,
   ]
 })
-export class ExternalContentComponent extends TabViewBase implements OnInit {
+export class ExternalContentComponent extends TabViewBase implements OnInit, OnDestroy {
   //#region ViewChilds, Inputs, Outputs
   //#endregion
 
   //#region Variables
   protected frameUrl?: SafeResourceUrl;
-  protected isBlocked: boolean = false;
-  protected isFrameLoading: boolean = false;
-  protected isInsecure: boolean = false;
-  protected isSlow: boolean = false;
-  protected isUnavailable: boolean = false;
-  protected label: string = '';
-  protected resolvedUrl: string = '';
+  protected isBlocked = false;
+  protected isFrameLoading = false;
+  protected isInsecure = false;
+  protected isSlow = false;
+  protected isUnavailable = false;
+  protected label = '';
+  protected resolvedUrl = '';
 
   private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private configs: ExternalContentConfigs = inject(EXTERNAL_CONTENT_CONFIGS);
@@ -68,7 +68,7 @@ export class ExternalContentComponent extends TabViewBase implements OnInit {
   }
 
   public ngOnInit(): void {
-    const menuID: number = Number(this.activatedRoute.snapshot.paramMap.get('menuID'));
+    const menuID = Number(this.activatedRoute.snapshot.paramMap.get('menuID'));
 
     if (!menuID) {
       this.isUnavailable = true;

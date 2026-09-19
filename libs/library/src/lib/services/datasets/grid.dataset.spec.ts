@@ -69,7 +69,7 @@ describe('GridDataset', () => {
     });
 
     it('should emit loadStarted', () => {
-      let started: boolean = false;
+      let started = false;
       dataset.loadStarted.subscribe(() => { started = true; });
 
       dataset.loadRows();

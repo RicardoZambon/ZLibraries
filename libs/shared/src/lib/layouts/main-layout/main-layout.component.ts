@@ -57,7 +57,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe({
           next: (item: SidebarMenu) => {
-            if (!!item) {
+            if (item) {
               this.tabService.updateTabTitle(url, item.label);
             }
           },

@@ -3,7 +3,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OperationsHistoryModalComponent } from './operations-history-modal.component';
 
 describe(OperationsHistoryModalComponent.name, () => {
-  beforeEach(() => {OperationsHistoryModalComponent
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ OperationsHistoryModalComponent, TranslateModule.forRoot() ]
     })

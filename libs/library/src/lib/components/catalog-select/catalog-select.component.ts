@@ -1,7 +1,7 @@
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { NgFor, NgIf } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, HostListener, inject, Input, KeyValueChanges, KeyValueDiffer, KeyValueDiffers, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, inject, Input, KeyValueChanges, KeyValueDiffer, KeyValueDiffers, OnInit, TemplateRef, ViewChild, ViewContainerRef, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { debounceTime, forkJoin, Observable, of, pairwise, startWith, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
@@ -24,7 +24,7 @@ import { FormInputComponent } from '../form-input/form-input.component';
     TranslatePipe,
   ]
 })
-export class CatalogSelectComponent extends BaseComponent implements OnInit, AfterViewInit {
+export class CatalogSelectComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   //#region HostListeners
   @HostListener('body:mousedown', ['$event'])
   private bodyMouseDown(event: MouseEvent): void {
@@ -47,10 +47,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   @ViewChild('dropdownTemplate', { read: TemplateRef }) private dropdownTemplate!: TemplateRef<any>;
   @ViewChild('input', { read: ElementRef }) private inputElement!: ElementRef<HTMLDivElement>;
   
-  @Input() public autofocus: boolean = false;
+  @Input() public autofocus = false;
   @Input() public controlName!: string;
   @Input() public displayControlName!: string;
-  @Input() public displayProperty: string = 'display';
+  @Input() public displayProperty = 'display';
   @Input() public set entriesList(value: any[] | { key: number; value: Observable<any> | string }[] | null | undefined) {
     if (this._entriesList !== value) {
       this._entriesList = value;
@@ -68,28 +68,28 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     }
   }
   @Input() public label!: string;
-  @Input() public maxEntries: number = 100;
-  @Input() public minimumLengthSearch: number = 3;
-  @Input() public notes: string = '';
-  @Input() public readOnly: boolean = false;
+  @Input() public maxEntries = 100;
+  @Input() public minimumLengthSearch = 3;
+  @Input() public notes = '';
+  @Input() public readOnly = false;
   @Input() public searchEndpoint?: string;
   @Input() public validations: { [id: string]: string; } = {};
-  @Input() public valueProperty: string = 'value';
+  @Input() public valueProperty = 'value';
   //#endregion
   
   //#region Variables
   protected displayedEntries: ICatalogEntry[] = [];
-  protected focusedIndex: number = -1;
-  protected isDropDownShown: boolean = false;
-  protected isFocused: boolean = false;
-  protected isLoading: boolean = false;
+  protected focusedIndex = -1;
+  protected isDropDownShown = false;
+  protected isFocused = false;
+  protected isLoading = false;
   protected selectedValue: any;
-  protected shouldUseCriteria: boolean = false;
-  protected showFailureMessage: boolean = false;
-  protected showMinimumCharactersMessage: boolean = false;
-  protected showNoResultsMessage: boolean = false;
+  protected shouldUseCriteria = false;
+  protected showFailureMessage = false;
+  protected showMinimumCharactersMessage = false;
+  protected showNoResultsMessage = false;
 
-  private static instanceCounter: number = 0;
+  private static instanceCounter = 0;
   private _entriesList?: any[] | { key: number; value: Observable<any> | string }[] | null;
   private _filters: { [id: string]: any; } = {};
   private catalogService: CatalogService = inject(CatalogService);
@@ -99,8 +99,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   private readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
   private readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
   private instanceId: number;
-  private isDataInitialized: boolean = false;
-  private isSubscriptionInitialized: boolean = false;
+  private isDataInitialized = false;
+  private isSubscriptionInitialized = false;
   private keyValueDiffers: KeyValueDiffers = inject(KeyValueDiffers);
   private lastCriteriaUsed: string | null = null;
   private overlay: Overlay = inject(Overlay);
@@ -108,7 +108,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   private positionBuilder: OverlayPositionBuilder = inject(OverlayPositionBuilder);
   private searchSubject: Subject<string | null> = new Subject<string | null>();
   private viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
-  private wasClickedOutside: boolean = false;
+  private wasClickedOutside = false;
   //#endregion
 
   //#region Properties
@@ -439,10 +439,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       }
     });
 
+    // Subscribed only to run the requests; the emitted values are not needed here.
     forkJoin(observables)
       .pipe(take(1))
-      .subscribe(() => {
-      });
+      .subscribe();
   }
 
   private initializeSearch(): void {
@@ -571,7 +571,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     }
   }
 
-  private refreshSearch(reInitialize: boolean = false): void {
+  private refreshSearch(reInitialize = false): void {
     if (reInitialize) {
       this.isDataInitialized = false;
     }
@@ -651,7 +651,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
     const changes: KeyValueChanges<string ,any> | null = this.filterDiffer.diff(this.filters);
     if (changes) {
-      const reInitialize: boolean = true;
+      const reInitialize = true;
       this.refreshSearch(reInitialize);
     }
   }

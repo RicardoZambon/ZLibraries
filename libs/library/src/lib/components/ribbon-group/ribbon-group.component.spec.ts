@@ -127,7 +127,7 @@ describe(RibbonGroupComponent.name, () => {
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => RibbonGroupButtonTestComponent)}],
 })
 class RibbonGroupButtonTestComponent extends RibbonGroupChild {
-  public visible: boolean = true;
+  public visible = true;
 }
 
 @Component({

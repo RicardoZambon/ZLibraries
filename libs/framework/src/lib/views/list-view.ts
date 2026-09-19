@@ -33,7 +33,7 @@ export abstract class ListView<TEntityModel, TListModel> extends TabViewList<TLi
         this.dataGridDataset.refresh();
       }
       
-      if (!!this.resultDataset) {
+      if (this.resultDataset) {
         this.resultDataset.parentEntityId = this.dataProvider.entityID;
       }
     }

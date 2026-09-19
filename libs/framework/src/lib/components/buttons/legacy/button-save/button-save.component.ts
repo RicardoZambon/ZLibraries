@@ -28,7 +28,7 @@ export class ButtonSaveLegacyComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ErrorModalComponent) private errorModal!: ErrorModalComponent;
 
-  @Input() public defaultOption: number = 0;
+  @Input() public defaultOption = 0;
   @Input() public form?: LegacySubViewForm;
   @Input() public tabView!: LegacyTabViewDetails;
   //#endregion
@@ -90,7 +90,7 @@ export class ButtonSaveLegacyComponent extends BaseButton {
         if (e.status === 400 && !!this.form) {
           BackendFormValidationHelper.validateAllFormFields(e, this.form.dataForm);
         } else {
-          let errorMessage: string = 'Modal-Failed-DefaultMessage';
+          let errorMessage = 'Modal-Failed-DefaultMessage';
           if (typeof e.error === 'string') {
             errorMessage = e.error;
           }

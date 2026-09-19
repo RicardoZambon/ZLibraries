@@ -83,7 +83,7 @@ describe(ExternalUrlResolverService.name, () => {
     });
 
     it('does not corrupt a URL whose braces are legitimate report parameters', () => {
-      const url: string = 'https://reports/r?filter={"a":1}&l={language}';
+      const url = 'https://reports/r?filter={"a":1}&l={language}';
 
       expect(service.resolve(url)).toBe('https://reports/r?filter={"a":1}&l=pt');
     });

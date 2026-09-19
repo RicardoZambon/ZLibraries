@@ -76,14 +76,14 @@ export class TabsComponent implements OnInit {
       if (shouldIgnoreFirstChildRoute) {
         clones.push(RouteHelper.getRouteURL(activatedDetailsTabView.firstChild!));
 
-      } else if (!!activatedDetailsTabView.firstChild) {
+      } else if (activatedDetailsTabView.firstChild) {
         const childPath: string = activatedDetailsTabView.firstChild.url.map((s: any) => s.path).join('/');
         const defaultChildPath: string = activatedDetailsTabView.routeConfig?.children
           ?.filter((route: Route) => !!route.data && route.data['ignoreRoute'] !== true)
           ?.[0]?.path ?? '';
 
         if (childPath !== defaultChildPath) {
-          const entityID: number = Number(activatedDetailsTabView.paramMap.get('id'));
+          const entityID = Number(activatedDetailsTabView.paramMap.get('id'));
           if (!entityID) {
             // New entity: inner views are not available, redirect to base URL.
             this.router.navigate([url], { replaceUrl: true });

@@ -17,9 +17,9 @@ export abstract class SidebarService {
   //#endregion
 
   //#region Variables
-  public isActive: boolean = false;
-  public isCollapsed: boolean = false;
-  public shouldActivate: boolean = false;
+  public isActive = false;
+  public isCollapsed = false;
+  public shouldActivate = false;
 
   private menus: SidebarMenu[] = [];
   private selectedMenu: SidebarMenu | null = null;
@@ -126,7 +126,7 @@ export abstract class SidebarService {
   //#endregion
 
   //#region Private methods
-  private deselectMenu(menu: SidebarMenu, shouldUpdateParents: boolean = true): void {
+  private deselectMenu(menu: SidebarMenu, shouldUpdateParents = true): void {
     if (!menu.isSelected) {
       return;
     }
@@ -138,13 +138,13 @@ export abstract class SidebarService {
       menu.children
         .filter((child: SidebarMenu) => child.isSelected)
         .forEach((child: SidebarMenu) => {
-          const shouldUpdateParents: boolean = false;
+          const shouldUpdateParents = false;
           this.deselectMenu(child, shouldUpdateParents);
         });
     }
 
     if (!!menu.parent && shouldUpdateParents) {
-      while (!!menu.parent) {
+      while (menu.parent) {
         this.selectionChanged.emit(menu.parent);
         menu = menu.parent;
       }
@@ -155,7 +155,7 @@ export abstract class SidebarService {
     menu.isSelected = true;
     this.selectionChanged.emit(menu);
 
-    if (!!menu.parent) {
+    if (menu.parent) {
       this.selectMenu(menu.parent);
     }
   }

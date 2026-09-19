@@ -26,7 +26,7 @@ describe('CatalogService', () => {
   });
 
   describe('search', () => {
-    const endpoint: string = '/api/catalogs/search';
+    const endpoint = '/api/catalogs/search';
     const mockResult: ICatalogResult = {
       entries: [{ id: 1, description: 'Test' } as any],
       shouldUseCriteria: true,
@@ -62,7 +62,7 @@ describe('CatalogService', () => {
     });
 
     it('should propagate HTTP errors', () => {
-      let errorOccurred: boolean = false;
+      let errorOccurred = false;
 
       service.search(endpoint, 10).subscribe({
         error: () => { errorOccurred = true; },

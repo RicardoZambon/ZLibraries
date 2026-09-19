@@ -190,7 +190,7 @@ describe('DataProviderService', () => {
 
   describe('ngOnDestroy', () => {
     it('should complete destroy$ subject', () => {
-      let completed: boolean = false;
+      let completed = false;
       (service as any).destroy$.subscribe({ complete: () => { completed = true; } });
 
       service.ngOnDestroy();

@@ -6,8 +6,8 @@ import { SidebarService } from '../../services';
 import { SidebarItemComponent } from './sidebar-item.component';
 
 class MockSidebarService extends SidebarService {
-  public override isCollapsed: boolean = false;
-  public override isActive: boolean = false;
+  public override isCollapsed = false;
+  public override isActive = false;
   public getMenuFromUrl(url: string): Observable<SidebarMenu> {
     return of(new SidebarMenu({ url }));
   }

@@ -71,12 +71,12 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
   public shouldAttach(route: ActivatedRouteSnapshot): boolean {
     const url: string = this.getUrlFromRoute(route);
-    const hasComponent: boolean = !!route.component;
+    const hasComponent = !!route.component;
 
     if ((this.tabService?.isUrlOpen(url) ?? false) && hasComponent)
     {
       const cacheKey: string = this.getCacheKey(route);
-      const isCached: boolean = !!this.cachedHandles[cacheKey];
+      const isCached = !!this.cachedHandles[cacheKey];
       return isCached;
     }
     return false;
@@ -84,7 +84,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
   public shouldDetach(route: ActivatedRouteSnapshot): boolean {
     const url: string = this.getUrlFromRoute(route);
-    const hasComponent: boolean = !!route.component;
+    const hasComponent = !!route.component;
 
     return (this.tabService?.isUrlOpen(url) ?? false) && hasComponent;
   }
@@ -154,8 +154,8 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     const segments: string[] = [];
 
     const buildRoute: (route: ActivatedRouteSnapshot | null) => void = (route: ActivatedRouteSnapshot | null): void => {
-      if (!!route) {
-        if (!!route.url.length) {
+      if (route) {
+        if (route.url.length) {
           segments.push(...route.url.map((segment: UrlSegment) => segment.path));
         }
         buildRoute(route.parent);

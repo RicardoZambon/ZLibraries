@@ -11,7 +11,7 @@ export class FormService {
   //#endregion
 
   //#region Variables
-  private _loading: boolean = false;
+  private _loading = false;
   private _model: any | null = null;
   private currentMode: 'edit' | 'view' = 'view';
   private editCanceled$: Subject<void> = new Subject<void>();
@@ -123,9 +123,9 @@ export class FormService {
 
     this.form.reset();
 
-    if (!!this.model) {
+    if (this.model) {
       this.form.patchValue(this.model);
-    } else if (!!this.initialValue) {
+    } else if (this.initialValue) {
       this.form.patchValue(this.initialValue);
     }
 

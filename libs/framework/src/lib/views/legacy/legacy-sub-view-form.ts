@@ -83,7 +83,7 @@ export abstract class LegacySubViewForm extends ViewBase implements OnInit {
     }
   }
 
-  beginEdit(resetValues: boolean = true): void {
+  beginEdit(resetValues = true): void {
     setTimeout(() => {
       this.viewMode = 'edit';
       this.dataForm.enable();
@@ -100,7 +100,9 @@ export abstract class LegacySubViewForm extends ViewBase implements OnInit {
     this.dataForm.disable();
   }
 
-  protected validate(formModel: any): void {
+  /** Extension point: subclasses override this to validate before save. */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+  protected validate(_formModel: any): void {
   }
 
   save(): Observable<any> {

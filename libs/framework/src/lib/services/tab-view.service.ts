@@ -20,8 +20,6 @@ export class TabViewService {
   //#endregion
   
   //#region Constructor and Angular life cycle methods
-  constructor() {
-  }
   //#endregion
 
   //#region Event handlers

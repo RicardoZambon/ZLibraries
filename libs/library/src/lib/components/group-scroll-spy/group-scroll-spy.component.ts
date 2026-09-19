@@ -20,7 +20,7 @@ export class GroupScrollSpyComponent {
     return this.sections?.map(x => x.label) ?? [];
   }
 
-  public activeSection: number = 0;  
+  public activeSection = 0;  
 
 
   activeSectionChanged(index: number): void {

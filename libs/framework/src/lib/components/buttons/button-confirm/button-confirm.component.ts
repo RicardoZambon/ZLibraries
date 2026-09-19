@@ -23,13 +23,13 @@ export class ButtonConfirmComponent extends BaseButton {
   @ViewChild(ConfirmModalComponent) private confirmModal!: ConfirmModalComponent;
 
   @Input() public action!: Observable<any>;
-  @Input() public color: string = 'text-primary-500';
+  @Input() public color = 'text-primary-500';
   @Input() public icon!: string;
   @Input() public label!: string;
   @Input() public modalConfirmButtonColor!: string;
   @Input() public modalConfirmButtonLabel!: string;
   @Input() public modalMessage!: string;
-  @Input() public modalMessageIcon: string = 'fa-solid fa-circle-question';
+  @Input() public modalMessageIcon = 'fa-solid fa-circle-question';
   @Input() public modalMessageIconColor!: string;
   @Input() public modalTitle!: string;
   //#endregion

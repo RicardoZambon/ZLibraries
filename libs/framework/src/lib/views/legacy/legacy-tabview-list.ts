@@ -16,7 +16,7 @@ export abstract class LegacyTabViewList<TListModel> extends LegacyTabViewBase im
 
   //#region Variables
   private _selectedItem?: TListModel;
-  private selectedRows: number = 0;
+  private selectedRows = 0;
   //#endregion
 
   //#region Properties

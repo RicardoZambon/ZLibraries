@@ -32,23 +32,23 @@ import { FormInputComponent } from '../form-input/form-input.component';
 })
 export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public autofocus: boolean = false;
+  @Input() public autofocus = false;
   @Input() public alignContent: 'center' | 'end' | 'start' = 'center';
   @Input() public controlName!: string;
   @Input() public fixedValue?: any;
   @Input() public format?: string;
   @Input() public label!: string;
-  @Input() public isDisabled: boolean = true;
-  @Input() public isFullHeight: boolean = false;
+  @Input() public isDisabled = true;
+  @Input() public isFullHeight = false;
   @Input() public maxLength?: number;
   @Input() public min?: number;
-  @Input() public notes: string = '';
-  @Input() public readOnly: boolean = false;
+  @Input() public notes = '';
+  @Input() public readOnly = false;
   @Input() public rows!: number;
-  @Input() public showLabel: boolean = true;
-  @Input() public step: number = 1;
+  @Input() public showLabel = true;
+  @Input() public step = 1;
   @Input() public template!: TemplateRef<any>;
-  @Input() public type: string = 'text';
+  @Input() public type = 'text';
   @Input() public validations: { [id: string]: string; } = {};
   //#endregion
 
@@ -59,7 +59,7 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   protected readonly formGroupDirective: FormGroupDirective = inject(FormGroupDirective);
   protected readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
   protected formService: FormService = inject(FormService);
-  protected loadingField: boolean = false;
+  protected loadingField = false;
   //#endregion
 
   //#region Properties
@@ -71,7 +71,7 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
 
   protected get formGroup(): FormGroup {
     let formGroup: FormGroup = this.formGroupDirective.form;
-    for (let group of this.parentGroups) {
+    for (const group of this.parentGroups) {
       formGroup = <FormGroup>formGroup.get(group);
     }
     return formGroup;

@@ -24,7 +24,7 @@ export class ButtonSaveComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ErrorModalComponent) private errorModal!: ErrorModalComponent;
 
-  @Input() public defaultOption: number = 0;
+  @Input() public defaultOption = 0;
   //#endregion
 
   //#region Variables
@@ -83,7 +83,7 @@ export class ButtonSaveComponent extends BaseButton {
               this.dataProviderService.updateModel(model);
 
               const detailsRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.root.snapshot, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
-              const savedEntityUrl: string = `${RouteHelper.getRouteURL(detailsRoute!.parent!)}/${model.id}`;
+              const savedEntityUrl = `${RouteHelper.getRouteURL(detailsRoute!.parent!)}/${model.id}`;
               const currentRouteUrl: string = RouteHelper.getRouteURL(detailsRoute!);
 
               if (currentRouteUrl !== savedEntityUrl) {
@@ -104,11 +104,11 @@ export class ButtonSaveComponent extends BaseButton {
               }
               break;
             }
-            default:
+            default: {
               this.dataProviderService.updateModel(model);
 
               const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.root.snapshot, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
-              const url: string = `${RouteHelper.getRouteURL(targetRoute!.parent!)}/${model.id}`;
+              const url = `${RouteHelper.getRouteURL(targetRoute!.parent!)}/${model.id}`;
 
               if (!this.tabService.isUrlActive(url)) {
                 const currentRoute: string = RouteHelper.getRouteURL(targetRoute!);
@@ -123,6 +123,7 @@ export class ButtonSaveComponent extends BaseButton {
                 }
               }
               break;
+            }
           }
         },
         error: (e: HttpErrorResponse) => {
@@ -132,7 +133,7 @@ export class ButtonSaveComponent extends BaseButton {
           if (e.status === 400) {
             this.formService.setValidationErrorsFromHttpResponse(e);
           } else {
-            let errorMessage: string = 'Modal-Failed-DefaultMessage';
+            let errorMessage = 'Modal-Failed-DefaultMessage';
             if (typeof e.error === 'string') {
               errorMessage = e.error;
             }
@@ -156,7 +157,7 @@ export class ButtonSaveComponent extends BaseButton {
   private navigateToNew(): void {
     const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.root.snapshot, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
 
-    let url: string = '';
+    let url = '';
     if (targetRoute) {
       url = RouteHelper.getRouteURL(targetRoute.parent!);
     } else {

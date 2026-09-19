@@ -16,7 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class FormGroupComponent {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public shouldExpand: boolean = false;
+  @Input() public shouldExpand = false;
   @Input() public label!: string;
   //#endregion
 

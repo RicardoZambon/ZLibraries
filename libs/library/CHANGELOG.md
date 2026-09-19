@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `CatalogSelectComponent` subscribed to its `forkJoin` with an empty handler; it now subscribes
+  without one. No behavioural change.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.6.3] - 2026-09-20

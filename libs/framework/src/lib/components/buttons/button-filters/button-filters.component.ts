@@ -27,7 +27,7 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
 
   @Input() public modalSize: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'xl';
   @Input() public modalTitle!: string;
-  @Input() public validateFormFunction?: Function;
+  @Input() public validateFormFunction?: () => void;
   //#endregion
 
   //#region Variables

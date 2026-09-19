@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
 /** First segment of the route that hosts embedded external content. */
-export const EXTERNAL_CONTENT_ROUTE_PATH: string = 'external-content';
+export const EXTERNAL_CONTENT_ROUTE_PATH = 'external-content';
 
 /**
  * Flat projection of an external menu item, used to restore an embedded tab.
@@ -26,7 +26,7 @@ export class ExternalContentConfigs {
   public allowedOrigins: string[] = [];
 
   /** Milliseconds to wait for the frame's first `load` before hinting that framing may be refused. */
-  public slowFrameHintDelay: number = 5000;
+  public slowFrameHintDelay = 5000;
 
   constructor(options: Partial<ExternalContentConfigs> = {}) {
     Object.assign(this, options);
