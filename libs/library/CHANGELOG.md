@@ -21,6 +21,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A `lib-data-grid` column with no room from the start no longer drags its heading out of line.**
+  1.6.1 removes the heading of a collapsed column, but only once that column had measured a real
+  width at some point. A column that never has any room does not, so it kept a heading over nothing
+  and pushed every column to its right along -- up to 263px on a fourteen-column screen, which is
+  the same drift 1.6.1 set out to remove.
+
+  Whether a zero is believable is now settled by the row rather than by what the column measured
+  before: if the row has a width the layout is live, so a column reporting zero really has
+  collapsed.
+
+- **`lib-data-grid` headings no longer stay behind after you revisit a tab.** Re-activating a
+  detached tab puts the grid back in the page with its horizontal scroll at the start again, and no
+  scroll event follows to say so, so the headings kept the offset they had when you left: on a grid
+  scrolled 300px every heading sat 300px away from its column. The header now reconciles with the
+  body whenever the grid is re-measured, which is what re-inserting it triggers.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.6.1] - 2026-09-19

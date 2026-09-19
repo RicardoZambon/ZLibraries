@@ -234,6 +234,7 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
           this.headerRightMargin = this.bodyElement.nativeElement.clientWidth - viewportWidth;
         }
         this.viewport?.checkViewportSize();
+        this.syncHeaderScroll();
         this.changeDetectorRef.detectChanges();
       });
 
@@ -270,6 +271,17 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
   //#endregion
 
   //#region Private methods
+  private syncHeaderScroll(): void {
+    // Re-inserting the viewport into the DOM -- which is what re-activating a detached tab does --
+    // puts its scroll position back to zero without firing a scroll event, so nothing tells the
+    // header to come back with it and the headings sit at an offset the body no longer has.
+    const scrollLeft: number = this.viewport?.elementRef?.nativeElement?.scrollLeft ?? 0;
+
+    if (this.headerScrollLeft !== scrollLeft) {
+      this.headerScrollLeft = scrollLeft;
+    }
+  }
+
   protected trackByFn(index: number, item: any): number {
     return item.key;
   }
