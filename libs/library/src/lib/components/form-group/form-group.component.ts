@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -12,7 +12,8 @@ import { TranslatePipe } from '@ngx-translate/core';
   ],
   host: {
     '[class.expand]': 'shouldExpand'
-  }
+  },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormGroupComponent {
   //#region ViewChilds, Inputs, Outputs

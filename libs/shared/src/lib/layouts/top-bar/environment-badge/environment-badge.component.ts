@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { APP_CONFIG, AppConfig } from '@zambon-dev/framework';
 
 @Component({
   selector: 'shared-environment-badge',
   templateUrl: './environment-badge.component.html',
   styleUrls: ['./environment-badge.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnvironmentBadgeComponent {
   //#region Variables

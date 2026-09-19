@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `RibbonComponent`, `FormGroupComponent` and `GroupContainerComponent` now use
+  `ChangeDetectionStrategy.OnPush`. They render from their inputs only, so behaviour is
+  unchanged, but consuming applications no longer check them on every change detection pass.
+
 ### Deprecated
 
 ### Removed

@@ -1,5 +1,5 @@
 import { NgClass, NgIf } from '@angular/common';
-import { Component, ContentChildren, Input, QueryList, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ContentChildren, Input, QueryList, ViewChild } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ScrollSpyDirective } from '../../directives/scroll-spy.directive';
 import { GroupAccordionComponent } from '../group-accordion/group-accordion.component';
@@ -12,7 +12,8 @@ import { GroupAccordionComponent } from '../group-accordion/group-accordion.comp
     NgClass,
     NgIf,
     TranslatePipe,
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupContainerComponent {
   @ViewChild(ScrollSpyDirective) scrollSpy!: ScrollSpyDirective;

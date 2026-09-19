@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `LoginLayoutComponent`, `HomeComponent`, `BrandComponent` and `EnvironmentBadgeComponent` now
+  use `ChangeDetectionStrategy.OnPush`. Behaviour is unchanged; they render from inputs or from
+  immutable application config.
+
+- **Accessibility.** The operations-history row opens its detail modal from the keyboard as well as
+  the mouse.
 ### Deprecated
 
 ### Removed

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -7,7 +7,8 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./login-layout.component.scss'],
   imports: [
     RouterModule,
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginLayoutComponent {
   //#region ViewChilds, Inputs, Outputs

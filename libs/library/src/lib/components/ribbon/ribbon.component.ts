@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'lib-ribbon',
   templateUrl: './ribbon.component.html',
-  styleUrls: ['./ribbon.component.scss']
+  styleUrls: ['./ribbon.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RibbonComponent {
   //#region ViewChilds, Inputs, Outputs
