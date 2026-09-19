@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Declared `ngx-resize-observer` and `rxjs` in `peerDependencies`. `DataGridRowComponent` imports
+  `ngx-resize-observer` at runtime, but the package was never declared, so installing
+  `@zambon-dev/library` on its own left the dependency unresolved.
+- Added a README to the published package.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.6.1] - 2026-09-19

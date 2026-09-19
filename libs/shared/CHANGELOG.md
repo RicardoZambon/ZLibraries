@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Declared `rxjs` and `@angular/platform-browser` in `peerDependencies`. `DomSanitizer` is used by
+  `ExternalContentComponent` and `BypassHtmlSanitizerPipe`, but neither package was declared.
+- Added a README to the published package.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [2.1.1] - 2026-09-15
