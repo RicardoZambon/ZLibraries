@@ -1,0 +1,68 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits"
+  ],
+  "timezone": "America/Sao_Paulo",
+  "schedule": ["before 6am on monday"],
+  "prConcurrentLimit": 5,
+  "labels": ["dependencies"],
+  "commitMessagePrefix": "chore(deps): ",
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": ["at any time"],
+    "labels": ["dependencies", "security"],
+    "commitMessagePrefix": "fix(deps): "
+  },
+  "osvVulnerabilityAlerts": true,
+  "packageRules": [
+    {
+      "description": "Angular, the CLI and the Nx plugins move together. A split upgrade does not build.",
+      "groupName": "angular",
+      "matchPackageNames": [
+        "@angular/**",
+        "@angular-devkit/**",
+        "@schematics/angular",
+        "angular-eslint",
+        "ng-packagr",
+        "zone.js"
+      ]
+    },
+    {
+      "description": "Every @nx/* package must sit on the same version as the nx core.",
+      "groupName": "nx",
+      "matchPackageNames": ["nx", "@nx/**"]
+    },
+    {
+      "description": "Storybook ships its packages as one coordinated set.",
+      "groupName": "storybook",
+      "matchPackageNames": ["storybook", "@storybook/**"]
+    },
+    {
+      "description": "Jest and its Angular preset are coupled.",
+      "groupName": "jest",
+      "matchPackageNames": ["jest", "jest-**", "ts-jest", "@types/jest"]
+    },
+    {
+      "description": "Batch low-risk dev tooling so it does not produce a PR each.",
+      "groupName": "dev tooling (non-major)",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "excludePackageNames": ["nx"],
+      "excludePackagePatterns": ["^@angular", "^@nx/", "^@storybook/"]
+    },
+    {
+      "description": "A major on a runtime dependency changes what consumers must install. Never automatic.",
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "@types/node tracks the Node version CI runs, not the newest release.",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "<21"
+    }
+  ]
+}

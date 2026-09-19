@@ -80,6 +80,10 @@ Configuration providers, helpers, models and validators are exported from the pa
 
 ## Documentation
 
+Browse the published Storybook at [https://ricardozambon.github.io/ZLibraries/framework/](https://ricardozambon.github.io/ZLibraries/framework/).
+
+To run it locally:
+
 ```bash
 npm run storybook:framework
 ```

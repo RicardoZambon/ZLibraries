@@ -74,7 +74,9 @@ Helpers, models, configuration providers, services and validators are exported f
 
 ## Documentation
 
-Component behaviour and variants are documented as Storybook stories alongside the source. To browse them:
+Browse the published Storybook at [https://ricardozambon.github.io/ZLibraries/library/](https://ricardozambon.github.io/ZLibraries/library/).
+
+Component behaviour and variants are documented as stories alongside the source. To run it locally:
 
 ```bash
 npm run storybook:library
