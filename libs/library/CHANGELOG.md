@@ -48,6 +48,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the body does not have. Measured in a running application the drift is zero across every column,
   at rest and scrolled.
 
+  A column that declares no `size` is laid out as `minmax(0, 1fr)`, which is free to collapse. If
+  one of yours does, its heading now goes with it rather than staying behind as a label over
+  nothing. Give such a column a real minimum -- `size: 'minmax(8rem, 1fr)'` -- to keep both on
+  screen.
+
 ## [1.6.0] - 2026-09-16
 
 ### Added
