@@ -8,7 +8,10 @@ import { takeUntil } from 'rxjs';
 import { RouteHelper } from '../../../helpers';
 import { ITab } from '../../../models';
 import { TabService, TabViewService } from '../../../services';
-import { ButtonViewsComponent } from '../../buttons';
+// Imported by concrete path, not through the buttons barrel: that barrel re-exports
+// ./legacy, whose buttons import the views barrel, which re-exports this file. Going
+// through it leaves one of this component's imports undefined at evaluation time.
+import { ButtonViewsComponent } from '../../buttons/button-views/button-views.component';
 import { ErrorModalComponent } from '../../modals/error-modal/error-modal.component';
 import { DefaultTabViewComponent } from '../default-tab-view/default-tab-view.component';
 

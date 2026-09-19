@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `DefaultDetailsTabViewComponent` imported `ButtonViewsComponent` through the `buttons` barrel,
+  which re-exports `./legacy`, whose buttons import the `views` barrel, which re-exports this
+  component. The cycle left one of the component's own imports undefined at evaluation time and
+  broke any attempt to instantiate it outside a fully booted application. It now imports the
+  button by its concrete path.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.4.2] - 2026-09-20
