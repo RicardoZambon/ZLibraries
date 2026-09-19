@@ -21,6 +21,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A details tab with child views no longer loses its ribbon after you visit another tab and come
+  back.** Every button of the child view disappeared -- filter, clear filters, refresh, export --
+  while the grid below carried on showing its filtered rows, and nothing brought them back short of
+  switching views.
+
+  A child view publishes its ribbon from `ngAfterViewInit`, and the router only names the active
+  view afterwards, so the first template of a tab was cached under an empty id. Looking it up later
+  under the real name missed and emptied the ribbon. It never recovered because a tab being
+  re-activated has its child **re-attached** rather than re-created, so `ngAfterViewInit` does not
+  run again and nothing publishes a second time.
+
+  A list screen was unaffected: it has no view switching, so the lookup never happened.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.4.0] - 2026-09-16

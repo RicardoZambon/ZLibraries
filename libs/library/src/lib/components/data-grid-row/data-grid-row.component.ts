@@ -56,7 +56,7 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   protected selected: boolean = false;
 
   private _rowData!: any;
-  private isWidthSet: { [column: number]: boolean } = {};
+  private hasMeasured: { [column: number]: boolean } = {};
   //#endregion
 
   //#region Properties
@@ -98,18 +98,25 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
 
   //#region Event handlers
   protected onResize(colIndex: number, event: ResizeObserverEntry): void {
-    if (this.isWidthSet[colIndex]) {
-      return;
-    }
-
     const width: number = event.contentRect.width;
-    if (width <= 0) {
+
+    // The very first callback can arrive before the grid is laid out and reports zero for every
+    // column; taking that at face value would pin the heading at zero. Once a column has measured
+    // something real, a later zero is believable -- that is a 1fr column collapsing, and the
+    // heading has to collapse with it or every column to its right sits under the wrong one.
+    if (width <= 0 && !this.hasMeasured[colIndex]) {
       return;
     }
 
-    if (this.columns[colIndex].realSize != width) {
+    this.hasMeasured[colIndex] = true;
+
+    // Reported on every change, not just the first. The body lays the columns out as a CSS grid of
+    // minmax(x, min-content), so a column is only as wide as the content currently rendered --
+    // which virtual scrolling keeps changing. Measuring once and latching left the header copying
+    // a width the body no longer had, and with many columns that drift accumulated into cells
+    // sitting under the wrong heading.
+    if (this.columns[colIndex].realSize !== width) {
       this.columns[colIndex].realSize = width;
-      this.isWidthSet[colIndex] = true;
     }
   }
 

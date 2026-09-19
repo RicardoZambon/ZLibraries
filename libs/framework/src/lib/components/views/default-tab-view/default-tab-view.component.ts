@@ -54,7 +54,9 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
     this.tabViewService.onViewChanged
       .pipe(takeUntil(this.destroy$))
       .subscribe((viewId: string) => {
-        this.updateRibbonTemplate(this.ribbonViewTemplate[viewId]); 
+        this.claimUnnamedRibbon(viewId);
+
+        this.updateRibbonTemplate(this.ribbonViewTemplate[viewId]);
       });
   }
   //#endregion
@@ -66,6 +68,27 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
   //#endregion
 
   //#region Private methods
+  /**
+   * Claims the ribbon published before the active view had a name.
+   *
+   * A child view publishes its ribbon from ngAfterViewInit, and the router only names the active
+   * view afterwards, so the first template of a tab is always cached under an empty id. Looking it
+   * up later under the real one misses, and the ribbon is emptied -- permanently, because a tab
+   * being re-activated has its child re-attached rather than re-created, so nothing publishes
+   * again. That is what left a details tab with children showing no buttons at all after visiting
+   * another tab and coming back.
+   *
+   * @param viewId The view that has just become active.
+   */
+  private claimUnnamedRibbon(viewId: string): void {
+    if (!viewId || this.ribbonViewTemplate[viewId] !== undefined || this.ribbonViewTemplate[''] === undefined) {
+      return;
+    }
+
+    this.ribbonViewTemplate[viewId] = this.ribbonViewTemplate[''];
+    delete this.ribbonViewTemplate[''];
+  }
+
   private updateRibbonTemplate(template: TemplateRef<any> | undefined): void {
     this.ribbonTemplate = template;
 

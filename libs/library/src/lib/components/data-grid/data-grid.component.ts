@@ -4,7 +4,7 @@ import { NgFor, NgIf, NgStyle } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, Input, NgZone, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { debounceTime, filter, Subject, takeUntil } from 'rxjs';
+import { debounceTime, filter, fromEvent, Subject, takeUntil } from 'rxjs';
 import { IGridColumn } from '../../models';
 import { DataGridConfigs } from '../../models/configs';
 import { DataGridDataset } from '../../services';
@@ -42,6 +42,7 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
   protected hasFailed: boolean = false;
   protected headerRightMargin: number = 0;
+  protected headerScrollLeft: number = 0;
   protected loading: boolean = false;
 
   private bodyResized$: Subject<void> = new Subject<void>();
@@ -189,6 +190,29 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
   }
 
   public ngAfterViewInit(): void {
+    // The rows scroll sideways inside the CDK viewport while the header sits outside it, so the
+    // header has to be moved by hand or the headings stay behind as the cells travel. Read outside
+    // Angular and written back inside it, because this fires for every frame of a scroll.
+    const viewportElement: HTMLElement | undefined = this.viewport?.elementRef?.nativeElement;
+
+    if (viewportElement) {
+      this.ngZone.runOutsideAngular(() => {
+        fromEvent(viewportElement, 'scroll')
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(() => {
+            const scrollLeft: number = viewportElement.scrollLeft;
+            if (this.headerScrollLeft === scrollLeft) {
+              return;
+            }
+
+            this.ngZone.run(() => {
+              this.headerScrollLeft = scrollLeft;
+              this.changeDetectorRef.detectChanges();
+            });
+          });
+      });
+    }
+
     this.viewport?.renderedRangeStream
       .pipe(takeUntil(this.destroy$))
       .subscribe((listRange: ListRange) => {
