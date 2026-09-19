@@ -41,6 +41,34 @@ describe(DefaultTabViewComponent.name, () => {
     expect(() => fixture.detectChanges()).not.toThrow();
   });
 
+  // Regression: a child view publishes its ribbon from ngAfterViewInit, and the router only names
+  // the active view afterwards, so the first template of a tab is cached under an empty id. Looking
+  // it up later under the real name missed and emptied the ribbon -- for good, because a tab being
+  // re-activated has its child re-attached rather than re-created, so nothing ever publishes again.
+  // That is what left a details tab with child views showing no buttons after visiting another tab.
+  it('keeps a ribbon published before the active view had a name', () => {
+    const fixture: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
+    fixture.detectChanges();
+
+    const view: DefaultTabViewComponent = fixture.debugElement
+      .query(By.directive(DefaultTabViewComponent)).componentInstance;
+    const service: TabViewService = fixture.debugElement
+      .query(By.directive(DefaultTabViewComponent)).injector.get(TabViewService);
+
+    // The child publishes while the view is still unnamed, exactly as ngAfterViewInit does.
+    service.updateRibbonTemplate(fixture.componentInstance.ribbonTemplate);
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('.ribbon-button'))).not.toBeNull();
+
+    // The router then names it, which is what used to drop the ribbon.
+    service.setActiveView('items');
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('.ribbon-button'))).not.toBeNull();
+    expect(view).toBeTruthy();
+  });
+
   it('should render an empty ribbon when no view publishes a ribbon template', () => {
     const fixture: ComponentFixture<DefaultTabViewComponent> = TestBed.createComponent(DefaultTabViewComponent);
     fixture.detectChanges();
