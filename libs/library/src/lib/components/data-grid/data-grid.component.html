@@ -6,7 +6,11 @@
 <div class="header"
 [class.hide]="isHideColumns"
 [style.padding-right.px]="headerRightMargin">
-    <div class="header-row">
+    <!-- Translated by however far the body is scrolled sideways. The rows scroll inside the CDK
+         viewport and the header sits outside it, so without this the headings simply stay put
+         while the cells move away from them. -->
+    <div class="header-row"
+    [style.transform]="headerScrollLeft ? 'translateX(-' + headerScrollLeft + 'px)' : null">
         <div *ngIf="isShowMultiSelect"
         class="header-cell selection"
         [ngStyle]="{
@@ -15,10 +19,18 @@
             &nbsp;
         </div>
         
+        <!-- A measured zero is a width, not the absence of one: it is a 1fr column that collapsed,
+             and its heading has to collapse too. The old test read `realSize ?? 0 > 0`, which binds
+             as `realSize ?? (0 > 0)` and so turned zero into no width at all.
+
+             Such a heading is removed rather than merely made zero wide, because a flex item still
+             takes a gap on each side while the body grid allows the collapsed track only one, and
+             that spare gap pushed every heading to its right out by 16px. -->
         <div *ngFor="let column of columns"
         class="header-cell"
         [ngStyle]="{
-            'width.px': column.realSize ?? 0 > 0 ? column.realSize : null
+            'display': column.realSize === 0 ? 'none' : null,
+            'width.px': column.realSize ?? null
         }">
             <span>{{ column.headerName | translate }}</span>
         </div>

@@ -25,7 +25,7 @@
 }
 
 .header {
-    @apply font-bold bg-gray-200/40 border-b border-gray-300/90;
+    @apply font-bold bg-gray-200/40 border-b border-gray-300/90 overflow-hidden;
 
     &.hide {
         @apply hidden;
@@ -38,8 +38,12 @@
     .header-cell {
         @apply whitespace-nowrap overflow-hidden text-ellipsis;
 
+        // Neither grows nor shrinks: the width comes from measuring the column in the body, and
+        // anything else here undoes that. Shrinking is what compressed every heading once the
+        // columns together were wider than the view, so each one sat a little further left than
+        // its cells -- a drift that grew with each column.
         &:not(.selection) {
-            @apply flex-grow;
+            @apply flex-none;
         }
     }
 }

@@ -21,6 +21,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`lib-data-grid` headings now sit over their own column.** On a grid with many columns each
+  heading drifted further from its cells than the last -- up to 263px on a fourteen-column screen --
+  and scrolling sideways separated them completely.
+
+  The body lays the columns out as a CSS grid inside the CDK viewport; the heading row is a flex
+  row outside it that copies each column's measured width. Four things pulled the two apart:
+
+  - The heading cells could **shrink**, so once the columns together were wider than the view every
+    heading was compressed a little and the error accumulated across the row.
+  - The heading row **did not follow the body sideways**. The rows scroll inside the viewport and
+    the headings simply stayed where they were.
+  - A column was **measured once and never again**, while the body keeps resizing its
+    `minmax(x, min-content)` columns as virtual scrolling brings different content into view.
+  - A column measured at **zero** -- a `1fr` column collapsed for want of room -- left its heading
+    with no width at all, so it kept its text width and shoved everything to its right along.
+
+  Headings are now fixed to the measured width, translate with the body's horizontal scroll, track
+  every resize, and a heading whose column has collapsed is removed rather than left taking a gap
+  the body does not have. Measured in a running application the drift is zero across every column,
+  at rest and scrolled.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.6.0] - 2026-09-16
