@@ -1,11 +1,12 @@
 import { NgStyle } from '@angular/common';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'lib-group-accordion',
   templateUrl: './group-accordion.component.html',
   styleUrls: ['./group-accordion.component.scss'],
   host: { '[class.collapsed]': 'collapsed' },
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [NgStyle],
 })
 export class GroupAccordionComponent {

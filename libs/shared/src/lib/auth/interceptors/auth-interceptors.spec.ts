@@ -16,7 +16,7 @@ jest.mock(
       }
     },
   }),
-  { virtual: true }
+  { virtual: true },
 );
 
 // Mock services barrel

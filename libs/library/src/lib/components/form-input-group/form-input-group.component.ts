@@ -1,5 +1,5 @@
-import { KeyValuePipe, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { Component, inject, Input, OnInit, TemplateRef } from '@angular/core';
+import { KeyValuePipe, NgStyle, NgTemplateOutlet } from '@angular/common';
+import { Component, inject, Input, OnInit, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, takeUntil } from 'rxjs';
@@ -11,7 +11,8 @@ import { FormInputComponent } from '../form-input/form-input.component';
   selector: 'lib-form-input-group',
   templateUrl: './form-input-group.component.html',
   styleUrls: ['./form-input-group.component.scss'],
-  imports: [FormInputComponent, KeyValuePipe, NgFor, NgIf, NgStyle, NgTemplateOutlet, TranslatePipe],
+  imports: [FormInputComponent, KeyValuePipe, NgStyle, NgTemplateOutlet, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.full-height]': 'isFullHeight',
     // Angular keeps static attributes in the DOM even when a directive consumes them as an
@@ -93,7 +94,7 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
     this.formService.fieldRefreshed
       .pipe(
         takeUntil(this.destroy$),
-        filter((field: { fieldName?: string; value?: any; loading?: boolean }) => field.fieldName === this.controlName)
+        filter((field: { fieldName?: string; value?: any; loading?: boolean }) => field.fieldName === this.controlName),
       )
       .subscribe((field: { fieldName?: string; value?: any; loading?: boolean }) => {
         this.loadingField = field.loading ?? false;

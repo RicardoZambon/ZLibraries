@@ -1,6 +1,6 @@
 import { ListRange } from '@angular/cdk/collections';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
-import { NgFor, NgIf, NgStyle } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -12,6 +12,7 @@ import {
   OnInit,
   ViewChild,
   OnDestroy,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -29,7 +30,8 @@ import { DataGridRowComponent } from '../data-grid-row/data-grid-row.component';
   host: {
     '[class.no-borders]': 'showButtons',
   },
-  imports: [DataGridRowComponent, NgFor, NgIf, NgStyle, ScrollingModule, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [DataGridRowComponent, NgStyle, ScrollingModule, TranslatePipe],
 })
 export class DataGridComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   //#region ViewChilds, Inputs, Outputs
@@ -122,7 +124,7 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
   protected get selectionColWidth(): string {
     return this.selectionColRealSize
       ? `${this.selectionColRealSize}px`
-      : this.configs.multiSelectSize ?? 'minmax(1.5rem,min-content)';
+      : (this.configs.multiSelectSize ?? 'minmax(1.5rem,min-content)');
   }
 
   protected get shouldDisplayMessageWhenEmpty(): boolean {
@@ -142,7 +144,7 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
     this.router.events
       .pipe(
         takeUntil(this.destroy$),
-        filter((events: any) => events instanceof NavigationStart || events instanceof NavigationEnd)
+        filter((events: any) => events instanceof NavigationStart || events instanceof NavigationEnd),
       )
       .subscribe((event: NavigationStart | NavigationEnd) => {
         if (event instanceof NavigationStart && this.isGridCurrentUrl) {

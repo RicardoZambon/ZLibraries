@@ -39,7 +39,10 @@ export abstract class AuthService {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(protected jwtHelper: JwtHelperService, protected tabService: TabService) {}
+  constructor(
+    protected jwtHelper: JwtHelperService,
+    protected tabService: TabService,
+  ) {}
   //#endregion
 
   //#region Event handlers
@@ -58,7 +61,7 @@ export abstract class AuthService {
     }
 
     return this.actionsCache$.pipe(
-      map((actions: string[]) => actions.includes(this.adminAction) || actions.includes(actionToCheck))
+      map((actions: string[]) => actions.includes(this.adminAction) || actions.includes(actionToCheck)),
     );
   }
 
@@ -79,10 +82,10 @@ export abstract class AuthService {
           actionsToCheck.map(
             (actionsToCheck: string) =>
               (checkForAdministrativeMaster && actions.indexOf(ADMINISTRATIVE_MASTER_ACTION) >= 0) ||
-              actions.indexOf(actionsToCheck) >= 0
-          )
-        )
-      )
+              actions.indexOf(actionsToCheck) >= 0,
+          ),
+        ),
+      ),
     );
   }
 
@@ -97,7 +100,7 @@ export abstract class AuthService {
   protected setStorage(
     key: 'username' | 'token' | 'refreshToken' | 'userInfo',
     value: string | null,
-    useLocalStorage: boolean | null = null
+    useLocalStorage: boolean | null = null,
   ) {
     if (useLocalStorage === null) {
       useLocalStorage = sessionStorage.getItem(key) === null;

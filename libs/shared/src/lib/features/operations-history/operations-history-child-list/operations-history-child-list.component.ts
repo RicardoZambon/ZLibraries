@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ChildList } from '@zambon-dev/framework';
 import { DataGridComponent, DataGridDataset } from '@zambon-dev/library';
 import { OperationsHistoryDataset } from '../../../datasets';
@@ -10,6 +10,7 @@ import { OperationsHistoryModalComponent } from '../operations-history-modal/ope
   templateUrl: './operations-history-child-list.component.html',
   styleUrls: ['./operations-history-child-list.component.scss'],
   imports: [DataGridComponent, OperationsHistoryModalComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: DataGridDataset, useClass: OperationsHistoryDataset }],
 })
 export class OperationsHistoryChildListComponent extends ChildList<any> implements AfterViewInit {

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { AfterViewInit, Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ChildList } from '@zambon-dev/framework';
 import { DataGridComponent, DataGridDataset } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -11,6 +11,7 @@ import { UtcDatePipe } from '../../../pipes';
   templateUrl: './services-history-child-list.component.html',
   styleUrls: ['./services-history-child-list.component.scss'],
   imports: [DataGridComponent, DatePipe, UtcDatePipe, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: DataGridDataset, useClass: ServicesHistoryDataset }],
 })
 export class ServicesHistoryChildListComponent extends ChildList<any> implements AfterViewInit {

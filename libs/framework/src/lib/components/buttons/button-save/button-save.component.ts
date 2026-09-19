@@ -1,6 +1,5 @@
-import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, forwardRef, inject, Input, ViewChild } from '@angular/core';
+import { Component, forwardRef, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { DataProviderService, FormService, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { Observable, take, throwError } from 'rxjs';
@@ -13,7 +12,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-save',
   templateUrl: './button-save.component.html',
-  imports: [ErrorModalComponent, NgIf, RibbonButtonComponent],
+  imports: [ErrorModalComponent, RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonSaveComponent) }],
 })
 export class ButtonSaveComponent extends BaseButton {
@@ -81,7 +81,7 @@ export class ButtonSaveComponent extends BaseButton {
               const detailsRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
                 this.router.routerState.root.snapshot,
                 FRAMEWORK_VIEW_TYPE,
-                FrameworkViewType.Details
+                FrameworkViewType.Details,
               );
               const savedEntityUrl = `${RouteHelper.getRouteURL(detailsRoute!.parent!)}/${model.id}`;
               const currentRouteUrl: string = RouteHelper.getRouteURL(detailsRoute!);
@@ -110,7 +110,7 @@ export class ButtonSaveComponent extends BaseButton {
               const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
                 this.router.routerState.root.snapshot,
                 FRAMEWORK_VIEW_TYPE,
-                FrameworkViewType.Details
+                FrameworkViewType.Details,
               );
               const url = `${RouteHelper.getRouteURL(targetRoute!.parent!)}/${model.id}`;
 
@@ -162,15 +162,12 @@ export class ButtonSaveComponent extends BaseButton {
     const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
       this.router.routerState.root.snapshot,
       FRAMEWORK_VIEW_TYPE,
-      FrameworkViewType.Details
+      FrameworkViewType.Details,
     );
 
-    let url = '';
-    if (targetRoute) {
-      url = RouteHelper.getRouteURL(targetRoute.parent!);
-    } else {
-      url = RouteHelper.getRouteURL(this.router.routerState.root.snapshot, true);
-    }
+    const url: string = targetRoute
+      ? RouteHelper.getRouteURL(targetRoute.parent!)
+      : RouteHelper.getRouteURL(this.router.routerState.root.snapshot, true);
 
     const tab: ITab = new Tab({ entityBaseUrl: `${url}/new`, url: `${url}/new` });
     this.tabService.navigateCurrentTab(tab);

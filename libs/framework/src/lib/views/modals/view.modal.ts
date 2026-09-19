@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FormService, IModal } from '@zambon-dev/library';
 import { Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ModalBase } from './modal-base';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class ViewModal<TEntityModel> extends ModalBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('modal') protected modalComponent!: IModal;

@@ -61,7 +61,7 @@ jest.mock(
     },
     TabService: jest.fn(),
   }),
-  { virtual: true }
+  { virtual: true },
 );
 
 import { TestBed } from '@angular/core/testing';

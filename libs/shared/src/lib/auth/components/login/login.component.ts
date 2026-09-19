@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -11,7 +10,8 @@ import { LanguageSelectorComponent } from '../language-selector/language-selecto
   selector: 'shared-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [LanguageSelectorComponent, NgIf, ReactiveFormsModule, RouterModule, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [LanguageSelectorComponent, ReactiveFormsModule, RouterModule, TranslatePipe],
 })
 export class LoginComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -69,7 +69,7 @@ export class LoginComponent implements OnInit {
           tap(() => {
             this.formState.success = true;
           }),
-          finalize(() => (this.formState.loading = false))
+          finalize(() => (this.formState.loading = false)),
         )
         .subscribe({
           next: () => {

@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, forwardRef, inject, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRouteSnapshot, NavigationEnd, Route, Router, UrlSegment } from '@angular/router';
 import { DataProviderService, IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { filter, takeUntil } from 'rxjs';
@@ -11,7 +10,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-views',
   templateUrl: './button-views.component.html',
-  imports: [NgIf, RibbonButtonComponent],
+  imports: [RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonViewsComponent) }],
 })
 export class ButtonViewsComponent extends BaseButton implements OnInit {
@@ -37,7 +37,7 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
         (option.allowedActions === undefined ||
           option.allowedActions.length === 0 ||
           option.isAccessAllowed === true ||
-          (option.isAccessAllowed === undefined && option.allowedActions?.length > 0))
+          (option.isAccessAllowed === undefined && option.allowedActions?.length > 0)),
     );
   }
 
@@ -109,7 +109,7 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
     this.router.events
       .pipe(
         filter((event: any) => event instanceof NavigationEnd),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
       )
       .subscribe((event: NavigationEnd) => {
         if (this.detailsViewRoute) {
@@ -119,7 +119,7 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
           const currentRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
             this.router.routerState.root.snapshot,
             FRAMEWORK_VIEW_TYPE,
-            FrameworkViewType.Details
+            FrameworkViewType.Details,
           );
 
           if (currentRoute) {

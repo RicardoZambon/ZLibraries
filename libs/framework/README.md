@@ -19,13 +19,13 @@ All peers must be present in the consuming application:
 
 | Package                           | Range     |
 | --------------------------------- | --------- |
-| `@angular/common`                 | `^19.1.0` |
-| `@angular/core`                   | `^19.1.0` |
-| `@angular/forms`                  | `^19.1.0` |
-| `@angular/router`                 | `^19.1.0` |
+| `@angular/common`                 | `^22.0.0` |
+| `@angular/core`                   | `^22.0.0` |
+| `@angular/forms`                  | `^22.0.0` |
+| `@angular/router`                 | `^22.0.0` |
 | `@auth0/angular-jwt`              | `^5.2.0`  |
 | `@ngx-translate/core`             | `^16.0.4` |
-| `@zambon-dev/library`             | `^1.6.0`  |
+| `@zambon-dev/library`             | `^2.0.0`  |
 | `ngx-translate-multi-http-loader` | `^19.0.2` |
 | `rxjs`                            | `^7.8.0`  |
 

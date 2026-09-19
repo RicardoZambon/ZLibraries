@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataProviderService, FormService } from '@zambon-dev/library';
 import { BaseButton } from './base-button';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class BaseFormViewButton extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   //#endregion

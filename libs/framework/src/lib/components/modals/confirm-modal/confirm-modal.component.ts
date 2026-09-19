@@ -1,6 +1,6 @@
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, Input, ViewChild } from '@angular/core';
+import { Component, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ControlContainer, FormGroup } from '@angular/forms';
 import { FormService, IModal, ModalComponent } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -10,7 +10,8 @@ import { BackendFormValidationHelper } from '../../../helpers';
   selector: 'framework-confirm-modal',
   templateUrl: './confirm-modal.component.html',
   styleUrls: ['./confirm-modal.component.scss'],
-  imports: [ModalComponent, NgClass, NgIf, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [ModalComponent, NgClass, TranslatePipe],
 })
 export class ConfirmModalComponent implements IModal {
   //#region ViewChilds, Inputs, Outputs

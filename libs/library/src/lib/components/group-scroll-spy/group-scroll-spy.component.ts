@@ -1,5 +1,4 @@
-import { NgFor } from '@angular/common';
-import { Component, ContentChildren, QueryList, ViewChild } from '@angular/core';
+import { Component, ContentChildren, QueryList, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ScrollSpyDirective } from '../../directives/scroll-spy.directive';
 import { GroupAccordionComponent } from '../group-accordion/group-accordion.component';
 
@@ -7,7 +6,8 @@ import { GroupAccordionComponent } from '../group-accordion/group-accordion.comp
   selector: 'lib-group-scroll-spy',
   templateUrl: './group-scroll-spy.component.html',
   styleUrls: ['./group-scroll-spy.component.scss'],
-  imports: [NgFor, ScrollSpyDirective],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [ScrollSpyDirective],
 })
 export class GroupScrollSpyComponent {
   @ViewChild(ScrollSpyDirective) scrollSpy!: ScrollSpyDirective;

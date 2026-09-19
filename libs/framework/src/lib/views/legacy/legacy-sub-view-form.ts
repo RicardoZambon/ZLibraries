@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataProviderService, FormService } from '@zambon-dev/library';
 import { Observable, take, tap, throwError } from 'rxjs';
@@ -9,7 +9,7 @@ import { ViewBase } from '../view-base';
  * @deprecated Use standalone {@link FormView} instead. Migrate by extending FormView
  * and using standalone component imports with inject() for dependency injection.
  */
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class LegacySubViewForm extends ViewBase implements OnInit {
   @Input() entityId?: number;
   @Input() set model(value: any | null) {
@@ -45,7 +45,10 @@ export abstract class LegacySubViewForm extends ViewBase implements OnInit {
 
   protected dataProvider: DataProviderService<any> | null;
 
-  constructor(protected formBuilder: FormBuilder, protected formService: FormService) {
+  constructor(
+    protected formBuilder: FormBuilder,
+    protected formService: FormService,
+  ) {
     super();
 
     this.dataProvider = inject(DataProviderService, { optional: true });

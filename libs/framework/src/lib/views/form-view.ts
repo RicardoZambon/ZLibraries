@@ -1,10 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataProviderService, FormService } from '@zambon-dev/library';
 import { take, takeUntil } from 'rxjs';
 import { TabViewBase } from './tabview-base';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class FormView<TEntityModel> extends TabViewBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   //#endregion

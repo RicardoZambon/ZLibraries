@@ -66,7 +66,7 @@ export abstract class DataGridDataset extends GridDataset {
           selected: false,
         };
         return keys;
-      }, {})
+      }, {}),
     );
   }
 
@@ -198,7 +198,7 @@ export abstract class DataGridDataset extends GridDataset {
             selected: true,
           };
           return keys;
-        }, {})
+        }, {}),
       );
     }
   }

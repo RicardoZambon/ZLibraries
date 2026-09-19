@@ -1,5 +1,5 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { Component, inject, Input, OnInit, TemplateRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, Input, OnInit, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs';
 import { MultiSelectResultDataset } from '../../../services/datasets/multi-select-result.dataset';
@@ -13,7 +13,8 @@ import { DataGridDataset } from '../../../services';
   host: {
     class: 'flex-grow',
   },
-  imports: [CommonModule, NgFor, NgIf, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [CommonModule, TranslatePipe],
 })
 export class MultiSelectResultGridComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs

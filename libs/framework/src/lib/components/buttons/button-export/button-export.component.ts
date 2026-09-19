@@ -1,6 +1,5 @@
-import { NgIf } from '@angular/common';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Component, forwardRef, inject, Input } from '@angular/core';
+import { Component, forwardRef, inject, Input, ChangeDetectionStrategy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DataGridDataset, IListParameters, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { take } from 'rxjs';
@@ -13,7 +12,8 @@ export const MaxExportRows = 50000;
 @Component({
   selector: 'framework-button-export',
   templateUrl: './button-export.component.html',
-  imports: [NgIf, RibbonButtonComponent],
+  imports: [RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonExportComponent) }],
 })
 export class ButtonExportComponent extends BaseButton {

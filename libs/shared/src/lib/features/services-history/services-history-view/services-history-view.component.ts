@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ViewBase } from '@zambon-dev/framework';
 import { DataProviderService } from '@zambon-dev/library';
@@ -10,6 +10,7 @@ import { ServicesHistoryChildListComponent } from '../services-history-child-lis
   selector: 'shared-services-history-view',
   templateUrl: './services-history-view.component.html',
   styleUrls: ['./services-history-view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [OperationsHistoryChildListComponent, ServicesHistoryChildListComponent],
 })
 export class ServicesHistoryViewComponent extends ViewBase {

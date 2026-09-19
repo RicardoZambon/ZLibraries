@@ -1,20 +1,24 @@
-<label *ngIf="showLabel" [attr.for]="controlName"> {{ label | translate }}: </label>
+@if (showLabel) {
+  <label [attr.for]="controlName"> {{ label | translate }}: </label>
+}
 
 <div class="field" [class.col-span-2]="!showLabel" [ngStyle]="{ 'align-content': alignContent }">
-  <div class="loading" *ngIf="loadingField || (formService.loading && formService.model === null); else content">
-    <div></div>
-  </div>
-
-  <ng-template #content>
-    <ng-container *ngTemplateOutlet="template ? template : defaultTemplate"> </ng-container>
-
-    <div class="validations" [class.show]="formControl?.invalid" *ngIf="formControl?.touched">
-      <ng-container *ngFor="let error of formControl?.errors | keyvalue">
-        <span *ngIf="hasValidation(error.key)">{{ validations[error.key] | translate }}</span>
-        <ng-template #defaultValidationError>{{ error.key }}</ng-template>
-      </ng-container>
+  @if (loadingField || (formService.loading && formService.model === null)) {
+    <div class="loading">
+      <div></div>
     </div>
-
+  } @else {
+    <ng-container *ngTemplateOutlet="template ? template : defaultTemplate"> </ng-container>
+    @if (formControl?.touched) {
+      <div class="validations" [class.show]="formControl?.invalid">
+        @for (error of $safeNavigationMigration(formControl?.errors) | keyvalue; track error) {
+          @if (hasValidation(error.key)) {
+            <span>{{ validations[error.key] | translate }}</span>
+          }
+          <ng-template #defaultValidationError>{{ error.key }}</ng-template>
+        }
+      </div>
+    }
     <ng-template #defaultTemplate>
       <lib-form-input
         #formInput
@@ -33,7 +37,8 @@
       >
       </lib-form-input>
     </ng-template>
-
-    <span class="text-sm italic" *ngIf="hasNotes"> *{{ notes | translate }} </span>
-  </ng-template>
+    @if (hasNotes) {
+      <span class="text-sm italic"> *{{ notes | translate }} </span>
+    }
+  }
 </div>

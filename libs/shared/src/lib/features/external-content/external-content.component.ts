@@ -1,5 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, DOCUMENT, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ButtonComponent, TabService, TabViewBase } from '@zambon-dev/framework';
@@ -23,6 +22,7 @@ import { ExternalContentService, ExternalUrlResolverService } from '../../servic
   selector: 'shared-external-content',
   templateUrl: './external-content.component.html',
   styleUrls: ['./external-content.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ButtonComponent, RibbonGroupComponent, TranslatePipe],
 })
 export class ExternalContentComponent extends TabViewBase implements OnInit, OnDestroy {
@@ -176,7 +176,7 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
     if (!this.externalUrlResolverService.isAllowed(url) || !this.isOriginAllowed(url)) {
       console.error(
         `Embedded menu item "${entry.label}" points to an address that is not allowed and was not displayed.`,
-        url
+        url,
       );
       this.isBlocked = true;
 

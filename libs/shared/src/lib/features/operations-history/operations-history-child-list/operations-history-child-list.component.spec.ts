@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { GridConfigsProvider } from '@zambon-dev/library';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,13 +9,13 @@ describe(OperationsHistoryChildListComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [OperationsHistoryChildListComponent, TranslateModule.forRoot()],
-      providers: [provideHttpClient(), provideHttpClientTesting(), GridConfigsProvider],
+      providers: [provideHttpClient(withXhr()), provideHttpClientTesting(), GridConfigsProvider],
     }).compileComponents();
   });
 
   it('should create', () => {
     const fixture: ComponentFixture<OperationsHistoryChildListComponent> = TestBed.createComponent(
-      OperationsHistoryChildListComponent
+      OperationsHistoryChildListComponent,
     );
     const component: OperationsHistoryChildListComponent = fixture.componentInstance;
 

@@ -1,5 +1,5 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { Component, EventEmitter, HostListener, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IRibbonButtonOption } from '../../models/ribbon-button-option';
 
@@ -11,7 +11,8 @@ import { IRibbonButtonOption } from '../../models/ribbon-button-option';
     '[class.show]': 'showDropdown',
   },
   styleUrls: ['./ribbon-button.component.scss'],
-  imports: [NgClass, NgFor, NgIf, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [NgClass, TranslatePipe],
 })
 export class RibbonButtonComponent {
   //#region ViewChilds, Inputs, Outputs
@@ -30,7 +31,7 @@ export class RibbonButtonComponent {
 
   //#region Host listeners
   @HostListener('body:mousedown', ['$event'])
-  private bodyMouseDown(event: MouseEvent): void {
+  protected bodyMouseDown(event: MouseEvent): void {
     if (this.showDropdown) {
       const target: HTMLElement = <HTMLElement>event.target;
 
@@ -44,22 +45,19 @@ export class RibbonButtonComponent {
   }
 
   @HostListener('body:mouseup', ['$event'])
-  private bodyMouseUp(event: MouseEvent): void {
+  protected bodyMouseUp(event: MouseEvent): void {
     if (this.showDropdown && this.clickedOutside) {
       this.showDropdown = false;
     }
   }
 
   @HostListener('document:keydown.escape', ['$event'])
-  private documentKeyDown(event: KeyboardEvent): void {
+  protected documentKeyDown(event: Event): void {
     event = event || window.event;
 
-    let isEscape = false;
-    if ('key' in event) {
-      isEscape = event.key === 'Escape' || event.key === 'Esc';
-    } else {
-      isEscape = (<KeyboardEvent>event).keyCode === 27;
-    }
+    // keyCode is the fallback for engines predating KeyboardEvent.key.
+    const isEscape: boolean =
+      'key' in event ? event.key === 'Escape' || event.key === 'Esc' : (<KeyboardEvent>event).keyCode === 27;
 
     if (this.showDropdown && isEscape) {
       this.showDropdown = false;

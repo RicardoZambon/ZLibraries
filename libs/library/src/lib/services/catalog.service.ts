@@ -29,7 +29,7 @@ export class CatalogService {
     endpoint: string,
     maxResults: number,
     criteria?: string,
-    filters: { [key: string]: string } | null = null
+    filters: { [key: string]: string } | null = null,
   ): Observable<ICatalogResult> {
     return this.http.post<ICatalogResult>(`${endpoint}`, { maxResults, criteria, filters });
   }

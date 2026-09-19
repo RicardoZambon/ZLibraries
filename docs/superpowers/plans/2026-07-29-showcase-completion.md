@@ -96,7 +96,7 @@ Apply ONLY the `form-input-group` change (Step 2), then load the showcase story 
       backgroundColor: cs.backgroundColor,
     },
     null,
-    2
+    2,
   );
 })();
 ```
@@ -262,7 +262,7 @@ Navigate to each list screen and measure:
       tabContentHeight: tabContent ? Math.round(tabContent.getBoundingClientRect().height) : 'ABSENT',
     },
     null,
-    2
+    2,
   );
 })();
 ```
@@ -282,7 +282,7 @@ Then open the **Dashboard** and confirm the regression case:
       contentVisible: (dash?.innerText || '').includes('Recent activity'),
     },
     null,
-    2
+    2,
   );
 })();
 ```
@@ -396,7 +396,7 @@ const SHOWCASE_LOGO: string =
       '<rect width="32" height="32" rx="7" fill="#006bb6"/>' +
       '<path d="M9 22.5 17.5 9.5h5.5L14.5 22.5z" fill="#ffffff"/>' +
       '<circle cx="11" cy="11" r="2.5" fill="#ffffff"/>' +
-      '</svg>'
+      '</svg>',
   );
 
 // Plain text, NOT translation keys: NotificationsComponent renders `{{ item.title }}` and
@@ -501,7 +501,7 @@ Expected: exit 0.
       sidebarFooter: (document.querySelector('.sidebar-footer')?.innerText || 'EMPTY').trim(),
     },
     null,
-    2
+    2,
   );
 })();
 ```
@@ -651,7 +651,7 @@ Then switch language via the top bar's language selector to Portuguese and confi
       stillEnglishDashboard: body.includes('Dashboard'),
     },
     null,
-    2
+    2,
   );
 })();
 ```
@@ -730,7 +730,7 @@ class ShowcaseServicesHistoryService {
   public list(
     controllerName: string,
     _entityID: number,
-    _parameters: IListParameters
+    _parameters: IListParameters,
   ): Observable<IServicesHistoryList[]> {
     return of(showcaseServiceHistory(controllerName)).pipe(delay(SHOWCASE_LATENCY_MS));
   }
@@ -742,7 +742,7 @@ class ShowcaseOperationsHistoryService {
     _controllerName: string,
     _entityID: number,
     serviceHistoryID: number,
-    _parameters: IListParameters
+    _parameters: IListParameters,
   ): Observable<IOperationsHistoryList[]> {
     const rows: IShowcaseOperationHistoryRow[] = [
       {
@@ -832,7 +832,7 @@ Open a Users detail, then click the **Views** ribbon button and confirm it now o
       text: (view?.innerText || 'ABSENT').replace(/\s+/g, ' ').slice(0, 300),
     },
     null,
-    2
+    2,
   );
 })();
 ```
@@ -957,16 +957,16 @@ git add libs/library/CHANGELOG.md libs/framework/CHANGELOG.md libs/shared/CHANGE
 
 ## Troubleshooting
 
-| Symptom                                     | Cause                                                                             | Fix                                                                                                         |
+| Symptom | Cause | Fix |
 | ------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------- |
-| `type` attribute still present after Task 1 | Host binding does not clear statically-set attributes                             | Report BLOCKED with the probe output; the fallback is `:host` resets, a different change                    |
-| Grids still ~256px                          | Marker class missing from the host, or `::ng-deep` omitted                        | Check `document.querySelector('.framework-view-list')`; `::ng-deep` is mandatory for routed hosts (fact #6) |
-| Dashboard content clipped                   | The height rules reached a non-`TabViewList` screen                               | The selector must be `.framework-view-list`, never a bare child selector                                    |
-| Raw keys visible in the UI                  | Key missing from `storybookTranslations`, or the component doesn't self-translate | Add the key; for `lib-group-accordion` / `lib-ribbon-group` add an explicit `                               | translate` (fact #12) |
-| Dates render as `Format-DateTime`           | That key is missing                                                               | Add `Format-Date` / `Format-DateTime` (Task 4 Step 1)                                                       |
-| Clicking a service row loads no operations  | Rows lack a lowercase `id`                                                        | Emit both `ID` and `id` (fact #19)                                                                          |
-| Bell missing                                | Mock's `isEnabled` falsy, or `NotificationsService` not provided                  | Provide the mock with `isEnabled: true`                                                                     |
-| Sidebar footer empty                        | `AppConfig.version` empty                                                         | Pass `version: '1.0.0'` (no `v` prefix)                                                                     |
+| `type` attribute still present after Task 1 | Host binding does not clear statically-set attributes | Report BLOCKED with the probe output; the fallback is `:host` resets, a different change |
+| Grids still ~256px | Marker class missing from the host, or `::ng-deep` omitted | Check `document.querySelector('.framework-view-list')`; `::ng-deep` is mandatory for routed hosts (fact #6) |
+| Dashboard content clipped | The height rules reached a non-`TabViewList` screen | The selector must be `.framework-view-list`, never a bare child selector |
+| Raw keys visible in the UI | Key missing from `storybookTranslations`, or the component doesn't self-translate | Add the key; for `lib-group-accordion` / `lib-ribbon-group` add an explicit `                               | translate` (fact #12) |
+| Dates render as `Format-DateTime` | That key is missing | Add `Format-Date` / `Format-DateTime` (Task 4 Step 1) |
+| Clicking a service row loads no operations | Rows lack a lowercase `id` | Emit both `ID` and `id` (fact #19) |
+| Bell missing | Mock's `isEnabled` falsy, or `NotificationsService` not provided | Provide the mock with `isEnabled: true` |
+| Sidebar footer empty | `AppConfig.version` empty | Pass `version: '1.0.0'` (no `v` prefix) |
 
 ## Out of scope
 

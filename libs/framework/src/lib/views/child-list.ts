@@ -1,9 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DataGridDataset, DataProviderService, MultiSelectResultDataset } from '@zambon-dev/library';
 import { skip, takeUntil } from 'rxjs';
 import { ViewBase } from './view-base';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class ChildList<TEntityModel> extends ViewBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   //#endregion

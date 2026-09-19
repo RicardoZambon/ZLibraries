@@ -1,5 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ITab } from '../../../models';
 import { TabService } from '../../../services';
@@ -8,7 +7,8 @@ import { TabService } from '../../../services';
   selector: 'framework-tab-breadcrumbs',
   templateUrl: './tab-breadcrumbs.component.html',
   styleUrls: ['./tab-breadcrumbs.component.scss'],
-  imports: [NgFor, NgIf, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [TranslatePipe],
 })
 export class TabBreadcrumbsComponent {
   //#region ViewChilds, Inputs, Outputs

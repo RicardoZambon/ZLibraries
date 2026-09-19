@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ModalBase } from '@zambon-dev/framework';
 import { ModalComponent } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -8,6 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'shared-operations-history-modal',
   templateUrl: './operations-history-modal.component.html',
   styleUrls: ['./operations-history-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [JsonPipe, ModalComponent, TranslatePipe],
 })
 export class OperationsHistoryModalComponent extends ModalBase {

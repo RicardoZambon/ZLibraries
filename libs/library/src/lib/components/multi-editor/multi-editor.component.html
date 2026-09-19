@@ -13,27 +13,28 @@
 
     <div class="data">
       <div class="buttons">
-        <button
-          *ngIf="showAddButton"
-          class="btn gray-500"
-          type="button"
-          [class.disabled]="modalProcessing || gridLoading || formLoading || formGroup.invalid"
-          [disabled]="modalProcessing || gridLoading || formLoading || formGroup.invalid"
-          (click)="onNewClick()"
-        >
-          {{ addButtonLabel }}
-        </button>
-
-        <button
-          *ngIf="showDeleteButton && hasSelectedKey"
-          class="btn red-500"
-          type="button"
-          [class.disabled]="modalProcessing || gridLoading || formLoading"
-          [disabled]="modalProcessing || gridLoading || formLoading"
-          (click)="onDeleteClick()"
-        >
-          {{ removeButtonLabel }}
-        </button>
+        @if (showAddButton) {
+          <button
+            class="btn gray-500"
+            type="button"
+            [class.disabled]="modalProcessing || gridLoading || formLoading || formGroup.invalid"
+            [disabled]="modalProcessing || gridLoading || formLoading || formGroup.invalid"
+            (click)="onNewClick()"
+          >
+            {{ addButtonLabel }}
+          </button>
+        }
+        @if (showDeleteButton && hasSelectedKey) {
+          <button
+            class="btn red-500"
+            type="button"
+            [class.disabled]="modalProcessing || gridLoading || formLoading"
+            [disabled]="modalProcessing || gridLoading || formLoading"
+            (click)="onDeleteClick()"
+          >
+            {{ removeButtonLabel }}
+          </button>
+        }
       </div>
 
       <lib-form-group>

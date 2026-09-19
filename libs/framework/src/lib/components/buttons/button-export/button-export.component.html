@@ -1,13 +1,14 @@
-<lib-ribbon-button
-  *ngIf="visible"
-  label="Button-Export"
-  icon="fa-file-export"
-  [defaultOption]="defaultOption"
-  [disabled]="isButtonDisabled"
-  [loading]="loading"
-  [iconSize]="iconSize"
-  [options]="options"
-  [tooltip]="tooltip"
-  (action)="onButtonClicked($event)"
->
-</lib-ribbon-button>
+@if (visible) {
+  <lib-ribbon-button
+    label="Button-Export"
+    icon="fa-file-export"
+    [defaultOption]="defaultOption"
+    [disabled]="isButtonDisabled"
+    [loading]="loading"
+    [iconSize]="iconSize"
+    [options]="options"
+    [tooltip]="tooltip"
+    (action)="onButtonClicked($event)"
+  >
+  </lib-ribbon-button>
+}

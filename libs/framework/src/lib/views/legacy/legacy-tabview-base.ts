@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ITabView, RouterFormatter } from '@zambon-dev/library';
 import { TabService } from '../../services';
@@ -8,13 +8,16 @@ import { ViewBase } from '../view-base';
  * @deprecated Use standalone {@link TabViewBase} instead. Migrate by extending TabViewBase
  * and using standalone component imports with inject() for dependency injection.
  */
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class LegacyTabViewBase extends ViewBase implements OnInit, ITabView {
   title = '';
   url: string;
   activeView?: string;
 
-  constructor(protected route: ActivatedRoute, protected tabService: TabService) {
+  constructor(
+    protected route: ActivatedRoute,
+    protected tabService: TabService,
+  ) {
     super();
 
     this.url = RouterFormatter.getURL(this.route.snapshot);

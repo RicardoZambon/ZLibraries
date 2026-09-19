@@ -802,7 +802,7 @@ it('projects a [sidebar-action] element and keeps it visible when collapsed', ()
   const fixture = TestBed.createComponent(HostComponent);
   fixture.detectChanges();
   const action = fixture.nativeElement.querySelector(
-    '.sidebar-action [sidebar-action], .sidebar-action button[sidebar-action]'
+    '.sidebar-action [sidebar-action], .sidebar-action button[sidebar-action]',
   );
   expect(action).toBeTruthy();
   expect(action.textContent).toContain('Add');

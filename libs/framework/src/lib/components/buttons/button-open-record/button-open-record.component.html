@@ -1,10 +1,11 @@
-<lib-ribbon-button
-  *ngIf="visible"
-  icon="fa-eye"
-  label="Button-Open-Record"
-  [disabled]="disabled || !isAccessLoaded || !isSelectedOneRecord"
-  [iconSize]="iconSize"
-  [loading]="loading"
-  (action)="onButtonClicked()"
->
-</lib-ribbon-button>
+@if (visible) {
+  <lib-ribbon-button
+    icon="fa-eye"
+    label="Button-Open-Record"
+    [disabled]="disabled || !isAccessLoaded || !isSelectedOneRecord"
+    [iconSize]="iconSize"
+    [loading]="loading"
+    (action)="onButtonClicked()"
+  >
+  </lib-ribbon-button>
+}

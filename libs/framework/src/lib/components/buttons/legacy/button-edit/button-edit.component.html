@@ -1,19 +1,20 @@
-<lib-ribbon-button
-  *ngIf="visible && (!form || form.viewMode !== 'edit')"
-  [disabled]="disabled || (!!form && form.loading)"
-  [icon]="editIcon"
-  [iconSize]="iconSize"
-  [label]="editLabel"
-  [loading]="loading"
-  (action)="onEditAction()"
-></lib-ribbon-button>
-
-<lib-ribbon-button
-  *ngIf="visible && form && form.viewMode === 'edit' && !form.isNew"
-  [color]="cancelColor"
-  [disabled]="disabled || form.loading"
-  [icon]="cancelIcon"
-  [label]="cancelLabel"
-  [loading]="loading"
-  (action)="onCancelAction()"
-></lib-ribbon-button>
+@if (visible && (!form || form.viewMode !== 'edit')) {
+  <lib-ribbon-button
+    [disabled]="disabled || (!!form && form.loading)"
+    [icon]="editIcon"
+    [iconSize]="iconSize"
+    [label]="editLabel"
+    [loading]="loading"
+    (action)="onEditAction()"
+  ></lib-ribbon-button>
+}
+@if (visible && form && form.viewMode === 'edit' && !form.isNew) {
+  <lib-ribbon-button
+    [color]="cancelColor"
+    [disabled]="disabled || form.loading"
+    [icon]="cancelIcon"
+    [label]="cancelLabel"
+    [loading]="loading"
+    (action)="onCancelAction()"
+  ></lib-ribbon-button>
+}

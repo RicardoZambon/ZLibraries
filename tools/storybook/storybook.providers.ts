@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { APP_INITIALIZER, EnvironmentProviders, Provider } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -370,7 +370,7 @@ function initializeTranslate(translateService: TranslateService): () => void {
 
 export const storybookApplicationProviders: Array<Provider | EnvironmentProviders> = [
   provideAnimations(),
-  provideHttpClient(),
+  provideHttpClient(withXhr()),
   provideRouter([]),
   provideTranslateService({
     defaultLanguage: 'en',

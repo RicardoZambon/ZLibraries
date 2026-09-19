@@ -1,4 +1,4 @@
-import { Component, Injectable } from '@angular/core';
+import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
 import { DataGridComponent } from '../../components/data-grid/data-grid.component';
@@ -125,6 +125,7 @@ class TallRowsMultiSelectDataset extends DataGridDataset {
   selector: 'lib-tall-rows-multi-select-host',
   imports: [DataGridComponent],
   providers: [{ provide: DataGridDataset, useClass: TallRowsMultiSelectDataset }],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="p-4 max-w-5xl h-96">
       <lib-data-grid></lib-data-grid>

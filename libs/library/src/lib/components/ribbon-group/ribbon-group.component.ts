@@ -1,4 +1,4 @@
-import { Component, ContentChildren, Input, QueryList } from '@angular/core';
+import { Component, ContentChildren, Input, QueryList, ChangeDetectionStrategy } from '@angular/core';
 
 import { RibbonGroupChild } from '../../models/ribbon-group-child';
 
@@ -6,6 +6,7 @@ import { RibbonGroupChild } from '../../models/ribbon-group-child';
   selector: 'lib-ribbon-group',
   templateUrl: './ribbon-group.component.html',
   styleUrls: ['./ribbon-group.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: { '[class.hidden]': '!hasChildren' },
 })
 export class RibbonGroupComponent {

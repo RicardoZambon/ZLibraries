@@ -32,7 +32,7 @@ export interface ZambonSharedTranslateConfig {
 
 export function createZambonSharedTranslateLoader(
   httpBackend: HttpBackend,
-  appResources: (string | TranslationResource)[] = []
+  appResources: (string | TranslationResource)[] = [],
 ): MultiTranslateHttpLoader {
   return new MultiTranslateHttpLoader(httpBackend, [...ZAMBON_SHARED_I18N_RESOURCES, ...appResources]);
 }

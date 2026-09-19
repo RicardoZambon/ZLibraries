@@ -1,6 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterModule } from '@angular/router';
 import {
   DataProviderService,
@@ -38,6 +46,7 @@ function dataProviderFactory(route: ActivatedRoute): DataProviderService<any> {
     RouterModule,
     TranslatePipe,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     { provide: TabViewService },
     { provide: DataProviderService, useFactory: dataProviderFactory, deps: [ActivatedRoute] },
@@ -79,7 +88,7 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
 
     this.detailsViewRoute = RouteHelper.getRouteWithComponent(
       this.router.routerState.root.snapshot,
-      DefaultDetailsTabViewComponent
+      DefaultDetailsTabViewComponent,
     );
     this.hasEntityID = this.dataProviderService?.hasEntityID ?? null;
 
@@ -92,7 +101,7 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
           this.hasEntityID = this.dataProviderService!.hasEntityID;
           this.detailsViewRoute = RouteHelper.getRouteWithComponent(
             this.router.routerState.root.snapshot,
-            DefaultDetailsTabViewComponent
+            DefaultDetailsTabViewComponent,
           );
         }
 

@@ -51,7 +51,7 @@ export abstract class MultiSelectResultDataset extends GridDataset {
         this.savedChanges.emit();
         this.clearSelection();
         this.clearLoadedRows();
-      })
+      }),
     );
   }
 
@@ -98,7 +98,7 @@ export abstract class MultiSelectResultDataset extends GridDataset {
 
   private updateDisplayedRows() {
     const loadedKeys: string[] = (this.loadedKeys ?? []).filter(
-      (key: string) => this.idsToRemove.indexOf(this.getRowID(key)) < 0
+      (key: string) => this.idsToRemove.indexOf(this.getRowID(key)) < 0,
     );
 
     this.displayedIDs = loadedKeys.map((key: string) => this.getRowID(key));

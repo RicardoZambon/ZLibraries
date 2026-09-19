@@ -8,25 +8,25 @@
     [attr.aria-label]="showFlag ? (title | translate) : null"
   >
     @if (showFlag) {
-    <span class="flag flag-{{ selectedLanguage }}"></span>
+      <span class="flag flag-{{ selectedLanguage }}"></span>
     } @else {
-    {{ title | translate }}
+      {{ title | translate }}
     }
   </button>
 
   <ul>
     @for (lang of languages; track lang) {
-    <li>
-      <button
-        type="button"
-        class="dropdown-item"
-        [class.selected]="lang === selectedLanguage"
-        (click)="onSelectLanguage(lang)"
-      >
-        <span class="flag flag-{{ lang }}"></span>
-        <span class="dropdown-label">{{ 'Language-' + lang | translate }}</span>
-      </button>
-    </li>
+      <li>
+        <button
+          type="button"
+          class="dropdown-item"
+          [class.selected]="lang === selectedLanguage"
+          (click)="onSelectLanguage(lang)"
+        >
+          <span class="flag flag-{{ lang }}"></span>
+          <span class="dropdown-label">{{ 'Language-' + lang | translate }}</span>
+        </button>
+      </li>
     }
   </ul>
 </div>

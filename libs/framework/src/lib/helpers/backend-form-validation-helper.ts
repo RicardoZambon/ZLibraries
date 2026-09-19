@@ -15,7 +15,7 @@ export abstract class BackendFormValidationHelper {
       Object.keys(validationErrors).forEach((fieldName: string) => {
         setTimeout(() => {
           const controlName: string | undefined = controls.find(
-            (controlName: string) => controlName.toLocaleLowerCase() === fieldName.toLocaleLowerCase()
+            (controlName: string) => controlName.toLocaleLowerCase() === fieldName.toLocaleLowerCase(),
           );
           if (!controlName || !formGroup.get(controlName)) {
             return;

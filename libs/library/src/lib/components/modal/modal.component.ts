@@ -1,5 +1,13 @@
-import { NgIf } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  inject,
+  Input,
+  Output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { IModal } from '../../models';
 import { BaseComponent } from '../base.component';
 
@@ -11,7 +19,8 @@ import { BaseComponent } from '../base.component';
     title: '', // This is to ensure that the title input does not conflict with the native HTML title attribute.
     '[class.show]': 'isShown',
   },
-  imports: [NgIf],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [],
 })
 export class ModalComponent extends BaseComponent implements IModal {
   //#region ViewChilds, Inputs, Outputs
@@ -87,7 +96,7 @@ export class ModalComponent extends BaseComponent implements IModal {
 
   //#region Host listeners
   @HostListener('body:mousedown', ['$event'])
-  private bodyMouseDown(event: MouseEvent): void {
+  protected bodyMouseDown(event: MouseEvent): void {
     if (this.dialog && this.isShown) {
       const target: HTMLElement = <HTMLElement>event.target;
 
@@ -101,7 +110,7 @@ export class ModalComponent extends BaseComponent implements IModal {
   }
 
   @HostListener('body:mouseup', ['$event'])
-  private bodyMouseUp(event: MouseEvent): void {
+  protected bodyMouseUp(event: MouseEvent): void {
     if (this.dialog && this.isShown) {
       if (this.clickedOutside && !this.modalProcessing) {
         this.toggleModal();
@@ -110,15 +119,12 @@ export class ModalComponent extends BaseComponent implements IModal {
   }
 
   @HostListener('document:keydown.escape', ['$event'])
-  private documentKeyDown(event: KeyboardEvent): void {
+  protected documentKeyDown(event: Event): void {
     event = event || window.event;
 
-    let isEscape = false;
-    if ('key' in event) {
-      isEscape = event.key === 'Escape' || event.key === 'Esc';
-    } else {
-      isEscape = (<KeyboardEvent>event).keyCode === 27;
-    }
+    // keyCode is the fallback for engines predating KeyboardEvent.key.
+    const isEscape: boolean =
+      'key' in event ? event.key === 'Escape' || event.key === 'Esc' : (<KeyboardEvent>event).keyCode === 27;
 
     if (!this.modalProcessing && this.isShown && isEscape && document.body.classList.contains('modal-active')) {
       this.toggleModal();

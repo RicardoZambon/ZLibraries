@@ -62,6 +62,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
+**Requires Angular 22.** Every `@angular/*` peer range moved from `^19.1.0` to `^22.0.0`, and
+the package is built and tested against Angular 22.1 with TypeScript 6.0.
+
+Upgrade your application to Angular 22 first — Angular does not support skipping majors, so go
+19 → 20 → 21 → 22 with `ng update`. Angular 22 also requires Node.js 22.22.3 or newer.
+
+- Requires `ngx-resize-observer` 4.x (the Angular 22 line); the peer range moved from `^3.0.0`.
+
 **`FormInputComponent` outputs renamed.** Four outputs were named after native DOM events. Because
 `<lib-form-input>` is a real element, `(change)` and `(input)` fired a consumer's handler twice --
 once from the native event bubbling out of the inner control, once from the component -- and

@@ -56,9 +56,15 @@
       "dependencyDashboardApproval": true
     },
     {
-      "description": "@types/node tracks the Node version CI runs, not the newest release.",
+      "description": "@types/node tracks the Node version CI runs (24), not the newest release.",
       "matchPackageNames": ["@types/node"],
-      "allowedVersions": "<21"
+      "allowedVersions": "<25"
+    },
+    {
+      "description": "Held deliberately. See docs/guides/dependency-holds.md before taking any of these.",
+      "matchPackageNames": ["tailwindcss", "typescript", "@ngx-translate/core", "@fortawesome/fontawesome-free"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
     }
   ]
 }

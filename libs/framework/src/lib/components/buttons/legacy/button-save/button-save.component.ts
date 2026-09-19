@@ -1,6 +1,5 @@
-import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, forwardRef, inject, Input, ViewChild } from '@angular/core';
+import { Component, forwardRef, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormService, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { take } from 'rxjs';
 import { BackendFormValidationHelper } from '../../../../helpers';
@@ -12,7 +11,8 @@ import { BaseButton } from '../../base-button';
 @Component({
   selector: 'framework-button-save-legacy',
   templateUrl: './button-save.component.html',
-  imports: [ErrorModalComponent, NgIf, RibbonButtonComponent],
+  imports: [ErrorModalComponent, RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonSaveLegacyComponent) }],
 })
 /**

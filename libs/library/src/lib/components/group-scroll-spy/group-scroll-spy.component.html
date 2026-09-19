@@ -1,16 +1,17 @@
 <div class="scroll-spy">
-  <a
-    *ngFor="let title of titles; let i = index"
-    class="item"
-    [class.active]="i === activeSection"
-    role="button"
-    tabindex="0"
-    [attr.aria-current]="i === activeSection"
-    (click)="scrollTo(i)"
-    (keydown.enter)="scrollTo(i)"
-    (keydown.space)="scrollTo(i); $event.preventDefault()"
-    >{{ title }}</a
-  >
+  @for (title of titles; track title; let i = $index) {
+    <a
+      class="item"
+      [class.active]="i === activeSection"
+      role="button"
+      tabindex="0"
+      [attr.aria-current]="i === activeSection"
+      (click)="scrollTo(i)"
+      (keydown.enter)="scrollTo(i)"
+      (keydown.space)="scrollTo(i); $event.preventDefault()"
+      >{{ title }}</a
+    >
+  }
 </div>
 
 <div

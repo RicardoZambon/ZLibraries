@@ -51,9 +51,9 @@ export class AuthenticationService extends AuthService {
               default:
                 throw 'InternalServerError';
             }
-          })
-        )
-      )
+          }),
+        ),
+      ),
     );
   }
 
@@ -81,7 +81,7 @@ export class AuthenticationService extends AuthService {
           this.setStorage('refreshToken', res.refreshToken);
           this.setStorage('userInfo', window.btoa(JSON.stringify(res as ICurrentUserInfo)));
         }),
-        map((res: IAuthResponse) => res.token ?? '')
+        map((res: IAuthResponse) => res.token ?? ''),
       );
   }
   //#endregion

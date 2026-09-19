@@ -210,7 +210,7 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
     return e?.name ?? '';
   }
   protected loadModel(id?: number): Observable<IUsersDisplay | null> {
-    return of(id ? USERS_BY_ID[id] ?? USERS_DISPLAY_SEED[0] : null);
+    return of(id ? (USERS_BY_ID[id] ?? USERS_DISPLAY_SEED[0]) : null);
   }
   public saveModel(model: IUsersDisplay): Observable<IUsersDisplay> {
     return of({ ...model, id: this.entityID ?? 999 });
