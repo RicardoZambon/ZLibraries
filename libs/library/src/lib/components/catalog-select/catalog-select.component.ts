@@ -359,9 +359,6 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     this.closeDropdownOverlay();
   }
 
-  protected onDropDownMessageClick(): void {
-    this.closeDropdownOverlay();
-  }
   //#endregion
 
   //#region Public methods

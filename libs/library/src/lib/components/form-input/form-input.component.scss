@@ -110,7 +110,9 @@ input[type=checkbox].switch {
     }
 }
 
-label {
+// `.value` is the read-only rendering of a control's value. It used to be a
+// <label>, which it never was: it captions nothing.
+label, .value {
     @apply block py-1 break-words;
 
     &.text {

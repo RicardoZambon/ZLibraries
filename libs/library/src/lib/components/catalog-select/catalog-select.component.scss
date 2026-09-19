@@ -47,6 +47,12 @@ div {
             @apply text-sm;
         }
 
+        .retry {
+            @apply w-full text-left cursor-pointer border-none bg-transparent p-0 underline;
+            color: inherit;
+            font: inherit;
+        }
+
         &.dropdown-item {
             @apply cursor-pointer;
 

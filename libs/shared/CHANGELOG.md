@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Accessibility.** The operations-history row opens its detail modal from the keyboard as well as
+  the mouse.
+
 ### Deprecated
 
 ### Removed
@@ -31,6 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `ExternalContentComponent` and `BypassHtmlSanitizerPipe`, but neither package was declared.
 - Added a README to the published package.
 
+### ⚠ Breaking Changes / Migration
+
+**Requires `@zambon-dev/library` 2.x and `@zambon-dev/framework` 2.x.** Both peer ranges moved to
+`^2.0.0`. See the library changelog for the `FormInputComponent` output renames.
 ## [2.1.1] - 2026-09-15
 
 ### Fixed

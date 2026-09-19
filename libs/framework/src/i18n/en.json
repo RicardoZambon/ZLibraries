@@ -1,8 +1,6 @@
 {
-  "Loading": "Loading",
-
-
-  "//": "Buttons",
+  "": "",
+  "//": "Ribbon And Details",
   "Button-Cancel-Edit": "Cancel",
   "Button-Delete": "Delete",
   "Button-Edit": "Edit",
@@ -29,34 +27,23 @@
   "Button-Views": "Views",
   "Button-Views-Details": "Details",
   "Button-Views-History": "History",
-
-
-  "//": "Forms",
-  "CatalogSelect-Loading": "Loading...",
   "CatalogSelect-FailureMessage": "An error occurred while fetching the results. Please click here to try again.",
+  "CatalogSelect-Loading": "Loading...",
   "CatalogSelect-MinimumLengthSearch": "Type at least {{ minimumLengthSearch }} characters.",
   "CatalogSelect-NoResultsFound": "No results found.",
-
-
-  "//": "Grids",
-  "Grid-Loading": "Loading...",
-  "Grid-Message-Empty": "No records found.",
-  "Grid-Message-Failed": "An error occurred while loading the records. Please try again later.",
-  "Grid-Message-LazyLoad": "Click the refresh button to load entries.",
-
-  
-  "//": "i18n",
+  "EditSection-Details": "Details",
   "Format-Currency": "1.2",
   "Format-Date": "MM/dd/yyyy",
   "Format-DateTime": "MM/dd/yyyy hh:mm a",
   "Format-Number": "1.0",
+  "Grid-Loading": "Loading...",
+  "Grid-Message-Empty": "No records found.",
+  "Grid-Message-Failed": "An error occurred while loading the records. Please try again later.",
+  "Grid-Message-LazyLoad": "Click the refresh button to load entries.",
   "Language-en": "English",
   "Language-pt": "Português",
+  "Loading": "Loading",
   "locale": "en-US",
-  "MonthYear-Format": "MM/yyyy",
-
-
-  "//": "Modals",
   "Modal-Delete-Confirm": "Confirm delete",
   "Modal-Delete-Message": "You are about to delete records, is not possible to reverse this action. Are you sure you want to continue?",
   "Modal-Delete-Title": "Confirm the record deletion",
@@ -65,14 +52,10 @@
   "Modal-Failed-Title": "An error occurred",
   "Modal-NotFound-Message": "The requested record was not found.\nIt may have been deleted or the URL may be incorrect.",
   "Modal-NotFound-Title": "Record not found",
-
-
-  "//": "Ribbon And Details",
-  "EditSection-Details": "Details",
+  "MonthYear-Format": "MM/yyyy",
   "RibbonGroup-Actions": "Actions",
   "RibbonGroup-Entity": "Entity",
   "RibbonGroup-General": "General",
   "RibbonGroup-Page": "Page",
-
-  "": ""
+  "Tabs-CloseTab": "Close tab"
 }

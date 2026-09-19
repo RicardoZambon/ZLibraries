@@ -15,6 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Accessibility.** Every interactive element that previously responded only to a mouse is now
+  reachable and operable by keyboard. `RibbonButtonComponent` (button, dropdown toggle and each
+  option), `GroupAccordionComponent`, `GroupScrollSpyComponent`, `SidebarItemComponent` and the
+  `MultiSelectComponent` result grid gained focus, `Enter`/`Space` activation and the matching ARIA
+  roles and state. `CatalogSelectComponent` status rows are now `role="presentation"`; its retry
+  action is a real button.
+- `MultiEditorComponent` and the multi-select result grid render their actions as `<button>`
+  rather than `<a>`. They are styled identically but now honour `disabled` natively.
+
 ### Deprecated
 
 ### Removed
@@ -35,6 +44,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `@zambon-dev/library` on its own left the dependency unresolved.
 - Added a README to the published package.
 
+### ⚠ Breaking Changes / Migration
+
+**`FormInputComponent` outputs renamed.** Four outputs were named after native DOM events. Because
+`<lib-form-input>` is a real element, `(change)` and `(input)` fired a consumer's handler twice --
+once from the native event bubbling out of the inner control, once from the component -- and
+`(blur)`/`(focus)` shadowed the native events. All four are typed `any`, so TypeScript could not
+catch the mismatch.
+
+Rename the bindings in your templates:
+
+| Before | After |
+| --- | --- |
+| `(blur)` | `(blurred)` |
+| `(change)` | `(changed)` |
+| `(focus)` | `(focused)` |
+| `(input)` | `(inputChanged)` |
+
+`(fixedValueChanged)` is unchanged, but its payload type is now `string` instead of `any` --
+matching what it always emitted.
+
+If you were relying on the double-fire, expect one call per event now instead of two.
 ## [1.6.2] - 2026-09-20
 
 ### Fixed

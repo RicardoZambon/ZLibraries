@@ -1,5 +1,10 @@
 <div class="title">
-    <h6 (click)="onToggle()"><i class="fas fa-chevron-down fa-sm"></i>{{ this.label }}</h6>
+    <h6 role="button"
+    tabindex="0"
+    [attr.aria-expanded]="!collapsed"
+    (click)="onToggle()"
+    (keydown.enter)="onToggle()"
+    (keydown.space)="onToggle(); $event.preventDefault()"><i class="fas fa-chevron-down fa-sm"></i>{{ this.label }}</h6>
 </div>
 
 <div #container class="content animate"

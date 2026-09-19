@@ -83,22 +83,20 @@ export default [
     },
   },
   {
-    // TEMPORARY -- these are real defects, downgraded so the CI lint gate can land
-    // without a 47-violation big bang. Phase 3 fixes them and restores 'error'.
     files: ['**/*.html'],
     rules: {
-      '@angular-eslint/template/click-events-have-key-events': 'warn',
-      '@angular-eslint/template/interactive-supports-focus': 'warn',
-      '@angular-eslint/template/label-has-associated-control': 'warn',
-      '@angular-eslint/template/no-autofocus': 'warn',
+      '@angular-eslint/template/click-events-have-key-events': 'error',
+      '@angular-eslint/template/interactive-supports-focus': 'error',
+      '@angular-eslint/template/label-has-associated-control': 'error',
+      '@angular-eslint/template/no-autofocus': 'error',
     },
   },
   {
-    // TEMPORARY -- @Output()s named after native DOM events double-fire for
-    // consumers. Renaming them is a breaking change; Phase 3 handles it.
+    // <lib-*> hosts are real DOM elements: an output sharing a native event name
+    // double-fires or shadows the native one for consumers.
     files: ['**/*.ts'],
     rules: {
-      '@angular-eslint/no-output-native': 'warn',
+      '@angular-eslint/no-output-native': 'error',
     },
   },
 ];

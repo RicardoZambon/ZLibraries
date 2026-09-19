@@ -1,8 +1,6 @@
 {
-  "Loading": "Carregando",
-
-
-  "//": "Buttons",
+  "": "",
+  "//": "Ribbon And Details",
   "Button-Cancel-Edit": "Cancelar",
   "Button-Delete": "Excluir",
   "Button-Edit": "Editar",
@@ -29,34 +27,23 @@
   "Button-Views": "Visões",
   "Button-Views-Details": "Detalhes",
   "Button-Views-History": "Histórico",
-
-
-  "//": "Forms",
-  "CatalogSelect-Loading": "Carregando...",
   "CatalogSelect-FailureMessage": "Ocorreu um erro ao buscar os resultados. Por favor, clique aqui para tentar novamente.",
+  "CatalogSelect-Loading": "Carregando...",
   "CatalogSelect-MinimumLengthSearch": "Digite ao menos {{ minimumLengthSearch }} caracteres.",
   "CatalogSelect-NoResultsFound": "Nenhum resultado encontrado.",
-
-
-  "//": "Grids",
-  "Grid-Loading": "Carregando...",
-  "Grid-Message-Empty": "Nenhum registro encontrado.",
-  "Grid-Message-Failed": "Ocorreu um erro ao carregar os registros. Por favor, tente novamente mais tarde.",
-  "Grid-Message-LazyLoad": "Clique no botão atualizar para carregar os registros.",
-
-
-  "//": "i18n",
+  "EditSection-Details": "Detalhes",
   "Format-Currency": "1.2",
   "Format-Date": "dd/MM/yyyy",
   "Format-DateTime": "dd/MM/yyyy HH:mm",
   "Format-Number": "1.0",
+  "Grid-Loading": "Carregando...",
+  "Grid-Message-Empty": "Nenhum registro encontrado.",
+  "Grid-Message-Failed": "Ocorreu um erro ao carregar os registros. Por favor, tente novamente mais tarde.",
+  "Grid-Message-LazyLoad": "Clique no botão atualizar para carregar os registros.",
   "Language-en": "English",
   "Language-pt": "Português",
+  "Loading": "Carregando",
   "locale": "pt-BR",
-  "MonthYear-Format": "MM/yyyy",
-
-
-  "//": "Modals",
   "Modal-Delete-Confirm": "Confirmar exclusão",
   "Modal-Delete-Message": "Você está prestes a excluir registros do sistema, não é possível reverter esta ação. Tem certeza que deseja continuar?",
   "Modal-Delete-Title": "Confirmação da exclusão do registro",
@@ -65,14 +52,10 @@
   "Modal-Failed-Title": "Ocorreu um erro",
   "Modal-NotFound-Message": "O registro solicitado não foi encontrado.\nEle pode ter sido excluído ou a URL pode estar incorreta.",
   "Modal-NotFound-Title": "Registro não encontrado",
-
-
-  "//": "Ribbon And Details",
-  "EditSection-Details": "Detalhes",
+  "MonthYear-Format": "MM/yyyy",
   "RibbonGroup-Actions": "Ações",
   "RibbonGroup-Entity": "Entidade",
   "RibbonGroup-General": "Geral",
   "RibbonGroup-Page": "Página",
-
-  "": ""
+  "Tabs-CloseTab": "Fechar aba"
 }

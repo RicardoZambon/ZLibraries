@@ -55,6 +55,8 @@
 
             .remove {
                 @apply text-red-500;
+                // Now a real <button>: strip the UA chrome it brings with it.
+                @apply border-none bg-transparent p-0 cursor-pointer;
             }
         
             &.disabled {

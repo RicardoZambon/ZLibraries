@@ -81,23 +81,23 @@
 
 <ng-template #disabledControl>
     <ng-container [ngSwitch]="type">
-        <label *ngSwitchCase="'checkbox'">
+        <span class="value" *ngSwitchCase="'checkbox'">
             <i [ngClass]="fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value ? 'fa-solid fa-square-check' : 'fa-regular fa-square'"></i>
-        </label>
+        </span>
 
-        <label *ngSwitchCase="'date'">
+        <span class="value" *ngSwitchCase="'date'">
             {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | date: format }}
-        </label>
+        </span>
 
-        <label *ngSwitchCase="'datetime-local'">
+        <span class="value" *ngSwitchCase="'datetime-local'">
             {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | date: format }}
-        </label>
+        </span>
 
-        <label *ngSwitchCase="'number'">
+        <span class="value" *ngSwitchCase="'number'">
             {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | number: format }}
-        </label>
+        </span>
 
-        <label class="text" *ngSwitchDefault>{{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value }}</label>
+        <span class="value text" *ngSwitchDefault>{{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value }}</span>
     </ng-container>
 </ng-template>
 

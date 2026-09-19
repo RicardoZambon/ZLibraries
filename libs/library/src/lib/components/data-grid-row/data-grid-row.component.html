@@ -1,4 +1,9 @@
-<div *ngIf="dataGridDataset.configs.multiSelect"
+<!-- A <label> rather than a clickable <div>: clicking anywhere in the cell still
+     reaches the checkbox, natively. The click handler is a mouse-only convenience;
+     the keyboard path is the nested checkbox, which is focusable and toggles with
+     Space on its own. -->
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<label *ngIf="dataGridDataset.configs.multiSelect"
 class="cell selection"
 (click)="onToggleSelection()"
 (onResize)="onResizeSelection($event)">
@@ -6,7 +11,7 @@ class="cell selection"
     type="checkbox"
     [attr.disabled]="disabled"
     [(ngModel)]="selected" />
-</div> 
+</label>
 
 <div #cell
 *ngFor="let column of columns; index as i"
