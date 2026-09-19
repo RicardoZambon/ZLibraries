@@ -5,13 +5,14 @@ import { OperationsHistoryModalComponent } from './operations-history-modal.comp
 describe(OperationsHistoryModalComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ OperationsHistoryModalComponent, TranslateModule.forRoot() ]
-    })
-    .compileComponents();
+      imports: [OperationsHistoryModalComponent, TranslateModule.forRoot()],
+    }).compileComponents();
   });
 
   it('should create', () => {
-    const fixture: ComponentFixture<OperationsHistoryModalComponent> = TestBed.createComponent(OperationsHistoryModalComponent);
+    const fixture: ComponentFixture<OperationsHistoryModalComponent> = TestBed.createComponent(
+      OperationsHistoryModalComponent
+    );
     const component: OperationsHistoryModalComponent = fixture.componentInstance;
 
     expect(component).toBeTruthy();

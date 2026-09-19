@@ -46,7 +46,10 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
 
   function setupDetailsRoute(parentUrl: string): void {
     const parentSnapshot: any = {
-      url: parentUrl.split('/').filter(Boolean).map((p: string) => ({ path: p })),
+      url: parentUrl
+        .split('/')
+        .filter(Boolean)
+        .map((p: string) => ({ path: p })),
       data: {},
       firstChild: null,
       parent: null,
@@ -81,9 +84,7 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
   }
 
   function lastNavigatedTab(): Tab {
-    return mockTabService.navigateCurrentTab.mock.calls[
-      mockTabService.navigateCurrentTab.mock.calls.length - 1
-    ][0];
+    return mockTabService.navigateCurrentTab.mock.calls[mockTabService.navigateCurrentTab.mock.calls.length - 1][0];
   }
 
   beforeEach(() => {

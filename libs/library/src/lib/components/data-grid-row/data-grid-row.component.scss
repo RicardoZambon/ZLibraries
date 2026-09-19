@@ -1,31 +1,31 @@
 /* @use 'tailwindcss'; */
 
 :host {
-    @apply grid col-span-full grid-cols-subgrid;
+  @apply grid col-span-full grid-cols-subgrid;
 }
 
 .cell {
-    @apply relative whitespace-nowrap overflow-hidden text-ellipsis content-center;
+  @apply relative whitespace-nowrap overflow-hidden text-ellipsis content-center;
 
-    &.disabled {
-        @apply pointer-events-none opacity-[.60] cursor-default overflow-hidden text-ellipsis;
-    }
+  &.disabled {
+    @apply pointer-events-none opacity-[.60] cursor-default overflow-hidden text-ellipsis;
+  }
 
-    input {
-        @apply align-super;
-    }
+  input {
+    @apply align-super;
+  }
 
-    // The selection checkbox is laid out as a flex item so it is centred by the box model instead of
-    // by the line box: as an inline element the `align-super` above lifts it off centre, and the
-    // taller the row, the more obvious that becomes. Horizontal placement is deliberately left at
-    // flex-start, matching the inline flow it replaces — centring it would push the checkbox past
-    // both edges of the cell's `overflow: hidden` box in grids whose selection column is narrower
-    // than the checkbox.
-    &.selection {
-        @apply flex items-center;
-    }
+  // The selection checkbox is laid out as a flex item so it is centred by the box model instead of
+  // by the line box: as an inline element the `align-super` above lifts it off centre, and the
+  // taller the row, the more obvious that becomes. Horizontal placement is deliberately left at
+  // flex-start, matching the inline flow it replaces — centring it would push the checkbox past
+  // both edges of the cell's `overflow: hidden` box in grids whose selection column is narrower
+  // than the checkbox.
+  &.selection {
+    @apply flex items-center;
+  }
 }
 
 .spacer {
-    @apply absolute inset-0 -z-[1] h-0;
+  @apply absolute inset-0 -z-[1] h-0;
 }

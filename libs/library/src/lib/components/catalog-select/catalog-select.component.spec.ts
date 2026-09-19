@@ -162,7 +162,10 @@ describe('CatalogSelectComponent', () => {
 
   beforeEach(() => {
     originalRAF = global.requestAnimationFrame;
-    global.requestAnimationFrame = jest.fn((cb: FrameRequestCallback) => { cb(0); return 0; }) as any;
+    global.requestAnimationFrame = jest.fn((cb: FrameRequestCallback) => {
+      cb(0);
+      return 0;
+    }) as any;
   });
 
   afterEach(() => {
@@ -742,9 +745,7 @@ describe('CatalogSelectComponent', () => {
       });
       initComponent();
 
-      expect(mockCatalogService.search).toHaveBeenCalledWith(
-        '/api/search', 100, '', {}
-      );
+      expect(mockCatalogService.search).toHaveBeenCalledWith('/api/search', 100, '', {});
     });
 
     it('should short-circuit API call when criteria is below minimum length and shouldUseCriteria', () => {
@@ -774,9 +775,7 @@ describe('CatalogSelectComponent', () => {
 
       component.searchSubject.next('abc');
 
-      expect(mockCatalogService.search).toHaveBeenCalledWith(
-        '/api/search', 100, 'abc', {}
-      );
+      expect(mockCatalogService.search).toHaveBeenCalledWith('/api/search', 100, 'abc', {});
     });
 
     it('should show failure message on API error', () => {

@@ -28,7 +28,7 @@ describe(SidebarService.name, () => {
     service.rootMenus = menus;
 
     let loaded: SidebarMenu[] = [];
-    service.loadRoot().subscribe((result: SidebarMenu[]) => loaded = result);
+    service.loadRoot().subscribe((result: SidebarMenu[]) => (loaded = result));
 
     return loaded;
   }

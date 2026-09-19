@@ -8,11 +8,7 @@ import { GroupAccordionComponent } from '../group-accordion/group-accordion.comp
   selector: 'lib-group-container',
   templateUrl: './group-container.component.html',
   styleUrls: ['./group-container.component.scss'],
-  imports: [
-    NgClass,
-    NgIf,
-    TranslatePipe,
-  ],
+  imports: [NgClass, NgIf, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupContainerComponent {
@@ -20,15 +16,14 @@ export class GroupContainerComponent {
   @ContentChildren(GroupAccordionComponent, { descendants: true }) sections!: QueryList<GroupAccordionComponent>;
 
   public get titles(): string[] {
-    return this.sections?.map(x => x.label) ?? [];
+    return this.sections?.map((x) => x.label) ?? [];
   }
 
   public activeSection = 0;
-  
+
   @Input() title?: string;
 
   @Input() icon?: string;
-
 
   activeSectionChanged(index: number): void {
     this.activeSection = index;

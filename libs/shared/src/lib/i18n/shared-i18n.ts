@@ -32,17 +32,12 @@ export interface ZambonSharedTranslateConfig {
 
 export function createZambonSharedTranslateLoader(
   httpBackend: HttpBackend,
-  appResources: (string | TranslationResource)[] = [],
+  appResources: (string | TranslationResource)[] = []
 ): MultiTranslateHttpLoader {
-  return new MultiTranslateHttpLoader(httpBackend, [
-    ...ZAMBON_SHARED_I18N_RESOURCES,
-    ...appResources,
-  ]);
+  return new MultiTranslateHttpLoader(httpBackend, [...ZAMBON_SHARED_I18N_RESOURCES, ...appResources]);
 }
 
-export function provideZambonSharedTranslateLoader(
-  appResources: (string | TranslationResource)[] = [],
-): Provider {
+export function provideZambonSharedTranslateLoader(appResources: (string | TranslationResource)[] = []): Provider {
   return {
     provide: TranslateLoader,
     useFactory: (httpBackend: HttpBackend) => createZambonSharedTranslateLoader(httpBackend, appResources),
@@ -50,9 +45,7 @@ export function provideZambonSharedTranslateLoader(
   };
 }
 
-export function provideZambonSharedTranslateService(
-  config: ZambonSharedTranslateConfig = {},
-): EnvironmentProviders {
+export function provideZambonSharedTranslateService(config: ZambonSharedTranslateConfig = {}): EnvironmentProviders {
   return provideTranslateService({
     defaultLanguage: config.defaultLanguage,
     loader: provideZambonSharedTranslateLoader(config.appResources),

@@ -10,10 +10,7 @@ import { NotificationsService } from '../../../services';
   selector: 'shared-notifications',
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss'],
-  imports: [
-    AsyncPipe,
-    TranslatePipe,
-  ],
+  imports: [AsyncPipe, TranslatePipe],
 })
 export class NotificationsComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs

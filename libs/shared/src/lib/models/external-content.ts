@@ -33,7 +33,8 @@ export class ExternalContentConfigs {
   }
 }
 
-export const EXTERNAL_CONTENT_CONFIGS: InjectionToken<ExternalContentConfigs> = new InjectionToken<ExternalContentConfigs>('Embedded external content configuration', {
-  providedIn: 'root',
-  factory: () => new ExternalContentConfigs(),
-});
+export const EXTERNAL_CONTENT_CONFIGS: InjectionToken<ExternalContentConfigs> =
+  new InjectionToken<ExternalContentConfigs>('Embedded external content configuration', {
+    providedIn: 'root',
+    factory: () => new ExternalContentConfigs(),
+  });

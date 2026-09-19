@@ -6,9 +6,7 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/storybook-host",
         "index": "apps/storybook-host/src/index.html",
@@ -25,7 +23,5 @@
       }
     }
   },
-  "tags": [
-    "type:storybook-host"
-  ]
+  "tags": ["type:storybook-host"]
 }

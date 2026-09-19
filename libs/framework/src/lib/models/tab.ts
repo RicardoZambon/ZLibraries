@@ -7,7 +7,7 @@ export interface ITab {
   url: string;
 }
 
-export class Tab implements ITab{
+export class Tab implements ITab {
   private _title?: string | undefined;
 
   public clones: string[] = [];
@@ -17,14 +17,14 @@ export class Tab implements ITab{
   public isTitleLoading = true;
 
   public queryParams?: { [key: string]: string };
-  
+
   public get title(): string | undefined {
     return this._title;
   }
   public set title(value: string | undefined) {
     if (this._title !== value) {
       this._title = value;
-  
+
       if (value) {
         this.isTitleLoading = false;
       }

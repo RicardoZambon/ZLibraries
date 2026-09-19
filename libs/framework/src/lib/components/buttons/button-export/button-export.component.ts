@@ -13,11 +13,8 @@ export const MaxExportRows = 50000;
 @Component({
   selector: 'framework-button-export',
   templateUrl: './button-export.component.html',
-  imports: [
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonExportComponent)}]
+  imports: [NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonExportComponent) }],
 })
 export class ButtonExportComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
@@ -84,7 +81,8 @@ export class ButtonExportComponent extends BaseButton {
       startRow: 0,
     };
 
-    this.dataGridDataset.export(resolvedFormat, parameters)
+    this.dataGridDataset
+      .export(resolvedFormat, parameters)
       .pipe(take(1))
       .subscribe({
         next: (response: HttpResponse<Blob>) => {
@@ -93,7 +91,7 @@ export class ButtonExportComponent extends BaseButton {
         },
         error: (_: HttpErrorResponse) => {
           this.finishLoading('failure');
-        }
+        },
       });
   }
   //#endregion

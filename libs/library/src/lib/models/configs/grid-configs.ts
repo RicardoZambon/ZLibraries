@@ -6,4 +6,4 @@ export type GridConfigs = {
   recordBlockSize: number;
   rowHeight: number;
   rowsToDisplay: number;
-}
+};

@@ -7,11 +7,8 @@ import { BaseButton } from '../../base-button';
 @Component({
   selector: 'framework-button-edit-legacy',
   templateUrl: './button-edit.component.html',
-  imports: [
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonEditLegacyComponent)}]
+  imports: [NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonEditLegacyComponent) }],
 })
 /**
  * @deprecated Use standalone {@link ButtonEditComponent} instead.
@@ -26,7 +23,7 @@ export class ButtonEditLegacyComponent extends BaseButton {
   @Input() public editIcon = 'fa-edit';
   @Input() public editLabel = 'Button-Edit';
   @Input() public form?: LegacySubViewForm;
-  @Input() public  modal?: ModalBase;
+  @Input() public modal?: ModalBase;
   //#endregion
 
   //#region Variables
@@ -48,8 +45,7 @@ export class ButtonEditLegacyComponent extends BaseButton {
   protected onEditAction(): void {
     if (this.form) {
       this.form.beginEdit();
-    }
-    else if (this.modal) {
+    } else if (this.modal) {
       this.modal.toggle();
     }
   }

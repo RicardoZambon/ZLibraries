@@ -58,13 +58,7 @@ describe('ButtonExportComponent', () => {
   });
 
   it('should configure the expected export format options', () => {
-    expect(component.options.map((option: any) => option.id)).toEqual([
-      'xlsx',
-      'pdf',
-      'csv',
-      'xml',
-      'mhtml',
-    ]);
+    expect(component.options.map((option: any) => option.id)).toEqual(['xlsx', 'pdf', 'csv', 'xml', 'mhtml']);
   });
 
   it('should disable the button and return a translated tooltip when the row limit is exceeded', () => {

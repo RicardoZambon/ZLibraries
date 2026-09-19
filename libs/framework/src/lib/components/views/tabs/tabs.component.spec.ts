@@ -73,25 +73,21 @@ describe('TabsComponent — ngOnInit routing logic', () => {
       const route: any = createDetailsRoute({ id: '42' }, defaultChildren(), 'audit');
       mockRouter.routerState.snapshot.root = route;
 
-      jest.spyOn(RouteHelper, 'getRouteByData').mockImplementation(
-        (_root: any, key: string, value: any): any => {
-          if (key === FRAMEWORK_VIEW_TYPE && value === FrameworkViewType.Details) {
-            return route;
-          }
-          return null;
-        },
-      );
-      jest.spyOn(RouteHelper, 'getRouteURL').mockImplementation(
-        (r: any): string => {
-          if (r === route) {
-            return '/configs/entity/42';
-          }
-          if (r === route.firstChild) {
-            return '/configs/entity/42/audit';
-          }
-          return '/';
-        },
-      );
+      jest.spyOn(RouteHelper, 'getRouteByData').mockImplementation((_root: any, key: string, value: any): any => {
+        if (key === FRAMEWORK_VIEW_TYPE && value === FrameworkViewType.Details) {
+          return route;
+        }
+        return null;
+      });
+      jest.spyOn(RouteHelper, 'getRouteURL').mockImplementation((r: any): string => {
+        if (r === route) {
+          return '/configs/entity/42';
+        }
+        if (r === route.firstChild) {
+          return '/configs/entity/42/audit';
+        }
+        return '/';
+      });
 
       component.ngOnInit();
 
@@ -118,33 +114,26 @@ describe('TabsComponent — ngOnInit routing logic', () => {
       const route: any = createDetailsRoute({ id: 'new' }, defaultChildren(), 'audit');
       mockRouter.routerState.snapshot.root = route;
 
-      jest.spyOn(RouteHelper, 'getRouteByData').mockImplementation(
-        (_root: any, key: string, value: any): any => {
-          if (key === FRAMEWORK_VIEW_TYPE && value === FrameworkViewType.Details) {
-            return route;
-          }
-          return null;
-        },
-      );
-      jest.spyOn(RouteHelper, 'getRouteURL').mockImplementation(
-        (r: any): string => {
-          if (r === route) {
-            return '/configs/entity/new';
-          }
-          if (r === route.firstChild) {
-            return '/configs/entity/new/audit';
-          }
-          return '/';
-        },
-      );
+      jest.spyOn(RouteHelper, 'getRouteByData').mockImplementation((_root: any, key: string, value: any): any => {
+        if (key === FRAMEWORK_VIEW_TYPE && value === FrameworkViewType.Details) {
+          return route;
+        }
+        return null;
+      });
+      jest.spyOn(RouteHelper, 'getRouteURL').mockImplementation((r: any): string => {
+        if (r === route) {
+          return '/configs/entity/new';
+        }
+        if (r === route.firstChild) {
+          return '/configs/entity/new/audit';
+        }
+        return '/';
+      });
 
       component.ngOnInit();
 
       // Should redirect to base URL
-      expect(mockRouter.navigate).toHaveBeenCalledWith(
-        ['/configs/entity/new'],
-        { replaceUrl: true },
-      );
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/configs/entity/new'], { replaceUrl: true });
 
       // Should NOT add sub-view to history
       return Promise.resolve().then(() => {
@@ -156,14 +145,12 @@ describe('TabsComponent — ngOnInit routing logic', () => {
       const route: any = createDetailsRoute({ id: 'new' }, defaultChildren(), '');
       mockRouter.routerState.snapshot.root = route;
 
-      jest.spyOn(RouteHelper, 'getRouteByData').mockImplementation(
-        (_root: any, key: string, value: any): any => {
-          if (key === FRAMEWORK_VIEW_TYPE && value === FrameworkViewType.Details) {
-            return route;
-          }
-          return null;
-        },
-      );
+      jest.spyOn(RouteHelper, 'getRouteByData').mockImplementation((_root: any, key: string, value: any): any => {
+        if (key === FRAMEWORK_VIEW_TYPE && value === FrameworkViewType.Details) {
+          return route;
+        }
+        return null;
+      });
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/configs/entity/new');
 
       component.ngOnInit();
@@ -181,14 +168,12 @@ describe('TabsComponent — ngOnInit routing logic', () => {
       const route: any = createDetailsRoute({ id: '10' }, defaultChildren(), '');
       mockRouter.routerState.snapshot.root = route;
 
-      jest.spyOn(RouteHelper, 'getRouteByData').mockImplementation(
-        (_root: any, key: string, value: any): any => {
-          if (key === FRAMEWORK_VIEW_TYPE && value === FrameworkViewType.Details) {
-            return route;
-          }
-          return null;
-        },
-      );
+      jest.spyOn(RouteHelper, 'getRouteByData').mockImplementation((_root: any, key: string, value: any): any => {
+        if (key === FRAMEWORK_VIEW_TYPE && value === FrameworkViewType.Details) {
+          return route;
+        }
+        return null;
+      });
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/configs/entity/10');
 
       component.ngOnInit();
@@ -212,14 +197,12 @@ describe('TabsComponent — ngOnInit routing logic', () => {
       };
       mockRouter.routerState.snapshot.root = listRoute;
 
-      jest.spyOn(RouteHelper, 'getRouteByData').mockImplementation(
-        (_root: any, key: string, value: any): any => {
-          if (key === FRAMEWORK_VIEW_TYPE && value === FrameworkViewType.List) {
-            return listRoute;
-          }
-          return null;
-        },
-      );
+      jest.spyOn(RouteHelper, 'getRouteByData').mockImplementation((_root: any, key: string, value: any): any => {
+        if (key === FRAMEWORK_VIEW_TYPE && value === FrameworkViewType.List) {
+          return listRoute;
+        }
+        return null;
+      });
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/configs/entity');
 
       component.ngOnInit();

@@ -14,15 +14,15 @@
 
 ## Verified facts (do not re-derive)
 
-1. **The checkbox bug** — `type="checkbox"` as a *static attribute* stays on the `<lib-form-input-group>` host. `@tailwindcss/forms` (default `strategy: ['base','class']`) emits tag-agnostic `[type="checkbox"] { border-width:1px; border-color:rgb(107,114,128); background-color:#fff; height:1rem; padding:0; color:rgb(37,99,235) }`, which matches the host. `:host`'s `@apply grid grid-cols-subgrid …` has equal specificity and only wins for `display`/`grid-*`. Measured: a 278×16px bordered white box. The blue tick is the same rule's `color`, inherited by the Font Awesome glyph.
-2. **`type` is a plain `@Input() type: string`** on both components — no setter, transform, or attribute read — so attribute vs. property binding sets the *class property* identically. Only the DOM side effect differs. `form-input-group.component.html` already passes `type` down with a binding, so `lib-form-input` has no stray attribute when used normally.
+1. **The checkbox bug** — `type="checkbox"` as a _static attribute_ stays on the `<lib-form-input-group>` host. `@tailwindcss/forms` (default `strategy: ['base','class']`) emits tag-agnostic `[type="checkbox"] { border-width:1px; border-color:rgb(107,114,128); background-color:#fff; height:1rem; padding:0; color:rgb(37,99,235) }`, which matches the host. `:host`'s `@apply grid grid-cols-subgrid …` has equal specificity and only wins for `display`/`grid-*`. Measured: a 278×16px bordered white box. The blue tick is the same rule's `color`, inherited by the Font Awesome glyph.
+2. **`type` is a plain `@Input() type: string`** on both components — no setter, transform, or attribute read — so attribute vs. property binding sets the _class property_ identically. Only the DOM side effect differs. `form-input-group.component.html` already passes `type` down with a binding, so `lib-form-input` has no stray attribute when used normally.
 3. **Both components already have a `host` block** — `host: { '[class.full-height]': 'isFullHeight' }` — so the new binding slots into existing metadata. (`form-input-group.component.ts:23-25`, `form-input.component.ts:21-23`.)
 4. **Grid height is a floor, not a fill.** `data-grid.component.ts`'s `bodyMinHeight` = `min(loadedRows, rowsToDisplay) × rowHeight`, bound as `[style.min-height.px]`. Defaults `rowHeight: 41.6`, `rowsToDisplay: 6`.
 5. **The flex chain breaks in exactly two places:** the routed list component's host (a direct flex child of the `framework-default-tab-view` host, styled by nothing) and `lib-data-grid`'s host (`flex flex-col overflow-hidden`, no `flex-grow`). Both rules are required — `align-items: stretch` only stretches the cross axis.
-6. **`::ng-deep` is mandatory** for styling a routed host: dynamically created component hosts do not carry the parent's `_ngcontent-*` attribute. Precedent: `lib-group-container`'s `.content-container ::ng-deep > *`. **Anchor it on `:host`** (`:host ::ng-deep .x`) — a bare `::ng-deep .x` emits a fully *global*, unscoped class selector, which in a shipped library reaches far more than intended (it would also catch `ListView` subclasses inside detail views, since `ListView extends TabViewList`).
-   - **Do NOT try to verify that scoping by grepping the library's `dist/` bundle.** Publishable Angular libraries build in **Ivy partial compilation mode**, so the linker that rewrites `:host`/`::ng-deep` into `[_nghost-*]`/`[_ngcontent-*]` runs in the *consuming application's* build, not the library's — `_nghost` appears zero times anywhere in `dist/libs/framework`, for every component. Verify in the consuming app's **live DOM** instead, by reading `document.styleSheets` for the emitted `selectorText`. Confirmed working: `[_nghost-ng-c3984974818] .framework-view-list`.
+6. **`::ng-deep` is mandatory** for styling a routed host: dynamically created component hosts do not carry the parent's `_ngcontent-*` attribute. Precedent: `lib-group-container`'s `.content-container ::ng-deep > *`. **Anchor it on `:host`** (`:host ::ng-deep .x`) — a bare `::ng-deep .x` emits a fully _global_, unscoped class selector, which in a shipped library reaches far more than intended (it would also catch `ListView` subclasses inside detail views, since `ListView extends TabViewList`).
+   - **Do NOT try to verify that scoping by grepping the library's `dist/` bundle.** Publishable Angular libraries build in **Ivy partial compilation mode**, so the linker that rewrites `:host`/`::ng-deep` into `[_nghost-*]`/`[_ngcontent-*]` runs in the _consuming application's_ build, not the library's — `_nghost` appears zero times anywhere in `dist/libs/framework`, for every component. Verify in the consuming app's **live DOM** instead, by reading `document.styleSheets` for the emitted `selectorText`. Confirmed working: `[_nghost-ng-c3984974818] .framework-view-list`.
 7. **Angular merges `hostAttrs` from a base component into subclasses** via `ɵɵInheritDefinitionFeature`, so a static host class on `TabViewList` is inherited by every list view with zero consumer changes.
-8. **Use a plain class name in `host`, never Tailwind utilities.** Library SCSS resolves `@apply` at library-build time and is self-contained; a class named in `host` metadata would need each *consumer's* Tailwind to generate it.
+8. **Use a plain class name in `host`, never Tailwind utilities.** Library SCSS resolves `@apply` at library-build time and is self-contained; a class named in `host` metadata would need each _consumer's_ Tailwind to generate it.
 9. **`bare :host-context` (no parentheses) is functionally identical to `:host`** and is the house idiom in these libraries. Keep it for consistency in existing blocks.
 10. **`DashboardComponent` extends `TabViewBase`, not `TabViewList`** — so keying the height fix off `TabViewList` leaves it untouched. A blanket rule on every routed child would clip it.
 11. **These components translate their own inputs** (pass keys): `lib-data-grid` `column.headerName`; `lib-form-input-group` `label` + `validations` values; `lib-form-group` `label`; `lib-sidebar-item` `menu.label`; `lib-sidebar` `region.name`; `TabsComponent`/`TabBreadcrumbs` `tab.title`.
@@ -34,32 +34,35 @@
 17. **`ButtonViewsComponent` builds options from the details route's static `routeConfig.children`**, reading `data.title`, `data.icon`, `data.allowedActions`, skipping children whose `data` is absent or `data.ignoreRoute === true`. `DefaultDetailsTabViewComponent` renders the button itself.
 18. **`ServicesHistoryViewComponent`** (`shared-services-history-view`) takes `controllerName` (required) and `entityID?`, falls back to `route.snapshot.data['controllerName']`, wires its two child lists internally, and already declares its own flex rules — so it needs no height help and no glue code.
 19. **Row-key mismatch:** `IServicesHistoryList` declares `ID` (uppercase) but `GridDataset.compareProperty` defaults to `'id'`, so `getRowID()` returns `undefined`, `selectedServiceID` never changes, and clicking a service row never loads operations. The existing `history.stories.ts` has this bug. Emit **both** keys in showcase mocks.
-20. **The two in-flight background sessions are in SEPARATE worktrees.** `libs/framework/eslint.config.mjs` in this checkout still reads `prefix: 'lib'`, and `DefaultTabViewComponent` is unmodified. Nothing here depends on that work; `host: { class: 'framework-view-list' }` is a host *class*, so selector-prefix rules never apply.
+20. **The two in-flight background sessions are in SEPARATE worktrees.** `libs/framework/eslint.config.mjs` in this checkout still reads `prefix: 'lib'`, and `DefaultTabViewComponent` is unmodified. Nothing here depends on that work; `host: { class: 'framework-view-list' }` is a host _class_, so selector-prefix rules never apply.
 
 ## Baselines (compare against these; do not "fix" them)
 
-| Command | Baseline in this checkout |
-|---|---|
-| `nx test shared` | ~28 failed tests / 11 failed suites |
-| `nx test framework` | 5 failed suites / 3 failed tests |
-| `nx test library` | 1 failed suite (ribbon-group) |
-| `nx lint shared` | 17 errors / 76 warnings |
-| `nx lint framework` | 155 errors / 253 warnings |
-| `nx lint library` | 193 errors / 399 warnings |
+| Command             | Baseline in this checkout           |
+| ------------------- | ----------------------------------- |
+| `nx test shared`    | ~28 failed tests / 11 failed suites |
+| `nx test framework` | 5 failed suites / 3 failed tests    |
+| `nx test library`   | 1 failed suite (ribbon-group)       |
+| `nx lint shared`    | 17 errors / 76 warnings             |
+| `nx lint framework` | 155 errors / 253 warnings           |
+| `nx lint library`   | 193 errors / 399 warnings           |
 
 ## Commands
 
 Type-check the story (the only tsconfig that includes `*.stories.ts`):
+
 ```bash
 npx tsc -p libs/shared/.storybook/tsconfig.json --noEmit
 ```
 
 Storybook for `shared` runs on port **4402**. It may already be running — check before starting one:
+
 ```bash
 curl -s -o /dev/null -w "%{http_code}" http://localhost:4402
 ```
 
 The showcase story URL:
+
 ```
 http://localhost:4402/iframe.html?id=shared-app-showcase--navigable-app&viewMode=story
 ```
@@ -71,6 +74,7 @@ Note: synthesized coordinate clicks do not reach the page when the browser pane 
 ## Task 1: `@library` — stop the `type` attribute leaking to the DOM
 
 **Files:**
+
 - Modify: `libs/library/src/lib/components/form-input-group/form-input-group.component.ts`
 - Modify: `libs/library/src/lib/components/form-input/form-input.component.ts`
 
@@ -84,13 +88,17 @@ Apply ONLY the `form-input-group` change (Step 2), then load the showcase story 
 (() => {
   const el = document.querySelector('lib-form-input-group[controlname="isActive"]');
   const cs = getComputedStyle(el);
-  return JSON.stringify({
-    typeAttr: el.getAttribute('type'),
-    borderWidth: cs.borderWidth,
-    height: cs.height,
-    backgroundColor: cs.backgroundColor
-  }, null, 2);
-})()
+  return JSON.stringify(
+    {
+      typeAttr: el.getAttribute('type'),
+      borderWidth: cs.borderWidth,
+      height: cs.height,
+      backgroundColor: cs.backgroundColor,
+    },
+    null,
+    2
+  );
+})();
 ```
 
 Expected AFTER the fix: `typeAttr: null`, `borderWidth: "0px"`, and `height` no longer `16px`.
@@ -139,11 +147,13 @@ Same replacement in `form-input.component.ts`. Use a shorter comment there, poin
 ```bash
 npx nx build library
 ```
+
 Expected: success.
 
 ```bash
 npx nx test library 2>&1 | tail -n 8
 ```
+
 Expected: 1 failed suite (ribbon-group) — the documented baseline, no new failures.
 
 - [ ] **Step 5: Verify in the browser**
@@ -151,13 +161,14 @@ Expected: 1 failed suite (ribbon-group) — the documented baseline, no new fail
 Re-run the Step 1 probe on **both** a Users detail and a Customers detail (`ACTIVE` and `MUST CHANGE PASSWORD` rows), in **view and edit mode**. All must report `typeAttr: null` and `borderWidth: "0px"`.
 
 Also confirm the view-mode tick is no longer forced blue:
+
 ```js
 (() => {
-  const icons = Array.from(document.querySelectorAll('lib-form-input-group i'))
-    .map(i => getComputedStyle(i).color);
+  const icons = Array.from(document.querySelectorAll('lib-form-input-group i')).map((i) => getComputedStyle(i).color);
   return JSON.stringify({ iconColors: icons }, null, 2);
-})()
+})();
 ```
+
 Expected: no `rgb(37, 99, 235)` among them.
 
 - [ ] **Step 6: Commit**
@@ -171,6 +182,7 @@ git add libs/library/src/lib/components/form-input-group/form-input-group.compon
 ## Task 2: `@framework` — automatic full-height list views
 
 **Files:**
+
 - Modify: `libs/framework/src/lib/views/tabview-list.ts`
 - Modify: `libs/framework/src/lib/components/views/default-tab-view/default-tab-view.component.scss`
 
@@ -205,17 +217,17 @@ The file currently contains only the `:host-context` block. Append:
    does not carry this component's _ngcontent-* attribute. Mirrors what lib-group-container
    already does for routed detail views. */
 ::ng-deep .framework-view-list {
-    @apply flex flex-col flex-grow overflow-hidden;
+  @apply flex flex-col flex-grow overflow-hidden;
 
-    /* min-height:0 lets the flex child shrink below its content height so the grid's own
+  /* min-height:0 lets the flex child shrink below its content height so the grid's own
        scroll container takes over instead of overflowing the tab. */
-    min-height: 0;
+  min-height: 0;
 
-    /* Descendant, not child: a list screen may nest its grid inside a wrapper (e.g. filters
+  /* Descendant, not child: a list screen may nest its grid inside a wrapper (e.g. filters
        above the grid) and must still stretch. */
-    lib-data-grid {
-        @apply flex-grow;
-    }
+  lib-data-grid {
+    @apply flex-grow;
+  }
 }
 ```
 
@@ -224,11 +236,13 @@ The file currently contains only the `:host-context` block. Append:
 ```bash
 npx nx build framework
 ```
+
 Expected: success.
 
 ```bash
 npx nx test framework 2>&1 | tail -n 8
 ```
+
 Expected: 5 failed suites / 3 failed tests — the documented baseline, no new failures.
 
 - [ ] **Step 4: Verify in the browser — grids fill, Dashboard is NOT clipped**
@@ -240,29 +254,39 @@ Navigate to each list screen and measure:
   const grid = document.querySelector('lib-data-grid');
   const host = document.querySelector('.framework-view-list');
   const tabContent = document.querySelector('.tab-content');
-  return JSON.stringify({
-    hasMarkerClass: !!host,
-    gridHeight: grid ? Math.round(grid.getBoundingClientRect().height) : 'ABSENT',
-    hostHeight: host ? Math.round(host.getBoundingClientRect().height) : 'ABSENT',
-    tabContentHeight: tabContent ? Math.round(tabContent.getBoundingClientRect().height) : 'ABSENT'
-  }, null, 2);
-})()
+  return JSON.stringify(
+    {
+      hasMarkerClass: !!host,
+      gridHeight: grid ? Math.round(grid.getBoundingClientRect().height) : 'ABSENT',
+      hostHeight: host ? Math.round(host.getBoundingClientRect().height) : 'ABSENT',
+      tabContentHeight: tabContent ? Math.round(tabContent.getBoundingClientRect().height) : 'ABSENT',
+    },
+    null,
+    2
+  );
+})();
 ```
 
 Expected on Users / Customers / Units: `hasMarkerClass: true`, and `gridHeight` close to `tabContentHeight` (within ~60px for the ribbon/breadcrumbs) — NOT the old ~256px.
 
 Then open the **Dashboard** and confirm the regression case:
+
 ```js
 (() => {
   const dash = document.querySelector('shared-showcase-dashboard');
-  return JSON.stringify({
-    markerPresent: !!document.querySelector('.framework-view-list'),
-    dashboardScrollHeight: dash ? dash.scrollHeight : 'ABSENT',
-    dashboardClientHeight: dash ? dash.clientHeight : 'ABSENT',
-    contentVisible: (dash?.innerText || '').includes('Recent activity')
-  }, null, 2);
-})()
+  return JSON.stringify(
+    {
+      markerPresent: !!document.querySelector('.framework-view-list'),
+      dashboardScrollHeight: dash ? dash.scrollHeight : 'ABSENT',
+      dashboardClientHeight: dash ? dash.clientHeight : 'ABSENT',
+      contentVisible: (dash?.innerText || '').includes('Recent activity'),
+    },
+    null,
+    2
+  );
+})();
 ```
+
 Expected: `markerPresent: false` (Dashboard extends `TabViewBase`, so it must NOT carry the class) and its content fully present, not clipped.
 
 Finally open a **detail** view and confirm the form still lays out correctly (it goes through `lib-group-container`, a different path).
@@ -283,6 +307,7 @@ change-detection pass and are never seen. Real backends are never instant; a sma
 states observable, which is part of showing "the full picture".
 
 **Files:**
+
 - Modify: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
 
 - [ ] **Step 1: Add the latency constants**
@@ -323,6 +348,7 @@ const SHOWCASE_WRITE_LATENCY_MS: number = 800;
 npx tsc -p libs/shared/.storybook/tsconfig.json --noEmit
 npx eslint libs/shared/src/lib/stories/showcase/app-showcase.stories.ts
 ```
+
 Expected: `tsc` exit 0; eslint 0 errors.
 
 - [ ] **Step 5: Commit**
@@ -340,6 +366,7 @@ with a short timeout instead of reading straight after dispatching the event.
 ## Task 3: Showcase — branded top bar, notifications, version footer
 
 **Files:**
+
 - Modify: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
 
 - [ ] **Step 1: Add imports**
@@ -369,7 +396,7 @@ const SHOWCASE_LOGO: string =
       '<rect width="32" height="32" rx="7" fill="#006bb6"/>' +
       '<path d="M9 22.5 17.5 9.5h5.5L14.5 22.5z" fill="#ffffff"/>' +
       '<circle cx="11" cy="11" r="2.5" fill="#ffffff"/>' +
-    '</svg>'
+      '</svg>'
   );
 
 // Plain text, NOT translation keys: NotificationsComponent renders `{{ item.title }}` and
@@ -457,6 +484,7 @@ In `meta.decorators`, inside the existing `applicationConfig({ providers: [...] 
 ```bash
 npx tsc -p libs/shared/.storybook/tsconfig.json --noEmit
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 5: Verify in the browser**
@@ -464,14 +492,18 @@ Expected: exit 0.
 ```js
 (() => {
   const brand = document.querySelector('shared-top-bar');
-  return JSON.stringify({
-    topBarText: (brand?.innerText || 'ABSENT').replace(/\s+/g, ' ').slice(0, 120),
-    hasLogoImg: !!document.querySelector('shared-top-bar img'),
-    badge: (document.querySelector('shared-environment-badge')?.innerText || 'NONE').trim(),
-    bellPresent: !!document.querySelector('shared-notifications'),
-    sidebarFooter: (document.querySelector('.sidebar-footer')?.innerText || 'EMPTY').trim()
-  }, null, 2);
-})()
+  return JSON.stringify(
+    {
+      topBarText: (brand?.innerText || 'ABSENT').replace(/\s+/g, ' ').slice(0, 120),
+      hasLogoImg: !!document.querySelector('shared-top-bar img'),
+      badge: (document.querySelector('shared-environment-badge')?.innerText || 'NONE').trim(),
+      bellPresent: !!document.querySelector('shared-notifications'),
+      sidebarFooter: (document.querySelector('.sidebar-footer')?.innerText || 'EMPTY').trim(),
+    },
+    null,
+    2
+  );
+})();
 ```
 
 Expected: the logo `<img>` present, app name and company visible, badge `QA`, bell present, and `sidebarFooter` exactly `v1.0.0`.
@@ -489,6 +521,7 @@ git add libs/shared/src/lib/stories/showcase/app-showcase.stories.ts && git comm
 ## Task 4: Showcase — full translations (en + pt)
 
 **Files:**
+
 - Modify: `tools/storybook/storybook.providers.ts`
 - Modify: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
 
@@ -498,70 +531,70 @@ In `tools/storybook/storybook.providers.ts`, add the following to **both** the `
 
 **Framework keys currently missing (these fix real breakage — `Format-DateTime`'s absence makes `DatePipe` receive the literal key as a format pattern):**
 
-| Key | en | pt |
-|---|---|---|
-| `Format-Date` | `MM/dd/yyyy` | `dd/MM/yyyy` |
-| `Format-DateTime` | `MM/dd/yyyy hh:mm a` | `dd/MM/yyyy HH:mm` |
-| `Grid-Loading` | `Loading...` | `Carregando...` |
-| `Grid-Message-Empty` | `No results` | `Nenhum resultado` |
-| `Grid-Message-Failed` | `Failed to load the data` | `Falha ao carregar os dados` |
-| `Grid-Message-LazyLoad` | `Loading more records...` | `Carregando mais registros...` |
-| `RibbonGroup-Entity` | `Entity` | `Entidade` |
-| `RibbonGroup-General` | `General` | `Geral` |
-| `Button-Views-Details` | `Details` | `Detalhes` |
-| `Button-Views-History` | `History` | `Histórico` |
-| `OperationsHistory-Modal-Title` | `Operation details` | `Detalhes da operação` |
+| Key                             | en                        | pt                             |
+| ------------------------------- | ------------------------- | ------------------------------ |
+| `Format-Date`                   | `MM/dd/yyyy`              | `dd/MM/yyyy`                   |
+| `Format-DateTime`               | `MM/dd/yyyy hh:mm a`      | `dd/MM/yyyy HH:mm`             |
+| `Grid-Loading`                  | `Loading...`              | `Carregando...`                |
+| `Grid-Message-Empty`            | `No results`              | `Nenhum resultado`             |
+| `Grid-Message-Failed`           | `Failed to load the data` | `Falha ao carregar os dados`   |
+| `Grid-Message-LazyLoad`         | `Loading more records...` | `Carregando mais registros...` |
+| `RibbonGroup-Entity`            | `Entity`                  | `Entidade`                     |
+| `RibbonGroup-General`           | `General`                 | `Geral`                        |
+| `Button-Views-Details`          | `Details`                 | `Detalhes`                     |
+| `Button-Views-History`          | `History`                 | `Histórico`                    |
+| `OperationsHistory-Modal-Title` | `Operation details`       | `Detalhes da operação`         |
 
 **Showcase keys:**
 
-| Key | en | pt |
-|---|---|---|
-| `Showcase-Region-Main` | `MAIN` | `PRINCIPAL` |
-| `Showcase-Region-Administration` | `ADMINISTRATION` | `ADMINISTRAÇÃO` |
-| `Showcase-Menus-Dashboard` | `Dashboard` | `Painel` |
-| `Showcase-Menus-General` | `General` | `Geral` |
-| `Showcase-Menus-Security` | `Security` | `Segurança` |
-| `Showcase-Menus-Customers` | `Customers` | `Clientes` |
-| `Showcase-Menus-Units` | `Units` | `Unidades` |
-| `Showcase-Menus-Users` | `Users` | `Usuários` |
-| `Showcase-Dashboard-Card-Users` | `Users` | `Usuários` |
-| `Showcase-Dashboard-Card-Customers` | `Customers` | `Clientes` |
-| `Showcase-Dashboard-Card-Units` | `Units` | `Unidades` |
-| `Showcase-Dashboard-RecentActivity` | `Recent activity` | `Atividade recente` |
-| `Showcase-Dashboard-Activity-1` | `Ada Lovelace updated customer Acme Industries` | `Ada Lovelace atualizou o cliente Acme Industries` |
-| `Showcase-Dashboard-Activity-2` | `Alan Turing created unit BR-05 Downtown Branch` | `Alan Turing criou a unidade BR-05 Downtown Branch` |
-| `Showcase-Dashboard-Activity-3` | `Grace Hopper deactivated user Edsger Dijkstra` | `Grace Hopper desativou o usuário Edsger Dijkstra` |
-| `Showcase-Dashboard-Activity-4` | `Barbara Liskov exported the customers list` | `Barbara Liskov exportou a lista de clientes` |
-| `Showcase-Users-Column-Name` | `Name` | `Nome` |
-| `Showcase-Users-Column-Username` | `Username` | `Usuário` |
-| `Showcase-Users-Column-Email` | `Email` | `E-mail` |
-| `Showcase-Users-Field-Name` | `Name` | `Nome` |
-| `Showcase-Users-Field-Username` | `Username` | `Usuário` |
-| `Showcase-Users-Field-Email` | `Email` | `E-mail` |
-| `Showcase-Users-Field-IsActive` | `Active` | `Ativo` |
-| `Showcase-Users-Field-MustChangePassword` | `Must change password` | `Deve alterar a senha` |
-| `Showcase-Users-Validations-Name-Required` | `Name is required` | `O nome é obrigatório` |
-| `Showcase-Users-Validations-Username-Required` | `Username is required` | `O usuário é obrigatório` |
-| `Showcase-Users-FormGroup-User` | `User` | `Usuário` |
-| `Showcase-Users-Details-Title-New` | `New user` | `Novo usuário` |
-| `Showcase-Customers-Column-Name` | `Name` | `Nome` |
-| `Showcase-Customers-Column-City` | `City` | `Cidade` |
-| `Showcase-Customers-Column-Email` | `Email` | `E-mail` |
-| `Showcase-Customers-Column-IsActive` | `Active` | `Ativo` |
-| `Showcase-Customers-Field-Name` | `Name` | `Nome` |
-| `Showcase-Customers-Field-Email` | `Email` | `E-mail` |
-| `Showcase-Customers-Field-Phone` | `Phone` | `Telefone` |
-| `Showcase-Customers-Field-IsActive` | `Active` | `Ativo` |
-| `Showcase-Customers-Field-City` | `City` | `Cidade` |
-| `Showcase-Customers-Validations-Name-Required` | `Name is required` | `O nome é obrigatório` |
-| `Showcase-Customers-FormGroup-Customer` | `Customer` | `Cliente` |
-| `Showcase-Customers-FormGroup-Location` | `Location` | `Localização` |
-| `Showcase-Customers-Details-Title-New` | `New customer` | `Novo cliente` |
-| `Showcase-Units-Column-Code` | `Code` | `Código` |
-| `Showcase-Units-Column-Name` | `Name` | `Nome` |
-| `Showcase-Units-Column-Description` | `Description` | `Descrição` |
-| `Showcase-EditSection-Details` | `Details` | `Detalhes` |
-| `Showcase-EditSection-Address` | `Address` | `Endereço` |
+| Key                                            | en                                               | pt                                                  |
+| ---------------------------------------------- | ------------------------------------------------ | --------------------------------------------------- |
+| `Showcase-Region-Main`                         | `MAIN`                                           | `PRINCIPAL`                                         |
+| `Showcase-Region-Administration`               | `ADMINISTRATION`                                 | `ADMINISTRAÇÃO`                                     |
+| `Showcase-Menus-Dashboard`                     | `Dashboard`                                      | `Painel`                                            |
+| `Showcase-Menus-General`                       | `General`                                        | `Geral`                                             |
+| `Showcase-Menus-Security`                      | `Security`                                       | `Segurança`                                         |
+| `Showcase-Menus-Customers`                     | `Customers`                                      | `Clientes`                                          |
+| `Showcase-Menus-Units`                         | `Units`                                          | `Unidades`                                          |
+| `Showcase-Menus-Users`                         | `Users`                                          | `Usuários`                                          |
+| `Showcase-Dashboard-Card-Users`                | `Users`                                          | `Usuários`                                          |
+| `Showcase-Dashboard-Card-Customers`            | `Customers`                                      | `Clientes`                                          |
+| `Showcase-Dashboard-Card-Units`                | `Units`                                          | `Unidades`                                          |
+| `Showcase-Dashboard-RecentActivity`            | `Recent activity`                                | `Atividade recente`                                 |
+| `Showcase-Dashboard-Activity-1`                | `Ada Lovelace updated customer Acme Industries`  | `Ada Lovelace atualizou o cliente Acme Industries`  |
+| `Showcase-Dashboard-Activity-2`                | `Alan Turing created unit BR-05 Downtown Branch` | `Alan Turing criou a unidade BR-05 Downtown Branch` |
+| `Showcase-Dashboard-Activity-3`                | `Grace Hopper deactivated user Edsger Dijkstra`  | `Grace Hopper desativou o usuário Edsger Dijkstra`  |
+| `Showcase-Dashboard-Activity-4`                | `Barbara Liskov exported the customers list`     | `Barbara Liskov exportou a lista de clientes`       |
+| `Showcase-Users-Column-Name`                   | `Name`                                           | `Nome`                                              |
+| `Showcase-Users-Column-Username`               | `Username`                                       | `Usuário`                                           |
+| `Showcase-Users-Column-Email`                  | `Email`                                          | `E-mail`                                            |
+| `Showcase-Users-Field-Name`                    | `Name`                                           | `Nome`                                              |
+| `Showcase-Users-Field-Username`                | `Username`                                       | `Usuário`                                           |
+| `Showcase-Users-Field-Email`                   | `Email`                                          | `E-mail`                                            |
+| `Showcase-Users-Field-IsActive`                | `Active`                                         | `Ativo`                                             |
+| `Showcase-Users-Field-MustChangePassword`      | `Must change password`                           | `Deve alterar a senha`                              |
+| `Showcase-Users-Validations-Name-Required`     | `Name is required`                               | `O nome é obrigatório`                              |
+| `Showcase-Users-Validations-Username-Required` | `Username is required`                           | `O usuário é obrigatório`                           |
+| `Showcase-Users-FormGroup-User`                | `User`                                           | `Usuário`                                           |
+| `Showcase-Users-Details-Title-New`             | `New user`                                       | `Novo usuário`                                      |
+| `Showcase-Customers-Column-Name`               | `Name`                                           | `Nome`                                              |
+| `Showcase-Customers-Column-City`               | `City`                                           | `Cidade`                                            |
+| `Showcase-Customers-Column-Email`              | `Email`                                          | `E-mail`                                            |
+| `Showcase-Customers-Column-IsActive`           | `Active`                                         | `Ativo`                                             |
+| `Showcase-Customers-Field-Name`                | `Name`                                           | `Nome`                                              |
+| `Showcase-Customers-Field-Email`               | `Email`                                          | `E-mail`                                            |
+| `Showcase-Customers-Field-Phone`               | `Phone`                                          | `Telefone`                                          |
+| `Showcase-Customers-Field-IsActive`            | `Active`                                         | `Ativo`                                             |
+| `Showcase-Customers-Field-City`                | `City`                                           | `Cidade`                                            |
+| `Showcase-Customers-Validations-Name-Required` | `Name is required`                               | `O nome é obrigatório`                              |
+| `Showcase-Customers-FormGroup-Customer`        | `Customer`                                       | `Cliente`                                           |
+| `Showcase-Customers-FormGroup-Location`        | `Location`                                       | `Localização`                                       |
+| `Showcase-Customers-Details-Title-New`         | `New customer`                                   | `Novo cliente`                                      |
+| `Showcase-Units-Column-Code`                   | `Code`                                           | `Código`                                            |
+| `Showcase-Units-Column-Name`                   | `Name`                                           | `Nome`                                              |
+| `Showcase-Units-Column-Description`            | `Description`                                    | `Descrição`                                         |
+| `Showcase-EditSection-Details`                 | `Details`                                        | `Detalhes`                                          |
+| `Showcase-EditSection-Address`                 | `Address`                                        | `Endereço`                                          |
 
 Deliberately **not** in this table: the app name, company name, and notification titles/descriptions. Those four surfaces are rendered raw by `BrandComponent` and `NotificationsComponent`, so they stay plain text in Task 3 (see the note there). A consequence to expect during verification: switching to Portuguese will **not** change the brand block or the notification list — that is correct behaviour, not a missed key.
 
@@ -588,32 +621,41 @@ In `app-showcase.stories.ts`, swap every literal for its key from the table abov
 npx tsc -p libs/shared/.storybook/tsconfig.json --noEmit
 npx eslint libs/shared/src/lib/stories/showcase/app-showcase.stories.ts tools/storybook/storybook.providers.ts
 ```
+
 Expected: `tsc` exit 0; eslint 0 errors (pre-existing `no-explicit-any` warnings in `storybook.providers.ts` are fine).
 
 - [ ] **Step 4: Verify in the browser — English, then Portuguese**
 
 With the story loaded in English, confirm no raw keys leak:
+
 ```js
 (() => {
   const body = document.body.innerText;
-  const leaked = (body.match(/(Showcase|RibbonGroup|Button-Views|Grid-Message|Format)-[A-Za-z0-9-]+/g) || []);
+  const leaked = body.match(/(Showcase|RibbonGroup|Button-Views|Grid-Message|Format)-[A-Za-z0-9-]+/g) || [];
   return JSON.stringify({ leakedKeys: Array.from(new Set(leaked)) }, null, 2);
-})()
+})();
 ```
+
 Expected: `leakedKeys: []`.
 
 Then switch language via the top bar's language selector to Portuguese and confirm the whole UI changes:
+
 ```js
 (() => {
   const body = document.body.innerText;
-  return JSON.stringify({
-    sidebar: (document.querySelector('lib-sidebar')?.innerText || '').replace(/\s+/g, ' ').slice(0, 120),
-    hasPainel: body.includes('Painel'),
-    hasUsuarios: body.includes('Usuários'),
-    stillEnglishDashboard: body.includes('Dashboard')
-  }, null, 2);
-})()
+  return JSON.stringify(
+    {
+      sidebar: (document.querySelector('lib-sidebar')?.innerText || '').replace(/\s+/g, ' ').slice(0, 120),
+      hasPainel: body.includes('Painel'),
+      hasUsuarios: body.includes('Usuários'),
+      stillEnglishDashboard: body.includes('Dashboard'),
+    },
+    null,
+    2
+  );
+})();
 ```
+
 Expected: `hasPainel: true`, `hasUsuarios: true`, `stillEnglishDashboard: false`.
 
 Expect the brand block (`ZLibraries Showcase` / `Zambon Dev`) and the notification list to stay in English — those components render their text raw by design, so that is correct, not a gap.
@@ -631,6 +673,7 @@ git add tools/storybook/storybook.providers.ts libs/shared/src/lib/stories/showc
 ## Task 5: Showcase — history / audit view
 
 **Files:**
+
 - Modify: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
 
 - [ ] **Step 1: Add imports**
@@ -684,22 +727,37 @@ function showcaseServiceHistory(controllerName: string): IShowcaseServiceHistory
 
 @Injectable()
 class ShowcaseServicesHistoryService {
-  public list(controllerName: string, _entityID: number, _parameters: IListParameters): Observable<IServicesHistoryList[]> {
+  public list(
+    controllerName: string,
+    _entityID: number,
+    _parameters: IListParameters
+  ): Observable<IServicesHistoryList[]> {
     return of(showcaseServiceHistory(controllerName)).pipe(delay(SHOWCASE_LATENCY_MS));
   }
 }
 
 @Injectable()
 class ShowcaseOperationsHistoryService {
-  public list(_controllerName: string, _entityID: number, serviceHistoryID: number, _parameters: IListParameters): Observable<IOperationsHistoryList[]> {
+  public list(
+    _controllerName: string,
+    _entityID: number,
+    serviceHistoryID: number,
+    _parameters: IListParameters
+  ): Observable<IOperationsHistoryList[]> {
     const rows: IShowcaseOperationHistoryRow[] = [
       {
-        ID: 1, id: 1, entityName: 'Record', operationType: 'Modified',
+        ID: 1,
+        id: 1,
+        entityName: 'Record',
+        operationType: 'Modified',
         oldValues: JSON.stringify({ isActive: true, name: 'Globex Corporation' }, null, 2),
         newValues: JSON.stringify({ isActive: false, name: 'Globex Corporation Ltd' }, null, 2),
       },
       {
-        ID: 2, id: 2, entityName: 'Contact', operationType: 'Added',
+        ID: 2,
+        id: 2,
+        entityName: 'Contact',
+        operationType: 'Added',
         oldValues: JSON.stringify({}, null, 2),
         newValues: JSON.stringify({ phone: '+1 514 555 0102' }, null, 2),
       },
@@ -755,6 +813,7 @@ And the same for the Customers `:id` route, with `controllerName: 'Customers'`:
 npx tsc -p libs/shared/.storybook/tsconfig.json --noEmit
 npx eslint libs/shared/src/lib/stories/showcase/app-showcase.stories.ts
 ```
+
 Expected: `tsc` exit 0, eslint 0 errors.
 
 - [ ] **Step 6: Verify in the browser**
@@ -765,25 +824,32 @@ Open a Users detail, then click the **Views** ribbon button and confirm it now o
 (() => {
   const view = document.querySelector('shared-services-history-view');
   const grids = Array.from(document.querySelectorAll('shared-services-history-view lib-data-grid'));
-  return JSON.stringify({
-    href: location.href,
-    viewPresent: !!view,
-    gridCount: grids.length,
-    text: (view?.innerText || 'ABSENT').replace(/\s+/g, ' ').slice(0, 300)
-  }, null, 2);
-})()
+  return JSON.stringify(
+    {
+      href: location.href,
+      viewPresent: !!view,
+      gridCount: grids.length,
+      text: (view?.innerText || 'ABSENT').replace(/\s+/g, ' ').slice(0, 300),
+    },
+    null,
+    2
+  );
+})();
 ```
+
 Expected: URL ends `/audit`, the view present, and audit rows listing `User created` / `User updated` / `User deactivated` with author names and **properly formatted dates** (not the literal string `Format-DateTime`).
 
 Then click a service row and confirm the operations grid populates — this is the row-key fix:
+
 ```js
 (() => {
   const click = (el) => el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
   const rows = Array.from(document.querySelectorAll('shared-services-history-view lib-data-grid-row'));
   click(rows[0].querySelector('div'));
   return JSON.stringify({ serviceRowCount: rows.length }, null, 2);
-})()
+})();
 ```
+
 Then re-query and confirm operation rows appeared. Also confirm the Customers audit view shows `Customer …` rows, proving `controllerName` is wired per entity.
 
 - [ ] **Step 7: Commit**
@@ -797,6 +863,7 @@ git add libs/shared/src/lib/stories/showcase/app-showcase.stories.ts && git comm
 ## Task 6: Changelogs and final verification
 
 **Files:**
+
 - Modify: `libs/library/CHANGELOG.md`
 - Modify: `libs/framework/CHANGELOG.md`
 - Modify: `libs/shared/CHANGELOG.md`
@@ -840,10 +907,10 @@ Ensure `⚠ Breaking Changes / Migration` says `None`.
 Under `## [Unreleased]` → `### Added`, extend the existing App Showcase entry (do not add a second one) with a sentence covering the new capabilities:
 
 ```markdown
-  The story now also demonstrates a branded top bar (logo, app name, subtitle, environment badge,
-  working notifications bell), a versioned sidebar footer, a mocked audit/history view reachable from
-  the detail views' Views button, and full `en`/`pt` translation so the language selector switches the
-  entire showcase.
+The story now also demonstrates a branded top bar (logo, app name, subtitle, environment badge,
+working notifications bell), a versioned sidebar footer, a mocked audit/history view reachable from
+the detail views' Views button, and full `en`/`pt` translation so the language selector switches the
+entire showcase.
 ```
 
 - [ ] **Step 4: Full verification sweep**
@@ -851,11 +918,13 @@ Under `## [Unreleased]` → `### Added`, extend the existing App Showcase entry 
 ```bash
 npx nx build library && npx nx build framework && npx nx build shared
 ```
+
 Expected: all three succeed.
 
 ```bash
 grep -rl "showcase" dist/libs/shared || echo "NOT PRESENT (expected)"
 ```
+
 Expected: `NOT PRESENT (expected)`.
 
 ```bash
@@ -863,6 +932,7 @@ npx nx test library 2>&1 | tail -n 6
 npx nx test framework 2>&1 | tail -n 6
 npx nx test shared 2>&1 | tail -n 6
 ```
+
 Expected: exactly the documented baselines (library 1 failed suite; framework 5 failed suites / 3 failed tests; shared ~28 failed tests / 11 failed suites). **Any increase is a regression — stop and report it.**
 
 ```bash
@@ -870,6 +940,7 @@ npx nx lint shared --skip-nx-cache 2>&1 | tail -n 4
 npx nx lint framework --skip-nx-cache 2>&1 | tail -n 4
 npx nx lint library --skip-nx-cache 2>&1 | tail -n 4
 ```
+
 Expected: shared 17 errors, framework 155, library 193 — no increases.
 
 - [ ] **Step 5: Final browser walk**
@@ -886,16 +957,16 @@ git add libs/library/CHANGELOG.md libs/framework/CHANGELOG.md libs/shared/CHANGE
 
 ## Troubleshooting
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| `type` attribute still present after Task 1 | Host binding does not clear statically-set attributes | Report BLOCKED with the probe output; the fallback is `:host` resets, a different change |
-| Grids still ~256px | Marker class missing from the host, or `::ng-deep` omitted | Check `document.querySelector('.framework-view-list')`; `::ng-deep` is mandatory for routed hosts (fact #6) |
-| Dashboard content clipped | The height rules reached a non-`TabViewList` screen | The selector must be `.framework-view-list`, never a bare child selector |
-| Raw keys visible in the UI | Key missing from `storybookTranslations`, or the component doesn't self-translate | Add the key; for `lib-group-accordion` / `lib-ribbon-group` add an explicit `| translate` (fact #12) |
-| Dates render as `Format-DateTime` | That key is missing | Add `Format-Date` / `Format-DateTime` (Task 4 Step 1) |
-| Clicking a service row loads no operations | Rows lack a lowercase `id` | Emit both `ID` and `id` (fact #19) |
-| Bell missing | Mock's `isEnabled` falsy, or `NotificationsService` not provided | Provide the mock with `isEnabled: true` |
-| Sidebar footer empty | `AppConfig.version` empty | Pass `version: '1.0.0'` (no `v` prefix) |
+| Symptom                                     | Cause                                                                             | Fix                                                                                                         |
+| ------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------- |
+| `type` attribute still present after Task 1 | Host binding does not clear statically-set attributes                             | Report BLOCKED with the probe output; the fallback is `:host` resets, a different change                    |
+| Grids still ~256px                          | Marker class missing from the host, or `::ng-deep` omitted                        | Check `document.querySelector('.framework-view-list')`; `::ng-deep` is mandatory for routed hosts (fact #6) |
+| Dashboard content clipped                   | The height rules reached a non-`TabViewList` screen                               | The selector must be `.framework-view-list`, never a bare child selector                                    |
+| Raw keys visible in the UI                  | Key missing from `storybookTranslations`, or the component doesn't self-translate | Add the key; for `lib-group-accordion` / `lib-ribbon-group` add an explicit `                               | translate` (fact #12) |
+| Dates render as `Format-DateTime`           | That key is missing                                                               | Add `Format-Date` / `Format-DateTime` (Task 4 Step 1)                                                       |
+| Clicking a service row loads no operations  | Rows lack a lowercase `id`                                                        | Emit both `ID` and `id` (fact #19)                                                                          |
+| Bell missing                                | Mock's `isEnabled` falsy, or `NotificationsService` not provided                  | Provide the mock with `isEnabled: true`                                                                     |
+| Sidebar footer empty                        | `AppConfig.version` empty                                                         | Pass `version: '1.0.0'` (no `v` prefix)                                                                     |
 
 ## Out of scope
 

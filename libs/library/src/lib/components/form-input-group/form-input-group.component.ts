@@ -11,15 +11,7 @@ import { FormInputComponent } from '../form-input/form-input.component';
   selector: 'lib-form-input-group',
   templateUrl: './form-input-group.component.html',
   styleUrls: ['./form-input-group.component.scss'],
-  imports: [
-    FormInputComponent,
-    KeyValuePipe,
-    NgFor,
-    NgIf,
-    NgStyle,
-    NgTemplateOutlet,
-    TranslatePipe,
-],
+  imports: [FormInputComponent, KeyValuePipe, NgFor, NgIf, NgStyle, NgTemplateOutlet, TranslatePipe],
   host: {
     '[class.full-height]': 'isFullHeight',
     // Angular keeps static attributes in the DOM even when a directive consumes them as an
@@ -27,8 +19,8 @@ import { FormInputComponent } from '../form-input/form-input.component';
     // @tailwindcss/forms' tag-agnostic `[type="checkbox"]` base rules style the host itself as
     // a checkbox (1px border, white fill, height:1rem). Clearing the attribute removes the
     // stray box for every type while leaving the `type` @Input() untouched.
-    '[attr.type]': 'null'
-  }
+    '[attr.type]': 'null',
+  },
 })
 export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -49,7 +41,7 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   @Input() public step = 1;
   @Input() public template!: TemplateRef<any>;
   @Input() public type = 'text';
-  @Input() public validations: { [id: string]: string; } = {};
+  @Input() public validations: { [id: string]: string } = {};
   //#endregion
 
   //#region Host listeners
@@ -64,9 +56,7 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
 
   //#region Properties
   protected get formControl(): FormControl<any> | null {
-    return this.controlName
-      ? <FormControl>this.formGroup.get(this.controlName)
-      : null;
+    return this.controlName ? <FormControl>this.formGroup.get(this.controlName) : null;
   }
 
   protected get formGroup(): FormGroup {
@@ -92,24 +82,20 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.formControl?.statusChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.loadingField = false;
-      });
+    this.formControl?.statusChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.loadingField = false;
+    });
 
-    this.formControl?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.loadingField = false;
-      });
+    this.formControl?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.loadingField = false;
+    });
 
     this.formService.fieldRefreshed
       .pipe(
         takeUntil(this.destroy$),
-        filter((field: { fieldName?: string, value?: any, loading?: boolean }) => field.fieldName === this.controlName),
+        filter((field: { fieldName?: string; value?: any; loading?: boolean }) => field.fieldName === this.controlName)
       )
-      .subscribe((field: { fieldName?: string, value?: any, loading?: boolean }) => {
+      .subscribe((field: { fieldName?: string; value?: any; loading?: boolean }) => {
         this.loadingField = field.loading ?? false;
       });
   }

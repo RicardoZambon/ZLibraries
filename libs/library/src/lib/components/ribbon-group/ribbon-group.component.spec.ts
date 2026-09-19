@@ -7,15 +7,10 @@ import { RibbonGroupChild } from '../../models';
 import { RibbonGroupComponent } from './ribbon-group.component';
 
 describe(RibbonGroupComponent.name, () => {
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        CommonModule,
-        RibbonGroupComponent,
-      ],
-    })
-    .compileComponents();
+      imports: [CommonModule, RibbonGroupComponent],
+    }).compileComponents();
   });
 
   it('should create', () => {
@@ -24,17 +19,11 @@ describe(RibbonGroupComponent.name, () => {
 
     expect(component).toBeTruthy();
   });
-  
+
   it('should have children content when has children buttons', async () => {
     TestBed.configureTestingModule({
-      imports: [
-        CommonModule,
-        RibbonGroupComponent,
-        RibbonGroupTestComponent,
-        RibbonGroupButtonTestComponent,
-      ],
-    })
-    .compileComponents();
+      imports: [CommonModule, RibbonGroupComponent, RibbonGroupTestComponent, RibbonGroupButtonTestComponent],
+    }).compileComponents();
 
     const fixture: ComponentFixture<RibbonGroupTestComponent> = TestBed.createComponent(RibbonGroupTestComponent);
     const component: RibbonGroupTestComponent = fixture.componentInstance;
@@ -50,14 +39,8 @@ describe(RibbonGroupComponent.name, () => {
 
   it('should remain visible when children are visible', async () => {
     TestBed.configureTestingModule({
-      imports: [
-        CommonModule,
-        RibbonGroupComponent,
-        RibbonGroupTestComponent,
-        RibbonGroupButtonTestComponent,
-      ],
-    })
-    .compileComponents();
+      imports: [CommonModule, RibbonGroupComponent, RibbonGroupTestComponent, RibbonGroupButtonTestComponent],
+    }).compileComponents();
 
     const fixture: ComponentFixture<RibbonGroupTestComponent> = TestBed.createComponent(RibbonGroupTestComponent);
 
@@ -91,14 +74,8 @@ describe(RibbonGroupComponent.name, () => {
 
   it('should stay hidden when children are NOT visible', async () => {
     TestBed.configureTestingModule({
-      imports: [
-        CommonModule,
-        RibbonGroupComponent,
-        RibbonGroupTestComponent,
-        RibbonGroupButtonTestComponent,
-      ],
-    })
-    .compileComponents();
+      imports: [CommonModule, RibbonGroupComponent, RibbonGroupTestComponent, RibbonGroupButtonTestComponent],
+    }).compileComponents();
 
     const fixture: ComponentFixture<RibbonGroupTestComponent> = TestBed.createComponent(RibbonGroupTestComponent);
     const component: RibbonGroupTestComponent = fixture.componentInstance;
@@ -124,7 +101,7 @@ describe(RibbonGroupComponent.name, () => {
 @Component({
   selector: 'test-ribbon-button',
   template: ``,
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => RibbonGroupButtonTestComponent)}],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => RibbonGroupButtonTestComponent) }],
 })
 class RibbonGroupButtonTestComponent extends RibbonGroupChild {
   public visible = true;
@@ -133,10 +110,11 @@ class RibbonGroupButtonTestComponent extends RibbonGroupChild {
 @Component({
   imports: [RibbonGroupComponent, RibbonGroupButtonTestComponent],
   template: `
-<lib-ribbon-group>
-  <test-ribbon-button></test-ribbon-button>
-</lib-ribbon-group>
-` })
+    <lib-ribbon-group>
+      <test-ribbon-button></test-ribbon-button>
+    </lib-ribbon-group>
+  `,
+})
 class RibbonGroupTestComponent {
   @ViewChild(RibbonGroupComponent) ribbonGroupComponent?: RibbonGroupComponent;
 }

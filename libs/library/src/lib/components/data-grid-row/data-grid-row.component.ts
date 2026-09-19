@@ -1,5 +1,16 @@
 import { NgClass, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, inject, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxResizeObserverModule } from 'ngx-resize-observer';
 import { takeUntil } from 'rxjs';
@@ -16,16 +27,9 @@ import { BaseComponent } from '../base.component';
   },
   styleUrls: ['./data-grid-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    FormsModule,
-    NgClass,
-    NgIf,
-    NgFor,
-    NgTemplateOutlet,
-    NgxResizeObserverModule,
-  ]
+  imports: [FormsModule, NgClass, NgIf, NgFor, NgTemplateOutlet, NgxResizeObserverModule],
 })
-export class DataGridRowComponent extends BaseComponent implements OnInit {  
+export class DataGridRowComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @Input() public disabled = false;
   @Input() public isFirstRow = false;
@@ -42,7 +46,7 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   public setFocus(): void {
     if (!this.disabled) {
       this.dataGridDataset.setFocusedRow(this.rowKey);
-    
+
       if (this.dataGridDataset.configs.multiSelect && (this.dataGridDataset.configs.selectOnClick ?? true)) {
         this.selected = this.isRowDataSelected;
       }
@@ -73,7 +77,7 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   }
 
   private get isRowDataSelected(): boolean {
-    return this.dataGridDataset.isKeySelected(this.rowKey)
+    return this.dataGridDataset.isKeySelected(this.rowKey);
   }
 
   private get rowKey(): string {
@@ -91,7 +95,7 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
 
     this.dataGridDataset.selectedRowsChanged
       .pipe(takeUntil(this.destroy$))
-      .subscribe((selectionChanges: { [id:string]: { rowData: any; selected: boolean } }) => {
+      .subscribe((selectionChanges: { [id: string]: { rowData: any; selected: boolean } }) => {
         if (this.rowKey in selectionChanges) {
           this.selected = selectionChanges[this.rowKey].selected;
           this.changeDetectorRef.detectChanges();
@@ -131,10 +135,13 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   }
 
   protected onToggleSelection(): void {
-    if (this.disabled || (this.dataGridDataset.configs.multiSelect && (this.dataGridDataset.configs.selectOnClick ?? true))) {
+    if (
+      this.disabled ||
+      (this.dataGridDataset.configs.multiSelect && (this.dataGridDataset.configs.selectOnClick ?? true))
+    ) {
       return;
     }
-    
+
     this.selected = !this.selected;
 
     if (this.selected) {

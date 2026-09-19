@@ -6,7 +6,7 @@ import { ExternalUrlResolverService } from './external-url-resolver.service';
 
 describe(ExternalUrlResolverService.name, () => {
   let service: ExternalUrlResolverService;
-  let translate: { currentLang: string, defaultLang: string };
+  let translate: { currentLang: string; defaultLang: string };
   let user: ICurrentUserInfo | null;
 
   function configure(): void {

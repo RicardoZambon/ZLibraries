@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
 @Pipe({
-  name: 'enumTranslate'
+  name: 'enumTranslate',
 })
 export class EnumTranslatePipe implements PipeTransform {
   //#region ViewChilds, Inputs, Outputs
@@ -23,13 +23,13 @@ export class EnumTranslatePipe implements PipeTransform {
   //#endregion
 
   //#region Public methods
-  public transform(enumType: any): Array<{value: any, display: Observable<any> }> {
+  public transform(enumType: any): Array<{ value: any; display: Observable<any> }> {
     return Object.keys(enumType)
-    .filter(key => isNaN(Number(key)))
-    .map(key => ({
-      value: enumType[key],
-      display: this.translate.get(key),
-    }));
+      .filter((key) => isNaN(Number(key)))
+      .map((key) => ({
+        value: enumType[key],
+        display: this.translate.get(key),
+      }));
   }
   //#endregion
 

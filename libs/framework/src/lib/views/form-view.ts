@@ -33,7 +33,6 @@ export abstract class FormView<TEntityModel> extends TabViewBase implements OnIn
     this.dataProvider = inject(DataProviderService, { optional: true });
     this.formBuilder = inject(FormBuilder);
     this.formService = inject(FormService);
-
   }
 
   public ngOnInit(): void {
@@ -41,7 +40,8 @@ export abstract class FormView<TEntityModel> extends TabViewBase implements OnIn
     this.formService.initializeForm(this.dataForm);
 
     this.formService.loading = true;
-    this.dataProvider?.getModel$()
+    this.dataProvider
+      ?.getModel$()
       .pipe(takeUntil(this.destroy$))
       .subscribe((model: TEntityModel | null) => {
         this.formService.loading = false;

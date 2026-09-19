@@ -10,9 +10,7 @@ export class ServicesHistoryDataset extends DataGridDataset {
   //#endregion
 
   //#region Variables
-  public override columns: IGridColumn[] = [
-    { field: '', headerName: '' },
-  ];
+  public override columns: IGridColumn[] = [{ field: '', headerName: '' }];
 
   public controllerName?: string;
 

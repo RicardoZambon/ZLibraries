@@ -8,18 +8,15 @@ import { OperationsHistoryChildListComponent } from './operations-history-child-
 describe(OperationsHistoryChildListComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ OperationsHistoryChildListComponent, TranslateModule.forRoot() ],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        GridConfigsProvider,
-      ],
-    })
-    .compileComponents();
+      imports: [OperationsHistoryChildListComponent, TranslateModule.forRoot()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), GridConfigsProvider],
+    }).compileComponents();
   });
 
   it('should create', () => {
-    const fixture: ComponentFixture<OperationsHistoryChildListComponent> = TestBed.createComponent(OperationsHistoryChildListComponent);
+    const fixture: ComponentFixture<OperationsHistoryChildListComponent> = TestBed.createComponent(
+      OperationsHistoryChildListComponent
+    );
     const component: OperationsHistoryChildListComponent = fixture.componentInstance;
 
     expect(component).toBeTruthy();

@@ -39,7 +39,11 @@ describe('BaseDataset', () => {
   describe('ngOnDestroy', () => {
     it('should complete the destroy$ subject', () => {
       let completed = false;
-      (dataset as any).destroy$.subscribe({ complete: () => { completed = true; } });
+      (dataset as any).destroy$.subscribe({
+        complete: () => {
+          completed = true;
+        },
+      });
 
       dataset.ngOnDestroy();
 
@@ -48,7 +52,9 @@ describe('BaseDataset', () => {
 
     it('should emit true on destroy$', () => {
       let emittedValue: boolean | undefined;
-      (dataset as any).destroy$.subscribe((v: boolean) => { emittedValue = v; });
+      (dataset as any).destroy$.subscribe((v: boolean) => {
+        emittedValue = v;
+      });
 
       dataset.ngOnDestroy();
 

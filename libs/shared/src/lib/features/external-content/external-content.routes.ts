@@ -34,9 +34,7 @@ export const externalContentRoutes: Routes = [
         path: ':menuID',
         component: DefaultTabViewComponent,
         data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
-        children: [
-          { path: '', component: ExternalContentComponent },
-        ],
+        children: [{ path: '', component: ExternalContentComponent }],
       },
     ],
   },

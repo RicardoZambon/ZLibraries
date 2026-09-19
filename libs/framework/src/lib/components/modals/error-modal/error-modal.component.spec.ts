@@ -5,9 +5,8 @@ import { ErrorModalComponent } from './error-modal.component';
 describe(ErrorModalComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ ErrorModalComponent, TranslateModule.forRoot() ]
-    })
-    .compileComponents();
+      imports: [ErrorModalComponent, TranslateModule.forRoot()],
+    }).compileComponents();
   });
 
   it('should create', () => {

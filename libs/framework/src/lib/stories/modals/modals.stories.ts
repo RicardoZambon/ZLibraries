@@ -6,10 +6,7 @@ const meta: Meta<ConfirmModalComponent> = {
   component: ConfirmModalComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        ConfirmModalComponent,
-        ErrorModalComponent,
-      ],
+      imports: [ConfirmModalComponent, ErrorModalComponent],
     }),
   ],
   title: 'Framework/Modals',

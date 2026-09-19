@@ -23,11 +23,7 @@ import { ExternalContentService, ExternalUrlResolverService } from '../../servic
   selector: 'shared-external-content',
   templateUrl: './external-content.component.html',
   styleUrls: ['./external-content.component.scss'],
-  imports: [
-    ButtonComponent,
-    RibbonGroupComponent,
-    TranslatePipe,
-  ]
+  imports: [ButtonComponent, RibbonGroupComponent, TranslatePipe],
 })
 export class ExternalContentComponent extends TabViewBase implements OnInit, OnDestroy {
   //#region ViewChilds, Inputs, Outputs
@@ -77,7 +73,8 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
       return;
     }
 
-    this.externalContentService.find(menuID)
+    this.externalContentService
+      .find(menuID)
       .pipe(take(1), takeUntil(this.destroy$))
       .subscribe((entry: IExternalContentEntry | undefined) => this.show(entry));
   }
@@ -177,7 +174,10 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
     const url: string = this.externalUrlResolverService.resolve(entry.url);
 
     if (!this.externalUrlResolverService.isAllowed(url) || !this.isOriginAllowed(url)) {
-      console.error(`Embedded menu item "${entry.label}" points to an address that is not allowed and was not displayed.`, url);
+      console.error(
+        `Embedded menu item "${entry.label}" points to an address that is not allowed and was not displayed.`,
+        url
+      );
       this.isBlocked = true;
 
       return;

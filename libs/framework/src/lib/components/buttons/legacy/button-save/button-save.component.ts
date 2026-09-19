@@ -12,12 +12,8 @@ import { BaseButton } from '../../base-button';
 @Component({
   selector: 'framework-button-save-legacy',
   templateUrl: './button-save.component.html',
-  imports: [
-    ErrorModalComponent,
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonSaveLegacyComponent)}]
+  imports: [ErrorModalComponent, NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonSaveLegacyComponent) }],
 })
 /**
  * @deprecated Use standalone {@link ButtonSaveComponent} instead.
@@ -61,44 +57,45 @@ export class ButtonSaveLegacyComponent extends BaseButton {
 
     this.startLoading();
     this.tabView.loading = true;
-    
-    this.form.save()
+
+    this.form
+      .save()
       .pipe(take(1))
       .subscribe({
-      next: (model: any) => {
-        this.finishLoading('success');
-        
-        this.formService.model = model;
-        this.form?.cancelEdit();
+        next: (model: any) => {
+          this.finishLoading('success');
 
-        switch (option) {
-          case 'save-and-close':
-            this.tabService.closeActiveTab();
-            // this.tabService.closeTab(this.tabView);
-            break;
-          case 'save-and-new':
-            if (this.tabView.buttonNew) {
-              this.tabView.buttonNew.clicked();
-            }
-            break;
-        }
-      },
-      error: (e: HttpErrorResponse) => {
-        this.finishLoading('warning');
-        this.form?.beginEdit(false);
+          this.formService.model = model;
+          this.form?.cancelEdit();
 
-        if (e.status === 400 && !!this.form) {
-          BackendFormValidationHelper.validateAllFormFields(e, this.form.dataForm);
-        } else {
-          let errorMessage = 'Modal-Failed-DefaultMessage';
-          if (typeof e.error === 'string') {
-            errorMessage = e.error;
+          switch (option) {
+            case 'save-and-close':
+              this.tabService.closeActiveTab();
+              // this.tabService.closeTab(this.tabView);
+              break;
+            case 'save-and-new':
+              if (this.tabView.buttonNew) {
+                this.tabView.buttonNew.clicked();
+              }
+              break;
           }
+        },
+        error: (e: HttpErrorResponse) => {
+          this.finishLoading('warning');
+          this.form?.beginEdit(false);
 
-          this.errorModal.showModal(errorMessage);
-        }
-      }
-    });
+          if (e.status === 400 && !!this.form) {
+            BackendFormValidationHelper.validateAllFormFields(e, this.form.dataForm);
+          } else {
+            let errorMessage = 'Modal-Failed-DefaultMessage';
+            if (typeof e.error === 'string') {
+              errorMessage = e.error;
+            }
+
+            this.errorModal.showModal(errorMessage);
+          }
+        },
+      });
   }
   //#endregion
 

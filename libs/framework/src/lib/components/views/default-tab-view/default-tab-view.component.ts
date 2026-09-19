@@ -9,12 +9,8 @@ import { TabViewService } from '../../../services';
   selector: 'framework-default-tab-view',
   templateUrl: './default-tab-view.component.html',
   styleUrls: ['./default-tab-view.component.scss'],
-  imports: [
-    NgTemplateOutlet,
-    RibbonComponent,
-    RouterModule,
-  ],
-  providers: [{ provide: TabViewService }]
+  imports: [NgTemplateOutlet, RibbonComponent, RouterModule],
+  providers: [{ provide: TabViewService }],
 })
 export class DefaultTabViewComponent implements OnDestroy, OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -26,17 +22,12 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
 
   private ribbonViewTemplate: { [viewId: string]: TemplateRef<any> | undefined } = {};
   //#endregion
-  
+
   //#region Properties
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected changeDetectorRef: ChangeDetectorRef,
-    protected tabViewService: TabViewService,
-  ) {
-    
-  }
+  constructor(protected changeDetectorRef: ChangeDetectorRef, protected tabViewService: TabViewService) {}
 
   public ngOnDestroy(): void {
     this.destroy$.next(true);
@@ -51,13 +42,11 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
         this.updateRibbonTemplate(template);
       });
 
-    this.tabViewService.onViewChanged
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((viewId: string) => {
-        this.claimUnnamedRibbon(viewId);
+    this.tabViewService.onViewChanged.pipe(takeUntil(this.destroy$)).subscribe((viewId: string) => {
+      this.claimUnnamedRibbon(viewId);
 
-        this.updateRibbonTemplate(this.ribbonViewTemplate[viewId]);
-      });
+      this.updateRibbonTemplate(this.ribbonViewTemplate[viewId]);
+    });
   }
   //#endregion
 

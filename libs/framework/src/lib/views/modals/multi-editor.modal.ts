@@ -1,6 +1,12 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { DataGridDataset, DataProviderService, FormService, MultiEditorComponent, MultiEditorDataset } from '@zambon-dev/library';
+import {
+  DataGridDataset,
+  DataProviderService,
+  FormService,
+  MultiEditorComponent,
+  MultiEditorDataset,
+} from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { ModalBase } from './modal-base';
 
@@ -36,18 +42,15 @@ export abstract class MultiEditorModal<TEntityModel> extends ModalBase implement
     this.formBuilder = inject(FormBuilder);
     this.formService = inject(FormService);
     this.multiEditorDataset = inject(MultiEditorDataset);
-
   }
 
   public ngOnInit(): void {
     this.dataForm = this.formSetup();
     this.formService.initializeForm(this.dataForm);
 
-    this.multiEditorDataset.savedChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.savedChanges.emit();
-      });
+    this.multiEditorDataset.savedChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.savedChanges.emit();
+    });
 
     this.updateParentID();
   }

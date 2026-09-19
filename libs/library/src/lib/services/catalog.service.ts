@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ICatalogResult } from '../models/catalog-result';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CatalogService {
   //#region ViewChilds, Inputs, Outputs
@@ -25,7 +25,12 @@ export class CatalogService {
   //#endregion
 
   //#region Public methods
-  public search(endpoint: string, maxResults: number, criteria?: string, filters: { [key: string ] : string } | null = null): Observable<ICatalogResult> {
+  public search(
+    endpoint: string,
+    maxResults: number,
+    criteria?: string,
+    filters: { [key: string]: string } | null = null
+  ): Observable<ICatalogResult> {
     return this.http.post<ICatalogResult>(`${endpoint}`, { maxResults, criteria, filters });
   }
   //#endregion

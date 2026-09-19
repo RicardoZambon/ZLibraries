@@ -2,7 +2,13 @@ import { ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
 import { RouteHelper } from './route-helper';
 
 describe('RouteHelper', () => {
-  function createRouteSnapshot(segments: string[], component?: any, firstChild?: ActivatedRouteSnapshot, parent?: ActivatedRouteSnapshot, data?: Record<string, any>): ActivatedRouteSnapshot {
+  function createRouteSnapshot(
+    segments: string[],
+    component?: any,
+    firstChild?: ActivatedRouteSnapshot,
+    parent?: ActivatedRouteSnapshot,
+    data?: Record<string, any>
+  ): ActivatedRouteSnapshot {
     return {
       url: segments.map((s: string) => new UrlSegment(s, {})),
       component,
@@ -51,7 +57,9 @@ describe('RouteHelper', () => {
 
   describe('getRouteByData', () => {
     it('should return the route if it has matching data key and value', () => {
-      const route: ActivatedRouteSnapshot = createRouteSnapshot(['test'], null, undefined, undefined, { viewType: 'details' });
+      const route: ActivatedRouteSnapshot = createRouteSnapshot(['test'], null, undefined, undefined, {
+        viewType: 'details',
+      });
 
       const result = RouteHelper.getRouteByData(route, 'viewType', 'details');
 
@@ -59,7 +67,9 @@ describe('RouteHelper', () => {
     });
 
     it('should search recursively in firstChild', () => {
-      const child: ActivatedRouteSnapshot = createRouteSnapshot(['child'], null, undefined, undefined, { viewType: 'list' });
+      const child: ActivatedRouteSnapshot = createRouteSnapshot(['child'], null, undefined, undefined, {
+        viewType: 'list',
+      });
       const parent: ActivatedRouteSnapshot = createRouteSnapshot(['parent'], null, child);
 
       const result = RouteHelper.getRouteByData(parent, 'viewType', 'list');
@@ -68,7 +78,9 @@ describe('RouteHelper', () => {
     });
 
     it('should return null when data key is not found', () => {
-      const route: ActivatedRouteSnapshot = createRouteSnapshot(['test'], null, undefined, undefined, { other: 'value' });
+      const route: ActivatedRouteSnapshot = createRouteSnapshot(['test'], null, undefined, undefined, {
+        other: 'value',
+      });
 
       const result = RouteHelper.getRouteByData(route, 'viewType', 'details');
 

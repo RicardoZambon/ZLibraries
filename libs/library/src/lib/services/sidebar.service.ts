@@ -4,7 +4,7 @@ import { ISidebarProfile, SidebarMenu, SidebarMenuOpenMode, toSidebarMenuOpenMod
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export abstract class SidebarService {
   //#region ViewChilds, Inputs, Outputs
@@ -27,7 +27,7 @@ export abstract class SidebarService {
 
   //#region Properties
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   //#endregion
 
@@ -43,13 +43,12 @@ export abstract class SidebarService {
   public loadChildren(parentMenu: SidebarMenu): void {
     this.childrenLoading.emit(parentMenu);
 
-    this.loadChildrenFor(parentMenu)
-      .subscribe({
-        error: (exception: HttpErrorResponse) => {
-          this.childrenFailed.emit(parentMenu);
-          throw exception;
-        }
-      });
+    this.loadChildrenFor(parentMenu).subscribe({
+      error: (exception: HttpErrorResponse) => {
+        this.childrenFailed.emit(parentMenu);
+        throw exception;
+      },
+    });
   }
 
   /**
@@ -58,26 +57,24 @@ export abstract class SidebarService {
    * the fire-and-forget variant that also raises the loading and failure events.
    */
   public loadChildrenFor(parentMenu: SidebarMenu): Observable<SidebarMenu[]> {
-    return this.loadMenus(parentMenu)
-      .pipe(
-        take(1),
-        map((menus: SidebarMenu[]) => menus.map((menu: SidebarMenu) => new SidebarMenu(menu))),
-        tap((childrenMenus: SidebarMenu[]) => {
-          parentMenu.children = childrenMenus;
-          childrenMenus.forEach((childMenu: SidebarMenu) => childMenu.parent = parentMenu);
-        }),
-      );
+    return this.loadMenus(parentMenu).pipe(
+      take(1),
+      map((menus: SidebarMenu[]) => menus.map((menu: SidebarMenu) => new SidebarMenu(menu))),
+      tap((childrenMenus: SidebarMenu[]) => {
+        parentMenu.children = childrenMenus;
+        childrenMenus.forEach((childMenu: SidebarMenu) => (childMenu.parent = parentMenu));
+      })
+    );
   }
 
   public loadRoot(): Observable<SidebarMenu[]> {
-    return this.loadMenus(null)
-      .pipe(
-        take(1),
-        map((menus: SidebarMenu[]) => menus.map((menu: SidebarMenu) => new SidebarMenu(menu))),
-        tap((menus: SidebarMenu[]) => this.menus = menus)
-      );
+    return this.loadMenus(null).pipe(
+      take(1),
+      map((menus: SidebarMenu[]) => menus.map((menu: SidebarMenu) => new SidebarMenu(menu))),
+      tap((menus: SidebarMenu[]) => (this.menus = menus))
+    );
   }
-  
+
   public select(menu: SidebarMenu): void {
     if (menu.childCount > 0 && (menu.children?.length ?? 0) === 0) {
       this.loadChildren(menu);
@@ -114,7 +111,6 @@ export abstract class SidebarService {
       if (hasUrl) {
         urlSelected.emit(menu);
       }
-
     } else if (hasUrl) {
       // Menu with a URL is already selected — navigate again instead of toggling off.
       urlSelected.emit(menu);

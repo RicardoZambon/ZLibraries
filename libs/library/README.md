@@ -17,16 +17,16 @@ npm install @zambon-dev/library
 
 All peers must be present in the consuming application:
 
-| Package | Range |
-| --- | --- |
-| `@angular/cdk` | `^19.1.5` |
-| `@angular/common` | `^19.1.0` |
-| `@angular/core` | `^19.1.0` |
-| `@angular/forms` | `^19.1.0` |
-| `@angular/router` | `^19.1.0` |
+| Package               | Range     |
+| --------------------- | --------- |
+| `@angular/cdk`        | `^19.1.5` |
+| `@angular/common`     | `^19.1.0` |
+| `@angular/core`       | `^19.1.0` |
+| `@angular/forms`      | `^19.1.0` |
+| `@angular/router`     | `^19.1.0` |
 | `@ngx-translate/core` | `^16.0.4` |
-| `ngx-resize-observer` | `^3.0.0` |
-| `rxjs` | `^7.8.0` |
+| `ngx-resize-observer` | `^3.0.0`  |
+| `rxjs`                | `^7.8.0`  |
 
 ## Usage
 

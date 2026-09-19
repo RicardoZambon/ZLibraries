@@ -36,30 +36,26 @@ export class AuthInterceptor implements HttpInterceptor {
       this.authenticationService.isTokenExpired
     ) {
       if (!this.refreshToken$) {
-        this.refreshToken$ = this.authenticationService.tryRefreshToken()
-          .pipe(
-            shareReplay(),
-            tap(() => {
-              this.refreshToken$ = undefined;
-            })
-          );
-      }
-
-      return this.refreshToken$!
-        .pipe(
-          switchMap((token: string) => {
-            return next.handle(
-              request.clone({ setHeaders: { authorization: `Bearer ${token}` } })
-            );
-          }),
-          catchError((err: HttpErrorResponse) => {
-            if (err.status === 401) {
-              this.authenticationService.signOut();
-              this.router.navigate(['/login']);
-            }
-            throw err;
+        this.refreshToken$ = this.authenticationService.tryRefreshToken().pipe(
+          shareReplay(),
+          tap(() => {
+            this.refreshToken$ = undefined;
           })
         );
+      }
+
+      return this.refreshToken$!.pipe(
+        switchMap((token: string) => {
+          return next.handle(request.clone({ setHeaders: { authorization: `Bearer ${token}` } }));
+        }),
+        catchError((err: HttpErrorResponse) => {
+          if (err.status === 401) {
+            this.authenticationService.signOut();
+            this.router.navigate(['/login']);
+          }
+          throw err;
+        })
+      );
     }
     return next.handle(request);
   }

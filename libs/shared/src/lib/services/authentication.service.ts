@@ -6,7 +6,7 @@ import { Observable, catchError, interval, map, mergeMap, tap } from 'rxjs';
 import { IAuthResponse, ICurrentUserInfo } from '../models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthenticationService extends AuthService {
   //#region ViewChilds, Inputs, Outputs
@@ -34,30 +34,27 @@ export class AuthenticationService extends AuthService {
   //#endregion
 
   //#region Public methods
-  public authenticate(model: { username: string, password: string, rememberMe: boolean }): Observable<void> {
-    return this.http
-      .post<IAuthResponse>(`${this.BASE_URL}/SignIn`, model)
-      .pipe(
-        map((res: IAuthResponse) => {
-          this.setStorage('username', res.username, model.rememberMe);
-          this.setStorage('token', res.token, model.rememberMe);
-          this.setStorage('refreshToken', res.refreshToken, model.rememberMe);
-          this.setStorage('userInfo',  window.btoa(JSON.stringify(res as ICurrentUserInfo)), model.rememberMe);
-        }),
-        catchError((error: HttpErrorResponse) =>
-          interval(1000)
-            .pipe(
-              mergeMap(() => {
-                switch(error.status) {
-                  case 401:
-                    throw 'InvalidUsernamePassword';
-                  default:
-                    throw 'InternalServerError';
-                }
-              })
-            )
+  public authenticate(model: { username: string; password: string; rememberMe: boolean }): Observable<void> {
+    return this.http.post<IAuthResponse>(`${this.BASE_URL}/SignIn`, model).pipe(
+      map((res: IAuthResponse) => {
+        this.setStorage('username', res.username, model.rememberMe);
+        this.setStorage('token', res.token, model.rememberMe);
+        this.setStorage('refreshToken', res.refreshToken, model.rememberMe);
+        this.setStorage('userInfo', window.btoa(JSON.stringify(res as ICurrentUserInfo)), model.rememberMe);
+      }),
+      catchError((error: HttpErrorResponse) =>
+        interval(1000).pipe(
+          mergeMap(() => {
+            switch (error.status) {
+              case 401:
+                throw 'InvalidUsernamePassword';
+              default:
+                throw 'InternalServerError';
+            }
+          })
         )
-      );
+      )
+    );
   }
 
   public getActions(): Observable<string[]> {
@@ -76,7 +73,7 @@ export class AuthenticationService extends AuthService {
     return this.http
       .post<IAuthResponse>(`${this.BASE_URL}/RefreshToken`, {
         username: this.username ?? '',
-        refreshToken: this.refreshToken ?? ''
+        refreshToken: this.refreshToken ?? '',
       })
       .pipe(
         tap((res: IAuthResponse) => {

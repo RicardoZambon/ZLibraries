@@ -63,11 +63,7 @@ export default [
     // Abstract view/button/modal base classes are exported public API. They are
     // decorated with @Component so subclasses inherit Angular metadata, but they are
     // not components and renaming them would break every consumer.
-    files: [
-      '**/views/**/*.ts',
-      '**/components/buttons/base-*.ts',
-      '**/components/filters-base.ts',
-    ],
+    files: ['**/views/**/*.ts', '**/components/buttons/base-*.ts', '**/components/filters-base.ts'],
     rules: {
       '@angular-eslint/component-class-suffix': 'off',
     },

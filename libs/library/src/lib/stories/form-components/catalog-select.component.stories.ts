@@ -7,10 +7,7 @@ const meta: Meta<CatalogSelectComponent> = {
   component: CatalogSelectComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        FormGroupComponent,
-        ReactiveFormsModule,
-      ],
+      imports: [FormGroupComponent, ReactiveFormsModule],
     }),
   ],
   title: 'Form Components/Catalog Select',
@@ -152,4 +149,3 @@ export const RemoteSearchWithFilters: Story = {
     `,
   }),
 };
-

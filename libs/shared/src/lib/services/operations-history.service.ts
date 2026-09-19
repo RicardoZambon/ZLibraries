@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { IOperationsHistoryList } from '../models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OperationsHistoryService {
   //#region ViewChilds, Inputs, Outputs
@@ -27,8 +27,16 @@ export class OperationsHistoryService {
   //#endregion
 
   //#region Public methods
-  public list(controllerName: string, entityID: number, serviceHistoryID: number, parameters: IListParameters): Observable<IOperationsHistoryList[]> {
-    return this.http.post<IOperationsHistoryList[]>(`${this.config.BASE_URL}/${controllerName}/${entityID}/Audit/${serviceHistoryID}`, parameters);
+  public list(
+    controllerName: string,
+    entityID: number,
+    serviceHistoryID: number,
+    parameters: IListParameters
+  ): Observable<IOperationsHistoryList[]> {
+    return this.http.post<IOperationsHistoryList[]>(
+      `${this.config.BASE_URL}/${controllerName}/${entityID}/Audit/${serviceHistoryID}`,
+      parameters
+    );
   }
   //#endregion
 

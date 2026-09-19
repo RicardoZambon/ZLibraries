@@ -17,20 +17,20 @@ npm install @zambon-dev/shared
 
 All peers must be present in the consuming application:
 
-| Package | Range |
-| --- | --- |
-| `@angular/common` | `^19.1.0` |
-| `@angular/core` | `^19.1.0` |
-| `@angular/forms` | `^19.1.0` |
-| `@angular/platform-browser` | `^19.1.0` |
-| `@angular/router` | `^19.1.0` |
-| `@auth0/angular-jwt` | `^5.2.0` |
-| `@microsoft/signalr` | `^10.0.0` |
-| `@ngx-translate/core` | `^16.0.4` |
-| `@zambon-dev/framework` | `^1.0.0` |
-| `@zambon-dev/library` | `^1.0.0` |
+| Package                           | Range     |
+| --------------------------------- | --------- |
+| `@angular/common`                 | `^19.1.0` |
+| `@angular/core`                   | `^19.1.0` |
+| `@angular/forms`                  | `^19.1.0` |
+| `@angular/platform-browser`       | `^19.1.0` |
+| `@angular/router`                 | `^19.1.0` |
+| `@auth0/angular-jwt`              | `^5.2.0`  |
+| `@microsoft/signalr`              | `^10.0.0` |
+| `@ngx-translate/core`             | `^16.0.4` |
+| `@zambon-dev/framework`           | `^1.0.0`  |
+| `@zambon-dev/library`             | `^1.0.0`  |
 | `ngx-translate-multi-http-loader` | `^19.0.2` |
-| `rxjs` | `^7.8.0` |
+| `rxjs`                            | `^7.8.0`  |
 
 ## Usage
 
@@ -51,9 +51,7 @@ Route protection uses the exported guard:
 ```ts
 import { AuthGuard } from '@zambon-dev/shared';
 
-export const routes: Routes = [
-  { path: 'orders', component: OrdersComponent, canActivate: [AuthGuard] },
-];
+export const routes: Routes = [{ path: 'orders', component: OrdersComponent, canActivate: [AuthGuard] }];
 ```
 
 Unauthenticated visitors are redirected to `/login` with a `returnUrl` query parameter.

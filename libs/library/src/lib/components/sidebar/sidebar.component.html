@@ -1,40 +1,42 @@
 <div class="sidebar-toolbar">
-    <button type="button" class="sidebar-toggle" (click)="collapse()" aria-label="Toggle navigation">
-        <i class="fa-solid fa-angle-left" [class.is-collapsed]="isCollapsed"></i>
-    </button>
+  <button type="button" class="sidebar-toggle" (click)="collapse()" aria-label="Toggle navigation">
+    <i class="fa-solid fa-angle-left" [class.is-collapsed]="isCollapsed"></i>
+  </button>
 </div>
 
 <nav>
-    <ul *ngIf="!isLoading; else loading">
-        <ng-container *ngFor="let region of regions; trackBy: trackByRegion">
-            <li class="sidebar-region-header" *ngIf="region.name">
-                <span>{{ region.name | translate }}</span>
-            </li>
+  <ul *ngIf="!isLoading; else loading">
+    <ng-container *ngFor="let region of regions; trackBy: trackByRegion">
+      <li class="sidebar-region-header" *ngIf="region.name">
+        <span>{{ region.name | translate }}</span>
+      </li>
 
-            <lib-sidebar-item *ngFor="let menu of region.items; trackBy: trackByFn"
-            [menu]="menu">
-            </lib-sidebar-item>
-        </ng-container>
+      <lib-sidebar-item *ngFor="let menu of region.items; trackBy: trackByFn" [menu]="menu"> </lib-sidebar-item>
+    </ng-container>
 
-        <div class="error" *ngIf="hasFailed">
-            <div>
-                <i class="fa-solid fa-fw fa-triangle-exclamation"></i>
-                <span>{{ configErrorText }}</span>
-            </div>
-        </div>
-    </ul>
+    <div class="error" *ngIf="hasFailed">
+      <div>
+        <i class="fa-solid fa-fw fa-triangle-exclamation"></i>
+        <span>{{ configErrorText }}</span>
+      </div>
+    </div>
+  </ul>
 </nav>
 
 <div class="sidebar-footer"><ng-content></ng-content></div>
 
 <ng-template #loading>
-    <div class="loading">
-        <div>
-            <svg class="animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>{{ configLoadingText }}</span>
-        </div>
+  <div class="loading">
+    <div>
+      <svg class="animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      <span>{{ configLoadingText }}</span>
     </div>
+  </div>
 </ng-template>

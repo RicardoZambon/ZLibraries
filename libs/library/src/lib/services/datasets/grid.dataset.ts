@@ -29,11 +29,11 @@ export abstract class GridDataset extends BaseDataset {
   private _hasBeenLoaded = false;
   private _loadedKeys?: string[];
   private _loadedRows?: any[];
-  private queryFilters?: { [key: string]: string; };
+  private queryFilters?: { [key: string]: string };
   //#endregion
 
   //#region Properties
-  public get filters(): { [key: string]: string; } | undefined {
+  public get filters(): { [key: string]: string } | undefined {
     return this.queryFilters;
   }
 
@@ -101,8 +101,7 @@ export abstract class GridDataset extends BaseDataset {
   public getRowID(key: string): any {
     const row: any = this.getRowData(key);
 
-    return this.compareProperty.split('.')
-      .reduce((row: any, property: string) => row[property], row);
+    return this.compareProperty.split('.').reduce((row: any, property: string) => row[property], row);
   }
 
   public getRowInternalKey(row: any): string {
@@ -114,13 +113,13 @@ export abstract class GridDataset extends BaseDataset {
       return false;
     }
 
-    const loadedIDs: any[] = this.compareProperty.split('.')
-      .reduce((loadedRows: any[], property: string) => loadedRows.map((row: any) => row[property]), this._loadedRows ?? [])
-      .map((row: any) =>
-        typeof id === 'string' ? `${row}`
-        : typeof id === 'number' ? parseInt(`${row}`)
-        : row
-      );
+    const loadedIDs: any[] = this.compareProperty
+      .split('.')
+      .reduce(
+        (loadedRows: any[], property: string) => loadedRows.map((row: any) => row[property]),
+        this._loadedRows ?? []
+      )
+      .map((row: any) => (typeof id === 'string' ? `${row}` : typeof id === 'number' ? parseInt(`${row}`) : row));
 
     return loadedIDs.indexOf(id) >= 0;
   }
@@ -164,7 +163,7 @@ export abstract class GridDataset extends BaseDataset {
         error: (_: any) => {
           this.isLoading = false;
           this.loadFinished.emit(false);
-        }
+        },
       });
   }
 
@@ -196,7 +195,7 @@ export abstract class GridDataset extends BaseDataset {
     });
   }
 
-  public setFilters(filters?: { [key: string ] : string }): void {
+  public setFilters(filters?: { [key: string]: string }): void {
     this.queryFilters = filters;
     this.filtersChanged.emit(filters);
     this.refresh();
@@ -240,8 +239,8 @@ export abstract class GridDataset extends BaseDataset {
       row[KEY_FIELD] = GuidHelper.generateGUID();
     });
 
-    this._loadedRows = [ ...this._loadedRows ?? [], ...rows];
-    this._loadedKeys = [ ...this._loadedKeys ?? [], ...rows.map((row: any) => row[KEY_FIELD])];
+    this._loadedRows = [...(this._loadedRows ?? []), ...rows];
+    this._loadedKeys = [...(this._loadedKeys ?? []), ...rows.map((row: any) => row[KEY_FIELD])];
 
     this.recordBlock += rows.length;
     if (rows.length < this.configsProvider.configs.recordBlockSize) {

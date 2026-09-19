@@ -10,12 +10,7 @@ import { BackendFormValidationHelper } from '../../../helpers';
   selector: 'framework-confirm-modal',
   templateUrl: './confirm-modal.component.html',
   styleUrls: ['./confirm-modal.component.scss'],
-  imports: [
-    ModalComponent,
-    NgClass,
-    NgIf,
-    TranslatePipe,
-  ]
+  imports: [ModalComponent, NgClass, NgIf, TranslatePipe],
 })
 export class ConfirmModalComponent implements IModal {
   //#region ViewChilds, Inputs, Outputs
@@ -26,7 +21,8 @@ export class ConfirmModalComponent implements IModal {
   @Input() public messageIcon = 'fa-regular fa-circle-question';
   @Input() public messageIconColor = 'text-cyan-500';
   @Input() public showMessageIcon = true;
-  @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'xl';
+  @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' =
+    'xl';
   @Input() public title!: string;
   //#endregion
 
@@ -52,7 +48,7 @@ export class ConfirmModalComponent implements IModal {
   private controlContainer: ControlContainer | null = inject(ControlContainer, { optional: true });
 
   private get formGroup(): FormGroup | null {
-    return this.controlContainer?.control as FormGroup ?? null;
+    return (this.controlContainer?.control as FormGroup) ?? null;
   }
   //#endregion
 
@@ -67,7 +63,7 @@ export class ConfirmModalComponent implements IModal {
     this.clearErrorMessage();
     this.isLoading = true;
   }
-  
+
   public clearErrorMessage(): void {
     this.errorMessage = '';
   }
@@ -109,11 +105,10 @@ export class ConfirmModalComponent implements IModal {
 
     if (this.formGroup) {
       // TODO: TEST THIS CHANGE
-      this.formGroup.reset()
+      this.formGroup.reset();
       this.formService?.resetForm();
     }
 
-    
     this.clearErrorMessage();
     this.modal.toggleModal();
   }

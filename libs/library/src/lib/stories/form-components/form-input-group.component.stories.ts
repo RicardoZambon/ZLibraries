@@ -7,10 +7,7 @@ const meta: Meta<FormInputGroupComponent> = {
   component: FormInputGroupComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        FormGroupComponent,
-        ReactiveFormsModule,
-      ],
+      imports: [FormGroupComponent, ReactiveFormsModule],
     }),
   ],
   title: 'Form Components/Form Input Group',
@@ -130,4 +127,3 @@ export const ValidationErrors: Story = {
     };
   },
 };
-

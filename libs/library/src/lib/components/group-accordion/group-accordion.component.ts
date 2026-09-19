@@ -6,9 +6,7 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
   templateUrl: './group-accordion.component.html',
   styleUrls: ['./group-accordion.component.scss'],
   host: { '[class.collapsed]': 'collapsed' },
-  imports: [
-    NgStyle,
-  ]
+  imports: [NgStyle],
 })
 export class GroupAccordionComponent {
   //#region ViewChilds, Inputs, Outputs

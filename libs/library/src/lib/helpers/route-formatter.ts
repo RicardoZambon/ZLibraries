@@ -9,7 +9,7 @@ export abstract class RouterFormatter {
 
   //#region Properties
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   //#endregion
 
@@ -24,13 +24,8 @@ export abstract class RouterFormatter {
     }
 
     let path = route.routeConfig?.path ?? '';
-    route.paramMap.keys
-    .forEach(k => {
-      path = path.replace(':' + k,
-        k === 'view'
-        ? ''
-        : (route.paramMap.get(k) ?? '')
-      );
+    route.paramMap.keys.forEach((k) => {
+      path = path.replace(':' + k, k === 'view' ? '' : route.paramMap.get(k) ?? '');
     });
 
     if (!route.parent || (parentRoute !== '' && parentRoute !== '/' && route.routeConfig?.path && path)) {

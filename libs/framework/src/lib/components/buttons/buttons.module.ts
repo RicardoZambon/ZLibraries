@@ -8,8 +8,13 @@ import { ButtonOpenRecordComponent } from './button-open-record/button-open-reco
 import { ButtonRefreshComponent } from './button-refresh/button-refresh.component';
 import { ButtonSaveComponent } from './button-save/button-save.component';
 import { ButtonViewsComponent } from './button-views/button-views.component';
-import { ButtonEditLegacyComponent, ButtonNewLegacyComponent, ButtonOpenRecordLegacyComponent, ButtonSaveLegacyComponent, ButtonViewsLegacyComponent } from './legacy';
-
+import {
+  ButtonEditLegacyComponent,
+  ButtonNewLegacyComponent,
+  ButtonOpenRecordLegacyComponent,
+  ButtonSaveLegacyComponent,
+  ButtonViewsLegacyComponent,
+} from './legacy';
 
 @NgModule({
   declarations: [],
@@ -23,7 +28,7 @@ import { ButtonEditLegacyComponent, ButtonNewLegacyComponent, ButtonOpenRecordLe
     ButtonRefreshComponent,
     ButtonSaveComponent,
     ButtonViewsComponent,
-    
+
     ButtonNewLegacyComponent,
     ButtonEditLegacyComponent,
     ButtonSaveLegacyComponent,
@@ -46,10 +51,10 @@ import { ButtonEditLegacyComponent, ButtonNewLegacyComponent, ButtonOpenRecordLe
     ButtonSaveLegacyComponent,
     ButtonViewsLegacyComponent,
     ButtonOpenRecordLegacyComponent,
-  ]
+  ],
 })
 /**
  * @deprecated Use standalone component imports instead of FrameworkButtonsModule.
  * Import individual button components directly in your component's `imports` array.
  */
-export class FrameworkButtonsModule { }
+export class FrameworkButtonsModule {}

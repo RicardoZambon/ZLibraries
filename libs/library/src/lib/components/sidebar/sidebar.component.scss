@@ -1,232 +1,238 @@
 /* @use 'tailwindcss'; */
 
 @mixin expanded {
-    width: var(--sidebar-expanded-width);
+  width: var(--sidebar-expanded-width);
 
-    .loading, .error {
-        i {
-            @apply text-lg ml-0;
-        }
-
-        svg {
-            @apply mt-[-4px] ml-[1px];
-            @apply h-5 w-5;
-        }
-
-        span {
-            @apply opacity-100;
-        }
+  .loading,
+  .error {
+    i {
+      @apply text-lg ml-0;
     }
+
+    svg {
+      @apply mt-[-4px] ml-[1px];
+      @apply h-5 w-5;
+    }
+
+    span {
+      @apply opacity-100;
+    }
+  }
 }
 
 :host {
-    // Position/z-index so the collapse handle can straddle the right edge and sit above the content.
-    @apply grid h-full select-none relative z-20;
-    background-color: var(--sidebar-bg);
-    border-radius: var(--sidebar-radius, 1.25rem);
-    backdrop-filter: blur(var(--sidebar-blur, 16px));
-    -webkit-backdrop-filter: blur(var(--sidebar-blur, 16px));
-    box-shadow: var(--sidebar-shadow, 0 10px 40px -12px rgba(0, 0, 0, 0.45));
-    @apply transition-[margin-left,width] ease-in-out;
-    margin-left: calc(var(--sidebar-collapsed-width) * -1);
-    transition-duration: var(--sidebar-animation-duration);
-    width: var(--sidebar-collapsed-width);
-    will-change: margin-left, width;
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    grid-template-areas:
-        "toolbar"
-        "nav"
-        "footer";
+  // Position/z-index so the collapse handle can straddle the right edge and sit above the content.
+  @apply grid h-full select-none relative z-20;
+  background-color: var(--sidebar-bg);
+  border-radius: var(--sidebar-radius, 1.25rem);
+  backdrop-filter: blur(var(--sidebar-blur, 16px));
+  -webkit-backdrop-filter: blur(var(--sidebar-blur, 16px));
+  box-shadow: var(--sidebar-shadow, 0 10px 40px -12px rgba(0, 0, 0, 0.45));
+  @apply transition-[margin-left,width] ease-in-out;
+  margin-left: calc(var(--sidebar-collapsed-width) * -1);
+  transition-duration: var(--sidebar-animation-duration);
+  width: var(--sidebar-collapsed-width);
+  will-change: margin-left, width;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'toolbar'
+    'nav'
+    'footer';
 
-    @screen md {
-        @apply ml-0;
-        
-        &.expanded {
-            @include expanded;
-        }
-    }
+  @screen md {
+    @apply ml-0;
 
-    &.active {
-        @include expanded;
+    &.expanded {
+      @include expanded;
     }
+  }
 
-    &.expanded, &.active {
-        @apply ml-0;
-    }
+  &.active {
+    @include expanded;
+  }
+
+  &.expanded,
+  &.active {
+    @apply ml-0;
+  }
 }
 
 .sidebar-toolbar {
-    // Symmetric vertical padding so the handle sits equidistant from the top bar and the first item.
-    @apply flex justify-end pt-2 pb-2;
-    grid-area: toolbar;
+  // Symmetric vertical padding so the handle sits equidistant from the top bar and the first item.
+  @apply flex justify-end pt-2 pb-2;
+  grid-area: toolbar;
 
-    // A light circular "handle" that straddles the sidebar's right edge (sits on the divider),
-    // pointing left to collapse and right to expand. High contrast against the blue rail.
-    .sidebar-toggle {
-        @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 cursor-pointer z-20;
-        @apply bg-white text-primary-600 shadow-md ring-1 ring-black/5 transition-colors;
-        @apply hover:bg-gray-100 hover:text-primary-700;
-        transform: translateX(40%);
+  // A light circular "handle" that straddles the sidebar's right edge (sits on the divider),
+  // pointing left to collapse and right to expand. High contrast against the blue rail.
+  .sidebar-toggle {
+    @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 cursor-pointer z-20;
+    @apply bg-white text-primary-600 shadow-md ring-1 ring-black/5 transition-colors;
+    @apply hover:bg-gray-100 hover:text-primary-700;
+    transform: translateX(40%);
 
-        i {
-            @apply text-sm;
-            // Individual `rotate` property (not transform) so the 180deg turn interpolates
-            // directionally and sweeps the same way as the sub-menu caret.
-            // (transform: rotate(180deg) is the ambiguous/flippy case.)
-            rotate: 0deg;
-            transition: rotate var(--sidebar-animation-duration) ease-in-out;
+    i {
+      @apply text-sm;
+      // Individual `rotate` property (not transform) so the 180deg turn interpolates
+      // directionally and sweeps the same way as the sub-menu caret.
+      // (transform: rotate(180deg) is the ambiguous/flippy case.)
+      rotate: 0deg;
+      transition: rotate var(--sidebar-animation-duration) ease-in-out;
 
-            &.is-collapsed {
-                rotate: -180deg;
-            }
-        }
+      &.is-collapsed {
+        rotate: -180deg;
+      }
     }
+  }
 }
 
 // Content-projection slot at the bottom of the sidebar (e.g. the app version). Hidden when the
 // rail is collapsed, and collapsed entirely when nothing is projected.
 .sidebar-footer {
-    @apply px-4 py-2 text-xs text-center whitespace-nowrap overflow-hidden;
-    color: var(--sidebar-text-muted);
-    @apply opacity-0 transition-opacity ease-in-out;
-    transition-duration: var(--sidebar-animation-duration);
-    grid-area: footer;
+  @apply px-4 py-2 text-xs text-center whitespace-nowrap overflow-hidden;
+  color: var(--sidebar-text-muted);
+  @apply opacity-0 transition-opacity ease-in-out;
+  transition-duration: var(--sidebar-animation-duration);
+  grid-area: footer;
 
-    &:empty {
-        @apply hidden;
-    }
+  &:empty {
+    @apply hidden;
+  }
 }
 
 :host(.expanded) .sidebar-footer,
 :host(.active) .sidebar-footer {
-    @apply opacity-100;
+  @apply opacity-100;
 }
 
 nav {
-    // Clip the horizontal overflow here (moved off :host so the collapse handle can overhang the edge).
-    @apply overflow-y-auto overflow-x-hidden;
-    grid-area: nav;
-    
-    /* Firefox support */
+  // Clip the horizontal overflow here (moved off :host so the collapse handle can overhang the edge).
+  @apply overflow-y-auto overflow-x-hidden;
+  grid-area: nav;
+
+  /* Firefox support */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+  /* WebKit browsers */
+  &::-webkit-scrollbar {
+    @apply h-0;
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply bg-black/20;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    @apply bg-black/55;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    @apply bg-black/45;
+  }
+
+  @media screen and (max-width: 480px) {
     scrollbar-width: thin;
-    scrollbar-color: rgba(0,0,0,0.2) transparent;
 
-    /* WebKit browsers */
     &::-webkit-scrollbar {
-        @apply h-0;
-        width: 7px;
+      width: 5px;
     }
-
-    &::-webkit-scrollbar-track {
-        @apply bg-transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        @apply bg-black/20;
-        border-radius: 10px;
-        transition: background 0.2s ease;
-    }
-    
-    &::-webkit-scrollbar-thumb:hover {
-        @apply bg-black/55;
-    }
-    
-    &:hover::-webkit-scrollbar-thumb {
-        @apply bg-black/45;
-    }
-
-    @media screen and (max-width: 480px) {
-        scrollbar-width: thin;
-        
-        &::-webkit-scrollbar {
-            width: 5px;
-        }
-    }
+  }
 }
 
-ul, .loading {
-    @apply relative;
-    background-color: var(--sidebar-nav-bg);
+ul,
+.loading {
+  @apply relative;
+  background-color: var(--sidebar-nav-bg);
 }
 
-ul lib-sidebar-item, .loading, .error {
-    @apply font-medium;
-    color: var(--sidebar-text);
+ul lib-sidebar-item,
+.loading,
+.error {
+  @apply font-medium;
+  color: var(--sidebar-text);
 }
 
 // Region group header (e.g. "MAIN"). Expanded: shows the label. Collapsed: the label
 // cross-fades to a short centred divider so groups stay visually separated. Heights are
 // fixed values (not auto -> 0) so the change animates smoothly.
 .sidebar-region-header {
-    @apply relative flex items-center px-4 whitespace-nowrap overflow-hidden;
-    height: 2rem;
-    color: var(--sidebar-text-muted);
-    @apply transition-[height] ease-in-out;
+  @apply relative flex items-center px-4 whitespace-nowrap overflow-hidden;
+  height: 2rem;
+  color: var(--sidebar-text-muted);
+  @apply transition-[height] ease-in-out;
+  transition-duration: var(--sidebar-animation-duration);
+
+  span {
+    @apply text-xs font-semibold uppercase tracking-wider;
+    @apply transition-opacity ease-in-out;
     transition-duration: var(--sidebar-animation-duration);
+  }
 
-    span {
-        @apply text-xs font-semibold uppercase tracking-wider;
-        @apply transition-opacity ease-in-out;
-        transition-duration: var(--sidebar-animation-duration);
-    }
-
-    // Collapsed-state group separator (hidden while expanded).
-    &::after {
-        content: '';
-        @apply absolute left-1/2 top-1/2 opacity-0;
-        width: 1.75rem;
-        height: 1px;
-        transform: translate(-50%, -50%);
-        background: var(--sidebar-text-muted);
-        @apply transition-opacity ease-in-out;
-        transition-duration: var(--sidebar-animation-duration);
-    }
+  // Collapsed-state group separator (hidden while expanded).
+  &::after {
+    content: '';
+    @apply absolute left-1/2 top-1/2 opacity-0;
+    width: 1.75rem;
+    height: 1px;
+    transform: translate(-50%, -50%);
+    background: var(--sidebar-text-muted);
+    @apply transition-opacity ease-in-out;
+    transition-duration: var(--sidebar-animation-duration);
+  }
 }
 
 :host(:not(.expanded):not(.active)) .sidebar-region-header {
-    height: 1.25rem;
+  height: 1.25rem;
 
-    span {
-        @apply opacity-0;
-    }
+  span {
+    @apply opacity-0;
+  }
 
-    &::after {
-        @apply opacity-100;
-    }
+  &::after {
+    @apply opacity-100;
+  }
 }
 
-.loading, .error {
-    @apply overflow-hidden;
-    height: var(--sidebar-item-height);
-    line-height: var(--sidebar-item-height);
-    
-    > div {
-        @apply px-3 text-left whitespace-nowrap overflow-hidden text-ellipsis;
-        width: var(--sidebar-expanded-width);
-    }
+.loading,
+.error {
+  @apply overflow-hidden;
+  height: var(--sidebar-item-height);
+  line-height: var(--sidebar-item-height);
 
-    i {
-        @apply text-xl mr-2;
-        @apply transition-[font-size,line-height,margin-left] ease-in-out;
-        margin-left: var(--sidebar-icon-collapsed-margin);
-        transition-duration: var(--sidebar-animation-duration);
-        will-change: font-size, line-height, margin-left;
-    }
+  > div {
+    @apply px-3 text-left whitespace-nowrap overflow-hidden text-ellipsis;
+    width: var(--sidebar-expanded-width);
+  }
 
-    svg {
-        @apply inline mt-[-4px] ml-2 h-6 w-6;
-        @apply transition-[height,margin-left,width] ease-in-out;
-        transition-duration: var(--sidebar-animation-duration);
-        will-change: height, margin-left, width;
-    }
+  i {
+    @apply text-xl mr-2;
+    @apply transition-[font-size,line-height,margin-left] ease-in-out;
+    margin-left: var(--sidebar-icon-collapsed-margin);
+    transition-duration: var(--sidebar-animation-duration);
+    will-change: font-size, line-height, margin-left;
+  }
 
-    svg + span {
-        @apply ml-[0.6rem];
-    }
+  svg {
+    @apply inline mt-[-4px] ml-2 h-6 w-6;
+    @apply transition-[height,margin-left,width] ease-in-out;
+    transition-duration: var(--sidebar-animation-duration);
+    will-change: height, margin-left, width;
+  }
 
-    span {
-        @apply transition-opacity ease-in-out;
-        @apply opacity-0;
-        transition-duration: var(--sidebar-animation-duration);
-    }
+  svg + span {
+    @apply ml-[0.6rem];
+  }
+
+  span {
+    @apply transition-opacity ease-in-out;
+    @apply opacity-0;
+    transition-duration: var(--sidebar-animation-duration);
+  }
 }

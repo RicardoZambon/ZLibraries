@@ -34,11 +34,7 @@ const meta: Meta<ButtonComponent> = {
         RibbonGroupComponent,
         ReactiveFormsModule,
       ],
-      providers: [
-        TabService,
-        TabViewService,
-        { provide: RouteReuseStrategy, useClass: CustomReuseStrategy },
-      ],
+      providers: [TabService, TabViewService, { provide: RouteReuseStrategy, useClass: CustomReuseStrategy }],
     }),
   ],
   title: 'Framework/Buttons',

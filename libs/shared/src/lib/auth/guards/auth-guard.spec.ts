@@ -45,17 +45,14 @@ describe('AuthGuard', () => {
     mockAuthService.isAuthenticated = true;
     const result: boolean = guard.canActivate(
       {} as ActivatedRouteSnapshot,
-      { url: '/dashboard' } as RouterStateSnapshot,
+      { url: '/dashboard' } as RouterStateSnapshot
     );
     expect(result).toBe(true);
   });
 
   it('should not navigate when user is authenticated', () => {
     mockAuthService.isAuthenticated = true;
-    guard.canActivate(
-      {} as ActivatedRouteSnapshot,
-      { url: '/dashboard' } as RouterStateSnapshot,
-    );
+    guard.canActivate({} as ActivatedRouteSnapshot, { url: '/dashboard' } as RouterStateSnapshot);
     expect(mockRouter.navigate).not.toHaveBeenCalled();
   });
 
@@ -63,20 +60,14 @@ describe('AuthGuard', () => {
     mockAuthService.isAuthenticated = false;
     const result: boolean = guard.canActivate(
       {} as ActivatedRouteSnapshot,
-      { url: '/dashboard' } as RouterStateSnapshot,
+      { url: '/dashboard' } as RouterStateSnapshot
     );
     expect(result).toBe(false);
   });
 
   it('should navigate to /login with returnUrl when not authenticated', () => {
     mockAuthService.isAuthenticated = false;
-    guard.canActivate(
-      {} as ActivatedRouteSnapshot,
-      { url: '/some/page' } as RouterStateSnapshot,
-    );
-    expect(mockRouter.navigate).toHaveBeenCalledWith(
-      ['/login'],
-      { queryParams: { returnUrl: '/some/page' } },
-    );
+    guard.canActivate({} as ActivatedRouteSnapshot, { url: '/some/page' } as RouterStateSnapshot);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/login'], { queryParams: { returnUrl: '/some/page' } });
   });
 });

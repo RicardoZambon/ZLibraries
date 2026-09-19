@@ -5,9 +5,8 @@ import { LanguageSelectorComponent } from './language-selector.component';
 describe(LanguageSelectorComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ LanguageSelectorComponent, TranslateModule.forRoot() ]
-    })
-    .compileComponents();
+      imports: [LanguageSelectorComponent, TranslateModule.forRoot()],
+    }).compileComponents();
   });
 
   it('should create', () => {

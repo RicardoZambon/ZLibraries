@@ -7,10 +7,7 @@ const meta: Meta<FormGroupComponent> = {
   component: FormGroupComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        FormInputGroupComponent,
-        ReactiveFormsModule,
-      ],
+      imports: [FormInputGroupComponent, ReactiveFormsModule],
     }),
   ],
   title: 'Form Components/Form Group',
@@ -53,4 +50,3 @@ export const Primary: Story = {
     `,
   }),
 };
-

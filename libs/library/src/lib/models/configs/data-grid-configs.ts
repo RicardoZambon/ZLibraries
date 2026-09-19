@@ -7,4 +7,4 @@ export type DataGridConfigs = GridConfigs & {
   multiSelectSize?: string;
   selectOnClick?: boolean;
   showMessageOnEmpty?: boolean;
-}
+};

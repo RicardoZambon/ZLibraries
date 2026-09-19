@@ -8,11 +8,8 @@ import { BaseButton } from '../../base-button';
 @Component({
   selector: 'framework-button-new-legacy',
   templateUrl: './button-new.component.html',
-  imports: [
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonNewLegacyComponent)}]
+  imports: [NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonNewLegacyComponent) }],
 })
 /**
  * @deprecated Use standalone {@link ButtonNewComponent} instead.

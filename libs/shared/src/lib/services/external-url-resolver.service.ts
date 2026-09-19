@@ -23,7 +23,7 @@ import { AuthenticationService } from './authentication.service';
  * substituted.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExternalUrlResolverService {
   //#region Variables
@@ -85,7 +85,10 @@ export class ExternalUrlResolverService {
       }
 
       if (value.length === 0) {
-        console.warn(`External URL placeholder ${token} has no value for the current user; substituting an empty string.`, url);
+        console.warn(
+          `External URL placeholder ${token} has no value for the current user; substituting an empty string.`,
+          url
+        );
       }
 
       // split/join rather than String.replace: replace() interprets `$&` and `$1` in the
@@ -115,7 +118,10 @@ export class ExternalUrlResolverService {
     const unknown: string[] = resolved.match(this.unknownPlaceholderPattern) ?? [];
 
     if (unknown.length > 0) {
-      console.warn(`External URL contains unrecognized placeholders and was left as configured: ${unknown.join(', ')}`, url);
+      console.warn(
+        `External URL contains unrecognized placeholders and was left as configured: ${unknown.join(', ')}`,
+        url
+      );
     }
   }
   //#endregion

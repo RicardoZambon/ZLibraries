@@ -1,4 +1,3 @@
-
 import { InjectionToken } from '@angular/core';
 
 export const SIDEBAR_CONFIGS: InjectionToken<SidebarConfigs> = new InjectionToken<SidebarConfigs>('', {

@@ -12,13 +12,12 @@ export class DataGridConfigsProvider extends GridConfigsProvider<DataGridConfigs
 
   //#region Properties
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   constructor() {
     super();
 
-    this._configs =
-    {
+    this._configs = {
       ...this._configs,
       multiSelect: false,
       multiSelectSize: 'minmax(1.5rem, min-content)',

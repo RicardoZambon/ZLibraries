@@ -5,13 +5,19 @@ import { JwtInterceptor } from '@auth0/angular-jwt';
 import { of, throwError } from 'rxjs';
 
 // Mock @zambon-dev/framework to avoid symlink resolution issues
-jest.mock('@zambon-dev/framework', () => ({
-  APP_CONFIG: 'APP_CONFIG_TOKEN',
-  AppConfig: class AppConfig {
-    public BASE_URL: string;
-    constructor(baseUrl: string) { this.BASE_URL = baseUrl; }
-  },
-}), { virtual: true });
+jest.mock(
+  '@zambon-dev/framework',
+  () => ({
+    APP_CONFIG: 'APP_CONFIG_TOKEN',
+    AppConfig: class AppConfig {
+      public BASE_URL: string;
+      constructor(baseUrl: string) {
+        this.BASE_URL = baseUrl;
+      }
+    },
+  }),
+  { virtual: true }
+);
 
 // Mock services barrel
 jest.mock('../../services', () => ({
@@ -105,9 +111,7 @@ describe('AuthInterceptor', () => {
     const req: HttpRequest<unknown> = new HttpRequest('GET', 'http://api.test.com/data');
     mockAuthService.isTokenExpired = true;
     mockAuthService.tryRefreshToken.mockReturnValue(of('new-token'));
-    (mockNext.handle as jest.Mock).mockReturnValue(
-      throwError(() => new HttpErrorResponse({ status: 401 }))
-    );
+    (mockNext.handle as jest.Mock).mockReturnValue(throwError(() => new HttpErrorResponse({ status: 401 })));
 
     interceptor.intercept(req, mockNext).subscribe({
       error: () => {
@@ -122,9 +126,7 @@ describe('AuthInterceptor', () => {
     const req: HttpRequest<unknown> = new HttpRequest('GET', 'http://api.test.com/data');
     mockAuthService.isTokenExpired = true;
     mockAuthService.tryRefreshToken.mockReturnValue(of('new-token'));
-    (mockNext.handle as jest.Mock).mockReturnValue(
-      throwError(() => new HttpErrorResponse({ status: 500 }))
-    );
+    (mockNext.handle as jest.Mock).mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
 
     interceptor.intercept(req, mockNext).subscribe({
       error: (err: HttpErrorResponse) => {

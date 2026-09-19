@@ -2,11 +2,11 @@
 
 An Nx workspace holding three published Angular packages that layer on top of each other.
 
-| Package | Role |
-| --- | --- |
-| [`@zambon-dev/library`](libs/library) | Presentation layer — UI components, directives, pipes |
-| [`@zambon-dev/framework`](libs/framework) | Application shell — tabbed navigation, view scaffolding, modals |
-| [`@zambon-dev/shared`](libs/shared) | Cross-cutting — authentication, layouts, history features, services |
+| Package                                   | Role                                                                |
+| ----------------------------------------- | ------------------------------------------------------------------- |
+| [`@zambon-dev/library`](libs/library)     | Presentation layer — UI components, directives, pipes               |
+| [`@zambon-dev/framework`](libs/framework) | Application shell — tabbed navigation, view scaffolding, modals     |
+| [`@zambon-dev/shared`](libs/shared)       | Cross-cutting — authentication, layouts, history features, services |
 
 The dependency direction is strictly one-way: `shared` → `framework` → `library`. Nothing lower may import
 from something higher.
@@ -26,16 +26,16 @@ npm ci
 
 ## Common commands
 
-| Command | What it does |
-| --- | --- |
-| `npm run build` | Production build of every package into `dist/libs/*` |
-| `npm test` | Unit tests (Jest) for every project |
-| `npm run lint` | ESLint across every project |
-| `npm run format` | Rewrite files with Prettier |
-| `npm run format:check` | Fail if anything is unformatted |
-| `npm run storybook:library` | Storybook for `@zambon-dev/library` |
-| `npm run storybook:framework` | Storybook for `@zambon-dev/framework` |
-| `npm run storybook:shared` | Storybook for `@zambon-dev/shared` |
+| Command                       | What it does                                         |
+| ----------------------------- | ---------------------------------------------------- |
+| `npm run build`               | Production build of every package into `dist/libs/*` |
+| `npm test`                    | Unit tests (Jest) for every project                  |
+| `npm run lint`                | ESLint across every project                          |
+| `npm run format`              | Rewrite files with Prettier                          |
+| `npm run format:check`        | Fail if anything is unformatted                      |
+| `npm run storybook:library`   | Storybook for `@zambon-dev/library`                  |
+| `npm run storybook:framework` | Storybook for `@zambon-dev/framework`                |
+| `npm run storybook:shared`    | Storybook for `@zambon-dev/shared`                   |
 
 Nx only rebuilds what changed. To scope a command to a single project:
 
@@ -74,12 +74,12 @@ secret. Without it, Nx falls back to the local cache and everything still works.
 Releases are driven by [semantic-release](https://semantic-release.gitbook.io/), so the commit type decides
 the version bump:
 
-| Type | Bump |
-| --- | --- |
-| `feat` | minor |
-| `fix`, `bug`, `refactor` | patch |
-| `breaking-changes`, or any commit with a `BREAKING CHANGE:` footer | major |
-| anything else (`chore`, `docs`, `test`, `ci`) | no release |
+| Type                                                               | Bump       |
+| ------------------------------------------------------------------ | ---------- |
+| `feat`                                                             | minor      |
+| `fix`, `bug`, `refactor`                                           | patch      |
+| `breaking-changes`, or any commit with a `BREAKING CHANGE:` footer | major      |
+| anything else (`chore`, `docs`, `test`, `ci`)                      | no release |
 
 Scoping a commit `no-release` suppresses a release regardless of type.
 

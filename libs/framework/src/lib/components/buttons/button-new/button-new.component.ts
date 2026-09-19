@@ -10,11 +10,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-new',
   templateUrl: './button-new.component.html',
-  imports: [
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonNewComponent)}]
+  imports: [NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonNewComponent) }],
 })
 export class ButtonNewComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
@@ -46,7 +43,7 @@ export class ButtonNewComponent extends BaseButton {
   protected onButtonClicked(optionId?: string): void {
     let option: IRibbonButtonOption | undefined = undefined;
     if (optionId) {
-      option = this.options.find(o => o.id === optionId);
+      option = this.options.find((o) => o.id === optionId);
     }
 
     let path: string | undefined = this.path;
@@ -62,7 +59,11 @@ export class ButtonNewComponent extends BaseButton {
     let url = '';
 
     // Try to find the route with ':id' parameters.
-    const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.root.snapshot, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
+    const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
+      this.router.routerState.root.snapshot,
+      FRAMEWORK_VIEW_TYPE,
+      FrameworkViewType.Details
+    );
     if (!targetRoute) {
       // If not found, uses the current route.
       url = RouteHelper.getRouteURL(this.router.routerState.root.snapshot, true);

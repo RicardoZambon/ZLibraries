@@ -7,7 +7,12 @@ import { IOperationsHistoryList, IServicesHistoryList } from '../../models';
 import { OperationsHistoryService, ServicesHistoryService } from '../../services';
 
 class StorybookOperationsHistoryService {
-  public list(_controllerName: string, _entityID: number, _serviceHistoryID: number, _parameters: IListParameters): Observable<IOperationsHistoryList[]> {
+  public list(
+    _controllerName: string,
+    _entityID: number,
+    _serviceHistoryID: number,
+    _parameters: IListParameters
+  ): Observable<IOperationsHistoryList[]> {
     return of([
       {
         entityName: 'Customer',
@@ -28,7 +33,11 @@ class StorybookOperationsHistoryService {
 }
 
 class StorybookServicesHistoryService {
-  public list(_controllerName: string, _entityID: number, _parameters: IListParameters): Observable<IServicesHistoryList[]> {
+  public list(
+    _controllerName: string,
+    _entityID: number,
+    _parameters: IListParameters
+  ): Observable<IServicesHistoryList[]> {
     return of([
       { id: 1, name: 'Record updated', changedByName: 'Ada Lovelace', changedOn: new Date() },
       { id: 2, name: 'Payment recalculated', changedByName: 'Grace Hopper', changedOn: new Date() },

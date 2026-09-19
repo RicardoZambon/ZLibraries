@@ -31,7 +31,7 @@ describe('DataProviderService', () => {
     return {
       get: (name: string) => params[name] ?? null,
       has: (name: string) => name in params,
-      getAll: (name: string) => params[name] ? [params[name]] : [],
+      getAll: (name: string) => (params[name] ? [params[name]] : []),
       keys: Object.keys(params),
     };
   }
@@ -74,7 +74,9 @@ describe('DataProviderService', () => {
       await new Promise<void>((resolve) => queueMicrotask(resolve));
 
       let result: any = null;
-      service.getModel$().subscribe((model: any) => { result = model; });
+      service.getModel$().subscribe((model: any) => {
+        result = model;
+      });
 
       expect(result).toEqual({ id: 42, name: 'Test Entity' });
     });
@@ -117,7 +119,9 @@ describe('DataProviderService', () => {
   describe('updateModel', () => {
     it('should emit the model via getModel$', () => {
       let result: any = null;
-      service.getModel$().subscribe((model: any) => { result = model; });
+      service.getModel$().subscribe((model: any) => {
+        result = model;
+      });
 
       service.updateModel({ id: 99, name: 'Updated' });
 
@@ -132,7 +136,9 @@ describe('DataProviderService', () => {
 
     it('should handle null model', () => {
       let result: any = 'not-null';
-      service.getModel$().subscribe((model: any) => { result = model; });
+      service.getModel$().subscribe((model: any) => {
+        result = model;
+      });
 
       service.updateModel(null);
 
@@ -149,7 +155,9 @@ describe('DataProviderService', () => {
       service.loadModelMock.mockReturnValue(throwError(() => httpError));
 
       let emittedError: HttpErrorResponse | null = null;
-      service.getError$().subscribe((error: HttpErrorResponse) => { emittedError = error; });
+      service.getError$().subscribe((error: HttpErrorResponse) => {
+        emittedError = error;
+      });
 
       service.refreshModel();
 
@@ -164,7 +172,9 @@ describe('DataProviderService', () => {
       service.loadModelMock.mockReturnValue(throwError(() => httpError));
 
       let result: any = 'not-null';
-      service.getModel$().subscribe((model: any) => { result = model; });
+      service.getModel$().subscribe((model: any) => {
+        result = model;
+      });
 
       service.refreshModel();
 
@@ -191,7 +201,11 @@ describe('DataProviderService', () => {
   describe('ngOnDestroy', () => {
     it('should complete destroy$ subject', () => {
       let completed = false;
-      (service as any).destroy$.subscribe({ complete: () => { completed = true; } });
+      (service as any).destroy$.subscribe({
+        complete: () => {
+          completed = true;
+        },
+      });
 
       service.ngOnDestroy();
 

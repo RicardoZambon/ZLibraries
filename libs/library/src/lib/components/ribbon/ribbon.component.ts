@@ -9,25 +9,18 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class RibbonComponent {
   //#region ViewChilds, Inputs, Outputs
   //#endregion
-
   //#region Host listeners
   //#endregion
-
   //#region Variables
   //#endregion
-
   //#region Properties
   //#endregion
-  
   //#region Constructor and Angular life cycle methods
   //#endregion
-
   //#region Event handlers
   //#endregion
-
   //#region Public methods
   //#endregion
-
   //#region Private methods
   //#endregion
 }

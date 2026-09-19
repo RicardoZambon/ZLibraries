@@ -11,11 +11,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-views',
   templateUrl: './button-views.component.html',
-  imports: [
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonViewsComponent)}]
+  imports: [NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonViewsComponent) }],
 })
 export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -34,7 +31,14 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
 
   //#region Properties
   protected get hasOptions(): boolean {
-    return this.options.some((option: IRibbonButtonOption) => (option.isVisible ?? true) && (option.allowedActions === undefined || option.allowedActions.length === 0 || option.isAccessAllowed === true || (option.isAccessAllowed === undefined && option.allowedActions?.length > 0)));
+    return this.options.some(
+      (option: IRibbonButtonOption) =>
+        (option.isVisible ?? true) &&
+        (option.allowedActions === undefined ||
+          option.allowedActions.length === 0 ||
+          option.isAccessAllowed === true ||
+          (option.isAccessAllowed === undefined && option.allowedActions?.length > 0))
+    );
   }
 
   protected get isNewEntity(): boolean {
@@ -65,35 +69,37 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
 
   public ngOnInit(): void {
     if (this.detailsViewRoute) {
-      this.options = this.detailsViewRoute.routeConfig?.children
-        ?.filter((route: Route) => !!route.data && route.data['ignoreRoute'] !== true)
-        ?.map((route: Route) => {
-          const data: { [key: string | symbol]: any } = route.data ?? {};
+      this.options =
+        this.detailsViewRoute.routeConfig?.children
+          ?.filter((route: Route) => !!route.data && route.data['ignoreRoute'] !== true)
+          ?.map((route: Route) => {
+            const data: { [key: string | symbol]: any } = route.data ?? {};
 
-          const option: IRibbonButtonOption = {
-            id: route.path ?? '',
-            isDisabled: false,
-            isVisible: true,
-            label: data['title'] ?? '',
-          };
+            const option: IRibbonButtonOption = {
+              id: route.path ?? '',
+              isDisabled: false,
+              isVisible: true,
+              label: data['title'] ?? '',
+            };
 
-          const icon: string | undefined = data['icon'];
-          if (icon) {
-            option.icon = icon;
-          }
+            const icon: string | undefined = data['icon'];
+            if (icon) {
+              option.icon = icon;
+            }
 
-          const allowedActions: string[] | undefined = data['allowedActions'];
-          if (allowedActions && allowedActions.length > 0) {
-            option.allowedActions = allowedActions;
-          }
+            const allowedActions: string[] | undefined = data['allowedActions'];
+            if (allowedActions && allowedActions.length > 0) {
+              option.allowedActions = allowedActions;
+            }
 
-          return option;
-        }) ?? [];
+            return option;
+          }) ?? [];
 
       const url: string = RouteHelper.getRouteURL(this.detailsViewRoute);
       this.baseUrlPath = url;
 
-      const option: string = this.detailsViewRoute.children[0]?.url?.map((segment: UrlSegment) => segment.path)?.join('/') ?? '';
+      const option: string =
+        this.detailsViewRoute.children[0]?.url?.map((segment: UrlSegment) => segment.path)?.join('/') ?? '';
       if (option === this.defaultViewId) {
         // We just need to check if the current option is the default, otherwise the router.events will handle the option selection.
         this.changeSelectedView(this.defaultViewId);
@@ -103,7 +109,7 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
     this.router.events
       .pipe(
         filter((event: any) => event instanceof NavigationEnd),
-        takeUntil(this.destroy$),
+        takeUntil(this.destroy$)
       )
       .subscribe((event: NavigationEnd) => {
         if (this.detailsViewRoute) {
@@ -113,7 +119,7 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
           const currentRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
             this.router.routerState.root.snapshot,
             FRAMEWORK_VIEW_TYPE,
-            FrameworkViewType.Details,
+            FrameworkViewType.Details
           );
 
           if (currentRoute) {

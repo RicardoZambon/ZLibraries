@@ -1,6 +1,14 @@
 import { CommonModule, formatDate, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { ControlContainer, FormControl, FormGroup, FormGroupDirective, FormGroupName, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  ControlContainer,
+  FormControl,
+  FormGroup,
+  FormGroupDirective,
+  FormGroupName,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { FormService } from '../../services';
 import { BaseComponent } from '../base.component';
@@ -9,21 +17,14 @@ import { BaseComponent } from '../base.component';
   selector: 'lib-form-input',
   templateUrl: './form-input.component.html',
   styleUrls: ['./form-input.component.scss'],
-  imports: [
-    CommonModule,
-    FormsModule,
-    NgIf,
-    NgSwitch,
-    NgSwitchCase,
-    ReactiveFormsModule,
-  ],
+  imports: [CommonModule, FormsModule, NgIf, NgSwitch, NgSwitchCase, ReactiveFormsModule],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
   host: {
     '[class.full-height]': 'isFullHeight',
     // Clears a stray `type` attribute for the same reason as FormInputGroupComponent — see the
     // comment there. Applies when a consumer sets `type` on `lib-form-input` directly.
-    '[attr.type]': 'null'
-  }
+    '[attr.type]': 'null',
+  },
 })
 export class FormInputComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -64,16 +65,11 @@ export class FormInputComponent extends BaseComponent implements OnInit {
 
   //#region Properties
   protected get formControl(): FormControl<any> | null {
-    return this.controlName
-    ? <FormControl>this.formGroup.get(this.controlName)
-    : null;
+    return this.controlName ? <FormControl>this.formGroup.get(this.controlName) : null;
   }
 
   protected get formControlName(): string {
-    return [
-      ...this.parentGroups,
-      this.controlName,
-    ].join('.');
+    return [...this.parentGroups, this.controlName].join('.');
   }
 
   protected get formGroup(): FormGroup {
@@ -120,13 +116,11 @@ export class FormInputComponent extends BaseComponent implements OnInit {
     switch (this.type) {
       case 'number':
         if (this.formControl) {
-          this.formControl.valueChanges
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((value: any) => {
-              if (value !== null && value === '') {
-                this.formControl?.setValue(null);
-              }
-            });
+          this.formControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: any) => {
+            if (value !== null && value === '') {
+              this.formControl?.setValue(null);
+            }
+          });
         }
         break;
 
@@ -136,20 +130,17 @@ export class FormInputComponent extends BaseComponent implements OnInit {
         }
 
         if (this.formControl) {
-          this.formControl.valueChanges
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((value: any) => {
-              if (value !== null) {
-                try {
-                  if (value !== formatDate(value, 'yyyy-MM-dd', 'en')) {
-                    this.formControl?.setValue(formatDate(value, 'yyyy-MM-dd', 'en'), { emitEvent: false });
-                  }
+          this.formControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: any) => {
+            if (value !== null) {
+              try {
+                if (value !== formatDate(value, 'yyyy-MM-dd', 'en')) {
+                  this.formControl?.setValue(formatDate(value, 'yyyy-MM-dd', 'en'), { emitEvent: false });
                 }
-                catch {
-                  this.formControl?.setValue(null, { emitEvent: false });
-                }
+              } catch {
+                this.formControl?.setValue(null, { emitEvent: false });
               }
-            });
+            }
+          });
         }
         break;
     }

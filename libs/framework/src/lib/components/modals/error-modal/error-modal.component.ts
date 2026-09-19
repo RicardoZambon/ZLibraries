@@ -8,18 +8,15 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'framework-error-modal',
   templateUrl: './error-modal.component.html',
   styleUrls: ['./error-modal.component.scss'],
-  imports: [
-    ModalComponent,
-    NgIf,
-    TranslatePipe,
-  ]
+  imports: [ModalComponent, NgIf, TranslatePipe],
 })
 export class ErrorModalComponent {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ModalComponent) private modal!: ModalComponent;
 
   @Input() public errorMessage = '';
-  @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'xl';
+  @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' =
+    'xl';
   @Input() public subtitle = 'Modal-Failed-Administrator';
   @Input() public title = 'Modal-Failed-Title';
 

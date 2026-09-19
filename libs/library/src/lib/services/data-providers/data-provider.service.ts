@@ -22,32 +22,30 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
 
   //#region Properties
   public get entityID(): number | undefined {
-    return this._entityID
+    return this._entityID;
   }
 
   public get hasEntityID(): boolean {
     return !!this.entityID;
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   constructor() {
-    this.activatedRoute.paramMap
-      .pipe(take(1))
-      .subscribe((paramMap: ParamMap) => {
-        const newID = Number(paramMap.get('id'));
-        if (newID !== this.entityID) {
-          this._entityID = newID;
-          
-          // Need to wait for the data-provider to be initialized.
-          queueMicrotask(() => {
-            // When lazy loading, the model should be loaded by the consuming component.
-            if (!this.shouldLazyLoad) {
-              this.refreshModel();
-            }
-          });
-        }
-      });
+    this.activatedRoute.paramMap.pipe(take(1)).subscribe((paramMap: ParamMap) => {
+      const newID = Number(paramMap.get('id'));
+      if (newID !== this.entityID) {
+        this._entityID = newID;
+
+        // Need to wait for the data-provider to be initialized.
+        queueMicrotask(() => {
+          // When lazy loading, the model should be loaded by the consuming component.
+          if (!this.shouldLazyLoad) {
+            this.refreshModel();
+          }
+        });
+      }
+    });
   }
 
   public ngOnDestroy(): void {
@@ -65,7 +63,7 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   }
 
   public abstract getTitle(entity: TEntityModel): string;
-  
+
   public getModel$(): Observable<TEntityModel | null> {
     if (!this.isModelLoaded && !this.shouldLazyLoad) {
       this.refreshModel();

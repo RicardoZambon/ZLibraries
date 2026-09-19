@@ -14,16 +14,16 @@ So the migration is per-component, and each one needs a test that proves the vie
 
 ## Done
 
-| Component | Why it was safe |
-| --- | --- |
-| `DataGridRowComponent` | Already OnPush before this work |
-| `RibbonComponent` | Pure `<ng-content>` wrapper with no state |
-| `FormGroupComponent` | Renders two `@Input()`s and nothing else |
-| `GroupContainerComponent` | Template reads only `title` and `icon`; its other members are API for parents, never rendered here |
-| `LoginLayoutComponent` | Static shell around a `<router-outlet>` |
-| `HomeComponent` | Static |
-| `BrandComponent` | Reads `APP_CONFIG`, which is fixed for the application's lifetime |
-| `EnvironmentBadgeComponent` | Same |
+| Component                   | Why it was safe                                                                                    |
+| --------------------------- | -------------------------------------------------------------------------------------------------- |
+| `DataGridRowComponent`      | Already OnPush before this work                                                                    |
+| `RibbonComponent`           | Pure `<ng-content>` wrapper with no state                                                          |
+| `FormGroupComponent`        | Renders two `@Input()`s and nothing else                                                           |
+| `GroupContainerComponent`   | Template reads only `title` and `icon`; its other members are API for parents, never rendered here |
+| `LoginLayoutComponent`      | Static shell around a `<router-outlet>`                                                            |
+| `HomeComponent`             | Static                                                                                             |
+| `BrandComponent`            | Reads `APP_CONFIG`, which is fixed for the application's lifetime                                  |
+| `EnvironmentBadgeComponent` | Same                                                                                               |
 
 Each of those has a spec that changes an input through `componentRef.setInput` and asserts the
 rendered DOM, so a regression shows up as a failing test rather than a blank panel.

@@ -6,12 +6,9 @@ import { LoginComponent } from './login.component';
 describe(LoginComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ LoginComponent, TranslateModule.forRoot() ],
-      providers: [
-        { provide: AuthenticationService, useValue: { isAuthenticated: false } },
-      ],
-    })
-    .compileComponents();
+      imports: [LoginComponent, TranslateModule.forRoot()],
+      providers: [{ provide: AuthenticationService, useValue: { isAuthenticated: false } }],
+    }).compileComponents();
   });
 
   it('should create', () => {

@@ -36,7 +36,13 @@ describe(NotificationsComponent.name, () => {
   });
 
   it('marks a notification as read and navigates internally on click', () => {
-    const item: INotification = { title: 't', description: 'd', icon: 'fa-solid fa-bell', callToActionUrl: '/records/1', isRead: false };
+    const item: INotification = {
+      title: 't',
+      description: 'd',
+      icon: 'fa-solid fa-bell',
+      callToActionUrl: '/records/1',
+      isRead: false,
+    };
 
     component.onNotificationClick(item);
 

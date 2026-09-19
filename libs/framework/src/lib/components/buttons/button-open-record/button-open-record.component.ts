@@ -10,11 +10,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-open-record',
   templateUrl: './button-open-record.component.html',
-  imports: [
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonOpenRecordComponent)}]
+  imports: [NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonOpenRecordComponent) }],
 })
 export class ButtonOpenRecordComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -38,11 +35,9 @@ export class ButtonOpenRecordComponent extends BaseButton implements OnInit {
   //#region Constructor and Angular life cycle methods
 
   public ngOnInit(): void {
-    this.dataGridDataset.selectedRowsChanged
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-          this.selectionCount = this.dataGridDataset.selectedRowKeys.length;
-      });
+    this.dataGridDataset.selectedRowsChanged.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.selectionCount = this.dataGridDataset.selectedRowKeys.length;
+    });
   }
   //#endregion
 

@@ -10,13 +10,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-confirm',
   templateUrl: './button-confirm.component.html',
-  imports: [
-    ConfirmModalComponent,
-    NgIf,
-    RibbonButtonComponent,
-    TranslatePipe,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonConfirmComponent)}]
+  imports: [ConfirmModalComponent, NgIf, RibbonButtonComponent, TranslatePipe],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonConfirmComponent) }],
 })
 export class ButtonConfirmComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
@@ -44,7 +39,7 @@ export class ButtonConfirmComponent extends BaseButton {
   //#region Constructor and Angular life cycle methods
   constructor() {
     super();
-    
+
     this.disabled = true;
   }
   //#endregion
@@ -58,21 +53,19 @@ export class ButtonConfirmComponent extends BaseButton {
     if (this.confirmModal.isLoading || !this.confirmModal.isShown) {
       return;
     }
-    
+
     this.confirmModal.beginLoading();
 
-    this.action
-      .pipe(take(1))
-      .subscribe({
-        next: () => {
-          this.finishLoading('success');
-          this.confirmModal.finishLoading(true);
-          this.gridDataset.refresh();
-        },
-        error: (e: HttpErrorResponse) => {
-          this.confirmModal.setErrorMessage(e);
-        }
-      });
+    this.action.pipe(take(1)).subscribe({
+      next: () => {
+        this.finishLoading('success');
+        this.confirmModal.finishLoading(true);
+        this.gridDataset.refresh();
+      },
+      error: (e: HttpErrorResponse) => {
+        this.confirmModal.setErrorMessage(e);
+      },
+    });
   }
   //#endregion
 

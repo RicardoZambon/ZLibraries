@@ -17,7 +17,7 @@ export abstract class MultiSelectResultDataset extends GridDataset {
   private _idsToRemove: any[] = [];
   private addedRowData: any[] = [];
   //#endregion
-  
+
   //#region Properties
   public get idsToAdd(): any[] {
     return this._idsToAdd;
@@ -46,14 +46,13 @@ export abstract class MultiSelectResultDataset extends GridDataset {
       idsToRemove: this.idsToRemove,
     };
 
-    return this.saveData(changes)
-      .pipe(
-        tap(() => {
-          this.savedChanges.emit();
-          this.clearSelection();
-          this.clearLoadedRows();
-        })
-      );
+    return this.saveData(changes).pipe(
+      tap(() => {
+        this.savedChanges.emit();
+        this.clearSelection();
+        this.clearLoadedRows();
+      })
+    );
   }
 
   public setIDToAdd(idToAdd: any, rowData: any): void {
@@ -94,15 +93,14 @@ export abstract class MultiSelectResultDataset extends GridDataset {
   }
 
   private isExistingID(id: any): boolean {
-    return (this.loadedKeys ?? [])
-      .map((key: string) => this.getRowID(key))
-      .indexOf(id) >= 0;
+    return (this.loadedKeys ?? []).map((key: string) => this.getRowID(key)).indexOf(id) >= 0;
   }
 
   private updateDisplayedRows() {
-    const loadedKeys: string[] = (this.loadedKeys ?? [])
-      .filter((key: string) => this.idsToRemove.indexOf(this.getRowID(key)) < 0);
-    
+    const loadedKeys: string[] = (this.loadedKeys ?? []).filter(
+      (key: string) => this.idsToRemove.indexOf(this.getRowID(key)) < 0
+    );
+
     this.displayedIDs = loadedKeys.map((key: string) => this.getRowID(key));
     this.displayedIDs.push(...this._idsToAdd);
 

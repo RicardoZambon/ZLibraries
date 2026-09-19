@@ -36,9 +36,9 @@ export const appConfig: ApplicationConfig = {
       useValue: new AppConfig(environment.apiBaseUrl, {
         appName: 'Engineering Change',
         companyName: 'Zilia Technologies',
-        environment: environment.name,        // 'DEV' | 'QA' | 'STG' | 'PROD'
-        logoUrl: '/assets/logo.svg',          // optional
-        version: '1.4.0',                      // shown at the bottom of the sidebar
+        environment: environment.name, // 'DEV' | 'QA' | 'STG' | 'PROD'
+        logoUrl: '/assets/logo.svg', // optional
+        version: '1.4.0', // shown at the bottom of the sidebar
         notificationsEnabled: environment.notificationsEnabled,
         notificationsUrl: environment.notificationsHubUrl, // e.g. `${apiBaseUrl}/hubs/notifications`
       }),
@@ -48,15 +48,15 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-| Option | Type | Purpose |
-|--------|------|---------|
-| `appName` | `string` | Brand title in the top bar |
-| `companyName` | `string` | Line under the app name |
-| `environment` | `string` | Environment badge. `DEV`/`QA`/`STG` are colored; any other non-empty value uses a neutral style; **`PROD` or empty hides the badge** |
-| `logoUrl` | `string?` | Optional brand logo |
-| `version` | `string` | App version string, shown at the bottom of the sidebar navigation |
-| `notificationsEnabled` | `boolean` | Turns the notifications bell on/off (default `false`) |
-| `notificationsUrl` | `string` | SignalR hub URL; the bell is only shown when enabled **and** this is set |
+| Option                 | Type      | Purpose                                                                                                                              |
+| ---------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `appName`              | `string`  | Brand title in the top bar                                                                                                           |
+| `companyName`          | `string`  | Line under the app name                                                                                                              |
+| `environment`          | `string`  | Environment badge. `DEV`/`QA`/`STG` are colored; any other non-empty value uses a neutral style; **`PROD` or empty hides the badge** |
+| `logoUrl`              | `string?` | Optional brand logo                                                                                                                  |
+| `version`              | `string`  | App version string, shown at the bottom of the sidebar navigation                                                                    |
+| `notificationsEnabled` | `boolean` | Turns the notifications bell on/off (default `false`)                                                                                |
+| `notificationsUrl`     | `string`  | SignalR hub URL; the bell is only shown when enabled **and** this is set                                                             |
 
 ## 3. Notifications (SignalR)
 
@@ -71,7 +71,7 @@ The client expects each notification to match `INotification`:
 export interface INotification {
   title: string;
   description: string;
-  icon: string;            // a Font Awesome class, e.g. 'fa-solid fa-envelope'
+  icon: string; // a Font Awesome class, e.g. 'fa-solid fa-envelope'
   callToActionUrl?: string; // optional; clicking navigates here
   isRead: boolean;
 }

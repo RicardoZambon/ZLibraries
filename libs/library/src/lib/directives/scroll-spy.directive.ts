@@ -1,7 +1,7 @@
 import { AfterViewInit, Directive, ElementRef, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
 
 @Directive({
-  selector: '[libScrollSpy]'
+  selector: '[libScrollSpy]',
 })
 export class ScrollSpyDirective implements AfterViewInit {
   //#region ViewChilds, Inputs, Outputs
@@ -32,14 +32,14 @@ export class ScrollSpyDirective implements AfterViewInit {
     const scrollHeight: number = event.target.scrollHeight;
     const maxScroll: number = Math.round(event.target.scrollHeight - event.target.getBoundingClientRect().height);
 
-    const currentScroll: number = Math.round(scrollTop * scrollHeight / maxScroll);
+    const currentScroll: number = Math.round((scrollTop * scrollHeight) / maxScroll);
 
     if (currentScroll >= scrollHeight) {
       this.select(this.sections.length - 1);
       return;
     }
 
-    const elements: Element[] = this.sections.filter(el => ((el as HTMLElement).offsetTop) <= currentScroll);
+    const elements: Element[] = this.sections.filter((el) => (el as HTMLElement).offsetTop <= currentScroll);
 
     this.select(elements.length > 0 ? elements.length - 1 : 0);
   }
@@ -60,8 +60,8 @@ export class ScrollSpyDirective implements AfterViewInit {
 
   //#region Private methods
   private updateSections(children: Element[]): void {
-    children.forEach(el => {
-      if (this.spiedTags.some(spiedTag => spiedTag.toUpperCase() === el.tagName.toUpperCase())) {
+    children.forEach((el) => {
+      if (this.spiedTags.some((spiedTag) => spiedTag.toUpperCase() === el.tagName.toUpperCase())) {
         this.sections.push(el);
       } else {
         this.updateSections(Array.from(el.children));

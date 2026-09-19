@@ -10,9 +10,7 @@ describe('GuidHelper', () => {
     });
 
     it('should generate unique GUIDs on each call', () => {
-      const guids: Set<string> = new Set(
-        Array.from({ length: 100 }, () => GuidHelper.generateGUID())
-      );
+      const guids: Set<string> = new Set(Array.from({ length: 100 }, () => GuidHelper.generateGUID()));
 
       expect(guids.size).toBe(100);
     });

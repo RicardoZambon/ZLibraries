@@ -7,7 +7,7 @@ import { AuthService } from '../../services';
 export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(RibbonButtonComponent) protected button!: RibbonButtonComponent;
-  
+
   @Input() public set allowedActions(value: string[]) {
     if (this._allowedActions !== value) {
       this._allowedActions = value;
@@ -32,7 +32,7 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
   protected destroy$: Subject<boolean> = new Subject<boolean>();
   protected isAccessLoaded = false;
 
-  private _allowedActions: string[] = new Array<string>;
+  private _allowedActions: string[] = new Array<string>();
   private _options: IRibbonButtonOption[] = [];
   //#endregion
 
@@ -88,7 +88,8 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
       return;
     }
 
-    this.authService.checkActionsAreAllowed(this.allowedActions)
+    this.authService
+      .checkActionsAreAllowed(this.allowedActions)
       .pipe(take(1))
       .subscribe((result: boolean[]) => {
         this.isAccessLoaded = true;
@@ -101,12 +102,14 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
       return;
     }
 
-    const optionsToCheckActions: IRibbonButtonOption[] = this.options
-      .filter((option: IRibbonButtonOption) => (option.allowedActions?.length ?? 0) > 0);
+    const optionsToCheckActions: IRibbonButtonOption[] = this.options.filter(
+      (option: IRibbonButtonOption) => (option.allowedActions?.length ?? 0) > 0
+    );
 
     if (optionsToCheckActions.length > 0) {
       optionsToCheckActions.forEach((option: IRibbonButtonOption, index: number) => {
-        this.authService.checkActionsAreAllowed(option.allowedActions!)
+        this.authService
+          .checkActionsAreAllowed(option.allowedActions!)
           .pipe(take(1))
           .subscribe((result: boolean[]) => {
             option.isAccessAllowed = result.some((isAllowed: boolean) => isAllowed === true);

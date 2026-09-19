@@ -6,11 +6,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button',
   templateUrl: './button.component.html',
-  imports: [
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonComponent)}]
+  imports: [NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonComponent) }],
 })
 export class ButtonComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs

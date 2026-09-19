@@ -13,12 +13,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-save',
   templateUrl: './button-save.component.html',
-  imports: [
-    ErrorModalComponent,
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonSaveComponent)}]
+  imports: [ErrorModalComponent, NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonSaveComponent) }],
 })
 export class ButtonSaveComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
@@ -82,7 +78,11 @@ export class ButtonSaveComponent extends BaseButton {
             case 'save-and-new': {
               this.dataProviderService.updateModel(model);
 
-              const detailsRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.root.snapshot, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
+              const detailsRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
+                this.router.routerState.root.snapshot,
+                FRAMEWORK_VIEW_TYPE,
+                FrameworkViewType.Details
+              );
               const savedEntityUrl = `${RouteHelper.getRouteURL(detailsRoute!.parent!)}/${model.id}`;
               const currentRouteUrl: string = RouteHelper.getRouteURL(detailsRoute!);
 
@@ -107,7 +107,11 @@ export class ButtonSaveComponent extends BaseButton {
             default: {
               this.dataProviderService.updateModel(model);
 
-              const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.root.snapshot, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
+              const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
+                this.router.routerState.root.snapshot,
+                FRAMEWORK_VIEW_TYPE,
+                FrameworkViewType.Details
+              );
               const url = `${RouteHelper.getRouteURL(targetRoute!.parent!)}/${model.id}`;
 
               if (!this.tabService.isUrlActive(url)) {
@@ -142,7 +146,7 @@ export class ButtonSaveComponent extends BaseButton {
         },
         complete: () => {
           this.formService.loading = false;
-        }
+        },
       });
   }
   //#endregion
@@ -155,7 +159,11 @@ export class ButtonSaveComponent extends BaseButton {
 
   //#region Private methods
   private navigateToNew(): void {
-    const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.root.snapshot, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
+    const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
+      this.router.routerState.root.snapshot,
+      FRAMEWORK_VIEW_TYPE,
+      FrameworkViewType.Details
+    );
 
     let url = '';
     if (targetRoute) {

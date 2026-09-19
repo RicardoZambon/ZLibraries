@@ -1,5 +1,14 @@
 import { NgFor, NgIf, NgStyle } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { delay, filter, takeUntil } from 'rxjs';
 import { SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu, SidebarMenuOpenMode, toSidebarMenuOpenMode } from '../../models';
@@ -10,19 +19,14 @@ import { BaseComponent } from '../base.component';
   selector: 'lib-sidebar-item',
   templateUrl: './sidebar-item.component.html',
   styleUrls: ['./sidebar-item.component.scss'],
-  imports: [
-    NgFor,
-    NgIf,
-    NgStyle,
-    TranslatePipe,
-  ],
+  imports: [NgFor, NgIf, NgStyle, TranslatePipe],
   host: {
     '[class.active]': 'isActive',
     '[class.expanded]': '!isCollapsed',
     '[class.first-level]': 'level === 0',
     '[class.last-child]': 'isLast',
     '[class.selected]': 'isSelected',
-  }
+  },
 })
 export class SidebarItemComponent extends BaseComponent implements OnInit, AfterViewInit {
   //#region ViewChilds, Inputs, Outputs
@@ -70,15 +74,17 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   }
 
   protected get opensInNewBrowserTab(): boolean {
-    return (this.menu.url?.length ?? 0) > 0
-      && toSidebarMenuOpenMode(this.menu.openMode) === SidebarMenuOpenMode.ExternalNewTab;
+    return (
+      (this.menu.url?.length ?? 0) > 0 &&
+      toSidebarMenuOpenMode(this.menu.openMode) === SidebarMenuOpenMode.ExternalNewTab
+    );
   }
 
   protected get hasIcon(): boolean {
     return !!this.menu.icon && this.menu.icon.length > 0;
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   constructor() {
     super();
@@ -97,7 +103,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
         .pipe(
           takeUntil(this.destroy$),
           filter((menu: SidebarMenu) => menu.id === this.menu.id),
-          delay(1000),
+          delay(1000)
         )
         .subscribe((_menu: SidebarMenu) => {
           this.hasFailed = true;
@@ -121,7 +127,10 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
       this.sidebarService.childrenInitialized
         .pipe(
           takeUntil(this.destroy$),
-          filter((menu: SidebarMenu) => menu.id === this.menu.id && this.menu.children.every((child: SidebarMenu) => (child.height ?? 0) > 0))
+          filter(
+            (menu: SidebarMenu) =>
+              menu.id === this.menu.id && this.menu.children.every((child: SidebarMenu) => (child.height ?? 0) > 0)
+          )
         )
         .subscribe((_menu: SidebarMenu) => {
           this.isLoading = false;
@@ -168,7 +177,10 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
 
   private getChildHeight(menu: SidebarMenu): number {
     if (menu.isSelected) {
-      return menu.children.reduce((height: number, childMenu: SidebarMenu) => height + (childMenu.height ?? 0) + this.getChildHeight(childMenu), 0);
+      return menu.children.reduce(
+        (height: number, childMenu: SidebarMenu) => height + (childMenu.height ?? 0) + this.getChildHeight(childMenu),
+        0
+      );
     }
     return 0;
   }

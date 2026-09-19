@@ -32,5 +32,5 @@ export class FrameworkGridConfigsProvider extends DataGridConfigsProvider {
   //#endregion
 
   //#region Private methods
-  //#endregion 
+  //#endregion
 }

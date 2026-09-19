@@ -56,4 +56,3 @@ export const WidePermissionSelector: Story = {
   },
   render: Primary.render,
 };
-

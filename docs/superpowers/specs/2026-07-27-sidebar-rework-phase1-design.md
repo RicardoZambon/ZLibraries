@@ -14,11 +14,11 @@ rail, tree-connector lines, and a footer call-to-action.
 
 The rework is **planned in full but delivered in reviewed slices**:
 
-| Phase | Scope | Notes |
-|-------|-------|-------|
-| **1 — Adopt patterns** *(this spec)* | Design tokens, pill selection, collapsed→flyout submenus, footer action slot | Restyle only. Brand colors and current layout stay. |
-| 2 — Glass overhaul | Translucent surfaces + blur + rounded floating panel | Layout/backdrop changes land in `main-layout`. Mostly token value swaps. |
-| 3 — Dark/light theming | Light/dark token set + theme mechanism | Wired to the top-bar's already-reserved theme-switch slot. |
+| Phase                                | Scope                                                                        | Notes                                                                    |
+| ------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **1 — Adopt patterns** _(this spec)_ | Design tokens, pill selection, collapsed→flyout submenus, footer action slot | Restyle only. Brand colors and current layout stay.                      |
+| 2 — Glass overhaul                   | Translucent surfaces + blur + rounded floating panel                         | Layout/backdrop changes land in `main-layout`. Mostly token value swaps. |
+| 3 — Dark/light theming               | Light/dark token set + theme mechanism                                       | Wired to the top-bar's already-reserved theme-switch slot.               |
 
 ### Architectural framing
 
@@ -59,21 +59,21 @@ route the sidebar SCSS through them. Result: **no visual change in Phase 1**, bu
 
 New tokens (initial Phase-1 values; tunable during Storybook review):
 
-| Token | Meaning | Phase-1 value (current-equivalent) |
-|-------|---------|-------------------------------------|
-| `--sidebar-bg` | Rail background | `primary-600` |
-| `--sidebar-nav-bg` | Nav list background | `primary-700 / 80%` |
-| `--sidebar-text` | Item text | `gray-200` |
-| `--sidebar-text-muted` | Footer/muted text | `gray-300 / 60%` |
-| `--sidebar-item-hover-bg` | Hover fill | `white / 10%` |
-| `--sidebar-item-selected-bg` | **Pill** fill (new) | `white / 15%` |
-| `--sidebar-item-selected-text` | Selected text | `white` |
-| `--sidebar-accent` | Marker/indicator accent | `gray-100` |
-| `--sidebar-flyout-bg` | Flyout panel surface | solid `primary-700` |
-| `--sidebar-flyout-text` | Flyout text | `gray-100` |
-| `--sidebar-flyout-shadow` | Flyout elevation | existing sidebar shadow |
-| `--sidebar-item-radius` | Pill/row rounding (new) | `8px` |
-| `--sidebar-flyout-radius` | Flyout panel rounding (new) | `10px` |
+| Token                          | Meaning                     | Phase-1 value (current-equivalent) |
+| ------------------------------ | --------------------------- | ---------------------------------- |
+| `--sidebar-bg`                 | Rail background             | `primary-600`                      |
+| `--sidebar-nav-bg`             | Nav list background         | `primary-700 / 80%`                |
+| `--sidebar-text`               | Item text                   | `gray-200`                         |
+| `--sidebar-text-muted`         | Footer/muted text           | `gray-300 / 60%`                   |
+| `--sidebar-item-hover-bg`      | Hover fill                  | `white / 10%`                      |
+| `--sidebar-item-selected-bg`   | **Pill** fill (new)         | `white / 15%`                      |
+| `--sidebar-item-selected-text` | Selected text               | `white`                            |
+| `--sidebar-accent`             | Marker/indicator accent     | `gray-100`                         |
+| `--sidebar-flyout-bg`          | Flyout panel surface        | solid `primary-700`                |
+| `--sidebar-flyout-text`        | Flyout text                 | `gray-100`                         |
+| `--sidebar-flyout-shadow`      | Flyout elevation            | existing sidebar shadow            |
+| `--sidebar-item-radius`        | Pill/row rounding (new)     | `8px`                              |
+| `--sidebar-flyout-radius`      | Flyout panel rounding (new) | `10px`                             |
 
 **File consolidation:** there are currently two byte-identical token files —
 `libs/library/src/styles/variables.scss` (tracked) and `libs/library/src/styles/_variables.scss`
@@ -125,6 +125,7 @@ child-load path (`SidebarService.loadChildren`) and shows the existing loading i
 inside the flyout.
 
 **Triggers.**
+
 - **Hover:** `mouseenter` on the anchor opens; `mouseleave` starts a ~150 ms close timer;
   entering the overlay panel cancels it; leaving the panel closes. (Close-intent delay so
   moving cursor from icon to panel doesn't dismiss.)
@@ -156,13 +157,13 @@ focus management as above.
 
 ## 4. Public API / consumer impact
 
-| Change | Type | Migration |
-|--------|------|-----------|
-| New `--sidebar-*` surface tokens | Added, defaulted | None — override to re-theme |
-| `SidebarItemComponent.displayMode` input | Added (internal default `'rail'`) | None |
-| `[sidebar-action]` projection slot | Added, optional | None |
-| Pill selection replaces 4px left bar | Changed (visual) | None (visual only) |
-| Collapsed parent → flyout (was full-rail expand) | Changed (behavior) | None — improved UX |
+| Change                                           | Type                              | Migration                   |
+| ------------------------------------------------ | --------------------------------- | --------------------------- |
+| New `--sidebar-*` surface tokens                 | Added, defaulted                  | None — override to re-theme |
+| `SidebarItemComponent.displayMode` input         | Added (internal default `'rail'`) | None                        |
+| `[sidebar-action]` projection slot               | Added, optional                   | None                        |
+| Pill selection replaces 4px left bar             | Changed (visual)                  | None (visual only)          |
+| Collapsed parent → flyout (was full-rail expand) | Changed (behavior)                | None — improved UX          |
 
 No breaking changes expected.
 
@@ -182,10 +183,10 @@ No breaking changes expected.
 ## 6. Documentation
 
 - **`libs/library/CHANGELOG.md` `[Unreleased]`** (required):
-  - *Added* — collapsed-rail flyout submenus; `[sidebar-action]` footer slot; semantic
+  - _Added_ — collapsed-rail flyout submenus; `[sidebar-action]` footer slot; semantic
     `--sidebar-*` surface tokens; `SidebarItemComponent.displayMode`.
-  - *Changed* — selected item uses a pill highlight instead of a left accent bar.
-  - *⚠ Breaking / Migration* — None.
+  - _Changed_ — selected item uses a pill highlight instead of a left accent bar.
+  - _⚠ Breaking / Migration_ — None.
 - Follow Conventional Commits (`feat(sidebar): …`) so semantic-release picks a minor bump.
 
 ## 7. Open questions

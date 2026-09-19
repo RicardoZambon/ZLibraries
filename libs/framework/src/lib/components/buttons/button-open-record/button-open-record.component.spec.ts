@@ -16,9 +16,7 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
   };
 
   function lastNavigatedTab(): Tab {
-    return mockTabService.navigateCurrentTab.mock.calls[
-      mockTabService.navigateCurrentTab.mock.calls.length - 1
-    ][0];
+    return mockTabService.navigateCurrentTab.mock.calls[mockTabService.navigateCurrentTab.mock.calls.length - 1][0];
   }
 
   beforeEach(() => {
