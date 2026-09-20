@@ -21,12 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.6.3] - 2026-09-20
+
+### Fixed
+
 - Declared `ngx-resize-observer` and `rxjs` in `peerDependencies`. `DataGridRowComponent` imports
   `ngx-resize-observer` at runtime, but the package was never declared, so installing
   `@zambon-dev/library` on its own left the dependency unresolved.
 - Added a README to the published package.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.6.2] - 2026-09-20
 
@@ -320,7 +324,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.6.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.6.3...HEAD
+[1.6.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.3
 [1.6.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.2
 [1.6.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.1
 [1.6.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.0

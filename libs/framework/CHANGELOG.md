@@ -21,10 +21,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.4.2] - 2026-09-20
+
+### Fixed
+
 - Declared `rxjs` in `peerDependencies`; it is used throughout the package but was never declared.
 - Added a README to the published package.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.4.1] - 2026-09-19
 
@@ -197,7 +201,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.2...HEAD
+[1.4.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.2
 [1.4.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.1
 [1.4.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.0
 [1.3.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.3.1

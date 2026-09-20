@@ -21,11 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [2.1.2] - 2026-09-20
+
+### Fixed
+
 - Declared `rxjs` and `@angular/platform-browser` in `peerDependencies`. `DomSanitizer` is used by
   `ExternalContentComponent` and `BypassHtmlSanitizerPipe`, but neither package was declared.
 - Added a README to the published package.
-
-### ⚠ Breaking Changes / Migration
 
 ## [2.1.1] - 2026-09-15
 
@@ -325,7 +329,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v2.1.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v2.1.2...HEAD
+[2.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.2
 [2.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.1
 [2.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.0
 [2.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.0.0
