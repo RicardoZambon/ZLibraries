@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Declared `rxjs` in `peerDependencies`; it is used throughout the package but was never declared.
+- Added a README to the published package.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.4.1] - 2026-09-19

@@ -2,6 +2,9 @@ export default {
   displayName: 'framework',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
+  // Per-project cache dir. A shared default (%TEMP%/jest) makes parallel
+  // Nx targets race each other and fail with EPERM on Windows.
+  cacheDirectory: '../../.nx/cache/jest/framework',
   coverageDirectory: '../../coverage/libs/framework',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [

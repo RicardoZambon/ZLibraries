@@ -4,11 +4,14 @@
   "license": "MIT",
   "scripts": {
     "build": "nx run-many --target=build --all --configuration=production",
+    "test": "nx run-many --target=test --all",
+    "lint": "nx run-many --target=lint --all",
+    "format": "nx format:write",
+    "format:check": "nx format:check",
     "storybook:framework": "nx storybook framework",
     "storybook:library": "nx storybook library",
     "storybook:shared": "nx storybook shared",
-    "build-storybook": "nx run-many --target=build-storybook --projects=framework,library,shared --configuration=ci",
-    "test": "nx run-many --target=test --all"
+    "build-storybook": "nx run-many --target=build-storybook --projects=framework,library,shared --configuration=ci"
   },
   "private": true,
   "dependencies": {

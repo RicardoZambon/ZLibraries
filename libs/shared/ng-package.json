@@ -3,6 +3,11 @@
   "dest": "../../dist/libs/shared",
   "assets": [
     {
+      "glob": "README.md",
+      "input": ".",
+      "output": "."
+    },
+    {
       "glob": "CHANGELOG.md",
       "input": ".",
       "output": "."

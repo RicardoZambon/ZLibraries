@@ -21,7 +21,6 @@
     ],
     "sharedGlobals": []
   },
-  "nxCloudAccessToken": "YmQ5ODM3ZTUtY2MyMy00NWMxLTljYTgtNWE2OGNhZGI0ZTZhfHJlYWQtd3JpdGU=",
   "plugins": [
     {
       "plugin": "@nx/storybook/plugin",

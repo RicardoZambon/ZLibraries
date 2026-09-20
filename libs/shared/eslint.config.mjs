@@ -9,7 +9,19 @@ export default [
       '@nx/dependency-checks': [
         'error',
         {
-          ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs}'],
+          // Dev-only entry points: their imports are not part of the published surface.
+          ignoredFiles: [
+            '{projectRoot}/eslint.config.{js,cjs,mjs}',
+            '{projectRoot}/jest.config.ts',
+            '{projectRoot}/.storybook/**/*',
+            '{projectRoot}/src/test-setup.ts',
+            '{projectRoot}/src/**/*.spec.ts',
+            '{projectRoot}/src/**/*.stories.ts',
+          ],
+          // Sibling workspace packages carry a placeholder 0.0.1 version in git;
+          // semantic-release stamps the real one at publish time, so the range
+          // in peerDependencies can never match what is checked out.
+          ignoredDependencies: ['@zambon-dev/framework', '@zambon-dev/library', '@zambon-dev/shared'],
         },
       ],
     },
