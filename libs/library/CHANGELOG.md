@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.6.2] - 2026-09-20
+
+### Fixed
+
 - **A `lib-data-grid` column with no room from the start no longer drags its heading out of line.**
   1.6.1 removes the heading of a collapsed column, but only once that column had measured a real
   width at some point. A column that never has any room does not, so it kept a heading over nothing
@@ -36,8 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   scroll event follows to say so, so the headings kept the offset they had when you left: on a grid
   scrolled 300px every heading sat 300px away from its column. The header now reconciles with the
   body whenever the grid is re-measured, which is what re-inserting it triggers.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.6.1] - 2026-09-19
 
@@ -311,7 +315,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.6.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.6.2...HEAD
+[1.6.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.2
 [1.6.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.1
 [1.6.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.0
 [1.5.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.5.0
