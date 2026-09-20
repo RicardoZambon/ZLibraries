@@ -2,6 +2,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { APP_CONFIG, AppConfig, CustomReuseStrategy, TabService } from '@zambon-dev/framework';
 import { ISidebarProfile, SidebarMenu, SidebarService } from '@zambon-dev/library';
+import { INotification } from '../../models';
 import { AuthenticationService } from '../../services/authentication.service';
 import { NotificationsService } from '../../services/notifications.service';
 import { Observable, of } from 'rxjs';
