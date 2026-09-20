@@ -1,5 +1,5 @@
 import { NgClass, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, HostListener, inject, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, inject, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxResizeObserverModule } from 'ngx-resize-observer';
 import { takeUntil } from 'rxjs';
@@ -56,7 +56,7 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   protected selected: boolean = false;
 
   private _rowData!: any;
-  private hasMeasured: { [column: number]: boolean } = {};
+  private elementRef: ElementRef<HTMLElement> = inject(ElementRef);
   //#endregion
 
   //#region Properties
@@ -66,6 +66,10 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
 
   protected get columns(): IGridColumn[] {
     return this.dataGridDataset.columns;
+  }
+
+  private get isLaidOut(): boolean {
+    return (this.elementRef.nativeElement?.getBoundingClientRect().width ?? 0) > 0;
   }
 
   private get isRowDataSelected(): boolean {
@@ -100,15 +104,16 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   protected onResize(colIndex: number, event: ResizeObserverEntry): void {
     const width: number = event.contentRect.width;
 
-    // The very first callback can arrive before the grid is laid out and reports zero for every
-    // column; taking that at face value would pin the heading at zero. Once a column has measured
-    // something real, a later zero is believable -- that is a 1fr column collapsing, and the
-    // heading has to collapse with it or every column to its right sits under the wrong one.
-    if (width <= 0 && !this.hasMeasured[colIndex]) {
+    // A zero means one of two very different things. Before the grid is laid out every column
+    // reports zero, and taking that at face value would pin every heading at zero. Once the row
+    // itself has a width the layout is live, and a zero is then the real thing: a 1fr column
+    // collapsed for want of room, whose heading has to collapse with it or every column to its
+    // right sits under the wrong one. Asking the row -- rather than remembering whether this
+    // column once measured something -- also covers a column that is born collapsed and never
+    // measures anything else.
+    if (width <= 0 && !this.isLaidOut) {
       return;
     }
-
-    this.hasMeasured[colIndex] = true;
 
     // Reported on every change, not just the first. The body lays the columns out as a CSS grid of
     // minmax(x, min-content), so a column is only as wide as the content currently rendered --
