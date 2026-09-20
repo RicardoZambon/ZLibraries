@@ -1,16 +1,13 @@
 import { UtcDatePipe } from './utc-date.pipe';
 
-// Pinned to a fixed, DST-free UTC-3 zone. The pipe's whole point is a timezone
-// shift, so under TZ=UTC the shift is zero and the assertions below cannot fail
-// — which is exactly how an inverted expectation survived here unnoticed.
-process.env.TZ = 'Etc/GMT+3';
-
 describe('UtcDatePipe', () => {
   let pipe: UtcDatePipe;
 
   beforeEach(() => {
     pipe = new UtcDatePipe();
   });
+
+  afterEach(() => jest.restoreAllMocks());
 
   it('should create', () => {
     expect(pipe).toBeTruthy();
@@ -38,14 +35,23 @@ describe('UtcDatePipe', () => {
   });
 
   it('should re-express UTC wall-clock fields in local time', () => {
-    // A value whose fields carry a UTC time but which was parsed as local:
-    // 12:00 "UTC" is 09:00 for a viewer at UTC-3.
+    // The pipe reads getHours() and getUTCHours(); the gap between them IS the
+    // offset it applies. Pinning getUTCHours pins the offset to UTC-3 on any
+    // machine, so this asserts the direction of the shift rather than the
+    // runner's timezone. Under a real TZ=UTC the shift is zero and an inverted
+    // implementation would pass -- which is how the original bug survived.
+    jest.spyOn(Date.prototype, 'getUTCHours').mockImplementation(function (
+      this: Date,
+    ): number {
+      return this.getHours() + 3;
+    });
+
     const date: Date = new Date(2026, 5, 15, 12, 0, 0);
     const result: Date | null = pipe.transform(date);
 
     expect(result).not.toBeNull();
+    // 12:00 read as UTC is 09:00 for a viewer at UTC-3.
     expect(result!.getHours()).toBe(9);
-    expect(result!.getHours()).toBe(new Date(Date.UTC(2026, 5, 15, 12, 0, 0)).getHours());
   });
 
   it('should preserve minutes and seconds', () => {
