@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.4.3] - 2026-09-21
+
+### Fixed
+
 - `ButtonFiltersComponent.validateFormFunction` was typed `Function`, which accepted any
   function-like value. It is now `() => void`, matching how it is actually invoked. Consumers
   passing a function that takes arguments or returns a value will now see a type error.
@@ -31,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   component. The cycle left one of the component's own imports undefined at evaluation time and
   broke any attempt to instantiate it outside a fully booted application. It now imports the
   button by its concrete path.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.4.2] - 2026-09-20
 
@@ -212,7 +216,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.3...HEAD
+[1.4.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.3
 [1.4.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.2
 [1.4.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.1
 [1.4.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.0
