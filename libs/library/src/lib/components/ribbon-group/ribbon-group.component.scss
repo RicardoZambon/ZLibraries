@@ -1,6 +1,6 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
   @apply pr-2 relative;
 
   &:after {

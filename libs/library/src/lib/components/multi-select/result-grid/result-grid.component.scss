@@ -1,6 +1,6 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
   @apply grid grid-rows-[auto_1fr] overflow-hidden select-none;
 
   &:not(.no-borders) {

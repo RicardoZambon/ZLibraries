@@ -1,6 +1,6 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
   @apply grid grid-cols-subgrid col-span-2;
 }
 

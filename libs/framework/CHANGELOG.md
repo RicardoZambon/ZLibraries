@@ -40,6 +40,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Host styles now apply.** `DefaultTabViewComponent`, `DefaultDetailsTabViewComponent`,
+  `TabBreadcrumbsComponent` and `ButtonFiltersComponent` declared their host block as
+  `:host-context {` with no argument, so every rule inside was silently dropped. Visible effects:
+  no gap between the ribbon and the view below it, and breadcrumbs with neither their bottom rule
+  nor their spacing. They are `:host {` now.
+
 - `ButtonFiltersComponent.validateFormFunction` was typed `Function`, which accepted any
   function-like value. It is now `() => void`, matching how it is actually invoked. Consumers
   passing a function that takes arguments or returns a value will now see a type error.

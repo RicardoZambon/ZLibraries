@@ -1,6 +1,6 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
   @apply w-full max-w-full min-w-full;
 }
 

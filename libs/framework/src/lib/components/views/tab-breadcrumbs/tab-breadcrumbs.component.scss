@@ -1,6 +1,6 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
   @apply font-bold mb-2 border-b border-b-slate-300 select-none;
 
   i {

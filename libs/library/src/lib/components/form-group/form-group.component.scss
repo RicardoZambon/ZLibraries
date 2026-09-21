@@ -1,6 +1,6 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
   &.expand {
     @apply flex flex-col max-h-full overflow-y-hidden;
 

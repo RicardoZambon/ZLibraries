@@ -1,7 +1,7 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Component, inject, Injectable, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, Injectable, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ROUTES, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
+import { ROUTES, Router, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import {
@@ -1367,9 +1367,19 @@ const authenticationServiceMock: Pick<AuthenticationService, 'getUserInfo' | 'is
   template: `<router-outlet></router-outlet>`,
 })
 class ShowcaseRootComponent implements OnInit {
+  /**
+   * Tabs to open on start, in order. `openTab` navigates as well as opening, so the
+   * last entry ends up active and its route is what renders — which is how the stories
+   * below land straight on a list or a details view instead of making you click there.
+   */
+  @Input() public seedTabs: { title: string; url: string }[] = [
+    { title: 'Showcase-Menus-Dashboard', url: '/dashboard' },
+  ];
+
+  private router: Router = inject(Router);
   private tabService: TabService = inject(TabService);
 
-  public ngOnInit(): void {
+  public async ngOnInit(): Promise<void> {
     // Seed the initial tab WITH its title. TabsComponent opens the first tab itself but
     // supplies no title, and Tab.isTitleLoading defaults to true — so the tab would spin
     // forever. MainLayoutComponent's normal title resolution (getMenuFromUrl ->
@@ -1378,7 +1388,23 @@ class ShowcaseRootComponent implements OnInit {
     // string and so never equals the tab's '/dashboard'. Seeding an exact-URL match means
     // TabsComponent focuses this tab rather than opening an untitled second one.
     this.tabService.closeAllTabs();
-    this.tabService.openTab(new Tab({ isTitleLoading: false, title: 'Showcase-Menus-Dashboard', url: '/dashboard' }));
+
+    for (const tab of this.seedTabs) {
+      this.tabService.openTab(new Tab({ isTitleLoading: false, title: tab.title, url: tab.url }));
+      // Await between tabs. openTab navigates, and letting six navigations pile up in one
+      // tick starves the mocked services -- the sidebar menu and the final view both sit
+      // on loads that were cancelled out from under them.
+      await this.router.navigateByUrl(tab.url);
+    }
+
+    // openTab navigates as well as opening, so seeding several in one tick leaves a pile of
+    // cancelled navigations behind and whichever one survives decides what renders. Navigate
+    // once more, explicitly, to the tab we actually want active: this re-runs that route and
+    // its data load, so the view resolves instead of sitting on skeletons.
+    const active: { title: string; url: string } | undefined = this.seedTabs[this.seedTabs.length - 1];
+    if (active) {
+      await this.router.navigateByUrl(active.url);
+    }
   }
 }
 
@@ -1550,13 +1576,54 @@ const meta: Meta<MainLayoutComponent> = {
 };
 export default meta;
 
-export const NavigableApp: StoryObj<MainLayoutComponent> = {
-  render: () => ({
-    template: `
-      ${FIT_TO_CONTAINER}
-      <div class="h-screen bg-slate-100">
-        <shared-showcase-root></shared-showcase-root>
-      </div>
-    `,
-  }),
-};
+/** Seeds a set of tabs and renders the shell. The last tab is the one you land on. */
+function showcaseWith(seedTabs: { title: string; url: string }[]): StoryObj<MainLayoutComponent> {
+  return {
+    render: () => ({
+      props: { seedTabs },
+      template: `
+        ${FIT_TO_CONTAINER}
+        <div class="h-screen bg-slate-100">
+          <shared-showcase-root [seedTabs]="seedTabs"></shared-showcase-root>
+        </div>
+      `,
+    }),
+  };
+}
+
+/** The dashboard, with the sidebar to navigate anywhere else from. */
+export const NavigableApp: StoryObj<MainLayoutComponent> = showcaseWith([
+  { title: 'Showcase-Menus-Dashboard', url: '/dashboard' },
+]);
+
+/**
+ * A list view: ribbon, filters and the virtual-scrolled grid, with a second tab
+ * behind it so the tab strip is showing more than one thing.
+ */
+export const ListView: StoryObj<MainLayoutComponent> = showcaseWith([
+  { title: 'Showcase-Menus-Dashboard', url: '/dashboard' },
+  { title: 'Showcase-Menus-Customers', url: '/general/customers' },
+]);
+
+/**
+ * A details view: the form, its ribbon, the child list, and the breadcrumb trail
+ * that the tab history builds up as you go list -> record.
+ */
+export const DetailsView: StoryObj<MainLayoutComponent> = showcaseWith([
+  { title: 'Showcase-Menus-Dashboard', url: '/dashboard' },
+  { title: 'Showcase-Menus-Customers', url: '/general/customers' },
+  { title: 'Aurora Components', url: '/general/customers/1' },
+]);
+
+/**
+ * Both view types open at once across several tabs. This is the one to look at when
+ * changing the tab strip itself -- it is the only story where tabs compete for width.
+ */
+export const ManyTabs: StoryObj<MainLayoutComponent> = showcaseWith([
+  { title: 'Showcase-Menus-Dashboard', url: '/dashboard' },
+  { title: 'Showcase-Menus-Customers', url: '/general/customers' },
+  { title: 'Aurora Components', url: '/general/customers/1' },
+  { title: 'Showcase-Menus-Units', url: '/general/units' },
+  { title: 'Ada Lovelace', url: '/security/users/1' },
+  { title: 'Showcase-Menus-Users', url: '/security/users' },
+]);

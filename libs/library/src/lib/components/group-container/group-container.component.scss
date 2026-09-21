@@ -1,6 +1,6 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
   @apply flex flex-col flex-grow border rounded-lg relative overflow-hidden;
   @apply bg-white/80 border-gray-300/90;
 }
