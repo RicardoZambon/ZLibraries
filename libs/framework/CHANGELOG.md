@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [3.1.0] - 2026-09-21
+
+### Added
+
 - **Tabs close on middle click**, and with `Delete` while a tab has focus.
 - **The tab strip scrolls.** It was `overflow: hidden`, so once the tabs were wider than the bar the
   ones past the right edge could not be reached at all. Selecting a tab also scrolls it into view.
@@ -51,14 +65,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   panel whose tab was nowhere on screen.
 - Breadcrumb separators are drawn in CSS rather than as a FontAwesome glyph codepoint, which was
   tied to a specific FontAwesome major.
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.0.1] - 2026-09-21
 
@@ -288,7 +294,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.0.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.0...HEAD
+[3.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.0
 [3.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.0.1
 [3.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.0.0
 [2.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v2.0.0
