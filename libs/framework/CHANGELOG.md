@@ -13,7 +13,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Tabs close on middle click**, and with `Delete` while a tab has focus.
+- **The tab strip scrolls.** It was `overflow: hidden`, so once the tabs were wider than the bar the
+  ones past the right edge could not be reached at all. Selecting a tab also scrolls it into view.
+- **Scroll controls at each end of the strip**, shown only while there is something to scroll to.
+- **A vertical mouse wheel over the strip scrolls it horizontally**, so a plain wheel mouse can
+  reach an off-screen tab without going to the controls. Trackpad and `Shift`+wheel gestures, which
+  already produce horizontal deltas, are left to the browser.
+
 ### Changed
+
+- **Tabs restyled to match the sidebar's glass**: a translucent, blurred, rounded panel, with the
+  active tab and the content sharing one fill so they read as a single card. Every colour, radius
+  and dimension comes from a `--tabs-*` custom property now, so the look can be retuned without
+  touching the component. Breadcrumbs follow the same tokens.
+
+  The glass is painted on a `::before` layer rather than on the panel itself. `backdrop-filter`
+  makes an element the containing block for its `position: fixed` descendants, and views render
+  hidden, viewport-width modal overlays inside the panel — filtering it directly pulled those into
+  its scroll width and produced a phantom horizontal scrollbar.
+
+- **The tablist is a single tab stop.** `Tab` reaches the selected tab and the arrow keys move
+  between tabs from there, with `Home`/`End` for the ends. Previously every tab was its own tab
+  stop and there was no arrow-key support.
+- **The panel is a real `tabpanel`**, with `aria-controls` on each tab and `aria-labelledby` on the
+  panel, so assistive technology can tell which panel a tab owns.
+- **Close buttons are named after their tab** — "Close Acme Industries" rather than six identical
+  "Close tab". `Tabs-CloseTab` takes a `title` parameter now; if you have overridden that key in
+  your own translations, add `{{title}}` to it.
+- **A tab keeps its width while its title loads.** The spinner sits beside the label instead of
+  replacing it, so the strip no longer reflows as each title resolves.
+- **Tabs compress before the strip scrolls**, down to `--tabs-item-min-width`, so a few more fit
+  before any of them goes off screen. Overflowing tabs fade out at the edges instead of being cut
+  off mid-tab.
+- **The selected tab is pulled back into view when the strip narrows**, not only when the selection
+  changes. Resizing the window or collapsing the sidebar used to be able to leave you looking at a
+  panel whose tab was nowhere on screen.
+- Breadcrumb separators are drawn in CSS rather than as a FontAwesome glyph codepoint, which was
+  tied to a specific FontAwesome major.
 
 ### Deprecated
 

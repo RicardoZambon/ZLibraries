@@ -57,5 +57,7 @@
   "RibbonGroup-Entity": "Entidade",
   "RibbonGroup-General": "Geral",
   "RibbonGroup-Page": "Página",
-  "Tabs-CloseTab": "Fechar aba"
+  "Tabs-CloseTab": "Fechar {{title}}",
+  "Tabs-ScrollLeft": "Rolar abas para a esquerda",
+  "Tabs-ScrollRight": "Rolar abas para a direita"
 }

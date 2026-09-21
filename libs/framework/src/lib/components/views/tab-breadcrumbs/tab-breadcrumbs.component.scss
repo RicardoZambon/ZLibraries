@@ -1,18 +1,48 @@
 /* @use 'tailwindcss'; */
 
 :host {
-  @apply font-bold mb-2 border-b border-b-slate-300 select-none;
+  @apply flex flex-wrap items-center gap-1 pb-2 mb-2 select-none;
+  @apply text-sm font-semibold;
+  border-bottom: 1px solid var(--tabs-border);
+  color: var(--tabs-item-text);
 
-  i {
-    @apply mx-1 text-xs;
+  > i {
+    @apply text-xs shrink-0;
+    color: var(--tabs-close);
   }
 
   a {
-    @apply cursor-pointer;
+    @apply flex items-center gap-1 px-1 rounded cursor-pointer;
+    @apply transition-colors ease-in-out;
 
+    &:hover,
+    &:focus-visible {
+      background-color: var(--tabs-item-hover-bg);
+      color: var(--tabs-item-active-text);
+    }
+
+    &:focus-visible {
+      @apply outline-none ring-2;
+      --tw-ring-color: var(--tabs-item-active-text);
+    }
+
+    /* A CSS triangle rather than content-['\f054'] in 'Font Awesome 6 Free'. The glyph
+       codepoint is tied to a specific FontAwesome major, and that package is held back
+       deliberately (docs/guides/dependency-holds.md) precisely because its names and
+       codepoints move -- a bumped major would have turned this separator into tofu. */
     &:not(:first-of-type):before {
-      @apply text-xs font-semibold content-['\f054'] px-1;
-      font-family: 'Font Awesome 6 Free';
+      @apply content-[''] shrink-0 mr-1;
+      width: 0;
+      height: 0;
+      border-top: 0.25rem solid transparent;
+      border-bottom: 0.25rem solid transparent;
+      border-left: 0.3rem solid currentColor;
+      opacity: 0.45;
+    }
+
+    /* The last crumb is where you already are, so it reads as the current heading. */
+    &:last-of-type {
+      color: var(--tabs-item-active-text);
     }
 
     svg {

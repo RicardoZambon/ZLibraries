@@ -28,4 +28,33 @@
   /* Radii (rounded restyle) */
   --sidebar-radius: 1.25rem;
   --sidebar-item-radius: 10px;
+
+  /* Tabs — a light glass card the views live in. The sidebar's glass is brand-tinted
+     and dark; this one is white-tinted, because the panel holds forms and grids that
+     need dark-on-light contrast. Same language (blur, radius, shadow), different hue. */
+  --tabs-item-bg: color-mix(in srgb, white 45%, transparent);
+  --tabs-item-hover-bg: color-mix(in srgb, white 70%, transparent);
+  --tabs-item-active-bg: color-mix(in srgb, white 88%, transparent);
+  --tabs-item-text: theme('colors.gray.600');
+  --tabs-item-active-text: theme('colors.gray.900');
+  --tabs-content-bg: color-mix(in srgb, white 88%, transparent);
+  --tabs-border: color-mix(in srgb, white 60%, transparent);
+  --tabs-close: theme('colors.gray.400');
+  --tabs-close-hover-bg: color-mix(in srgb, theme('colors.gray.900') 10%, transparent);
+  --tabs-close-hover: theme('colors.gray.700');
+
+  /* Glass — softer than the sidebar's, which floats over the backdrop rather than content. */
+  --tabs-blur: 16px;
+  --tabs-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.25);
+
+  /* Radii & dimensions */
+  --tabs-radius: 1.25rem;
+  --tabs-item-radius: 10px;
+  --tabs-height: 2.75rem;
+  --tabs-item-max-width: 14rem;
+  /* Tabs compress to this before the strip starts scrolling -- still wide enough for a few
+     characters plus the close button, so a compressed tab is identifiable rather than a stub. */
+  --tabs-item-min-width: 7rem;
+  --tabs-scroll-width: 1.75rem;
+  --tabs-fade-width: 1.5rem;
 }

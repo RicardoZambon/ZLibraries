@@ -4,71 +4,171 @@
   @apply block relative h-full max-h-full max-w-full;
 }
 
-li .tab-item,
-.tab-content {
-  @apply border-x;
-  border-color: rgb(183 188 197);
-}
-
-li.active .tab-item,
-.tab-content {
-  background-color: rgb(246 247 248) !important;
-}
-
 .tabs-container {
-  @apply absolute top-0 h-11 w-full max-h-11 max-w-full z-[1] overflow-hidden;
+  @apply absolute top-0 flex flex-row items-end w-full max-w-full z-[1];
+  height: var(--tabs-height);
+  max-height: var(--tabs-height);
 
-  .tabs-nav {
-    @apply flex flex-row;
+  /* Drives the fade below. A zero-width stop collapses that side's gradient to nothing, so
+     one mask declaration covers all four combinations of scrollable ends. */
+  --tabs-fade-start: 0px;
+  --tabs-fade-end: 0px;
 
-    &:after {
-      @apply content-[''] absolute bottom-0 left-0 right-0 h-[1px] border-t;
-      border-color: rgb(183 188 197);
+  &.can-scroll-left {
+    --tabs-fade-start: var(--tabs-fade-width);
+  }
+
+  &.can-scroll-right {
+    --tabs-fade-end: var(--tabs-fade-width);
+  }
+
+  /* The chevrons at each end. Same glass as an inactive tab, so they read as part of the
+     strip rather than as toolbar buttons parked next to it. */
+  .tabs-scroll {
+    @apply flex items-center justify-center shrink-0 self-stretch;
+    @apply text-xs leading-none cursor-pointer border-none p-0;
+    @apply transition-colors ease-in-out;
+
+    width: var(--tabs-scroll-width);
+    background-color: var(--tabs-item-bg);
+    color: var(--tabs-item-text);
+
+    &.left {
+      border-top-left-radius: var(--tabs-item-radius);
     }
 
+    &.right {
+      border-top-right-radius: var(--tabs-item-radius);
+    }
+
+    &:hover {
+      background-color: var(--tabs-item-hover-bg);
+      color: var(--tabs-item-active-text);
+    }
+  }
+
+  .tabs-nav {
+    @apply flex flex-row items-end h-full;
+    /* min-w-0 so this can actually be narrower than its content -- without it the flex item
+       refuses to shrink below scrollWidth and the chevrons get pushed off the container. */
+    @apply flex-1 min-w-0;
+    /* Scrolls rather than clips. This was overflow:hidden, which left any tab past the
+       right edge unreachable -- no scroll, no affordance, simply gone. */
+    @apply overflow-x-auto overflow-y-hidden overscroll-x-contain;
+
+    /* The scrollbar would sit on the seam between the strip and the panel and break the
+       join. The chevrons, the wheel, and scrollIntoView on selection cover reaching the
+       tabs; the fade below is what says there are more of them. */
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      @apply hidden;
+    }
+
+    /* A clipped tab fades out instead of being guillotined, so the cut reads as "there is
+       more this way" rather than as a rendering fault. The mask sits in the element's own
+       box, not the scrolled content, so the fades stay pinned to the edges. */
+    $fade: linear-gradient(
+      to right,
+      transparent 0,
+      black var(--tabs-fade-start),
+      black calc(100% - var(--tabs-fade-end)),
+      transparent 100%
+    );
+    mask-image: $fade;
+    -webkit-mask-image: $fade;
+
     li {
-      @apply flex relative;
+      /* Shrinks before the strip scrolls, down to a floor that still fits a few characters
+         and the close button. Never grows: one tab should not span the whole bar. */
+      @apply flex relative grow-0 shrink;
+      min-width: var(--tabs-item-min-width);
 
       &.active {
         @apply z-[1];
       }
 
       .tab-item {
-        @apply py-2 pl-4 pr-11 max-w-xs select-none cursor-pointer text-xl font-medium text-ellipsis overflow-hidden;
-        @apply border-t text-gray-700 rounded-t-md;
+        @apply flex items-center gap-2 py-2 pl-4 pr-10 select-none cursor-pointer;
+        @apply text-base font-medium overflow-hidden;
         @apply transition-colors ease-in-out;
-        background-color: rgb(223 225 230);
 
-        span {
-          @apply whitespace-nowrap;
+        /* min-w-0 is what lets the label's text-ellipsis engage: without it this flex item
+           floors at its content width and the tab refuses to compress. */
+        @apply flex-1 min-w-0;
+        max-width: var(--tabs-item-max-width);
+        background-color: var(--tabs-item-bg);
+        color: var(--tabs-item-text);
+        border-top-left-radius: var(--tabs-item-radius);
+        border-top-right-radius: var(--tabs-item-radius);
+
+        .label {
+          @apply whitespace-nowrap overflow-hidden text-ellipsis;
         }
 
-        svg {
-          @apply h-7 w-7 animate-spin;
+        /* Sits beside the label rather than replacing it, so the tab keeps its width and
+           the strip does not reflow as each title resolves. */
+        .spinner {
+          @apply h-4 w-4 shrink-0 animate-spin;
         }
+
+        &:focus-visible {
+          @apply outline-none ring-2 ring-inset;
+          --tw-ring-color: var(--tabs-item-active-text);
+        }
+      }
+
+      &:hover .tab-item {
+        background-color: var(--tabs-item-hover-bg);
+      }
+
+      /* The selected tab and the panel share one fill so they read as a single card. */
+      &.active .tab-item {
+        background-color: var(--tabs-item-active-bg);
+        color: var(--tabs-item-active-text);
       }
 
       .tab-close {
-        @apply text-gray-400;
-      }
+        @apply flex items-center justify-center absolute top-1/2 right-1.5 -translate-y-1/2;
+        @apply h-6 w-6 rounded-full text-base leading-none cursor-pointer;
+        @apply border-none bg-transparent p-0;
+        @apply transition-colors ease-in-out;
+        color: var(--tabs-close);
 
-      &:hover {
-        .tab-item {
-          background-color: rgb(250 251 251);
+        &:hover,
+        &:focus-visible {
+          background-color: var(--tabs-close-hover-bg);
+          color: var(--tabs-close-hover);
         }
-      }
-
-      .tab-close {
-        @apply flex items-center absolute p-4 top-0 right-0 bottom-0 text-2xl cursor-pointer;
-        @apply transition-colors ease-in-out text-gray-400/80;
-        // Now a real <button>: strip the UA chrome it brings with it.
-        @apply border-none bg-transparent leading-none;
       }
     }
   }
 }
 
 .tab-content {
-  @apply absolute flex flex-col p-2 top-11 bottom-0 w-full max-w-full rounded-b-lg overflow-y-auto;
-  @apply border-b;
+  @apply absolute flex flex-col p-2 bottom-0 w-full max-w-full overflow-y-auto;
+  top: var(--tabs-height);
+
+  border: 1px solid var(--tabs-border);
+  border-bottom-left-radius: var(--tabs-radius);
+  border-bottom-right-radius: var(--tabs-radius);
+  border-top-right-radius: var(--tabs-radius);
+  box-shadow: var(--tabs-shadow);
+
+  /* Own stacking context, so the backdrop layer below can sit at z-index -1 behind this
+     panel's content without falling behind the app backdrop entirely. */
+  isolation: isolate;
+
+  /* The glass lives on a layer, NOT on .tab-content itself. backdrop-filter makes an
+     element the containing block for its position:fixed descendants -- and the views
+     render hidden, viewport-width modal overlays in here. Filtering the panel directly
+     pulled those into its scroll width and gave it a 285px phantom horizontal scrollbar.
+     A pseudo-element is not an ancestor of the content, so the blur cannot capture them. */
+  &::before {
+    @apply content-[''] absolute inset-0 -z-[1] pointer-events-none;
+    background-color: var(--tabs-content-bg);
+    border-radius: inherit;
+    backdrop-filter: blur(var(--tabs-blur));
+    -webkit-backdrop-filter: blur(var(--tabs-blur));
+  }
 }
