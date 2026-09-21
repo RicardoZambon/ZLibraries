@@ -1,5 +1,4 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { AfterViewInit, Component, HostListener, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { forkJoin, map, merge, Observable, of, switchMap, take, takeUntil } from 'rxjs';
 import { SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu, SidebarRegion } from '../../models';
@@ -11,7 +10,8 @@ import { SidebarItemComponent } from '../sidebar-item/sidebar-item.component';
   selector: 'lib-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, NgFor, NgIf, SidebarItemComponent, TranslatePipe],
+  imports: [SidebarItemComponent, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.active]': 'isActive',
     '[class.expanded]': '!isCollapsed',
@@ -23,7 +23,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
 
   //#region Host listeners
   @HostListener('body:mousedown', ['$event'])
-  private onBodyMouseDown(event: MouseEvent): void {
+  protected onBodyMouseDown(event: MouseEvent): void {
     if (this.isActive && event.target) {
       const target: HTMLElement = <HTMLElement>event.target;
       this.wasClickedOutside = (event.button === 0 && !target.closest('lib-sidebar')) ?? false;
@@ -31,7 +31,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   }
 
   @HostListener('body:mouseup', ['$event'])
-  private onBodyMouseUp(_event: MouseEvent): void {
+  protected onBodyMouseUp(_event: MouseEvent): void {
     if (this.wasClickedOutside) {
       this.wasClickedOutside = false;
       this.deactivate();
@@ -39,15 +39,12 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   }
 
   @HostListener('document:keydown.escape', ['$event'])
-  private onDocumentKeyDown(event: KeyboardEvent): void {
+  protected onDocumentKeyDown(event: Event): void {
     event = event || window.event;
 
-    let isEscapeKey = false;
-    if ('key' in event) {
-      isEscapeKey = event.key === 'Escape' || event.key === 'Esc';
-    } else {
-      isEscapeKey = (<KeyboardEvent>event).keyCode === 27;
-    }
+    // keyCode is the fallback for engines predating KeyboardEvent.key.
+    const isEscapeKey: boolean =
+      'key' in event ? event.key === 'Escape' || event.key === 'Esc' : (<KeyboardEvent>event).keyCode === 27;
 
     if (isEscapeKey) {
       this.deactivate();
@@ -55,7 +52,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   }
 
   @HostListener('window:resize', ['$event'])
-  private onResize(_event: Event): void {
+  protected onResize(_event: Event): void {
     this.updateShouldActivate();
   }
   //#endregion
@@ -105,7 +102,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
       .loadRoot()
       .pipe(
         take(1),
-        switchMap((menus: SidebarMenu[]) => this.loadAreaChildren(menus))
+        switchMap((menus: SidebarMenu[]) => this.loadAreaChildren(menus)),
       )
       .subscribe({
         next: (menus: SidebarMenu[]) => {

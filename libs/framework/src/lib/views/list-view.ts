@@ -1,8 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DataProviderService, MultiSelectResultDataset } from '@zambon-dev/library';
 import { TabViewList } from './tabview-list';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class ListView<TEntityModel, TListModel> extends TabViewList<TListModel> implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   //#endregion

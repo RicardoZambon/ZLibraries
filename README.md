@@ -15,7 +15,7 @@ from something higher.
 
 ## Requirements
 
-- Node.js 20 or later
+- Node.js 24 or later (Angular 22 requires >= 22.22.3; CI runs 24)
 - npm 10 or later
 
 ## Getting started

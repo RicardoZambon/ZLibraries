@@ -40,7 +40,7 @@ export class AuthInterceptor implements HttpInterceptor {
           shareReplay(),
           tap(() => {
             this.refreshToken$ = undefined;
-          })
+          }),
         );
       }
 
@@ -54,7 +54,7 @@ export class AuthInterceptor implements HttpInterceptor {
             this.router.navigate(['/login']);
           }
           throw err;
-        })
+        }),
       );
     }
     return next.handle(request);

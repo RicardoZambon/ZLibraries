@@ -40,7 +40,7 @@ export class NotificationsService {
   /** Emits the number of unread notifications. */
   public getUnreadCount(): Observable<number> {
     return this.notifications$.pipe(
-      map((notifications: INotification[]) => notifications.filter((n: INotification) => !n.isRead).length)
+      map((notifications: INotification[]) => notifications.filter((n: INotification) => !n.isRead).length),
     );
   }
 
@@ -58,7 +58,7 @@ export class NotificationsService {
   /** Marks a single notification as read (optimistically; the server reconciles on the next push). */
   public markAsRead(notification: INotification): void {
     this.notifications$.next(
-      this.notifications$.value.map((n: INotification) => (n === notification ? { ...n, isRead: true } : n))
+      this.notifications$.value.map((n: INotification) => (n === notification ? { ...n, isRead: true } : n)),
     );
   }
 

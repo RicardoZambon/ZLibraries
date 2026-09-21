@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, inject, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild, forwardRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroupDirective } from '@angular/forms';
 import {
   DataGridDataset,
@@ -17,7 +16,8 @@ import { BaseButton } from '../base-button';
   selector: 'framework-button-filters',
   templateUrl: './button-filters.component.html',
   styleUrls: ['./button-filters.component.scss'],
-  imports: [ModalComponent, NgIf, RibbonButtonComponent, TranslatePipe],
+  imports: [ModalComponent, RibbonButtonComponent, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [FormService, { provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonFiltersComponent) }],
 })
 export class ButtonFiltersComponent extends BaseButton implements OnInit {
@@ -25,18 +25,7 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   @ViewChild(ModalComponent) modal!: ModalComponent;
 
   @Input() public modalSize:
-    | 'sm'
-    | 'md'
-    | 'lg'
-    | 'xl'
-    | '2xl'
-    | '3xl'
-    | '4xl'
-    | '5xl'
-    | '6xl'
-    | '7xl'
-    | 'full'
-    | 'auto' = 'xl';
+    'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'xl';
   @Input() public modalTitle!: string;
   @Input() public validateFormFunction?: () => void;
   //#endregion
@@ -101,7 +90,7 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
 
       const formValue: any = this.formGroup.form.getRawValue();
       const formFilters: { [key: string]: any } = Object.fromEntries(
-        Object.entries(formValue).filter(([_, v]) => (!!v && v !== '') || v === 0)
+        Object.entries(formValue).filter(([_, v]) => (!!v && v !== '') || v === 0),
       );
 
       this.setFilters(formFilters);
@@ -149,8 +138,8 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   private withoutDisplayControls(filters: { [key: string]: string }): { [key: string]: string } {
     return Object.fromEntries(
       Object.entries(filters).filter(
-        ([key]: [string, string]) => !DisplayControls.isDisplayControl(this.formGroup.form.get(key))
-      )
+        ([key]: [string, string]) => !DisplayControls.isDisplayControl(this.formGroup.form.get(key)),
+      ),
     );
   }
   //#endregion

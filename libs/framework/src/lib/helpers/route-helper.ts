@@ -4,7 +4,7 @@ export abstract class RouteHelper {
   public static getRouteByData(
     routeSnapshot: ActivatedRouteSnapshot | null,
     key: string,
-    value: any
+    value: any,
   ): ActivatedRouteSnapshot | null {
     if (!routeSnapshot) {
       return null;
@@ -16,7 +16,7 @@ export abstract class RouteHelper {
 
   public static getRouteWithComponent(
     routeSnapshot: ActivatedRouteSnapshot | null,
-    component: any
+    component: any,
   ): ActivatedRouteSnapshot | null {
     if (!routeSnapshot) {
       return null;

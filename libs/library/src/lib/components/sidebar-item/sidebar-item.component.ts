@@ -1,4 +1,4 @@
-import { NgFor, NgIf, NgStyle } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -8,6 +8,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { delay, filter, takeUntil } from 'rxjs';
@@ -19,7 +20,8 @@ import { BaseComponent } from '../base.component';
   selector: 'lib-sidebar-item',
   templateUrl: './sidebar-item.component.html',
   styleUrls: ['./sidebar-item.component.scss'],
-  imports: [NgFor, NgIf, NgStyle, TranslatePipe],
+  imports: [NgStyle, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.active]': 'isActive',
     '[class.expanded]': '!isCollapsed',
@@ -103,7 +105,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
         .pipe(
           takeUntil(this.destroy$),
           filter((menu: SidebarMenu) => menu.id === this.menu.id),
-          delay(1000)
+          delay(1000),
         )
         .subscribe((_menu: SidebarMenu) => {
           this.hasFailed = true;
@@ -117,7 +119,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
       this.sidebarService.childrenLoading
         .pipe(
           takeUntil(this.destroy$),
-          filter((menu: SidebarMenu) => menu.id === this.menu.id)
+          filter((menu: SidebarMenu) => menu.id === this.menu.id),
         )
         .subscribe((_menu: SidebarMenu) => {
           this.hasFailed = false;
@@ -129,8 +131,8 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
           takeUntil(this.destroy$),
           filter(
             (menu: SidebarMenu) =>
-              menu.id === this.menu.id && this.menu.children.every((child: SidebarMenu) => (child.height ?? 0) > 0)
-          )
+              menu.id === this.menu.id && this.menu.children.every((child: SidebarMenu) => (child.height ?? 0) > 0),
+          ),
         )
         .subscribe((_menu: SidebarMenu) => {
           this.isLoading = false;
@@ -148,7 +150,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
     this.sidebarService.selectionChanged
       .pipe(
         takeUntil(this.destroy$),
-        filter((menu: SidebarMenu) => menu.id === this.menu.id)
+        filter((menu: SidebarMenu) => menu.id === this.menu.id),
       )
       .subscribe((menu: SidebarMenu) => {
         this.isSelected = menu.isSelected;
@@ -179,7 +181,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
     if (menu.isSelected) {
       return menu.children.reduce(
         (height: number, childMenu: SidebarMenu) => height + (childMenu.height ?? 0) + this.getChildHeight(childMenu),
-        0
+        0,
       );
     }
     return 0;

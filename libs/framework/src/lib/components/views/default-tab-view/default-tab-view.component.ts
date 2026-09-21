@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { RibbonComponent } from '@zambon-dev/library';
 import { Subject, takeUntil } from 'rxjs';
@@ -10,6 +10,7 @@ import { TabViewService } from '../../../services';
   templateUrl: './default-tab-view.component.html',
   styleUrls: ['./default-tab-view.component.scss'],
   imports: [NgTemplateOutlet, RibbonComponent, RouterModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: TabViewService }],
 })
 export class DefaultTabViewComponent implements OnDestroy, OnInit {
@@ -27,7 +28,10 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(protected changeDetectorRef: ChangeDetectorRef, protected tabViewService: TabViewService) {}
+  constructor(
+    protected changeDetectorRef: ChangeDetectorRef,
+    protected tabViewService: TabViewService,
+  ) {}
 
   public ngOnDestroy(): void {
     this.destroy$.next(true);

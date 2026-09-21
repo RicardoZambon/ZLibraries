@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataGridDataset, MultiEditorComponent, MultiEditorDataset } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { ModalBase } from './modal-base';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class MultiEditorLegacyModal extends ModalBase implements OnInit {
   protected _entityId?: number;
 
@@ -25,7 +25,7 @@ export abstract class MultiEditorLegacyModal extends ModalBase implements OnInit
   constructor(
     protected dataGridDataset: DataGridDataset,
     protected multiEditorDataset: MultiEditorDataset,
-    protected formBuilder: FormBuilder
+    protected formBuilder: FormBuilder,
   ) {
     super();
   }

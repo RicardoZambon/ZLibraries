@@ -1,4 +1,4 @@
-import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
+import { Component, EventEmitter, forwardRef, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { BaseButton } from '../../base-button';
 
@@ -6,6 +6,7 @@ import { BaseButton } from '../../base-button';
   selector: 'framework-button-views-legacy',
   templateUrl: './button-views.component.html',
   imports: [RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonViewsLegacyComponent) }],
 })
 /**

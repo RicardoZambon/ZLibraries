@@ -1,6 +1,5 @@
-import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, forwardRef, inject, Input, ViewChild } from '@angular/core';
+import { Component, forwardRef, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, take } from 'rxjs';
@@ -10,7 +9,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-confirm',
   templateUrl: './button-confirm.component.html',
-  imports: [ConfirmModalComponent, NgIf, RibbonButtonComponent, TranslatePipe],
+  imports: [ConfirmModalComponent, RibbonButtonComponent, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonConfirmComponent) }],
 })
 export class ButtonConfirmComponent extends BaseButton {

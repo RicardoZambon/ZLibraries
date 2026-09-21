@@ -1,34 +1,27 @@
 <!-- A <label> rather than a clickable <div>: clicking anywhere in the cell still
-     reaches the checkbox, natively. The click handler is a mouse-only convenience;
-     the keyboard path is the nested checkbox, which is focusable and toggles with
-     Space on its own. -->
-<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
-<label
-  *ngIf="dataGridDataset.configs.multiSelect"
-  class="cell selection"
-  (click)="onToggleSelection()"
-  (onResize)="onResizeSelection($event)"
->
-  <input class="form-input" type="checkbox" [attr.disabled]="disabled" [(ngModel)]="selected" />
-</label>
-
-<div
-  #cell
-  *ngFor="let column of columns; index as i"
-  class="cell"
-  [class.disabled]="disabled"
-  [ngClass]="column.customClass"
->
-  <div *ngIf="isFirstRow" class="spacer" (onResize)="onResize(i, $event)"></div>
-
-  <ng-container
-    *ngTemplateOutlet="
-      column.template ? column.template : simpleTemplate;
-      context: { rowData: rowData, column: column }
-    "
-  >
-  </ng-container>
-</div>
+reaches the checkbox, natively. The click handler is a mouse-only convenience;
+the keyboard path is the nested checkbox, which is focusable and toggles with
+Space on its own. -->
+@if (dataGridDataset.configs.multiSelect) {
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+  <label class="cell selection" (click)="onToggleSelection()" (onResize)="onResizeSelection($event)">
+    <input class="form-input" type="checkbox" [attr.disabled]="disabled" [(ngModel)]="selected" />
+  </label>
+}
+@for (column of columns; track column; let i = $index) {
+  <div #cell class="cell" [class.disabled]="disabled" [ngClass]="column.customClass">
+    @if (isFirstRow) {
+      <div class="spacer" (onResize)="onResize(i, $event)"></div>
+    }
+    <ng-container
+      *ngTemplateOutlet="
+        column.template ? column.template : simpleTemplate;
+        context: { rowData: rowData, column: column }
+      "
+    >
+    </ng-container>
+  </div>
+}
 
 <ng-template #simpleTemplate let-rowData="rowData" let-column="column">
   <span>{{ getValue(column.field) }}</span>

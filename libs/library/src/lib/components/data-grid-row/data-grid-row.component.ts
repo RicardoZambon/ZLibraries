@@ -1,4 +1,4 @@
-import { NgClass, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -22,12 +22,12 @@ import { BaseComponent } from '../base.component';
   selector: 'lib-data-grid-row',
   templateUrl: './data-grid-row.component.html',
   host: {
-    '[class.focused]': 'dataGridDataset.focusedRow === rowData',
+    '[class.focused]': 'dataGridDataset.focusedRowKey === rowData',
     '[class.selected]': 'dataGridDataset.isKeySelected(rowKey)',
   },
   styleUrls: ['./data-grid-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, NgClass, NgIf, NgFor, NgTemplateOutlet, NgxResizeObserverModule],
+  imports: [FormsModule, NgClass, NgTemplateOutlet, NgxResizeObserverModule],
 })
 export class DataGridRowComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -80,7 +80,7 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
     return this.dataGridDataset.isKeySelected(this.rowKey);
   }
 
-  private get rowKey(): string {
+  protected get rowKey(): string {
     return this.dataGridDataset.getRowInternalKey(this.rowData);
   }
   //#endregion

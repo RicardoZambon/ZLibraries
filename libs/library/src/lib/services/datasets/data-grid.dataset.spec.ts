@@ -32,7 +32,7 @@ describe('DataGridDataset', () => {
         { id: 1, name: 'Row 1' },
         { id: 2, name: 'Row 2' },
         { id: 3, name: 'Row 3' },
-      ])
+      ]),
     );
     dataset.loadRows();
   }

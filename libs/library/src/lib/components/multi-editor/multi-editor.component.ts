@@ -1,6 +1,5 @@
-import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
@@ -15,7 +14,8 @@ import { ModalComponent } from '../modal/modal.component';
   selector: 'lib-multi-editor',
   templateUrl: './multi-editor.component.html',
   styleUrls: ['./multi-editor.component.scss'],
-  imports: [DataGridComponent, ModalComponent, NgIf, FormGroupComponent, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [DataGridComponent, ModalComponent, FormGroupComponent, TranslatePipe],
 })
 export class MultiEditorComponent extends ModalComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs

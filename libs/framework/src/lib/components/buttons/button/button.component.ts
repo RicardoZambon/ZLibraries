@@ -1,12 +1,12 @@
-import { NgIf } from '@angular/common';
-import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
+import { Component, EventEmitter, forwardRef, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { BaseButton } from '../base-button';
 
 @Component({
   selector: 'framework-button',
   templateUrl: './button.component.html',
-  imports: [NgIf, RibbonButtonComponent],
+  imports: [RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonComponent) }],
 })
 export class ButtonComponent extends BaseButton {

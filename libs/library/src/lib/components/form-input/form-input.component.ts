@@ -1,5 +1,5 @@
-import { CommonModule, formatDate, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { CommonModule, formatDate } from '@angular/common';
+import { Component, EventEmitter, inject, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import {
   ControlContainer,
   FormControl,
@@ -17,8 +17,9 @@ import { BaseComponent } from '../base.component';
   selector: 'lib-form-input',
   templateUrl: './form-input.component.html',
   styleUrls: ['./form-input.component.scss'],
-  imports: [CommonModule, FormsModule, NgIf, NgSwitch, NgSwitchCase, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.full-height]': 'isFullHeight',
     // Clears a stray `type` attribute for the same reason as FormInputGroupComponent — see the

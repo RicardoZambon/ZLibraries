@@ -1,6 +1,6 @@
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { NgFor, NgIf } from '@angular/common';
+
 import {
   AfterViewInit,
   Component,
@@ -16,6 +16,7 @@ import {
   ViewChild,
   ViewContainerRef,
   OnDestroy,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -43,12 +44,13 @@ import { FormInputComponent } from '../form-input/form-input.component';
   selector: 'lib-catalog-select',
   templateUrl: './catalog-select.component.html',
   styleUrls: ['./catalog-select.component.scss'],
-  imports: [FormInputComponent, FormInputGroupComponent, NgFor, NgIf, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [FormInputComponent, FormInputGroupComponent, TranslatePipe],
 })
 export class CatalogSelectComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   //#region HostListeners
   @HostListener('body:mousedown', ['$event'])
-  private bodyMouseDown(event: MouseEvent): void {
+  protected bodyMouseDown(event: MouseEvent): void {
     const target: HTMLElement = <HTMLElement>event.target;
     if (this.isDropDownShown && !target.closest('.catalog-container.show')) {
       this.wasClickedOutside = (event.button === 0 && !target.closest('.dropdown-container')) ?? false;
@@ -56,7 +58,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   }
 
   @HostListener('body:mouseup', ['$event'])
-  private bodyMouseUp(event: MouseEvent): void {
+  protected bodyMouseUp(event: MouseEvent): void {
     if (this.isDropDownShown && this.wasClickedOutside) {
       this.closeDropdownOverlay();
       this.wasClickedOutside = false;
@@ -73,7 +75,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   @Input() public displayControlName!: string;
   @Input() public displayProperty = 'display';
   @Input() public set entriesList(
-    value: any[] | { key: number; value: Observable<any> | string }[] | null | undefined
+    value: any[] | { key: number; value: Observable<any> | string }[] | null | undefined,
   ) {
     if (this._entriesList !== value) {
       this._entriesList = value;
@@ -229,7 +231,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
         }),
         debounceTime(500),
         startWith(null),
-        pairwise()
+        pairwise(),
       )
       .subscribe(([previous, current]: string[]) => {
         if (!this.isFocused || previous === current) {
@@ -446,8 +448,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
               if (this.selectedValue === value) {
                 this.displayControl.setValue(v);
               }
-            })
-          )
+            }),
+          ),
         );
       } else {
         this.entriesDataSource.push({ value, display });
@@ -471,8 +473,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
             }
             return of(
               this.entriesDataSource.filter(
-                (entry: ICatalogEntry) => entry.display.toLowerCase().indexOf(criteria?.toLowerCase() ?? '') > -1
-              )
+                (entry: ICatalogEntry) => entry.display.toLowerCase().indexOf(criteria?.toLowerCase() ?? '') > -1,
+              ),
             ).pipe(take(1));
           }
 
@@ -484,7 +486,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
           return this.catalogService
             .search(this.searchEndpoint!, this.maxEntries, criteria ?? '', this.filters)
             .pipe(take(1));
-        })
+        }),
       )
       .subscribe({
         next: (result: ICatalogResult | any[] | null | undefined) => {
@@ -659,7 +661,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     ) {
       // If the control name is matching the ID property of the data grid dataset, filter out the loaded rows to remove duplicated IDs.
       const loadedIDs: any[] = this.dataGridDataset.loadedKeys!.map((key: string) =>
-        this.dataGridDataset.getRowID(key)
+        this.dataGridDataset.getRowID(key),
       );
       return results.filter((result: ICatalogEntry) => loadedIDs.indexOf(result.value) < 0);
     }

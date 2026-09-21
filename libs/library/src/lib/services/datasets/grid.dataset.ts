@@ -86,6 +86,11 @@ export abstract class GridDataset extends BaseDataset {
     this.updateLoadedRows([row]);
   }
 
+  /** The key of the currently focused row, or null. Read by DataGridRowComponent's host binding. */
+  public get focusedRowKey(): string | null {
+    return this.focusedRow;
+  }
+
   public clearFocusedRow(): void {
     this.focusedRow = null;
   }
@@ -117,7 +122,7 @@ export abstract class GridDataset extends BaseDataset {
       .split('.')
       .reduce(
         (loadedRows: any[], property: string) => loadedRows.map((row: any) => row[property]),
-        this._loadedRows ?? []
+        this._loadedRows ?? [],
       )
       .map((row: any) => (typeof id === 'string' ? `${row}` : typeof id === 'number' ? parseInt(`${row}`) : row));
 

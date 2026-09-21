@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormService, IRibbonButtonOption } from '@zambon-dev/library';
 import { Observable, takeUntil } from 'rxjs';
@@ -12,7 +12,7 @@ import { LegacyTabViewBase } from './legacy-tabview-base';
  * Migrate by extending TabViewBase and composing detail/history views as child routes
  * with standalone component imports.
  */
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements AfterViewInit, OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ButtonNewLegacyComponent) public buttonNew!: ButtonNewLegacyComponent;
@@ -49,7 +49,11 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(route: ActivatedRoute, tabService: TabService, protected formService: FormService) {
+  constructor(
+    route: ActivatedRoute,
+    tabService: TabService,
+    protected formService: FormService,
+  ) {
     super(route, tabService);
   }
 
@@ -84,7 +88,7 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
     super.openTabView();
 
     const activeView: IRibbonButtonOption | undefined = this.views.find(
-      (view: IRibbonButtonOption) => view.id === this.activeView
+      (view: IRibbonButtonOption) => view.id === this.activeView,
     );
     if (activeView) {
       activeView.isDisabled = true;
@@ -120,7 +124,7 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
     }
 
     const activeView: IRibbonButtonOption | undefined = this.views.find(
-      (view: IRibbonButtonOption) => view.id === (this.activeView ?? this.defaultView)
+      (view: IRibbonButtonOption) => view.id === (this.activeView ?? this.defaultView),
     );
     if (activeView) {
       activeView.isDisabled = false;

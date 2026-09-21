@@ -63,7 +63,7 @@ export abstract class SidebarService {
       tap((childrenMenus: SidebarMenu[]) => {
         parentMenu.children = childrenMenus;
         childrenMenus.forEach((childMenu: SidebarMenu) => (childMenu.parent = parentMenu));
-      })
+      }),
     );
   }
 
@@ -71,7 +71,7 @@ export abstract class SidebarService {
     return this.loadMenus(null).pipe(
       take(1),
       map((menus: SidebarMenu[]) => menus.map((menu: SidebarMenu) => new SidebarMenu(menu))),
-      tap((menus: SidebarMenu[]) => (this.menus = menus))
+      tap((menus: SidebarMenu[]) => (this.menus = menus)),
     );
   }
 

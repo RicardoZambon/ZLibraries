@@ -1,9 +1,9 @@
-import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ButtonFiltersComponent } from '@zambon-dev/framework';
 import { Subject } from 'rxjs';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class FiltersBase implements OnInit, OnDestroy {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ButtonFiltersComponent) protected buttonFilters?: ButtonFiltersComponent;

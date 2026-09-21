@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, inject, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { TabViewService } from '../services';
 import { ViewBase } from './view-base';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class TabViewBase extends ViewBase implements AfterViewInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('ribbon') private ribbonTemplate?: TemplateRef<any>;

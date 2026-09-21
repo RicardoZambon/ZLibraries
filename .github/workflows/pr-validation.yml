@@ -9,6 +9,11 @@ on:
       - synchronize
       - reopened
       - ready_for_review
+      # A stacked PR is opened against its parent branch, which the branches
+      # filter above excludes. When the parent merges, GitHub retargets it to
+      # main -- and that arrives as "edited", so without this the PR would sit
+      # forever waiting on a required check that never ran.
+      - edited
 
 permissions:
   contents: read
@@ -32,7 +37,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies

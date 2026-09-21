@@ -31,40 +31,47 @@
     </span>
   </a>
 
-  <a
-    class="button-dropdown"
-    *ngIf="options.length > 0"
-    role="button"
-    [attr.tabindex]="isButtonDisabled ? -1 : 0"
-    [attr.aria-disabled]="isButtonDisabled"
-    aria-haspopup="menu"
-    [attr.aria-expanded]="showDropdown"
-    [class.disabled]="isButtonDisabled"
-    [class.success]="status === 'success'"
-    [class.warning]="status === 'warning'"
-    [class.failure]="status === 'failure'"
-    [class.small]="iconSize === 'small'"
-    (click)="onShowHideDropdown()"
-    (keydown.enter)="onShowHideDropdown()"
-    (keydown.space)="onShowHideDropdown(); $event.preventDefault()"
-  >
-    <i class="fas fa-chevron-down" [ngClass]="[color]"></i>
-  </a>
+  @if (options.length > 0) {
+    <a
+      class="button-dropdown"
+      role="button"
+      [attr.tabindex]="isButtonDisabled ? -1 : 0"
+      [attr.aria-disabled]="isButtonDisabled"
+      aria-haspopup="menu"
+      [attr.aria-expanded]="showDropdown"
+      [class.disabled]="isButtonDisabled"
+      [class.success]="status === 'success'"
+      [class.warning]="status === 'warning'"
+      [class.failure]="status === 'failure'"
+      [class.small]="iconSize === 'small'"
+      (click)="onShowHideDropdown()"
+      (keydown.enter)="onShowHideDropdown()"
+      (keydown.space)="onShowHideDropdown(); $event.preventDefault()"
+    >
+      <i class="fas fa-chevron-down" [ngClass]="[color]"></i>
+    </a>
+  }
 </div>
 
-<ul class="options-dropdown" *ngIf="options.length > 0" role="menu">
-  <li
-    *ngFor="let option of options; let i = index"
-    role="menuitem"
-    [attr.tabindex]="isOptionDisabled(option) || !isOptionVisible(option) ? -1 : 0"
-    [attr.aria-disabled]="isOptionDisabled(option)"
-    [class.default-option]="i === defaultOption"
-    [class.disabled]="isOptionDisabled(option)"
-    [class.hidden]="!isOptionVisible(option)"
-    (click)="onOptionClicked(option)"
-    (keydown.enter)="onOptionClicked(option)"
-    (keydown.space)="onOptionClicked(option); $event.preventDefault()"
-  >
-    <i class="fas fa-fw" *ngIf="!!option.icon" [ngClass]="[option.icon, color]"></i> {{ option.label | translate }}
-  </li>
-</ul>
+@if (options.length > 0) {
+  <ul class="options-dropdown" role="menu">
+    @for (option of options; track option; let i = $index) {
+      <li
+        role="menuitem"
+        [attr.tabindex]="isOptionDisabled(option) || !isOptionVisible(option) ? -1 : 0"
+        [attr.aria-disabled]="isOptionDisabled(option)"
+        [class.default-option]="i === defaultOption"
+        [class.disabled]="isOptionDisabled(option)"
+        [class.hidden]="!isOptionVisible(option)"
+        (click)="onOptionClicked(option)"
+        (keydown.enter)="onOptionClicked(option)"
+        (keydown.space)="onOptionClicked(option); $event.preventDefault()"
+      >
+        @if (!!option.icon) {
+          <i class="fas fa-fw" [ngClass]="[option.icon, color]"></i>
+        }
+        {{ option.label | translate }}
+      </li>
+    }
+  </ul>
+}

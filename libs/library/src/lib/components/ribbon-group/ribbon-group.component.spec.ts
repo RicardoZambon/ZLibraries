@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DebugElement, ViewChild, forwardRef } from '@angular/core';
+import { Component, DebugElement, ViewChild, forwardRef, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -101,6 +101,7 @@ describe(RibbonGroupComponent.name, () => {
 @Component({
   selector: 'test-ribbon-button',
   template: ``,
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => RibbonGroupButtonTestComponent) }],
 })
 class RibbonGroupButtonTestComponent extends RibbonGroupChild {
@@ -109,6 +110,7 @@ class RibbonGroupButtonTestComponent extends RibbonGroupChild {
 
 @Component({
   imports: [RibbonGroupComponent, RibbonGroupButtonTestComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <lib-ribbon-group>
       <test-ribbon-button></test-ribbon-button>

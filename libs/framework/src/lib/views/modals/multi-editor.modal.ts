@@ -1,4 +1,13 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   DataGridDataset,
@@ -10,7 +19,7 @@ import {
 import { takeUntil } from 'rxjs';
 import { ModalBase } from './modal-base';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class MultiEditorModal<TEntityModel> extends ModalBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(MultiEditorComponent) protected multiEditor!: MultiEditorComponent;

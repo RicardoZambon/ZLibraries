@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -6,7 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'lib-form-group',
   templateUrl: './form-group.component.html',
   styleUrls: ['./form-group.component.scss'],
-  imports: [NgIf, TranslatePipe],
+  imports: [TranslatePipe],
   host: {
     '[class.expand]': 'shouldExpand',
   },

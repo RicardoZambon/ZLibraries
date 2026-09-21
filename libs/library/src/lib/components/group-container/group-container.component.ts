@@ -1,4 +1,4 @@
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ContentChildren, Input, QueryList, ViewChild } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ScrollSpyDirective } from '../../directives/scroll-spy.directive';
@@ -8,7 +8,7 @@ import { GroupAccordionComponent } from '../group-accordion/group-accordion.comp
   selector: 'lib-group-container',
   templateUrl: './group-container.component.html',
   styleUrls: ['./group-container.component.scss'],
-  imports: [NgClass, NgIf, TranslatePipe],
+  imports: [NgClass, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupContainerComponent {

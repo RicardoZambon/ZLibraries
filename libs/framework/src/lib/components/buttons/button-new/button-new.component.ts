@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, forwardRef, inject, Input } from '@angular/core';
+import { Component, forwardRef, inject, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { DataProviderService, IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { RouteHelper } from '../../../helpers';
@@ -10,7 +9,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-new',
   templateUrl: './button-new.component.html',
-  imports: [NgIf, RibbonButtonComponent],
+  imports: [RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonNewComponent) }],
 })
 export class ButtonNewComponent extends BaseButton {
@@ -56,20 +56,15 @@ export class ButtonNewComponent extends BaseButton {
       queryParameters = { ...queryParameters, ...option.parameters };
     }
 
-    let url = '';
-
-    // Try to find the route with ':id' parameters.
+    // Try to find the route with ':id' parameters; fall back to the current route.
     const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
       this.router.routerState.root.snapshot,
       FRAMEWORK_VIEW_TYPE,
-      FrameworkViewType.Details
+      FrameworkViewType.Details,
     );
-    if (!targetRoute) {
-      // If not found, uses the current route.
-      url = RouteHelper.getRouteURL(this.router.routerState.root.snapshot, true);
-    } else {
-      url = RouteHelper.getRouteURL(targetRoute!.parent!);
-    }
+    let url: string = targetRoute
+      ? RouteHelper.getRouteURL(targetRoute.parent!)
+      : RouteHelper.getRouteURL(this.router.routerState.root.snapshot, true);
 
     if (path && path.length > 0) {
       url += `/${path}`;

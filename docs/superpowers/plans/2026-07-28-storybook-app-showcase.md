@@ -220,15 +220,15 @@ interface IDashboardCard {
     <div class="p-6 flex flex-col gap-6">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         @for (card of cards; track card.label) {
-        <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <div class="flex items-center gap-3">
-            <i class="fa-solid {{ card.icon }} text-xl text-slate-400"></i>
-            <div>
-              <div class="text-2xl font-semibold text-slate-800">{{ card.value }}</div>
-              <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label }}</div>
+          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid {{ card.icon }} text-xl text-slate-400"></i>
+              <div>
+                <div class="text-2xl font-semibold text-slate-800">{{ card.value }}</div>
+                <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label }}</div>
+              </div>
             </div>
           </div>
-        </div>
         }
       </div>
 
@@ -236,7 +236,7 @@ interface IDashboardCard {
         <div class="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700">Recent activity</div>
         <ul class="divide-y divide-slate-100">
           @for (entry of activity; track entry) {
-          <li class="px-4 py-2 text-sm text-slate-600">{{ entry }}</li>
+            <li class="px-4 py-2 text-sm text-slate-600">{{ entry }}</li>
           }
         </ul>
       </div>

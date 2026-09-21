@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, forwardRef, inject, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DataProviderService, FormService, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { ModalBase } from '../../../views/modals/modal-base';
@@ -8,7 +7,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-edit',
   templateUrl: './button-edit.component.html',
-  imports: [NgIf, RibbonButtonComponent],
+  imports: [RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonEditComponent) }],
 })
 export class ButtonEditComponent extends BaseButton implements OnInit {

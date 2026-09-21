@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { GridConfigsProvider } from '@zambon-dev/library';
 import { ActivatedRoute } from '@angular/router';
@@ -16,7 +16,7 @@ describe(ServicesHistoryViewComponent.name, () => {
       imports: [ServicesHistoryViewComponent, TranslateModule.forRoot()],
       providers: [
         GridConfigsProvider,
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         provideHttpClientTesting(),
         { provide: ActivatedRoute, useValue: activatedRouteStub },
       ],

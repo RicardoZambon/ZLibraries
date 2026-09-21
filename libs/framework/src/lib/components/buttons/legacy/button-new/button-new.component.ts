@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, forwardRef, inject, Input } from '@angular/core';
+import { Component, forwardRef, inject, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ITabView, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { Tab } from '../../../../models';
 import { TabService } from '../../../../services';
@@ -8,7 +7,8 @@ import { BaseButton } from '../../base-button';
 @Component({
   selector: 'framework-button-new-legacy',
   templateUrl: './button-new.component.html',
-  imports: [NgIf, RibbonButtonComponent],
+  imports: [RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonNewLegacyComponent) }],
 })
 /**

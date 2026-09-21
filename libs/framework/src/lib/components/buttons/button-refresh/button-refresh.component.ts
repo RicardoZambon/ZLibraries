@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, OnInit } from '@angular/core';
+import { Component, forwardRef, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { BaseButton } from '../base-button';
@@ -7,6 +7,7 @@ import { BaseButton } from '../base-button';
   selector: 'framework-button-refresh',
   templateUrl: './button-refresh.component.html',
   imports: [RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonRefreshComponent) }],
 })
 export class ButtonRefreshComponent extends BaseButton implements OnInit {

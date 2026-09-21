@@ -1,6 +1,5 @@
-import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ModalComponent } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -8,7 +7,8 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'framework-error-modal',
   templateUrl: './error-modal.component.html',
   styleUrls: ['./error-modal.component.scss'],
-  imports: [ModalComponent, NgIf, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [ModalComponent, TranslatePipe],
 })
 export class ErrorModalComponent {
   //#region ViewChilds, Inputs, Outputs

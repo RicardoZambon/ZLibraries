@@ -8,7 +8,9 @@
   <div body>
     <div class="erro">
       <h4>{{ errorMessage | translate }}</h4>
-      <span *ngIf="subtitle">{{ subtitle | translate }}</span>
+      @if (subtitle) {
+        <span>{{ subtitle | translate }}</span>
+      }
     </div>
   </div>
 </lib-modal>

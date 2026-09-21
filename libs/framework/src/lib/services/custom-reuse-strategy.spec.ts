@@ -22,7 +22,7 @@ describe('CustomReuseStrategy', () => {
   function createRouteSnapshot(
     segments: string[],
     component: Type<unknown> | null,
-    parent?: ActivatedRouteSnapshot
+    parent?: ActivatedRouteSnapshot,
   ): ActivatedRouteSnapshot {
     return <ActivatedRouteSnapshot>(<unknown>{
       component,

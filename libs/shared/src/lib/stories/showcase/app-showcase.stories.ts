@@ -1,5 +1,5 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Component, inject, Injectable, OnInit } from '@angular/core';
+import { Component, inject, Injectable, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ROUTES, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -212,7 +212,7 @@ function addressesOf(customerID: number): ICustomerAddressesList[] {
 // a non-null assertion. Falls back to 0, which matches no customer — so on the /new route, where
 // entityID is NaN, the list is empty instead of showing another customer's rows.
 function parentCustomerID(dataProvider: DataProviderService<ICustomersDisplay> | null): number {
-  return dataProvider?.hasEntityID ? dataProvider.entityID ?? 0 : 0;
+  return dataProvider?.hasEntityID ? (dataProvider.entityID ?? 0) : 0;
 }
 
 // The customer's main city, taken from its first address. Blank when it has none.
@@ -274,7 +274,7 @@ function deleteCustomer(id: number): Observable<unknown> {
 // modal's `id` control is null for a new row); `entitiesToDelete` carries the ids of removed rows.
 function saveCustomerAddresses(
   customerID: number,
-  batchUpdate: IBatchUpdate<Partial<ICustomerAddressesList>, number>
+  batchUpdate: IBatchUpdate<Partial<ICustomerAddressesList>, number>,
 ): Observable<unknown> {
   return defer(() => {
     batchUpdate.entitiesToDelete.forEach((addressID: number) => {
@@ -363,7 +363,7 @@ class ShowcaseSidebarService extends SidebarService {
     // answer with the real menu. Falling through would hand the view a menu whose url is the
     // /external-content route itself, which is not an http address and would read as blocked.
     const external: SidebarMenu | undefined = externalMenus().find(
-      (menu: SidebarMenu) => url === `/external-content/${menu.id}`
+      (menu: SidebarMenu) => url === `/external-content/${menu.id}`,
     );
 
     if (external) {
@@ -477,7 +477,7 @@ abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
     const lines: string[] = [
       fields.map((field: string) => csvCell(field)).join(','),
       ...rows.map((row: TListModel) =>
-        fields.map((field: string) => csvCell((row as Record<string, unknown>)[field])).join(',')
+        fields.map((field: string) => csvCell((row as Record<string, unknown>)[field])).join(','),
       ),
     ];
 
@@ -499,7 +499,7 @@ abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
   // booleans are intentionally left out of the filter forms.
   private matching(parameters?: IListParameters): TListModel[] {
     const active: [string, string][] = Object.entries(parameters?.filters ?? {}).filter(
-      ([, value]: [string, string]) => value !== null && value !== undefined && `${value}`.trim() !== ''
+      ([, value]: [string, string]) => value !== null && value !== undefined && `${value}`.trim() !== '',
     );
 
     if (active.length === 0) {
@@ -508,8 +508,8 @@ abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
 
     return this.rows().filter((row: TListModel) =>
       active.every(([field, value]: [string, string]) =>
-        `${(row as Record<string, unknown>)[field] ?? ''}`.toLowerCase().includes(`${value}`.toLowerCase())
-      )
+        `${(row as Record<string, unknown>)[field] ?? ''}`.toLowerCase().includes(`${value}`.toLowerCase()),
+      ),
     );
   }
 }
@@ -573,7 +573,7 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
     // NaN is neither null nor undefined, so `??` would pass NaN straight through as the id.
     // `defer` keeps the write on-subscribe rather than evaluating eagerly at call time.
     return defer(() => of(saveUser(model, this.hasEntityID ? this.entityID : undefined))).pipe(
-      delay(SHOWCASE_WRITE_LATENCY_MS)
+      delay(SHOWCASE_WRITE_LATENCY_MS),
     );
   }
 
@@ -614,7 +614,7 @@ class CustomersDataProvider extends DataProviderService<ICustomersDisplay> {
     // NaN is neither null nor undefined, so `??` would pass NaN straight through as the id.
     // `defer` keeps the write on-subscribe rather than evaluating eagerly at call time.
     return defer(() => of(saveCustomer(model, this.hasEntityID ? this.entityID : undefined))).pipe(
-      delay(SHOWCASE_WRITE_LATENCY_MS)
+      delay(SHOWCASE_WRITE_LATENCY_MS),
     );
   }
 
@@ -715,7 +715,7 @@ class ShowcaseServicesHistoryService {
   public list(
     controllerName: string,
     _entityID: number,
-    _parameters: IListParameters
+    _parameters: IListParameters,
   ): Observable<IServicesHistoryList[]> {
     return of(showcaseServiceHistory(controllerName)).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
@@ -753,7 +753,7 @@ class ShowcaseOperationsHistoryService {
     _controllerName: string,
     _entityID: number,
     serviceHistoryID: number,
-    _parameters: IListParameters
+    _parameters: IListParameters,
   ): Observable<IOperationsHistoryList[]> {
     return of(SHOWCASE_OPERATIONS_BY_SERVICE[serviceHistoryID] ?? []).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
@@ -772,6 +772,7 @@ interface IDashboardCard {
 @Component({
   selector: 'shared-showcase-dashboard',
   imports: [TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <!-- Every screen publishes a ribbon template, even an empty one, so the ribbon bar is
          driven by the view rather than DefaultTabViewComponent's internal fallback. -->
@@ -780,15 +781,15 @@ interface IDashboardCard {
     <div class="p-6 flex flex-col gap-6">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         @for (card of cards; track card.label) {
-        <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <div class="flex items-center gap-3">
-            <i class="fa-solid {{ card.icon }} text-xl text-slate-400"></i>
-            <div>
-              <div class="text-2xl font-semibold text-slate-800">{{ card.value }}</div>
-              <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label | translate }}</div>
+          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid {{ card.icon }} text-xl text-slate-400"></i>
+              <div>
+                <div class="text-2xl font-semibold text-slate-800">{{ card.value }}</div>
+                <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label | translate }}</div>
+              </div>
             </div>
           </div>
-        </div>
         }
       </div>
 
@@ -798,7 +799,7 @@ interface IDashboardCard {
         </div>
         <ul class="divide-y divide-slate-100">
           @for (entry of activity; track entry) {
-          <li class="px-4 py-2 text-sm text-slate-600">{{ entry | translate }}</li>
+            <li class="px-4 py-2 text-sm text-slate-600">{{ entry | translate }}</li>
           }
         </ul>
       </div>
@@ -831,6 +832,7 @@ class DashboardComponent extends TabViewBase {
 @Component({
   selector: 'shared-showcase-users-filter',
   imports: [ButtonFiltersComponent, FormGroupComponent, FormInputGroupComponent, ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <framework-button-filters modalSize="xl" modalTitle="Showcase-Users-Filters-Title" [formGroup]="filterForm">
       <lib-form-group>
@@ -857,6 +859,7 @@ class ShowcaseUsersFilterComponent extends FiltersBase {
 @Component({
   selector: 'shared-showcase-customers-filter',
   imports: [ButtonFiltersComponent, FormGroupComponent, FormInputGroupComponent, ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <framework-button-filters modalSize="xl" modalTitle="Showcase-Customers-Filters-Title" [formGroup]="filterForm">
       <lib-form-group>
@@ -883,6 +886,7 @@ class ShowcaseCustomersFilterComponent extends FiltersBase {
 @Component({
   selector: 'shared-showcase-units-filter',
   imports: [ButtonFiltersComponent, FormGroupComponent, FormInputGroupComponent, ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <framework-button-filters modalSize="xl" modalTitle="Showcase-Units-Filters-Title" [formGroup]="filterForm">
       <lib-form-group>
@@ -924,6 +928,7 @@ class ShowcaseUnitsFilterComponent extends FiltersBase {
     TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: UsersDataset }],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
@@ -964,6 +969,7 @@ class UsersListComponent extends TabViewList<IUsersList> {
     TranslatePipe,
   ],
   providers: [{ provide: FormService }],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
@@ -1037,6 +1043,7 @@ class UsersFormComponent extends FormView<IUsersDisplay> {
     TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: CustomersDataset }],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
@@ -1073,6 +1080,7 @@ class CustomersListComponent extends TabViewList<ICustomersList> {
     { provide: FormService },
     { provide: MultiEditorDataset, useClass: CustomerAddressesMultiEditorDataset },
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <lib-multi-editor
       size="5xl"
@@ -1141,6 +1149,7 @@ class CustomerAddressesMultiEditorModalComponent extends MultiEditorModal<ICusto
     <shared-showcase-customer-addresses-multi-editor #multiEditor (savedChanges)="onSavedChanges()">
     </shared-showcase-customer-addresses-multi-editor>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [':host { grid-column: 1 / -1; }'],
 })
 class CustomerAddressesChildListComponent extends ChildList<ICustomersDisplay> {
@@ -1167,6 +1176,7 @@ class CustomerAddressesChildListComponent extends ChildList<ICustomersDisplay> {
     TranslatePipe,
   ],
   providers: [{ provide: FormService }],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
@@ -1200,9 +1210,9 @@ class CustomerAddressesChildListComponent extends ChildList<ICustomersDisplay> {
              ChildList never loads without one, so on /new the section is hidden rather than shown
              empty. It appears as soon as the customer is saved. -->
         @if (hasEntityID) {
-        <lib-group-accordion [label]="'Showcase-EditSection-Addresses' | translate">
-          <shared-showcase-customer-addresses-child-list> </shared-showcase-customer-addresses-child-list>
-        </lib-group-accordion>
+          <lib-group-accordion [label]="'Showcase-EditSection-Addresses' | translate">
+            <shared-showcase-customer-addresses-child-list> </shared-showcase-customer-addresses-child-list>
+          </lib-group-accordion>
         }
       </form>
     </lib-group-scroll-spy>
@@ -1236,6 +1246,7 @@ class CustomersFormComponent extends FormView<ICustomersDisplay> {
     TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: UnitsDataset }],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
@@ -1262,7 +1273,7 @@ const SHOWCASE_LOGO =
       '<rect width="32" height="32" rx="7" fill="#006bb6"/>' +
       '<path d="M9 22.5 17.5 9.5h5.5L14.5 22.5z" fill="#ffffff"/>' +
       '<circle cx="11" cy="11" r="2.5" fill="#ffffff"/>' +
-      '</svg>'
+      '</svg>',
   );
 
 // Plain text, NOT translation keys: NotificationsComponent renders `{{ item.title }}` and
@@ -1306,15 +1317,15 @@ const notificationsServiceMock: Pick<
   getNotifications: () => showcaseNotifications$.asObservable(),
   getUnreadCount: () =>
     showcaseNotifications$.pipe(
-      map((items: INotification[]) => items.filter((item: INotification) => !item.isRead).length)
+      map((items: INotification[]) => items.filter((item: INotification) => !item.isRead).length),
     ),
   markAllAsRead: () =>
     showcaseNotifications$.next(showcaseNotifications$.value.map((item: INotification) => ({ ...item, isRead: true }))),
   markAsRead: (notification: INotification) =>
     showcaseNotifications$.next(
       showcaseNotifications$.value.map((item: INotification) =>
-        item === notification ? { ...item, isRead: true } : item
-      )
+        item === notification ? { ...item, isRead: true } : item,
+      ),
     ),
   start: () => undefined,
   stop: () => Promise.resolve(),
@@ -1352,6 +1363,7 @@ const authenticationServiceMock: Pick<AuthenticationService, 'getUserInfo' | 'is
 @Component({
   selector: 'shared-showcase-root',
   imports: [RouterModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<router-outlet></router-outlet>`,
 })
 class ShowcaseRootComponent implements OnInit {

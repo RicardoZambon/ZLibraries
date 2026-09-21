@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -10,6 +10,7 @@ import { NotificationsService } from '../../../services';
   selector: 'shared-notifications',
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [AsyncPipe, TranslatePipe],
 })
 export class NotificationsComponent implements OnInit {
@@ -67,7 +68,7 @@ export class NotificationsComponent implements OnInit {
 
   //#region Private methods
   @HostListener('window:click', ['$event'])
-  private documentClick(event: MouseEvent): void {
+  protected documentClick(event: MouseEvent): void {
     if (this.showDropdown) {
       let target: HTMLElement = <HTMLElement>event.target;
       while (target !== null && target.tagName?.toUpperCase() !== 'BODY') {

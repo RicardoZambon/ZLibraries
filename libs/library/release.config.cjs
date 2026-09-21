@@ -32,7 +32,7 @@ if (!isValidation) {
       {
         pkgRoot: '../../dist/libs/library',
       },
-    ]
+    ],
   );
 }
 

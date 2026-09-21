@@ -94,4 +94,18 @@ export default [
       '@angular-eslint/no-output-native': 'error',
     },
   },
+  {
+    // Both became errors in the angular-eslint that ships with Angular 22; neither
+    // was configured here before. Kept visible as warnings rather than switched off.
+    files: ['**/*.ts'],
+    rules: {
+      // Tracked work, not an oversight: docs/guides/change-detection.md lists the 66
+      // components still to migrate and what blocks each one.
+      '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
+      // The codebase mixes constructor injection and inject(). Converting the
+      // remainder is a job for , which needs
+      // Node 22+, not a hand edit of base classes their subclasses call super() on.
+      '@angular-eslint/prefer-inject': 'warn',
+    },
+  },
 ];

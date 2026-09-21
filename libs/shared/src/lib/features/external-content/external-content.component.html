@@ -24,27 +24,29 @@
 </ng-template>
 
 @if (isUnavailable) {
-<div class="external-content-message">
-  <i class="fa-solid fa-link-slash"></i>
-  <span class="external-content-message-title">{{ 'ExternalContent-Unavailable-Title' | translate }}</span>
-  <span>{{ 'ExternalContent-Unavailable-Message' | translate }}</span>
-</div>
+  <div class="external-content-message">
+    <i class="fa-solid fa-link-slash"></i>
+    <span class="external-content-message-title">{{ 'ExternalContent-Unavailable-Title' | translate }}</span>
+    <span>{{ 'ExternalContent-Unavailable-Message' | translate }}</span>
+  </div>
 } @else if (isInsecure) {
-<div class="external-content-message">
-  <i class="fa-solid fa-shield-halved"></i>
-  <span class="external-content-message-title">{{ 'ExternalContent-Insecure-Title' | translate }}</span>
-  <span>{{ 'ExternalContent-Insecure-Message' | translate }}</span>
-</div>
+  <div class="external-content-message">
+    <i class="fa-solid fa-shield-halved"></i>
+    <span class="external-content-message-title">{{ 'ExternalContent-Insecure-Title' | translate }}</span>
+    <span>{{ 'ExternalContent-Insecure-Message' | translate }}</span>
+  </div>
 } @else if (isBlocked) {
-<div class="external-content-message">
-  <i class="fa-solid fa-triangle-exclamation"></i>
-  <span class="external-content-message-title">{{ 'ExternalContent-Blocked-Title' | translate }}</span>
-  <span>{{ 'ExternalContent-Blocked-Message' | translate }}</span>
-</div>
-} @else { @if (isSlow) {
-<div class="external-content-hint">{{ 'ExternalContent-SlowHint' | translate }}</div>
-} @if (frameUrl || isFrameLoading) {
-<!--
+  <div class="external-content-message">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span class="external-content-message-title">{{ 'ExternalContent-Blocked-Title' | translate }}</span>
+    <span>{{ 'ExternalContent-Blocked-Message' | translate }}</span>
+  </div>
+} @else {
+  @if (isSlow) {
+    <div class="external-content-hint">{{ 'ExternalContent-SlowHint' | translate }}</div>
+  }
+  @if (frameUrl || isFrameLoading) {
+    <!--
             The container stays mounted across a reload, which briefly clears frameUrl, so the panel
             does not flicker out and back. What goes away is the frame itself, on purpose.
 
@@ -62,30 +64,32 @@
               the whole application away.
             - allow-popups-to-escape-sandbox keeps print and download popups usable.
         -->
-<div class="external-content-frame-container">
-  @if (isFrameLoading) {
-  <div class="external-content-loading">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path
-        class="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      ></path>
-    </svg>
+    <div class="external-content-frame-container">
+      @if (isFrameLoading) {
+        <div class="external-content-loading">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
 
-    <span>{{ 'Loading' | translate }}</span>
-  </div>
-  } @if (frameUrl) {
-  <iframe
-    class="external-content-frame"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
-    referrerpolicy="strict-origin-when-cross-origin"
-    [src]="frameUrl"
-    [attr.title]="label | translate"
-    (load)="onFrameLoad()"
-  >
-  </iframe>
+          <span>{{ 'Loading' | translate }}</span>
+        </div>
+      }
+      @if (frameUrl) {
+        <iframe
+          class="external-content-frame"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
+          referrerpolicy="strict-origin-when-cross-origin"
+          [src]="frameUrl"
+          [attr.title]="label | translate"
+          (load)="onFrameLoad()"
+        >
+        </iframe>
+      }
+    </div>
   }
-</div>
-} }
+}

@@ -9,17 +9,18 @@
 >
 </lib-ribbon-button>
 
-<lib-ribbon-button
-  *ngIf="hasFiltersApplied"
-  [color]="'text-red-500'"
-  [disabled]="disabled"
-  [icon]="'fa-broom'"
-  [iconSize]="iconSize"
-  [label]="'Button-Filters-Clear'"
-  [loading]="loading"
-  (action)="onResetButtonClicked()"
->
-</lib-ribbon-button>
+@if (hasFiltersApplied) {
+  <lib-ribbon-button
+    [color]="'text-red-500'"
+    [disabled]="disabled"
+    [icon]="'fa-broom'"
+    [iconSize]="iconSize"
+    [label]="'Button-Filters-Clear'"
+    [loading]="loading"
+    (action)="onResetButtonClicked()"
+  >
+  </lib-ribbon-button>
+}
 
 <lib-modal
   position="top"

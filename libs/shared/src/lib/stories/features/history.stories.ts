@@ -11,7 +11,7 @@ class StorybookOperationsHistoryService {
     _controllerName: string,
     _entityID: number,
     _serviceHistoryID: number,
-    _parameters: IListParameters
+    _parameters: IListParameters,
   ): Observable<IOperationsHistoryList[]> {
     return of([
       {
@@ -36,7 +36,7 @@ class StorybookServicesHistoryService {
   public list(
     _controllerName: string,
     _entityID: number,
-    _parameters: IListParameters
+    _parameters: IListParameters,
   ): Observable<IServicesHistoryList[]> {
     return of([
       { id: 1, name: 'Record updated', changedByName: 'Ada Lovelace', changedOn: new Date() },

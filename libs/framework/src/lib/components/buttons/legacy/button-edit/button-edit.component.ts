@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, forwardRef, Input, ChangeDetectionStrategy } from '@angular/core';
 import { RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { LegacySubViewForm, ModalBase } from '../../../../views';
 import { BaseButton } from '../../base-button';
@@ -7,7 +6,8 @@ import { BaseButton } from '../../base-button';
 @Component({
   selector: 'framework-button-edit-legacy',
   templateUrl: './button-edit.component.html',
-  imports: [NgIf, RibbonButtonComponent],
+  imports: [RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonEditLegacyComponent) }],
 })
 /**

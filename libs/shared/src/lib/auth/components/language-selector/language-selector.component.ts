@@ -1,10 +1,11 @@
-import { Component, ElementRef, HostListener, inject, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'shared-language-selector',
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TranslatePipe],
 })
 export class LanguageSelectorComponent {
@@ -50,7 +51,7 @@ export class LanguageSelectorComponent {
 
   //#region Private methods
   @HostListener('window:click', ['$event'])
-  private documentClick(event: MouseEvent): void {
+  protected documentClick(event: MouseEvent): void {
     if (this.showDropdown) {
       let target: HTMLElement = <HTMLElement>event.target;
       while (target !== null && target.tagName?.toUpperCase() !== 'BODY') {

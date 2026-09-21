@@ -1,13 +1,14 @@
-<lib-ribbon-button
-  *ngIf="visible"
-  [color]="color"
-  [disabled]="disabled"
-  [icon]="icon"
-  [label]="label"
-  [loading]="loading"
-  (action)="onButtonClicked()"
->
-</lib-ribbon-button>
+@if (visible) {
+  <lib-ribbon-button
+    [color]="color"
+    [disabled]="disabled"
+    [icon]="icon"
+    [label]="label"
+    [loading]="loading"
+    (action)="onButtonClicked()"
+  >
+  </lib-ribbon-button>
+}
 
 <framework-confirm-modal
   #modal

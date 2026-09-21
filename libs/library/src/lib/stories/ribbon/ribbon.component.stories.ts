@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, ChangeDetectionStrategy } from '@angular/core';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { RibbonButtonComponent } from '../../components/ribbon-button/ribbon-button.component';
 import { RibbonGroupComponent } from '../../components/ribbon-group/ribbon-group.component';
@@ -8,6 +8,7 @@ import { RibbonGroupChild } from '../../models/ribbon-group-child';
 @Component({
   selector: 'storybook-ribbon-child',
   template: '<ng-content></ng-content>',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => StorybookRibbonChildComponent) }],
 })
 class StorybookRibbonChildComponent extends RibbonGroupChild {

@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DataGridDataset, MultiSelectResultDataset } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { ViewBase } from './view-base';
@@ -7,7 +7,7 @@ import { ViewBase } from './view-base';
  * @deprecated Use standalone {@link ChildList} instead. Migrate by extending ChildList
  * and using standalone component imports with inject() for dependency injection.
  */
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class ChildListLegacy extends ViewBase implements OnInit {
   private _entityId?: number;
 

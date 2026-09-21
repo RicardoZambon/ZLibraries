@@ -1,30 +1,28 @@
-<ng-container *ngIf="formGroupDirective.form?.enabled || isFormEditMode; else disabledControl">
-  <ng-container [ngSwitch]="type">
-    <textarea
-      *ngSwitchCase="'textarea'"
-      [attr.maxLength]="maxLength ?? null"
-      [attr.rows]="rows"
-      [class.invalid]="invalid"
-      [formControlName]="controlName"
-      (blur)="onBlur()"
-      (focus)="onFocus()"
-      (input)="onInput()"
-    >
-    </textarea>
-
-    <ng-container *ngSwitchCase="'checkbox'">
-      <input
-        *ngIf="isFormControl; else fixedCheckbox"
-        class="switch"
-        type="checkbox"
+@if (formGroupDirective.form?.enabled || isFormEditMode) {
+  @switch (type) {
+    @case ('textarea') {
+      <textarea
+        [attr.maxLength]="maxLength ?? null"
+        [attr.rows]="rows"
         [class.invalid]="invalid"
         [formControlName]="controlName"
         (blur)="onBlur()"
         (focus)="onFocus()"
         (input)="onInput()"
-      />
-
-      <ng-template #fixedCheckbox>
+      ></textarea>
+    }
+    @case ('checkbox') {
+      @if (isFormControl) {
+        <input
+          class="switch"
+          type="checkbox"
+          [class.invalid]="invalid"
+          [formControlName]="controlName"
+          (blur)="onBlur()"
+          (focus)="onFocus()"
+          (input)="onInput()"
+        />
+      } @else {
         <input
           class="switch"
           type="checkbox"
@@ -40,26 +38,24 @@
           (input)="onInput()"
           (ngModelChange)="onValueChanged($event)"
         />
-      </ng-template>
-    </ng-container>
-
-    <ng-container *ngSwitchDefault>
-      <input
-        *ngIf="isFormControl; else fixedTextBox"
-        [attr.maxLength]="maxLength ?? null"
-        [attr.min]="minAttributeValue"
-        [attr.readonly]="readOnly ? true : null"
-        [attr.step]="stepAttributeValue"
-        [class.invalid]="invalid"
-        [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
-        [formControlName]="controlName"
-        [type]="type"
-        (blur)="onBlur()"
-        (focus)="onFocus()"
-        (input)="onInput()"
-      />
-
-      <ng-template #fixedTextBox>
+      }
+    }
+    @default {
+      @if (isFormControl) {
+        <input
+          [attr.maxLength]="maxLength ?? null"
+          [attr.min]="minAttributeValue"
+          [attr.readonly]="readOnly ? true : null"
+          [attr.step]="stepAttributeValue"
+          [class.invalid]="invalid"
+          [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
+          [formControlName]="controlName"
+          [type]="type"
+          (blur)="onBlur()"
+          (focus)="onFocus()"
+          (input)="onInput()"
+        />
+      } @else {
         <input
           type="text"
           [attr.maxLength]="maxLength ?? null"
@@ -71,10 +67,10 @@
           [disabled]="isDisabled"
           [ngModel]="
             type === 'date' || type === 'datetime-local'
-              ? (fixedValue | date : format)
+              ? (fixedValue | date: format)
               : type === 'number'
-              ? (fixedValue | number)
-              : fixedValue
+                ? (fixedValue | number)
+                : fixedValue
           "
           [ngModelOptions]="{ standalone: true }"
           (blur)="onBlur()"
@@ -82,39 +78,43 @@
           (input)="onInput()"
           (ngModelChange)="onValueChanged($event)"
         />
-      </ng-template>
-    </ng-container>
-  </ng-container>
-</ng-container>
-
-<ng-template #disabledControl>
-  <ng-container [ngSwitch]="type">
-    <span class="value" *ngSwitchCase="'checkbox'">
-      <i
-        [ngClass]="
-          fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value
-            ? 'fa-solid fa-square-check'
-            : 'fa-regular fa-square'
-        "
-      ></i>
-    </span>
-
-    <span class="value" *ngSwitchCase="'date'">
-      {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | date : format }}
-    </span>
-
-    <span class="value" *ngSwitchCase="'datetime-local'">
-      {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | date : format }}
-    </span>
-
-    <span class="value" *ngSwitchCase="'number'">
-      {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | number : format }}
-    </span>
-
-    <span class="value text" *ngSwitchDefault>{{
-      fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value
-    }}</span>
-  </ng-container>
-</ng-template>
+      }
+    }
+  }
+} @else {
+  @switch (type) {
+    @case ('checkbox') {
+      <span class="value">
+        <i
+          [ngClass]="
+            (fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value)
+              ? 'fa-solid fa-square-check'
+              : 'fa-regular fa-square'
+          "
+        ></i>
+      </span>
+    }
+    @case ('date') {
+      <span class="value">
+        {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | date: format }}
+      </span>
+    }
+    @case ('datetime-local') {
+      <span class="value">
+        {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | date: format }}
+      </span>
+    }
+    @case ('number') {
+      <span class="value">
+        {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | number: format }}
+      </span>
+    }
+    @default {
+      <span class="value text">{{
+        fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value
+      }}</span>
+    }
+  }
+}
 
 <ng-template #fixedTextbox let-fixedValue="fixedValue"> </ng-template>

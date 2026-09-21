@@ -18,7 +18,12 @@
       "@zambon-dev/framework": ["libs/framework/src/index.ts"],
       "@zambon-dev/library": ["libs/library/src/index.ts"],
       "@zambon-dev/shared": ["libs/shared/src/index.ts"]
-    }
+    },
+    "strict": false,
+    "noUncheckedSideEffectImports": false,
+    "types": ["*"],
+    "esModuleInterop": false,
+    "ignoreDeprecations": "6.0"
   },
   "exclude": ["node_modules", "tmp"]
 }

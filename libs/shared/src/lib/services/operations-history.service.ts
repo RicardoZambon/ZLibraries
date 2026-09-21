@@ -31,11 +31,11 @@ export class OperationsHistoryService {
     controllerName: string,
     entityID: number,
     serviceHistoryID: number,
-    parameters: IListParameters
+    parameters: IListParameters,
   ): Observable<IOperationsHistoryList[]> {
     return this.http.post<IOperationsHistoryList[]>(
       `${this.config.BASE_URL}/${controllerName}/${entityID}/Audit/${serviceHistoryID}`,
-      parameters
+      parameters,
     );
   }
   //#endregion

@@ -54,7 +54,7 @@ export class TabService {
     private applicationRef: ApplicationRef,
     private location: Location,
     private router: Router,
-    routeReuseStrategy: RouteReuseStrategy
+    routeReuseStrategy: RouteReuseStrategy,
   ) {
     this.customReuseStrategy = <CustomReuseStrategy>routeReuseStrategy;
     this.customReuseStrategy.tabService = this;

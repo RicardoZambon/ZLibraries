@@ -7,7 +7,7 @@ describe('RouteHelper', () => {
     component?: any,
     firstChild?: ActivatedRouteSnapshot,
     parent?: ActivatedRouteSnapshot,
-    data?: Record<string, any>
+    data?: Record<string, any>,
   ): ActivatedRouteSnapshot {
     return {
       url: segments.map((s: string) => new UrlSegment(s, {})),

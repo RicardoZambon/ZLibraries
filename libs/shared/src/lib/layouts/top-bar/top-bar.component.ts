@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageSelectorComponent } from '../../auth/components/language-selector/language-selector.component';
 import { BrandComponent } from './brand/brand.component';
@@ -10,6 +10,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
   selector: 'shared-top-bar',
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     BrandComponent,
     EnvironmentBadgeComponent,

@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, forwardRef, inject, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DataGridDataset, ITabView, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { Tab } from '../../../../models';
@@ -9,7 +8,8 @@ import { BaseButton } from '../../base-button';
 @Component({
   selector: 'framework-button-open-record-legacy',
   templateUrl: './button-open-record.component.html',
-  imports: [NgIf, RibbonButtonComponent],
+  imports: [RibbonButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonOpenRecordLegacyComponent) }],
 })
 /**

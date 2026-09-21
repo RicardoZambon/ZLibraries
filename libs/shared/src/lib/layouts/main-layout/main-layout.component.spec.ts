@@ -87,7 +87,7 @@ describe(`${MainLayoutComponent.name} sidebar menu handling`, () => {
 
   it('opens a new browser tab with the resolved URL and no access back to this window', () => {
     menuExternalUrlSelected.emit(
-      menu({ id: 2, label: 'Report', url: 'https://reports/r?u={userId}' }, SidebarMenuOpenMode.ExternalNewTab)
+      menu({ id: 2, label: 'Report', url: 'https://reports/r?u={userId}' }, SidebarMenuOpenMode.ExternalNewTab),
     );
 
     expect(open).toHaveBeenCalledWith('https://reports/r?u=42', '_blank', 'noopener,noreferrer');
@@ -96,7 +96,7 @@ describe(`${MainLayoutComponent.name} sidebar menu handling`, () => {
 
   it('refuses to open a scheme that would execute instead of navigate', () => {
     menuExternalUrlSelected.emit(
-      menu({ id: 3, label: 'Bad', url: 'javascript:alert(1)' }, SidebarMenuOpenMode.ExternalNewTab)
+      menu({ id: 3, label: 'Bad', url: 'javascript:alert(1)' }, SidebarMenuOpenMode.ExternalNewTab),
     );
 
     expect(open).not.toHaveBeenCalled();
@@ -106,7 +106,7 @@ describe(`${MainLayoutComponent.name} sidebar menu handling`, () => {
   it('opens an embedded item as an application tab keyed by menu id, never by the destination', () => {
     const item: SidebarMenu = menu(
       { id: 4, label: 'Embedded report', url: 'https://reports/r' },
-      SidebarMenuOpenMode.ExternalEmbedded
+      SidebarMenuOpenMode.ExternalEmbedded,
     );
 
     menuExternalUrlSelected.emit(item);

@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnInit, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
@@ -13,6 +13,7 @@ import { MultiSelectResultGridComponent } from './result-grid/result-grid.compon
   selector: 'lib-multi-select',
   templateUrl: './multi-select.component.html',
   styleUrls: ['./multi-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [DataGridComponent, FormsModule, ModalComponent, MultiSelectResultGridComponent, TranslatePipe],
 })
 export class MultiSelectComponent extends ModalComponent implements OnInit {
@@ -153,7 +154,7 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
 
     // Get each corresponding key from the data grid.
     const keysToSelect: string[] = (this.dataGridDataset.loadedKeys ?? []).filter(
-      (key: string) => idsFromResult.indexOf(this.dataGridDataset.getRowID(key)) >= 0
+      (key: string) => idsFromResult.indexOf(this.dataGridDataset.getRowID(key)) >= 0,
     );
 
     this.dataGridDataset.selectRows(keysToSelect);

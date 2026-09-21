@@ -87,7 +87,7 @@ export class ExternalUrlResolverService {
       if (value.length === 0) {
         console.warn(
           `External URL placeholder ${token} has no value for the current user; substituting an empty string.`,
-          url
+          url,
         );
       }
 
@@ -120,7 +120,7 @@ export class ExternalUrlResolverService {
     if (unknown.length > 0) {
       console.warn(
         `External URL contains unrecognized placeholders and was left as configured: ${unknown.join(', ')}`,
-        url
+        url,
       );
     }
   }

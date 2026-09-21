@@ -1,9 +1,9 @@
-import { Component, inject, Input, OnDestroy, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { Subject, take } from 'rxjs';
 import { AuthService } from '../../services';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(RibbonButtonComponent) protected button!: RibbonButtonComponent;
@@ -103,7 +103,7 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
     }
 
     const optionsToCheckActions: IRibbonButtonOption[] = this.options.filter(
-      (option: IRibbonButtonOption) => (option.allowedActions?.length ?? 0) > 0
+      (option: IRibbonButtonOption) => (option.allowedActions?.length ?? 0) > 0,
     );
 
     if (optionsToCheckActions.length > 0) {

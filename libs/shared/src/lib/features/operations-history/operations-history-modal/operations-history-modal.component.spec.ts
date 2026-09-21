@@ -11,7 +11,7 @@ describe(OperationsHistoryModalComponent.name, () => {
 
   it('should create', () => {
     const fixture: ComponentFixture<OperationsHistoryModalComponent> = TestBed.createComponent(
-      OperationsHistoryModalComponent
+      OperationsHistoryModalComponent,
     );
     const component: OperationsHistoryModalComponent = fixture.componentInstance;
 

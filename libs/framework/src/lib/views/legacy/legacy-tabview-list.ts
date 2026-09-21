@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DataGridDataset } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
@@ -9,7 +9,7 @@ import { LegacyTabViewBase } from './legacy-tabview-base';
  * @deprecated Use standalone {@link TabViewList} instead. Migrate by extending TabViewList
  * and using standalone component imports with inject() for dependency injection.
  */
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class LegacyTabViewList<TListModel> extends LegacyTabViewBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   //#endregion
@@ -30,7 +30,11 @@ export abstract class LegacyTabViewList<TListModel> extends LegacyTabViewBase im
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(protected dataGridDataset: DataGridDataset, route: ActivatedRoute, tabService: TabService) {
+  constructor(
+    protected dataGridDataset: DataGridDataset,
+    route: ActivatedRoute,
+    tabService: TabService,
+  ) {
     super(route, tabService);
 
     // This will force the screen to initialize with the buttons disabled.

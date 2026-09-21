@@ -56,6 +56,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
+**Requires Angular 22.** Every `@angular/*` peer range moved from `^19.1.0` to `^22.0.0`, and
+the package is built and tested against Angular 22.1 with TypeScript 6.0.
+
+Upgrade your application to Angular 22 first — Angular does not support skipping majors, so go
+19 → 20 → 21 → 22 with `ng update`. Angular 22 also requires Node.js 22.22.3 or newer.
+
 **Requires `@zambon-dev/library` 2.x.** The peer range moved from `^1.6.0` to `^2.0.0`. See the
 library changelog for the `FormInputComponent` output renames; if your application binds those
 outputs directly, apply that migration too.

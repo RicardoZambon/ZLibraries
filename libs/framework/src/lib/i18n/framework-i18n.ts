@@ -28,7 +28,7 @@ export interface ZambonFrameworkTranslateConfig {
 
 export function createZambonFrameworkTranslateLoader(
   httpBackend: HttpBackend,
-  appResources: (string | TranslationResource)[] = []
+  appResources: (string | TranslationResource)[] = [],
 ): MultiTranslateHttpLoader {
   return new MultiTranslateHttpLoader(httpBackend, [...ZAMBON_FRAMEWORK_I18N_RESOURCES, ...appResources]);
 }
@@ -42,7 +42,7 @@ export function provideZambonFrameworkTranslateLoader(appResources: (string | Tr
 }
 
 export function provideZambonFrameworkTranslateService(
-  config: ZambonFrameworkTranslateConfig = {}
+  config: ZambonFrameworkTranslateConfig = {},
 ): EnvironmentProviders {
   return provideTranslateService({
     defaultLanguage: config.defaultLanguage,

@@ -1,4 +1,4 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TabViewService } from '../../../services';
@@ -6,6 +6,7 @@ import { DefaultTabViewComponent } from './default-tab-view.component';
 
 @Component({
   imports: [DefaultTabViewComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <framework-default-tab-view></framework-default-tab-view>
 
@@ -50,7 +51,7 @@ describe(DefaultTabViewComponent.name, () => {
     fixture.detectChanges();
 
     const view: DefaultTabViewComponent = fixture.debugElement.query(
-      By.directive(DefaultTabViewComponent)
+      By.directive(DefaultTabViewComponent),
     ).componentInstance;
     const service: TabViewService = fixture.debugElement
       .query(By.directive(DefaultTabViewComponent))

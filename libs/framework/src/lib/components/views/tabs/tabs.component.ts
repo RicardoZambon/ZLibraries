@@ -1,5 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRouteSnapshot, Route, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RouteHelper } from '../../../helpers';
@@ -12,7 +11,8 @@ import { TabBreadcrumbsComponent } from '../tab-breadcrumbs/tab-breadcrumbs.comp
   selector: 'framework-tabs',
   templateUrl: './tabs.component.html',
   styleUrls: ['./tabs.component.scss'],
-  imports: [NgFor, NgIf, TabBreadcrumbsComponent, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [TabBreadcrumbsComponent, TranslatePipe],
 })
 export class TabsComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -53,13 +53,16 @@ export class TabsComponent implements OnInit {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(private router: Router, private tabService: TabService) {}
+  constructor(
+    private router: Router,
+    private tabService: TabService,
+  ) {}
 
   public ngOnInit(): void {
     const activatedDetailsTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
       this.router.routerState.snapshot.root,
       FRAMEWORK_VIEW_TYPE,
-      FrameworkViewType.Details
+      FrameworkViewType.Details,
     );
     if (activatedDetailsTabView) {
       const shouldIgnoreFirstChildRoute: boolean =
@@ -76,7 +79,7 @@ export class TabsComponent implements OnInit {
         const childPath: string = activatedDetailsTabView.firstChild.url.map((s: any) => s.path).join('/');
         const defaultChildPath: string =
           activatedDetailsTabView.routeConfig?.children?.filter(
-            (route: Route) => !!route.data && route.data['ignoreRoute'] !== true
+            (route: Route) => !!route.data && route.data['ignoreRoute'] !== true,
           )?.[0]?.path ?? '';
 
         if (childPath !== defaultChildPath) {
@@ -94,7 +97,7 @@ export class TabsComponent implements OnInit {
                 new Tab({
                   title: childTitle,
                   url: childUrl,
-                })
+                }),
               );
             });
           }
@@ -107,13 +110,13 @@ export class TabsComponent implements OnInit {
           entityBaseUrl: url,
           queryParams: activatedDetailsTabView.queryParams,
           url: url,
-        })
+        }),
       );
     } else {
       const activatedTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
         this.router.routerState.snapshot.root,
         FRAMEWORK_VIEW_TYPE,
-        FrameworkViewType.List
+        FrameworkViewType.List,
       );
       if (activatedTabView) {
         const url: string = RouteHelper.getRouteURL(activatedTabView);
@@ -121,7 +124,7 @@ export class TabsComponent implements OnInit {
           new Tab({
             queryParams: activatedTabView.queryParams,
             url: url,
-          })
+          }),
         );
       } else {
         this.router.navigate(['/']);

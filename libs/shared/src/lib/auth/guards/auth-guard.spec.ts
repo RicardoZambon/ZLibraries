@@ -45,7 +45,7 @@ describe('AuthGuard', () => {
     mockAuthService.isAuthenticated = true;
     const result: boolean = guard.canActivate(
       {} as ActivatedRouteSnapshot,
-      { url: '/dashboard' } as RouterStateSnapshot
+      { url: '/dashboard' } as RouterStateSnapshot,
     );
     expect(result).toBe(true);
   });
@@ -60,7 +60,7 @@ describe('AuthGuard', () => {
     mockAuthService.isAuthenticated = false;
     const result: boolean = guard.canActivate(
       {} as ActivatedRouteSnapshot,
-      { url: '/dashboard' } as RouterStateSnapshot
+      { url: '/dashboard' } as RouterStateSnapshot,
     );
     expect(result).toBe(false);
   });
