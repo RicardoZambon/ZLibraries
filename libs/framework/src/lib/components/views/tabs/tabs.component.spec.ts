@@ -362,3 +362,191 @@ describe('TabsComponent — tab strip interaction', () => {
     expect(loading.querySelector('.spinner')).toBeTruthy();
   });
 });
+
+describe('TabsComponent — strip overflow', () => {
+  let fixture: ComponentFixture<TabsComponent>;
+  let tabs: ITab[];
+  let activeUrl: string;
+  let originalResizeObserver: typeof ResizeObserver;
+  let resizeObserverStub: { observe: jest.Mock; disconnect: jest.Mock };
+
+  function nav(): HTMLElement {
+    return fixture.nativeElement.querySelector('.tabs-nav');
+  }
+
+  function scrollButton(side: 'left' | 'right'): HTMLButtonElement | null {
+    return fixture.nativeElement.querySelector(`.tabs-scroll.${side}`);
+  }
+
+  /**
+   * jsdom has no layout, so every box is 0x0 and the strip can never report an overflow on
+   * its own. Everything here is driven off clientWidth/scrollWidth/scrollLeft, so the tests
+   * declare that geometry outright.
+   */
+  function setGeometry(options: { clientWidth: number; scrollWidth: number; scrollLeft?: number }): void {
+    const element: HTMLElement = nav();
+    Object.defineProperty(element, 'clientWidth', { configurable: true, value: options.clientWidth });
+    Object.defineProperty(element, 'scrollWidth', { configurable: true, value: options.scrollWidth });
+    Object.defineProperty(element, 'scrollLeft', {
+      configurable: true,
+      writable: true,
+      value: options.scrollLeft ?? 0,
+    });
+  }
+
+  /** The component defers its own updates to a microtask to stay clear of NG0100. */
+  async function settle(): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+  }
+
+  beforeEach(async () => {
+    tabs = [
+      new Tab({ isTitleLoading: false, title: 'First', url: '/first' }),
+      new Tab({ isTitleLoading: false, title: 'Second', url: '/second' }),
+      new Tab({ isTitleLoading: false, title: 'Third', url: '/third' }),
+    ];
+    activeUrl = '/first';
+
+    originalResizeObserver = global.ResizeObserver;
+    resizeObserverStub = { observe: jest.fn(), disconnect: jest.fn() };
+    global.ResizeObserver = jest.fn(() => resizeObserverStub) as unknown as typeof ResizeObserver;
+
+    await TestBed.configureTestingModule({
+      imports: [TabsComponent, TranslateModule.forRoot()],
+      providers: [
+        {
+          provide: TabService,
+          useValue: {
+            activeTabs: tabs,
+            activeTabsDisplayTitles: ['First', 'Second', 'Third'],
+            activeTabsLoadingStates: [false, false, false],
+            activateTab: jest.fn((tab: ITab) => (activeUrl = tab.url)),
+            closeTab: jest.fn(),
+            isTabActive: (tab: ITab) => tab.url === activeUrl,
+            openTab: jest.fn(),
+          },
+        },
+        { provide: Router, useValue: { routerState: { snapshot: { root: {} } }, navigate: jest.fn() } },
+      ],
+    }).compileComponents();
+
+    jest.spyOn(TabsComponent.prototype, 'ngOnInit').mockImplementation(() => undefined);
+
+    fixture = TestBed.createComponent(TabsComponent);
+    fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    global.ResizeObserver = originalResizeObserver;
+    jest.restoreAllMocks();
+  });
+
+  it('should offer no scroll controls while every tab fits', async () => {
+    setGeometry({ clientWidth: 600, scrollWidth: 600 });
+    nav().dispatchEvent(new Event('scroll'));
+    await settle();
+
+    expect(scrollButton('left')).toBeNull();
+    expect(scrollButton('right')).toBeNull();
+  });
+
+  it('should offer only a forward control at the start of an overflowing strip', async () => {
+    setGeometry({ clientWidth: 300, scrollWidth: 900, scrollLeft: 0 });
+    nav().dispatchEvent(new Event('scroll'));
+    await settle();
+
+    expect(scrollButton('left')).toBeNull();
+    expect(scrollButton('right')).not.toBeNull();
+  });
+
+  it('should offer only a backward control at the end of an overflowing strip', async () => {
+    setGeometry({ clientWidth: 300, scrollWidth: 900, scrollLeft: 600 });
+    nav().dispatchEvent(new Event('scroll'));
+    await settle();
+
+    expect(scrollButton('left')).not.toBeNull();
+    expect(scrollButton('right')).toBeNull();
+  });
+
+  it('should offer both controls in the middle of an overflowing strip', async () => {
+    setGeometry({ clientWidth: 300, scrollWidth: 900, scrollLeft: 300 });
+    nav().dispatchEvent(new Event('scroll'));
+    await settle();
+
+    expect(scrollButton('left')).not.toBeNull();
+    expect(scrollButton('right')).not.toBeNull();
+  });
+
+  it('should travel most of a screenful when a scroll control is pressed', async () => {
+    setGeometry({ clientWidth: 300, scrollWidth: 900, scrollLeft: 300 });
+    nav().dispatchEvent(new Event('scroll'));
+    await settle();
+
+    scrollButton('right')!.click();
+    expect(nav().scrollLeft).toBe(540); // 300 + 300 * 0.8
+
+    scrollButton('left')!.click();
+    expect(nav().scrollLeft).toBe(300);
+  });
+
+  it('should turn a vertical wheel into horizontal travel', async () => {
+    setGeometry({ clientWidth: 300, scrollWidth: 900, scrollLeft: 0 });
+    await settle();
+
+    const event: WheelEvent = new WheelEvent('wheel', { deltaY: 120, deltaX: 0, cancelable: true });
+    nav().dispatchEvent(event);
+
+    expect(nav().scrollLeft).toBe(120);
+    expect(event.defaultPrevented).toBe(true);
+  });
+
+  it('should leave a horizontal wheel to the browser', async () => {
+    setGeometry({ clientWidth: 300, scrollWidth: 900, scrollLeft: 0 });
+    await settle();
+
+    const event: WheelEvent = new WheelEvent('wheel', { deltaY: 120, deltaX: 40, cancelable: true });
+    nav().dispatchEvent(event);
+
+    expect(nav().scrollLeft).toBe(0);
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  it('should not hijack the wheel when the strip does not overflow', async () => {
+    setGeometry({ clientWidth: 900, scrollWidth: 900, scrollLeft: 0 });
+    await settle();
+
+    const event: WheelEvent = new WheelEvent('wheel', { deltaY: 120, deltaX: 0, cancelable: true });
+    nav().dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  /**
+   * The regression this whole block exists for: the strip narrowing pushes the selected tab
+   * out of sight, and because the tab list itself never changed, nothing used to bring it
+   * back. You ended up looking at a panel whose tab was nowhere on screen.
+   */
+  it('should bring the selected tab back into view when the strip narrows', async () => {
+    setGeometry({ clientWidth: 900, scrollWidth: 900 });
+    await settle();
+
+    const selected: HTMLElement = fixture.nativeElement.querySelectorAll('[role="tab"]')[0];
+    const scrollIntoView: jest.Mock = jest.fn();
+    selected.scrollIntoView = scrollIntoView;
+
+    setGeometry({ clientWidth: 300, scrollWidth: 900, scrollLeft: 600 });
+    fixture.detectChanges();
+    await settle();
+
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest', inline: 'nearest' });
+  });
+
+  it('should watch the strip for resizes and let go of it on destroy', () => {
+    expect(resizeObserverStub.observe).toHaveBeenCalledWith(nav());
+
+    fixture.destroy();
+
+    expect(resizeObserverStub.disconnect).toHaveBeenCalled();
+  });
+});

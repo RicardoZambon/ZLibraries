@@ -52,4 +52,9 @@
   --tabs-item-radius: 10px;
   --tabs-height: 2.75rem;
   --tabs-item-max-width: 14rem;
+  /* Tabs compress to this before the strip starts scrolling -- still wide enough for a few
+     characters plus the close button, so a compressed tab is identifiable rather than a stub. */
+  --tabs-item-min-width: 7rem;
+  --tabs-scroll-width: 1.75rem;
+  --tabs-fade-width: 1.5rem;
 }

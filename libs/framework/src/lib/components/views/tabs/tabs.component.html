@@ -1,5 +1,21 @@
 @if (hasTabs) {
-  <div class="tabs-container">
+  <div class="tabs-container" [class.can-scroll-left]="canScrollLeft" [class.can-scroll-right]="canScrollRight">
+    <!-- Only rendered while there is something to scroll to, so the strip is not permanently
+         flanked by two dead chevrons. tabindex -1 because the tablist is already one tab stop
+         and the arrow keys reach every tab -- these are a pointer affordance, not a second
+         keyboard path. -->
+    @if (canScrollLeft) {
+      <button
+        class="tabs-scroll left"
+        type="button"
+        tabindex="-1"
+        [attr.aria-label]="'Tabs-ScrollLeft' | translate"
+        (click)="onScrollStrip(-1)"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    }
+
     <!-- Horizontally scrollable. This used to be overflow:hidden, so once the tabs were
          wider than the bar the ones past the right edge could not be reached at all. -->
     <ul #tabsNav class="tabs-nav" role="tablist">
@@ -53,6 +69,18 @@
         </li>
       }
     </ul>
+
+    @if (canScrollRight) {
+      <button
+        class="tabs-scroll right"
+        type="button"
+        tabindex="-1"
+        [attr.aria-label]="'Tabs-ScrollRight' | translate"
+        (click)="onScrollStrip(1)"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    }
   </div>
 }
 @if (hasTabs) {

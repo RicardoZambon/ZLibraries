@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Tabs close on middle click**, and with `Delete` while a tab has focus.
 - **The tab strip scrolls.** It was `overflow: hidden`, so once the tabs were wider than the bar the
   ones past the right edge could not be reached at all. Selecting a tab also scrolls it into view.
+- **Scroll controls at each end of the strip**, shown only while there is something to scroll to.
+- **A vertical mouse wheel over the strip scrolls it horizontally**, so a plain wheel mouse can
+  reach an off-screen tab without going to the controls. Trackpad and `Shift`+wheel gestures, which
+  already produce horizontal deltas, are left to the browser.
 
 ### Changed
 
@@ -39,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   your own translations, add `{{title}}` to it.
 - **A tab keeps its width while its title loads.** The spinner sits beside the label instead of
   replacing it, so the strip no longer reflows as each title resolves.
+- **Tabs compress before the strip scrolls**, down to `--tabs-item-min-width`, so a few more fit
+  before any of them goes off screen. Overflowing tabs fade out at the edges instead of being cut
+  off mid-tab.
+- **The selected tab is pulled back into view when the strip narrows**, not only when the selection
+  changes. Resizing the window or collapsing the sidebar used to be able to leave you looking at a
+  panel whose tab was nowhere on screen.
 - Breadcrumb separators are drawn in CSS rather than as a FontAwesome glyph codepoint, which was
   tied to a specific FontAwesome major.
 
@@ -61,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.0] - 2026-09-21
 
 ### Changed
+
 - **Accessibility.** `TabsComponent` renders proper `tablist`/`tab` semantics with `aria-selected`,
   its tabs are keyboard-activatable and the close control is a labelled `<button>`.
   `TabBreadcrumbsComponent` entries are focusable and activate with `Enter`/`Space`.
