@@ -25,7 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.1.0] - 2026-09-21
 
-- Maintenance release (no consumer-facing changes were documented).
+### Added
+
+- Added the `--tabs-*` design tokens to the published stylesheet, mirroring the set
+  `@zambon-dev/library` gained in 3.1.0. They style `@zambon-dev/framework`'s tab strip —
+  colours, radii, blur, the shadow, the minimum and maximum tab width, and the width of the
+  scroll controls and edge fades — and they sit alongside `--sidebar-*` in the same layer, so
+  the strip can be retuned without touching the component.
+
+  This release shipped them but originally recorded no entry; the note was added afterwards.
 
 ## [4.0.1] - 2026-09-21
 
