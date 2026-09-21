@@ -1,7 +1,14 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { APP_CONFIG, ITab, Tab, TabsComponent, TabService } from '@zambon-dev/framework';
-import { ModalComponent, SidebarComponent, SidebarMenu, SidebarMenuOpenMode, SidebarService, toSidebarMenuOpenMode } from '@zambon-dev/library';
+import {
+  ModalComponent,
+  SidebarComponent,
+  SidebarMenu,
+  SidebarMenuOpenMode,
+  SidebarService,
+  toSidebarMenuOpenMode,
+} from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, take, takeUntil } from 'rxjs';
 import { EXTERNAL_CONTENT_ROUTE_PATH } from '../../models';
@@ -12,14 +19,7 @@ import { TopBarComponent } from '../top-bar';
   selector: 'shared-main-layout',
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],
-  imports: [
-    ModalComponent,
-    RouterModule,
-    SidebarComponent,
-    TabsComponent,
-    TopBarComponent,
-    TranslatePipe,
-  ]
+  imports: [ModalComponent, RouterModule, SidebarComponent, TabsComponent, TopBarComponent, TranslatePipe],
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {
   //#region ViewChilds, Inputs, Outputs
@@ -53,7 +53,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     const url: string = this.router.url;
 
     if (url !== '/' && !this.tabService.isUrlOpen(url)) {
-      this.sidebarService.getMenuFromUrl(url)
+      this.sidebarService
+        .getMenuFromUrl(url)
         .pipe(take(1))
         .subscribe({
           next: (item: SidebarMenu) => {
@@ -72,15 +73,13 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((item: SidebarMenu) => this.openExternalMenu(item));
 
-    this.sidebarService.menuUrlSelected
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((item: SidebarMenu) => {
-        const tab: ITab = new Tab({
-          title: item.label,
-          url: item.url,
-        });
-        this.tabService.openTab(tab);
+    this.sidebarService.menuUrlSelected.pipe(takeUntil(this.destroy$)).subscribe((item: SidebarMenu) => {
+      const tab: ITab = new Tab({
+        title: item.label,
+        url: item.url,
       });
+      this.tabService.openTab(tab);
+    });
   }
   //#endregion
 

@@ -1,26 +1,28 @@
 <div class="main-container">
-    <div class="sidebar-region">
-        <lib-sidebar>
-            @if (appVersion) {
-                <span>v{{ appVersion }}</span>
-            }
-        </lib-sidebar>
-    </div>
+  <div class="sidebar-region">
+    <lib-sidebar>
+      @if (appVersion) {
+      <span>v{{ appVersion }}</span>
+      }
+    </lib-sidebar>
+  </div>
 
-    <shared-top-bar class="toolbar" (logout)="onLogoutClick()"></shared-top-bar>
+  <shared-top-bar class="toolbar" (logout)="onLogoutClick()"></shared-top-bar>
 
-    <div class="content">
-        <framework-tabs>
-            <router-outlet></router-outlet>
-        </framework-tabs>
-    </div>
+  <div class="content">
+    <framework-tabs>
+      <router-outlet></router-outlet>
+    </framework-tabs>
+  </div>
 </div>
 
 <lib-modal #logoutModal position="top" size="xl" [closeButtonText]="'Main-Logout-Modal-Message-Cancel' | translate">
-    <div body>
-        <h5>{{ 'Main-Logout-Modal-Message' | translate }}</h5>
-    </div>
-    <div footer>
-        <button type="button" class="btn red-600" (click)="onLogoutConfirm()">{{ 'Main-Logout-Modal-Message-Confirm' | translate }}</button>
-    </div>
+  <div body>
+    <h5>{{ 'Main-Logout-Modal-Message' | translate }}</h5>
+  </div>
+  <div footer>
+    <button type="button" class="btn red-600" (click)="onLogoutConfirm()">
+      {{ 'Main-Logout-Modal-Message-Confirm' | translate }}
+    </button>
+  </div>
 </lib-modal>

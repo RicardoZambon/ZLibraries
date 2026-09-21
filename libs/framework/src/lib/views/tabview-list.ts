@@ -38,23 +38,17 @@ export abstract class TabViewList<TListModel> extends TabViewBase implements OnI
   }
 
   public ngOnInit(): void {
-    this.dataGridDataset.loadStarted
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.loading = true;
-      });
+    this.dataGridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.loading = true;
+    });
 
-    this.dataGridDataset.loadFinished
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        setTimeout(() => this.loading = false);
-      });
+    this.dataGridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      setTimeout(() => (this.loading = false));
+    });
 
-    this.dataGridDataset.selectedRowsChanged
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.selectedRowChanged();
-      });
+    this.dataGridDataset.selectedRowsChanged.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.selectedRowChanged();
+    });
   }
   //#endregion
 
@@ -70,7 +64,7 @@ export abstract class TabViewList<TListModel> extends TabViewBase implements OnI
 
     this._selectedItem = undefined;
     if (this.selectionCount === 1) {
-      this._selectedItem = <TListModel>this.dataGridDataset.getRowData(this.dataGridDataset.selectedRowKeys[0])
+      this._selectedItem = <TListModel>this.dataGridDataset.getRowData(this.dataGridDataset.selectedRowKeys[0]);
     }
   }
   //#endregion

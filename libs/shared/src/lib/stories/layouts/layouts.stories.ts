@@ -56,7 +56,13 @@ class StorybookSidebarService extends SidebarService {
     return of([
       new SidebarMenu({ id: 1, label: 'Dashboard', icon: 'fa-chart-line', url: '/dashboard', region: 'MAIN' }),
       new SidebarMenu({ id: 2, label: 'General', icon: 'fa-layer-group', childCount: 2, region: 'MAIN' }),
-      new SidebarMenu({ id: 3, label: 'Security', icon: 'fa-shield-halved', url: '/security', region: 'ADMINISTRATION' }),
+      new SidebarMenu({
+        id: 3,
+        label: 'Security',
+        icon: 'fa-shield-halved',
+        url: '/security',
+        region: 'ADMINISTRATION',
+      }),
     ]);
   }
 }
@@ -65,10 +71,7 @@ const meta: Meta<MainLayoutComponent> = {
   component: MainLayoutComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        LoginComponent,
-        LoginLayoutComponent,
-      ],
+      imports: [LoginComponent, LoginLayoutComponent],
       providers: [
         TabService,
         { provide: RouteReuseStrategy, useClass: CustomReuseStrategy },

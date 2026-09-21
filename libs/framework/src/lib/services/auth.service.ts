@@ -22,29 +22,24 @@ export abstract class AuthService {
     return this.token !== null && this.jwtHelper.isTokenExpired(this.token);
   }
   public get token(): string | null {
-    return localStorage.getItem('token')
-    ?? sessionStorage.getItem('token'); }
-  public get userID(): number | undefined { return 0; }
+    return localStorage.getItem('token') ?? sessionStorage.getItem('token');
+  }
+  public get userID(): number | undefined {
+    return 0;
+  }
   protected get refreshToken(): string | null {
-    return localStorage.getItem('refreshToken')
-    ?? sessionStorage.getItem('refreshToken');
+    return localStorage.getItem('refreshToken') ?? sessionStorage.getItem('refreshToken');
   }
   protected get userInfo(): string | null {
-    return localStorage.getItem('userInfo')
-    ?? sessionStorage.getItem('userInfo');
+    return localStorage.getItem('userInfo') ?? sessionStorage.getItem('userInfo');
   }
   protected get username(): string | null {
-    return localStorage.getItem('username')
-    ?? sessionStorage.getItem('username');
+    return localStorage.getItem('username') ?? sessionStorage.getItem('username');
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected jwtHelper: JwtHelperService,
-    protected tabService: TabService,
-  ) {
-  }
+  constructor(protected jwtHelper: JwtHelperService, protected tabService: TabService) {}
   //#endregion
 
   //#region Event handlers
@@ -62,8 +57,9 @@ export abstract class AuthService {
         });
     }
 
-    return this.actionsCache$
-      .pipe(map((actions: string[]) => actions.includes(this.adminAction) || actions.includes(actionToCheck)));
+    return this.actionsCache$.pipe(
+      map((actions: string[]) => actions.includes(this.adminAction) || actions.includes(actionToCheck))
+    );
   }
 
   public checkActionsAreAllowed(actionsToCheck: string[], checkForAdministrativeMaster = true): Observable<boolean[]> {
@@ -77,19 +73,32 @@ export abstract class AuthService {
         });
     }
 
-    return this.actionsCache$
-      .pipe(switchMap((actions: string[]) => of(actionsToCheck.map((actionsToCheck: string) => (checkForAdministrativeMaster && actions.indexOf(ADMINISTRATIVE_MASTER_ACTION) >= 0) || actions.indexOf(actionsToCheck) >= 0))));
+    return this.actionsCache$.pipe(
+      switchMap((actions: string[]) =>
+        of(
+          actionsToCheck.map(
+            (actionsToCheck: string) =>
+              (checkForAdministrativeMaster && actions.indexOf(ADMINISTRATIVE_MASTER_ACTION) >= 0) ||
+              actions.indexOf(actionsToCheck) >= 0
+          )
+        )
+      )
+    );
   }
 
   public signOut(): void {
     localStorage.clear();
     sessionStorage.clear();
-    
+
     this.tabService.closeAllTabs();
     this.resetActionsCache();
   }
 
-  protected setStorage(key : 'username' | 'token' | 'refreshToken' | 'userInfo', value : string | null, useLocalStorage: boolean | null = null) {
+  protected setStorage(
+    key: 'username' | 'token' | 'refreshToken' | 'userInfo',
+    value: string | null,
+    useLocalStorage: boolean | null = null
+  ) {
     if (useLocalStorage === null) {
       useLocalStorage = sessionStorage.getItem(key) === null;
     }

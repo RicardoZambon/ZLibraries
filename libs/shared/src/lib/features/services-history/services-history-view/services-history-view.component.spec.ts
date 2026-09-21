@@ -13,19 +13,19 @@ describe(ServicesHistoryViewComponent.name, () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [ ServicesHistoryViewComponent, TranslateModule.forRoot() ],
+      imports: [ServicesHistoryViewComponent, TranslateModule.forRoot()],
       providers: [
         GridConfigsProvider,
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: ActivatedRoute, useValue: activatedRouteStub },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
   });
 
   it('should create', () => {
-    const fixture: ComponentFixture<ServicesHistoryViewComponent> = TestBed.createComponent(ServicesHistoryViewComponent);
+    const fixture: ComponentFixture<ServicesHistoryViewComponent> =
+      TestBed.createComponent(ServicesHistoryViewComponent);
     const component: ServicesHistoryViewComponent = fixture.componentInstance;
 
     expect(component).toBeTruthy();

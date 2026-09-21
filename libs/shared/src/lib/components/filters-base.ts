@@ -17,7 +17,7 @@ export abstract class FiltersBase implements OnInit, OnDestroy {
 
   //#region Properties
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
 
   public ngOnDestroy(): void {
@@ -34,7 +34,7 @@ export abstract class FiltersBase implements OnInit, OnDestroy {
   //#endregion
 
   //#region Public methods
-  public setFilters(filters: { [key: string ] : any }): void {
+  public setFilters(filters: { [key: string]: any }): void {
     this.filterForm.patchValue(filters);
 
     setTimeout(() => {

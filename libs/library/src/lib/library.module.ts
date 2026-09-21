@@ -3,7 +3,6 @@ import * as c from './components';
 import * as d from './directives';
 import * as p from './pipes';
 
-
 @NgModule({
   declarations: [],
   imports: [
@@ -55,7 +54,7 @@ import * as p from './pipes';
     p.EnumTranslatePipe,
     p.ReplacePipe,
     p.ReplaceManyPipe,
-  ]
+  ],
 })
 /**
  * @deprecated Use standalone component imports instead of LibraryModule.

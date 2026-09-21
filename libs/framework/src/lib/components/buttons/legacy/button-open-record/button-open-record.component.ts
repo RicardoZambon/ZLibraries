@@ -9,11 +9,8 @@ import { BaseButton } from '../../base-button';
 @Component({
   selector: 'framework-button-open-record-legacy',
   templateUrl: './button-open-record.component.html',
-  imports: [
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonOpenRecordLegacyComponent)}]
+  imports: [NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonOpenRecordLegacyComponent) }],
 })
 /**
  * @deprecated Use standalone {@link ButtonOpenRecordComponent} instead.
@@ -39,10 +36,8 @@ export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnIni
 
   //#region Constructor and Angular life cycle methods
   public ngOnInit(): void {
-    this.dataGridDataset.selectedRowsChanged
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(() => {
-        this.selectionCount = this.dataGridDataset.selectedRowKeys.length;
+    this.dataGridDataset.selectedRowsChanged.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.selectionCount = this.dataGridDataset.selectedRowKeys.length;
     });
   }
   //#endregion

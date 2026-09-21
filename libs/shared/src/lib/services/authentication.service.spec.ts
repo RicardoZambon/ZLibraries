@@ -2,55 +2,67 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 
 // Mock @zambon-dev/framework to avoid symlink resolution issues
-jest.mock('@zambon-dev/framework', () => ({
-  // A real InjectionToken, so the service under test can be built through
-  // TestBed and resolve APP_CONFIG the same way it does in an application.
-  APP_CONFIG: new (jest.requireActual('@angular/core').InjectionToken)('APP_CONFIG'),
-  AppConfig: class AppConfig {
-    public BASE_URL: string;
-    constructor(baseUrl: string) { this.BASE_URL = baseUrl; }
-  },
-  AuthService: class AuthService {
-    protected jwtHelper: any;
-    protected tabService: any;
-    constructor(jwtHelper: any, tabService: any) {
-      this.jwtHelper = jwtHelper;
-      this.tabService = tabService;
-    }
-    public get isAuthenticated(): boolean { return false; }
-    public get isTokenExpired(): boolean { return false; }
-    public get token(): string | null { return null; }
-    protected get refreshToken(): string | null {
-      return localStorage.getItem('refreshToken') ?? sessionStorage.getItem('refreshToken');
-    }
-    protected get userInfo(): string | null {
-      return localStorage.getItem('userInfo') ?? sessionStorage.getItem('userInfo');
-    }
-    protected get username(): string | null {
-      return localStorage.getItem('username') ?? sessionStorage.getItem('username');
-    }
-    protected setStorage(key: string, value: string | null, useLocalStorage: boolean | null = null) {
-      if (useLocalStorage === null) {
-        useLocalStorage = sessionStorage.getItem(key) === null;
+jest.mock(
+  '@zambon-dev/framework',
+  () => ({
+    // A real InjectionToken, so the service under test can be built through
+    // TestBed and resolve APP_CONFIG the same way it does in an application.
+    APP_CONFIG: new (jest.requireActual('@angular/core').InjectionToken)('APP_CONFIG'),
+    AppConfig: class AppConfig {
+      public BASE_URL: string;
+      constructor(baseUrl: string) {
+        this.BASE_URL = baseUrl;
       }
-      if (value) {
-        if (useLocalStorage) {
-          localStorage.setItem(key, value);
-        } else {
-          sessionStorage.setItem(key, value);
+    },
+    AuthService: class AuthService {
+      protected jwtHelper: any;
+      protected tabService: any;
+      constructor(jwtHelper: any, tabService: any) {
+        this.jwtHelper = jwtHelper;
+        this.tabService = tabService;
+      }
+      public get isAuthenticated(): boolean {
+        return false;
+      }
+      public get isTokenExpired(): boolean {
+        return false;
+      }
+      public get token(): string | null {
+        return null;
+      }
+      protected get refreshToken(): string | null {
+        return localStorage.getItem('refreshToken') ?? sessionStorage.getItem('refreshToken');
+      }
+      protected get userInfo(): string | null {
+        return localStorage.getItem('userInfo') ?? sessionStorage.getItem('userInfo');
+      }
+      protected get username(): string | null {
+        return localStorage.getItem('username') ?? sessionStorage.getItem('username');
+      }
+      protected setStorage(key: string, value: string | null, useLocalStorage: boolean | null = null) {
+        if (useLocalStorage === null) {
+          useLocalStorage = sessionStorage.getItem(key) === null;
         }
-      } else {
-        localStorage.removeItem(key);
-        sessionStorage.removeItem(key);
+        if (value) {
+          if (useLocalStorage) {
+            localStorage.setItem(key, value);
+          } else {
+            sessionStorage.setItem(key, value);
+          }
+        } else {
+          localStorage.removeItem(key);
+          sessionStorage.removeItem(key);
+        }
       }
-    }
-    public signOut(): void {
-      localStorage.clear();
-      sessionStorage.clear();
-    }
-  },
-  TabService: jest.fn(),
-}), { virtual: true });
+      public signOut(): void {
+        localStorage.clear();
+        sessionStorage.clear();
+      }
+    },
+    TabService: jest.fn(),
+  }),
+  { virtual: true }
+);
 
 import { TestBed } from '@angular/core/testing';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -137,10 +149,7 @@ describe('AuthenticationService', () => {
       (mockHttp.post as jest.Mock).mockReturnValue(of(mockAuthResponse));
 
       service.authenticate(model).subscribe(() => {
-        expect(mockHttp.post).toHaveBeenCalledWith(
-          'http://api.test.com/Authentication/SignIn',
-          model,
-        );
+        expect(mockHttp.post).toHaveBeenCalledWith('http://api.test.com/Authentication/SignIn', model);
         done();
       });
     });
@@ -168,9 +177,7 @@ describe('AuthenticationService', () => {
     });
 
     it('should throw InvalidUsernamePassword on 401 error', (done) => {
-      (mockHttp.post as jest.Mock).mockReturnValue(
-        throwError(() => new HttpErrorResponse({ status: 401 }))
-      );
+      (mockHttp.post as jest.Mock).mockReturnValue(throwError(() => new HttpErrorResponse({ status: 401 })));
 
       service.authenticate(model).subscribe({
         error: (err: string) => {
@@ -181,9 +188,7 @@ describe('AuthenticationService', () => {
     });
 
     it('should throw InternalServerError on non-401 error', (done) => {
-      (mockHttp.post as jest.Mock).mockReturnValue(
-        throwError(() => new HttpErrorResponse({ status: 500 }))
-      );
+      (mockHttp.post as jest.Mock).mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
 
       service.authenticate(model).subscribe({
         error: (err: string) => {
@@ -202,10 +207,7 @@ describe('AuthenticationService', () => {
         expect(actions).toEqual(['action1', 'action2']);
       });
 
-      expect(mockHttp.post).toHaveBeenCalledWith(
-        'http://api.test.com/Authentication/GetActions',
-        {},
-      );
+      expect(mockHttp.post).toHaveBeenCalledWith('http://api.test.com/Authentication/GetActions', {});
     });
   });
 
@@ -238,10 +240,10 @@ describe('AuthenticationService', () => {
       (mockHttp.post as jest.Mock).mockReturnValue(of(mockAuthResponse));
 
       service.tryRefreshToken().subscribe(() => {
-        expect(mockHttp.post).toHaveBeenCalledWith(
-          'http://api.test.com/Authentication/RefreshToken',
-          { username: 'testuser', refreshToken: 'old-refresh' },
-        );
+        expect(mockHttp.post).toHaveBeenCalledWith('http://api.test.com/Authentication/RefreshToken', {
+          username: 'testuser',
+          refreshToken: 'old-refresh',
+        });
         done();
       });
     });
@@ -252,9 +254,7 @@ describe('AuthenticationService', () => {
       (mockHttp.post as jest.Mock).mockReturnValue(of(mockAuthResponse));
 
       service.tryRefreshToken().subscribe(() => {
-        expect(
-          sessionStorage.getItem('token') || localStorage.getItem('token')
-        ).toBe('test-jwt-token');
+        expect(sessionStorage.getItem('token') || localStorage.getItem('token')).toBe('test-jwt-token');
         done();
       });
     });

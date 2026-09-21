@@ -8,11 +8,7 @@ import { TabService } from '../../../services';
   selector: 'framework-tab-breadcrumbs',
   templateUrl: './tab-breadcrumbs.component.html',
   styleUrls: ['./tab-breadcrumbs.component.scss'],
-  imports: [
-    NgFor,
-    NgIf,
-    TranslatePipe,
-  ]
+  imports: [NgFor, NgIf, TranslatePipe],
 })
 export class TabBreadcrumbsComponent {
   //#region ViewChilds, Inputs, Outputs

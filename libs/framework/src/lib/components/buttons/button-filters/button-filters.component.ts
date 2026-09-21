@@ -1,7 +1,14 @@
 import { NgIf } from '@angular/common';
 import { Component, inject, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
 import { FormGroupDirective } from '@angular/forms';
-import { DataGridDataset, DisplayControls, FormService, ModalComponent, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
+import {
+  DataGridDataset,
+  DisplayControls,
+  FormService,
+  ModalComponent,
+  RibbonButtonComponent,
+  RibbonGroupChild,
+} from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs';
 import { BaseButton } from '../base-button';
@@ -10,22 +17,26 @@ import { BaseButton } from '../base-button';
   selector: 'framework-button-filters',
   templateUrl: './button-filters.component.html',
   styleUrls: ['./button-filters.component.scss'],
-  imports: [
-    ModalComponent,
-    NgIf,
-    RibbonButtonComponent,
-    TranslatePipe,
-  ],
-  providers: [
-    FormService,
-    { provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonFiltersComponent)},
-  ]
+  imports: [ModalComponent, NgIf, RibbonButtonComponent, TranslatePipe],
+  providers: [FormService, { provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonFiltersComponent) }],
 })
 export class ButtonFiltersComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ModalComponent) modal!: ModalComponent;
 
-  @Input() public modalSize: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'xl';
+  @Input() public modalSize:
+    | 'sm'
+    | 'md'
+    | 'lg'
+    | 'xl'
+    | '2xl'
+    | '3xl'
+    | '4xl'
+    | '5xl'
+    | '6xl'
+    | '7xl'
+    | 'full'
+    | 'auto' = 'xl';
   @Input() public modalTitle!: string;
   @Input() public validateFormFunction?: () => void;
   //#endregion
@@ -34,7 +45,7 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   protected gridDataset: DataGridDataset = inject(DataGridDataset);
   protected readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
 
-  private filters: { [key: string]: string; } = {};
+  private filters: { [key: string]: string } = {};
   //#endregion
 
   //#region Properties
@@ -46,7 +57,7 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
     return this.modalSize === 'sm' || this.modalSize === 'md' || this.modalSize === 'lg' || this.modalSize === 'xl';
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   constructor() {
     super();
@@ -56,23 +67,19 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.gridDataset.loadStarted
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.disabled = true;
-        if (this.button.loading) {
-          this.finishLoading('success');
-        }
-      });
+    this.gridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.disabled = true;
+      if (this.button.loading) {
+        this.finishLoading('success');
+      }
+    });
 
-    this.gridDataset.loadFinished
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.disabled = false;
-        if (this.button.loading) {
-          this.finishLoading('success');
-        }
-      });
+    this.gridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.disabled = false;
+      if (this.button.loading) {
+        this.finishLoading('success');
+      }
+    });
   }
   //#endregion
 
@@ -91,9 +98,11 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
     if (this.formGroup.form.valid) {
       this.button.startLoading();
       this.modal.toggleModal();
-      
+
       const formValue: any = this.formGroup.form.getRawValue();
-      const formFilters: { [key: string ] : any } = Object.fromEntries(Object.entries(formValue).filter(([_, v]) => (!!v && v !== '') || v === 0));
+      const formFilters: { [key: string]: any } = Object.fromEntries(
+        Object.entries(formValue).filter(([_, v]) => (!!v && v !== '') || v === 0)
+      );
 
       this.setFilters(formFilters);
     }
@@ -101,7 +110,7 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
 
   protected onResetButtonClicked(): void {
     this.button.startLoading();
-    
+
     this.formGroup.form.reset();
     this.filters = {};
 
@@ -110,7 +119,7 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   //#endregion
 
   //#region Public methods
-  public setFilters(filters: { [key: string ] : any }): void {
+  public setFilters(filters: { [key: string]: any }): void {
     // Kept whole, because reopening the modal patches this straight back into the form and a
     // catalog select backed by a search endpoint cannot recover its label from the identifier --
     // it only resolves a display from a local entries list. Dropping the labels here would leave
@@ -137,10 +146,12 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
    * @param filters The filters as submitted.
    * @returns The filters a backend should receive.
    */
-  private withoutDisplayControls(filters: { [key: string ] : string }): { [key: string ] : string } {
+  private withoutDisplayControls(filters: { [key: string]: string }): { [key: string]: string } {
     return Object.fromEntries(
-      Object.entries(filters)
-        .filter(([key]: [string, string]) => !DisplayControls.isDisplayControl(this.formGroup.form.get(key))));
+      Object.entries(filters).filter(
+        ([key]: [string, string]) => !DisplayControls.isDisplayControl(this.formGroup.form.get(key))
+      )
+    );
   }
   //#endregion
 }

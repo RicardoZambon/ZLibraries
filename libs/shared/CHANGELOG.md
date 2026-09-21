@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `LoginLayoutComponent`, `HomeComponent`, `BrandComponent` and `EnvironmentBadgeComponent` now
+  use `ChangeDetectionStrategy.OnPush`. Behaviour is unchanged; they render from inputs or from
+  immutable application config.
+
+- **Accessibility.** The operations-history row opens its detail modal from the keyboard as well as
+  the mouse.
+
 ### Deprecated
 
 ### Removed
@@ -46,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Requires `@zambon-dev/library` 2.x and `@zambon-dev/framework` 2.x.** Both peer ranges moved to
 `^2.0.0`. See the library changelog for the `FormInputComponent` output renames.
+
 ## [2.1.1] - 2026-09-15
 
 ### Fixed
@@ -61,8 +69,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is decidable up front, so `ExternalContentComponent` now compares the page’s protocol with the
   destination’s and shows a message naming the real reason. **Open in a new browser tab keeps
   working and is the way out:** a top-level navigation to `http://` is not mixed content. For a
-  destination that only speaks `http`, configure the menu item as *external, new tab* rather than
-  *external, embedded*; to embed it, put it behind an `https` reverse proxy.
+  destination that only speaks `http`, configure the menu item as _external, new tab_ rather than
+  _external, embedded_; to embed it, put it behind an `https` reverse proxy.
 
   Two new keys, `ExternalContent-Insecure-Title` and `ExternalContent-Insecure-Message`, ship in
   `en` and `pt`. An application that overrides this feature’s translations needs to add them.
@@ -127,7 +135,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   The tab URL is `/external-content/<menu id>` and never carries the destination, so no one can
   hand-craft a link that makes your application frame an arbitrary site. Pressing F5 on an embedded
-  tab restores both the frame and the tab title from `sessionStorage`. Opening that URL in a *fresh*
+  tab restores both the frame and the tab title from `sessionStorage`. Opening that URL in a _fresh_
   browser tab can only work if your `SidebarService.getMenuFromUrl()` resolves
   `/external-content/<id>`; otherwise the view says the content is unavailable and asks the user to
   reopen it from the menu.
@@ -186,6 +194,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   detail-views through the real hosts (`DefaultTabViewComponent` /
   `DefaultDetailsTabViewComponent`, `TabViewList` / `FormView`, and the `framework-button-*`
   ribbon buttons). It covers:
+
   - a branded top bar (logo, app name, subtitle, environment badge and a working notifications
     bell) and a versioned sidebar footer;
   - a mocked audit/history view, reachable from the detail views' Views button;
@@ -210,7 +219,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `IServicesHistoryList` and `IOperationsHistoryList` declared an `ID` property, and
   `IOperationsHistoryList` declared `entityId`. Neither key is ever sent. The audit endpoints
   (`POST /{controller}/{entityID}/Audit` and `.../Audit/{serviceHistoryID}`) serialize under
-  ASP.NET Core's default camelCase policy, which lowercases only a *leading* run of capitals — so the
+  ASP.NET Core's default camelCase policy, which lowercases only a _leading_ run of capitals — so the
   backend's `ID` goes out as `id` and its `EntityID` goes out as `entityID`. Typing a row against
   `.ID` or `.entityId` therefore compiled fine and read `undefined` at run time. See
   **⚠ Breaking Changes / Migration** below.
@@ -239,10 +248,10 @@ Two properties on the audit history models were renamed to the keys the backend 
 models are exported from the package root, so anything typed against the old names will now fail to
 compile. Nothing in `@shared` changes behaviour at run time — the fix is to the declared types.
 
-| Model | Before | After |
-|-------|--------|-------|
-| `IServicesHistoryList` | `ID: number` | `id: number` |
-| `IOperationsHistoryList` | `ID: number` | `id: number` |
+| Model                    | Before              | After               |
+| ------------------------ | ------------------- | ------------------- |
+| `IServicesHistoryList`   | `ID: number`        | `id: number`        |
+| `IOperationsHistoryList` | `ID: number`        | `id: number`        |
 | `IOperationsHistoryList` | `entityId?: number` | `entityID?: number` |
 
 To upgrade:

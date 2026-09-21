@@ -18,7 +18,7 @@ describe(ButtonFiltersComponent.name, () => {
   function build(): void {
     component = Object.create(ButtonFiltersComponent.prototype);
 
-    Object.assign(<Record<string, unknown>><unknown>component, {
+    Object.assign(<Record<string, unknown>>(<unknown>component), {
       button: { startLoading: jest.fn() },
       filters: {},
       formGroup: { form },
@@ -28,7 +28,7 @@ describe(ButtonFiltersComponent.name, () => {
   }
 
   function openTheModal(): void {
-    (<{ onFiltersButtonClicked(): void }><unknown>component).onFiltersButtonClicked();
+    (<{ onFiltersButtonClicked(): void }>(<unknown>component)).onFiltersButtonClicked();
   }
 
   beforeEach(() => {

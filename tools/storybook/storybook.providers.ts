@@ -42,7 +42,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Button-New': 'New',
     'Button-Open-Record': 'Open',
     'Button-Refresh': 'Refresh',
-    'Loading': 'Loading',
+    Loading: 'Loading',
     'Button-Save': 'Save',
     'Button-Save-And-Close': 'Save & Close',
     'Button-Save-And-New': 'Save & New',
@@ -59,12 +59,14 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Button-Filters-Clear': 'Clear filters',
     'Button-Filters-Modal-Confirm': 'Confirm filter',
     'Modal-Delete-Confirm': 'Confirm delete',
-    'Modal-Delete-Message': 'You are about to delete records, is not possible to reverse this action. Are you sure you want to continue?',
+    'Modal-Delete-Message':
+      'You are about to delete records, is not possible to reverse this action. Are you sure you want to continue?',
     'Modal-Delete-Title': 'Confirm the record deletion',
     'Modal-Failed-Administrator': 'If the problem persists, please contact your administrator.',
     'Modal-Failed-DefaultMessage': 'An error occurred in the server. Please try again later.',
     'Modal-Failed-Title': 'An error occurred',
-    'Modal-NotFound-Message': 'The requested record was not found.\nIt may have been deleted or the URL may be incorrect.',
+    'Modal-NotFound-Message':
+      'The requested record was not found.\nIt may have been deleted or the URL may be incorrect.',
     'Modal-NotFound-Title': 'Record not found',
     'RibbonGroup-Page': 'Page',
     // Framework keys still missing from the Storybook translations — Format-DateTime's absence
@@ -82,9 +84,11 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'OperationsHistory-Modal-Title': 'Operation details',
     // Embedded external content — copied verbatim from the shipped i18n (libs/shared/src/i18n/external-content/en.json).
     'ExternalContent-Blocked-Title': 'Cannot be displayed',
-    'ExternalContent-Blocked-Message': 'This menu item points to an address that is not allowed. Ask an administrator to review it.',
+    'ExternalContent-Blocked-Message':
+      'This menu item points to an address that is not allowed. Ask an administrator to review it.',
     'ExternalContent-OpenInNewTab': 'Open in a new browser tab',
-    'ExternalContent-SlowHint': 'Still loading. Some sites do not allow being displayed inside another application — try opening it in a new browser tab.',
+    'ExternalContent-SlowHint':
+      'Still loading. Some sites do not allow being displayed inside another application — try opening it in a new browser tab.',
     'ExternalContent-Unavailable-Title': 'Content unavailable',
     'ExternalContent-Unavailable-Message': 'Reopen this item from the menu to load it.',
     // App Showcase story — sidebar, dashboard, datasets, forms and route titles.
@@ -176,7 +180,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Button-New': 'Novo',
     'Button-Open-Record': 'Abrir',
     'Button-Refresh': 'Atualizar',
-    'Loading': 'Carregando',
+    Loading: 'Carregando',
     'Button-Save': 'Salvar',
     'Button-Save-And-Close': 'Salvar e Fechar',
     'Button-Save-And-New': 'Salvar e Novo',
@@ -188,17 +192,20 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Button-Export-CSV': 'CSV',
     'Button-Export-XML': 'XML',
     'Button-Export-MHTML': 'Arquivo Web',
-    'Button-Export-LimitExceeded': 'A exportação ultrapassa o limite de {{ max }} linhas. Refine os filtros e tente novamente.',
+    'Button-Export-LimitExceeded':
+      'A exportação ultrapassa o limite de {{ max }} linhas. Refine os filtros e tente novamente.',
     'Button-Filters': 'Filtrar',
     'Button-Filters-Clear': 'Limpar filtros',
     'Button-Filters-Modal-Confirm': 'Confirmar filtros',
     'Modal-Delete-Confirm': 'Confirmar exclusão',
-    'Modal-Delete-Message': 'Você está prestes a excluir registros do sistema, não é possível reverter esta ação. Tem certeza que deseja continuar?',
+    'Modal-Delete-Message':
+      'Você está prestes a excluir registros do sistema, não é possível reverter esta ação. Tem certeza que deseja continuar?',
     'Modal-Delete-Title': 'Confirmação da exclusão do registro',
     'Modal-Failed-Administrator': 'Se o problema persistir, por favor, entre em contato com o administrador.',
     'Modal-Failed-DefaultMessage': 'Ocorreu um erro no servidor. Por favor, tente novamente mais tarde.',
     'Modal-Failed-Title': 'Ocorreu um erro',
-    'Modal-NotFound-Message': 'O registro solicitado não foi encontrado.\nEle pode ter sido excluído ou a URL pode estar incorreta.',
+    'Modal-NotFound-Message':
+      'O registro solicitado não foi encontrado.\nEle pode ter sido excluído ou a URL pode estar incorreta.',
     'Modal-NotFound-Title': 'Registro não encontrado',
     'RibbonGroup-Page': 'Página',
     // Framework keys still missing from the Storybook translations — Format-DateTime's absence
@@ -216,9 +223,11 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'OperationsHistory-Modal-Title': 'Detalhes da operação',
     // Embedded external content — copied verbatim from the shipped i18n (libs/shared/src/i18n/external-content/pt.json).
     'ExternalContent-Blocked-Title': 'Não é possível exibir',
-    'ExternalContent-Blocked-Message': 'Este item de menu aponta para um endereço não permitido. Peça a um administrador para revisá-lo.',
+    'ExternalContent-Blocked-Message':
+      'Este item de menu aponta para um endereço não permitido. Peça a um administrador para revisá-lo.',
     'ExternalContent-OpenInNewTab': 'Abrir em nova aba do navegador',
-    'ExternalContent-SlowHint': 'Ainda carregando. Alguns sites não permitem ser exibidos dentro de outra aplicação — tente abrir em uma nova aba do navegador.',
+    'ExternalContent-SlowHint':
+      'Ainda carregando. Alguns sites não permitem ser exibidos dentro de outra aplicação — tente abrir em uma nova aba do navegador.',
     'ExternalContent-Unavailable-Title': 'Conteúdo indisponível',
     'ExternalContent-Unavailable-Message': 'Reabra este item pelo menu para carregá-lo.',
     // App Showcase story — sidebar, dashboard, datasets, forms and route titles.

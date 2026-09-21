@@ -2,7 +2,12 @@ import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterModule } from '@angular/router';
-import { DataProviderService, GroupContainerComponent, RibbonComponent, RibbonGroupComponent } from '@zambon-dev/library';
+import {
+  DataProviderService,
+  GroupContainerComponent,
+  RibbonComponent,
+  RibbonGroupComponent,
+} from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs';
 import { RouteHelper } from '../../../helpers';
@@ -36,7 +41,7 @@ function dataProviderFactory(route: ActivatedRoute): DataProviderService<any> {
   providers: [
     { provide: TabViewService },
     { provide: DataProviderService, useFactory: dataProviderFactory, deps: [ActivatedRoute] },
-  ]
+  ],
 })
 export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent implements OnDestroy, OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -67,22 +72,28 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
     const changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
     const tabViewService: TabViewService = inject(TabViewService);
     super(changeDetectorRef, tabViewService);
-
   }
 
   public override ngOnInit(): void {
     super.ngOnInit();
 
-    this.detailsViewRoute = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
+    this.detailsViewRoute = RouteHelper.getRouteWithComponent(
+      this.router.routerState.root.snapshot,
+      DefaultDetailsTabViewComponent
+    );
     this.hasEntityID = this.dataProviderService?.hasEntityID ?? null;
 
-    this.dataProviderService?.getModel$()
+    this.dataProviderService
+      ?.getModel$()
       .pipe(takeUntil(this.destroy$))
       .subscribe((model: any) => {
         if (this.hasEntityID !== this.dataProviderService!.hasEntityID || !this.detailsViewRoute) {
           // If the entity ID changes, we need update the detailsViewRoute to get the correct route URL later.
           this.hasEntityID = this.dataProviderService!.hasEntityID;
-          this.detailsViewRoute = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
+          this.detailsViewRoute = RouteHelper.getRouteWithComponent(
+            this.router.routerState.root.snapshot,
+            DefaultDetailsTabViewComponent
+          );
         }
 
         if (this.detailsViewRoute) {
@@ -99,7 +110,8 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
         }
       });
 
-    this.dataProviderService?.getError$()
+    this.dataProviderService
+      ?.getError$()
       .pipe(takeUntil(this.destroy$))
       .subscribe((error: HttpErrorResponse) => {
         this.hasLoadError = true;

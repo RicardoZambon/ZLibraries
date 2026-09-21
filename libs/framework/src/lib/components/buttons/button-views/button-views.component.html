@@ -1,7 +1,9 @@
-<lib-ribbon-button *ngIf="hasOptions"
-icon="fa-eye"
-label="Button-Views"
-[disabled]="!isAccessLoaded || isNewEntity"
-[options]="options"
-(action)="onViewClicked($event)">
+<lib-ribbon-button
+  *ngIf="hasOptions"
+  icon="fa-eye"
+  label="Button-Views"
+  [disabled]="!isAccessLoaded || isNewEntity"
+  [options]="options"
+  (action)="onViewClicked($event)"
+>
 </lib-ribbon-button>

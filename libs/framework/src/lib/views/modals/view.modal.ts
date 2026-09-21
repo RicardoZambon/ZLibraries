@@ -31,25 +31,22 @@ export abstract class ViewModal<TEntityModel> extends ModalBase implements OnIni
     this.formBuilder = inject(FormBuilder);
     this.formService = inject(FormService);
 
-    this.data$ = this.entityIdSubject
-      .pipe(switchMap((entityID: number | undefined) => this.loadData(entityID)));
+    this.data$ = this.entityIdSubject.pipe(switchMap((entityID: number | undefined) => this.loadData(entityID)));
   }
 
   public ngOnInit(): void {
     this.dataForm = this.formSetup();
     this.formService.initializeForm(this.dataForm);
 
-    this.data$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data: TEntityModel | null) => {
-        this.formService.model = data;
-        this.formService.loading = false;
-        this.dataForm.patchValue(<any>data);
+    this.data$.pipe(takeUntil(this.destroy$)).subscribe((data: TEntityModel | null) => {
+      this.formService.model = data;
+      this.formService.loading = false;
+      this.dataForm.patchValue(<any>data);
 
-        if (this.beginEditOnEntityLoad) {
-          this.formService.beginEdit();
-        }
-      });
+      if (this.beginEditOnEntityLoad) {
+        this.formService.beginEdit();
+      }
+    });
   }
   //#endregion
 

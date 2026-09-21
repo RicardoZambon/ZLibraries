@@ -1,17 +1,21 @@
-<lib-ribbon-button *ngIf="visible && !isButtonCancelVisible && hasDataProviderEntityID"
-[disabled]="disabled || !isAccessLoaded || isFormLoading"
-[icon]="editIcon"
-[iconSize]="iconSize"
-[label]="editLabel"
-[loading]="loading"
-(action)="onEditClicked()">
+<lib-ribbon-button
+  *ngIf="visible && !isButtonCancelVisible && hasDataProviderEntityID"
+  [disabled]="disabled || !isAccessLoaded || isFormLoading"
+  [icon]="editIcon"
+  [iconSize]="iconSize"
+  [label]="editLabel"
+  [loading]="loading"
+  (action)="onEditClicked()"
+>
 </lib-ribbon-button>
 
-<lib-ribbon-button *ngIf="visible && isButtonCancelVisible && hasDataProviderEntityID"
-[color]="cancelColor"
-[disabled]="disabled || !isAccessLoaded || isFormLoading"
-[icon]="cancelIcon"
-[label]="cancelLabel"
-[loading]="loading"
-(action)="onCancelClicked()">
+<lib-ribbon-button
+  *ngIf="visible && isButtonCancelVisible && hasDataProviderEntityID"
+  [color]="cancelColor"
+  [disabled]="disabled || !isAccessLoaded || isFormLoading"
+  [icon]="cancelIcon"
+  [label]="cancelLabel"
+  [loading]="loading"
+  (action)="onCancelClicked()"
+>
 </lib-ribbon-button>

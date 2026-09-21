@@ -1,25 +1,26 @@
-<lib-data-grid [lazyLoadRows]="true">
-</lib-data-grid>
+<lib-data-grid [lazyLoadRows]="true"> </lib-data-grid>
 
 <ng-template #operationTemplate let-rowData="rowData">
-    <div class="operation-content"
+  <div
+    class="operation-content"
     role="button"
     tabindex="0"
     (click)="openModal()"
     (keydown.enter)="openModal()"
-    (keydown.space)="openModal(); $event.preventDefault()">
-        <span class="operation"
-        [class.added]="rowData.operationType === 'Added'"
-        [class.deleted]="rowData.operationType === 'Deleted'"
-        [class.modified]="rowData.operationType === 'Modified'"
-        [class.unchanged]="rowData.operationType === 'Unchanged'">
-            {{ rowData.operationType }}
-        </span>
-        {{ rowData.entityName }}
-    </div>
+    (keydown.space)="openModal(); $event.preventDefault()"
+  >
+    <span
+      class="operation"
+      [class.added]="rowData.operationType === 'Added'"
+      [class.deleted]="rowData.operationType === 'Deleted'"
+      [class.modified]="rowData.operationType === 'Modified'"
+      [class.unchanged]="rowData.operationType === 'Unchanged'"
+    >
+      {{ rowData.operationType }}
+    </span>
+    {{ rowData.entityName }}
+  </div>
 </ng-template>
 
-<shared-operations-history-modal
-[newValues]="selectedNewValues"
-[oldValues]="selectedOldValues">
+<shared-operations-history-modal [newValues]="selectedNewValues" [oldValues]="selectedOldValues">
 </shared-operations-history-modal>

@@ -1,10 +1,37 @@
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { NgFor, NgIf } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, HostListener, inject, Input, KeyValueChanges, KeyValueDiffer, KeyValueDiffers, OnInit, TemplateRef, ViewChild, ViewContainerRef, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  Input,
+  KeyValueChanges,
+  KeyValueDiffer,
+  KeyValueDiffers,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
+  OnDestroy,
+} from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { debounceTime, forkJoin, Observable, of, pairwise, startWith, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import {
+  debounceTime,
+  forkJoin,
+  Observable,
+  of,
+  pairwise,
+  startWith,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { DisplayControls } from '../../helpers';
 import { ICatalogEntry, ICatalogResult } from '../../models';
 import { CatalogService, DataGridDataset } from '../../services';
@@ -16,13 +43,7 @@ import { FormInputComponent } from '../form-input/form-input.component';
   selector: 'lib-catalog-select',
   templateUrl: './catalog-select.component.html',
   styleUrls: ['./catalog-select.component.scss'],
-  imports: [
-    FormInputComponent,
-    FormInputGroupComponent,
-    NgFor,
-    NgIf,
-    TranslatePipe,
-  ]
+  imports: [FormInputComponent, FormInputGroupComponent, NgFor, NgIf, TranslatePipe],
 })
 export class CatalogSelectComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   //#region HostListeners
@@ -46,12 +67,14 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('dropdownTemplate', { read: TemplateRef }) private dropdownTemplate!: TemplateRef<any>;
   @ViewChild('input', { read: ElementRef }) private inputElement!: ElementRef<HTMLDivElement>;
-  
+
   @Input() public autofocus = false;
   @Input() public controlName!: string;
   @Input() public displayControlName!: string;
   @Input() public displayProperty = 'display';
-  @Input() public set entriesList(value: any[] | { key: number; value: Observable<any> | string }[] | null | undefined) {
+  @Input() public set entriesList(
+    value: any[] | { key: number; value: Observable<any> | string }[] | null | undefined
+  ) {
     if (this._entriesList !== value) {
       this._entriesList = value;
       if (this.isSubscriptionInitialized) {
@@ -61,7 +84,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       }
     }
   }
-  @Input() public set filters(value: { [id: string]: any; }) {
+  @Input() public set filters(value: { [id: string]: any }) {
     if (this._filters !== value) {
       this._filters = value;
       this.updateFilters();
@@ -73,10 +96,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   @Input() public notes = '';
   @Input() public readOnly = false;
   @Input() public searchEndpoint?: string;
-  @Input() public validations: { [id: string]: string; } = {};
+  @Input() public validations: { [id: string]: string } = {};
   @Input() public valueProperty = 'value';
   //#endregion
-  
+
   //#region Variables
   protected displayedEntries: ICatalogEntry[] = [];
   protected focusedIndex = -1;
@@ -91,7 +114,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
   private static instanceCounter = 0;
   private _entriesList?: any[] | { key: number; value: Observable<any> | string }[] | null;
-  private _filters: { [id: string]: any; } = {};
+  private _filters: { [id: string]: any } = {};
   private catalogService: CatalogService = inject(CatalogService);
   private dataGridDataset: DataGridDataset = inject(DataGridDataset, { optional: true })!;
   private entriesDataSource: ICatalogEntry[] = [];
@@ -116,7 +139,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     return this._entriesList;
   }
 
-  public get filters(): { [id: string]: any; } | undefined {
+  public get filters(): { [id: string]: any } | undefined {
     return this._filters;
   }
 
@@ -136,17 +159,11 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   }
 
   protected get formControlName(): string {
-    return [
-      ...this.formGroupName?.path ?? [],
-      this.controlName
-    ].join('.');
+    return [...(this.formGroupName?.path ?? []), this.controlName].join('.');
   }
 
   protected get formDisplayControlName(): string {
-    return [
-      ...this.formGroupName?.path ?? [],
-      this.displayControlName
-    ].join('.');
+    return [...(this.formGroupName?.path ?? []), this.displayControlName].join('.');
   }
 
   protected get isInvalid(): boolean {
@@ -212,9 +229,9 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
         }),
         debounceTime(500),
         startWith(null),
-        pairwise(),
+        pairwise()
       )
-      .subscribe(([ previous, current ]: string[]) => {
+      .subscribe(([previous, current]: string[]) => {
         if (!this.isFocused || previous === current) {
           this.isLoading = false;
           return;
@@ -227,24 +244,22 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     // Subscribe to changes in the form control to update the selected value and display control states.
     this.syncFormControlsEnabledDisabled();
 
-    this.formControl?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((value: any) => {
-        this.syncFormControlsEnabledDisabled();
+    this.formControl?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: any) => {
+      this.syncFormControlsEnabledDisabled();
 
-        if (!this.shouldRefreshDisplay(value)) {
-          return;
-        }
+      if (!this.shouldRefreshDisplay(value)) {
+        return;
+      }
 
-        this.selectedValue = value;
-        if (this.hasSearchEndpoint) {
-          if (!value) {
-            this.displayControl?.reset(null, { emitEvent: false });
-          }
-        } else {
-          this.displayControl?.setValue(this.resolveDisplay(value), { emitEvent: false });
+      this.selectedValue = value;
+      if (this.hasSearchEndpoint) {
+        if (!value) {
+          this.displayControl?.reset(null, { emitEvent: false });
         }
-      });
+      } else {
+        this.displayControl?.setValue(this.resolveDisplay(value), { emitEvent: false });
+      }
+    });
 
     // Initial sync: if the form control already has a value (e.g., the model was loaded
     // before this component initialized), sync the display control immediately.
@@ -258,9 +273,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   }
 
   protected onContainerClick(): void {
-    if ((!this.isDropDownShown || this.readOnly)
-      && (this.formGroup.form?.enabled ?? false)
-      && (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
+    if (
+      (!this.isDropDownShown || this.readOnly) &&
+      (this.formGroup.form?.enabled ?? false) &&
+      (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
     ) {
       this.openDropdownOverlay();
     }
@@ -268,9 +284,11 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
   protected onContainerFocus(): void {
     this.isFocused = true;
-    if (!this.isDropDownShown && !this.readOnly
-      && (this.formGroup.form?.enabled ?? false)
-      && (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
+    if (
+      !this.isDropDownShown &&
+      !this.readOnly &&
+      (this.formGroup.form?.enabled ?? false) &&
+      (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
     ) {
       this.openDropdownOverlay();
     }
@@ -413,18 +431,18 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
     const observables: Observable<string>[] = [];
 
-    this._entriesList.forEach((entry: any | { key: number, value: Observable<any> }) => {
+    this._entriesList.forEach((entry: any | { key: number; value: Observable<any> }) => {
       const value: number = entry[this.valueProperty];
       const display: string | Observable<any> = entry[this.displayProperty];
 
       if (display instanceof Observable) {
         this.entriesDataSource.push({ value: value, display: 'Loading...' });
-        
-        observables.push(display
-          .pipe(
+
+        observables.push(
+          display.pipe(
             take(1),
-            tap(v => {
-              this.entriesDataSource.filter(x => x.value === value)[0].display = v;
+            tap((v) => {
+              this.entriesDataSource.filter((x) => x.value === value)[0].display = v;
               if (this.selectedValue === value) {
                 this.displayControl.setValue(v);
               }
@@ -437,9 +455,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     });
 
     // Subscribed only to run the requests; the emitted values are not needed here.
-    forkJoin(observables)
-      .pipe(take(1))
-      .subscribe();
+    forkJoin(observables).pipe(take(1)).subscribe();
   }
 
   private initializeSearch(): void {
@@ -453,7 +469,11 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
             if (this.entriesDataSource.length === 0) {
               return of(null).pipe(take(1));
             }
-            return of(this.entriesDataSource.filter((entry: ICatalogEntry) => entry.display.toLowerCase().indexOf(criteria?.toLowerCase() ?? '') > -1)).pipe(take(1));
+            return of(
+              this.entriesDataSource.filter(
+                (entry: ICatalogEntry) => entry.display.toLowerCase().indexOf(criteria?.toLowerCase() ?? '') > -1
+              )
+            ).pipe(take(1));
           }
 
           this.updateMinimumCharactersMessageVisibility(criteria ?? '');
@@ -461,17 +481,18 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
             return of(null).pipe(take(1));
           }
 
-          return this.catalogService.search(this.searchEndpoint!, this.maxEntries, criteria ?? '', this.filters)
+          return this.catalogService
+            .search(this.searchEndpoint!, this.maxEntries, criteria ?? '', this.filters)
             .pipe(take(1));
-        }),
-      ).subscribe({
+        })
+      )
+      .subscribe({
         next: (result: ICatalogResult | any[] | null | undefined) => {
           this.isLoading = false;
           this.displayedEntries = [];
 
           if (Array.isArray(result) && result.length > 0) {
             this.displayedEntries = result;
-
           } else if (result?.entries && Array.isArray(result.entries)) {
             const catalogResult: ICatalogResult = result as ICatalogResult;
             if (!catalogResult) {
@@ -492,7 +513,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
           if (this.displayedEntries.length > 0 && this.dataGridDataset) {
             this.displayedEntries = this.tryFilterFromDataset(this.displayedEntries);
           }
-          
+
           if (!this.showMinimumCharactersMessage && this.displayedEntries.length === 0) {
             this.showNoResultsMessage = true;
           }
@@ -504,13 +525,13 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
           // Set a new subscription to allow retrying the search later.
           this.initializeSearch();
-        }
+        },
       });
 
-      if (!this.isSubscriptionInitialized) {
-        this.isSubscriptionInitialized = true;
-        this.applySearchCriteria(null);
-      }
+    if (!this.isSubscriptionInitialized) {
+      this.isSubscriptionInitialized = true;
+      this.applySearchCriteria(null);
+    }
   }
 
   private openDropdownOverlay(): void {
@@ -535,9 +556,9 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
           originY: 'top',
           overlayX: 'start',
           overlayY: 'bottom',
-        }
+        },
       ]);
-    
+
     this.overlayRef = this.overlay.create({
       positionStrategy,
       hasBackdrop: false,
@@ -551,9 +572,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     const portal: TemplatePortal = new TemplatePortal(this.dropdownTemplate, this.viewContainerRef);
     this.overlayRef.attach(portal);
     this.isDropDownShown = true;
-    this.focusedIndex = this.selectedValue != null
-      ? this.displayedEntries.findIndex((entry: ICatalogEntry) => entry.value === this.selectedValue)
-      : -1;
+    this.focusedIndex =
+      this.selectedValue != null
+        ? this.displayedEntries.findIndex((entry: ICatalogEntry) => entry.value === this.selectedValue)
+        : -1;
     this.updateInputAriaActiveDescendant();
 
     // Re-evaluate minimum characters message visibility when opening the dropdown,
@@ -630,12 +652,15 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   }
 
   private tryFilterFromDataset(results: ICatalogEntry[]): ICatalogEntry[] {
-    if (this.dataGridDataset
-      && this.controlName === this.dataGridDataset?.keyProperty
-      && this.dataGridDataset.hasLoadedRows
+    if (
+      this.dataGridDataset &&
+      this.controlName === this.dataGridDataset?.keyProperty &&
+      this.dataGridDataset.hasLoadedRows
     ) {
       // If the control name is matching the ID property of the data grid dataset, filter out the loaded rows to remove duplicated IDs.
-      const loadedIDs: any[] = this.dataGridDataset.loadedKeys!.map((key: string) => this.dataGridDataset.getRowID(key));
+      const loadedIDs: any[] = this.dataGridDataset.loadedKeys!.map((key: string) =>
+        this.dataGridDataset.getRowID(key)
+      );
       return results.filter((result: ICatalogEntry) => loadedIDs.indexOf(result.value) < 0);
     }
     return results;
@@ -646,7 +671,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       return;
     }
 
-    const changes: KeyValueChanges<string ,any> | null = this.filterDiffer.diff(this.filters);
+    const changes: KeyValueChanges<string, any> | null = this.filterDiffer.diff(this.filters);
     if (changes) {
       const reInitialize = true;
       this.refreshSearch(reInitialize);
@@ -655,9 +680,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
   private updateMinimumCharactersMessageVisibility(criteria: string): void {
     this.showMinimumCharactersMessage =
-      this.shouldUseCriteria
-      && this.minimumLengthSearch > 0
-      && (criteria?.length ?? 0) < this.minimumLengthSearch;
+      this.shouldUseCriteria && this.minimumLengthSearch > 0 && (criteria?.length ?? 0) < this.minimumLengthSearch;
   }
 
   private getNativeInput(): HTMLInputElement | null {

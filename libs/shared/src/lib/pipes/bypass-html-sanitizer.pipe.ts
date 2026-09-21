@@ -31,7 +31,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
  * <div [innerHTML]="comment.body"></div>                        // ✅ Angular sanitizes automatically
  */
 @Pipe({
-  name: 'bypassHtmlSanitizer'
+  name: 'bypassHtmlSanitizer',
 })
 export class BypassHtmlSanitizerPipe implements PipeTransform {
   private sanitizer: DomSanitizer = inject(DomSanitizer);

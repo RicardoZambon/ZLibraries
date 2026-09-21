@@ -27,27 +27,27 @@ These were confirmed by reading source. Trust them.
    - **Coalesce optional strings** (`email: model.email ?? ''`) so a blank unvalidated control doesn't persist `null` into a field typed `string`.
 6. **`/new` works naturally.** `Number('new')` is `NaN`, so `hasEntityID` is `false` and `loadModel(NaN)` receives a falsy id → return `of(null)` → `FormView` calls `beginEdit()`.
 7. **`SIDEBAR_CONFIGS` has a root factory default** — do not provide it.
-8. **`override` usage** (repo has `noImplicitOverride: true`): use `override` when replacing a *concrete* member (`columns`, `configs`), and **omit** it when implementing an *abstract* member (`getData`, `getTitle`, `saveModel`, `loadModel`). This matches `tools/storybook/storybook.providers.ts`. If `tsc` disagrees on any member, follow the compiler.
+8. **`override` usage** (repo has `noImplicitOverride: true`): use `override` when replacing a _concrete_ member (`columns`, `configs`), and **omit** it when implementing an _abstract_ member (`getData`, `getTitle`, `saveModel`, `loadModel`). This matches `tools/storybook/storybook.providers.ts`. If `tsc` disagrees on any member, follow the compiler.
 9. **`lib-form-input-group` injects `FormGroupDirective` (non-optional)** — it must be inside `<form ngNoForm [formGroup]="dataForm">`, and the component must import `ReactiveFormsModule`.
 10. **Unresolved i18n keys echo themselves.** The global `StorybookTranslateLoader` returns `{}` for unknown keys, so plain English strings like `'Name'` render as `Name`. Use plain strings, not i18n keys.
 11. **Do not override `ngOnInit`** in list/form screens — `TabViewList.ngOnInit` and `FormView.ngOnInit` do required setup. If you must, call `super.ngOnInit()` first.
-12. **`MainLayoutComponent` must be a ROUTED component, not rendered directly by the story.** (Discovered by live browser verification during Task 1.) `TabsComponent.ngOnInit` reads `router.routerState.snapshot.root` for a `FRAMEWORK_VIEW_TYPE` route and calls `openTab`; its template gates `<ng-content>` (which projects `<router-outlet>`) behind `*ngIf="hasTabs"`. If the story renders `<shared-main-layout>` directly, tabs initializes *before* initial navigation resolves, finds no view type, calls `router.navigate(['/'])`, opens no tab — and the canvas stays blank until the user clicks a menu item. The real app avoids this via `{ path: '', component: MainLayoutComponent, children: [...] }` (`Panthor/Frontend/apps/panthor/src/app/app.routes.ts:6`). So: the story renders a tiny `ShowcaseRootComponent` (`template: '<router-outlet></router-outlet>'`, registered via `moduleMetadata({ imports: [ShowcaseRootComponent] })`), and all screen routes are children of a `''` MainLayout route. That `''` route consumes no URL segments, so child paths remain `/dashboard`, `/general/customers`, … and still match the sidebar `url` values.
-13. **`NG0100` from `DefaultTabViewComponent` is a pre-existing `@framework` issue — do NOT try to fix it from the story.** (An earlier version of this plan wrongly claimed an empty `#ribbon` fixes it; live testing disproved that.) `DefaultTabViewComponent.ngAfterViewInit` runs *before* the routed child's `ngAfterViewInit` (the child is created later through the outlet), so the parent always assigns its fallback `emptyRibbonTemplate` first — undefined → object via the `markForCheck()` path (`default-tab-view.component.ts:42-47, 77-96`) — tripping the dev-mode changed-after-checked check on `*ngTemplateOutlet="ribbonTemplate"`. It is dev-mode only and does not affect rendering. Fixing it requires changing `@framework`, which is out of scope here. Screens should still each declare a `#ribbon` template (empty is fine, as the Dashboard does) so the ribbon is view-driven, but that is for consistency, not to silence NG0100.
-15. **The initial auto-opened tab needs its title seeded by the story.** `TabsComponent.ngOnInit` opens the List tab with no title and `Tab.isTitleLoading` defaults to `true`, so it renders a perpetual spinner. `MainLayoutComponent.ngOnInit` normally resolves it via `getMenuFromUrl` → `updateTabTitle`, but that cannot work in Storybook: it runs before `TabsComponent` creates the tab (parent `ngOnInit` first — in the real app the HTTP response lands later, whereas a mocked `of(...)` fires immediately into the void), and it matches on `router.url`, which carries Storybook's `?id=&viewMode=` query string and so never equals the tab's `/dashboard`. Fix: `ShowcaseRootComponent.ngOnInit` calls `closeAllTabs()` then `openTab(new Tab({ isTitleLoading: false, title: 'Dashboard', url: '/dashboard' }))`. Because the URL matches exactly, `TabsComponent` focuses that tab instead of adding an untitled one. Precedent: `libs/framework/src/lib/stories/views/views.stories.ts:22-28`.
-14. **Add `@Injectable()` to every mock service/dataset/provider class you define.** Without it Angular logs `DEPRECATED: DI is instantiating a token "X" that inherits its @Injectable decorator but does not provide one itself. This will become an error in a future version of Angular.` (Pre-existing classes in `tools/storybook/storybook.providers.ts` have this warning; leave them alone — out of scope.)
+12. **`MainLayoutComponent` must be a ROUTED component, not rendered directly by the story.** (Discovered by live browser verification during Task 1.) `TabsComponent.ngOnInit` reads `router.routerState.snapshot.root` for a `FRAMEWORK_VIEW_TYPE` route and calls `openTab`; its template gates `<ng-content>` (which projects `<router-outlet>`) behind `*ngIf="hasTabs"`. If the story renders `<shared-main-layout>` directly, tabs initializes _before_ initial navigation resolves, finds no view type, calls `router.navigate(['/'])`, opens no tab — and the canvas stays blank until the user clicks a menu item. The real app avoids this via `{ path: '', component: MainLayoutComponent, children: [...] }` (`Panthor/Frontend/apps/panthor/src/app/app.routes.ts:6`). So: the story renders a tiny `ShowcaseRootComponent` (`template: '<router-outlet></router-outlet>'`, registered via `moduleMetadata({ imports: [ShowcaseRootComponent] })`), and all screen routes are children of a `''` MainLayout route. That `''` route consumes no URL segments, so child paths remain `/dashboard`, `/general/customers`, … and still match the sidebar `url` values.
+13. **`NG0100` from `DefaultTabViewComponent` is a pre-existing `@framework` issue — do NOT try to fix it from the story.** (An earlier version of this plan wrongly claimed an empty `#ribbon` fixes it; live testing disproved that.) `DefaultTabViewComponent.ngAfterViewInit` runs _before_ the routed child's `ngAfterViewInit` (the child is created later through the outlet), so the parent always assigns its fallback `emptyRibbonTemplate` first — undefined → object via the `markForCheck()` path (`default-tab-view.component.ts:42-47, 77-96`) — tripping the dev-mode changed-after-checked check on `*ngTemplateOutlet="ribbonTemplate"`. It is dev-mode only and does not affect rendering. Fixing it requires changing `@framework`, which is out of scope here. Screens should still each declare a `#ribbon` template (empty is fine, as the Dashboard does) so the ribbon is view-driven, but that is for consistency, not to silence NG0100.
+14. **The initial auto-opened tab needs its title seeded by the story.** `TabsComponent.ngOnInit` opens the List tab with no title and `Tab.isTitleLoading` defaults to `true`, so it renders a perpetual spinner. `MainLayoutComponent.ngOnInit` normally resolves it via `getMenuFromUrl` → `updateTabTitle`, but that cannot work in Storybook: it runs before `TabsComponent` creates the tab (parent `ngOnInit` first — in the real app the HTTP response lands later, whereas a mocked `of(...)` fires immediately into the void), and it matches on `router.url`, which carries Storybook's `?id=&viewMode=` query string and so never equals the tab's `/dashboard`. Fix: `ShowcaseRootComponent.ngOnInit` calls `closeAllTabs()` then `openTab(new Tab({ isTitleLoading: false, title: 'Dashboard', url: '/dashboard' }))`. Because the URL matches exactly, `TabsComponent` focuses that tab instead of adding an untitled one. Precedent: `libs/framework/src/lib/stories/views/views.stories.ts:22-28`.
+15. **Add `@Injectable()` to every mock service/dataset/provider class you define.** Without it Angular logs `DEPRECATED: DI is instantiating a token "X" that inherits its @Injectable decorator but does not provide one itself. This will become an error in a future version of Angular.` (Pre-existing classes in `tools/storybook/storybook.providers.ts` have this warning; leave them alone — out of scope.)
 
 ## File Structure
 
-| File | Responsibility |
-|------|----------------|
+| File                                                                   | Responsibility                                                                                                                 |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | Create: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts` | Everything: seed data, models, datasets, data providers, 6 screen components, sidebar service, route table, CSF3 meta + story. |
-| Modify: `libs/shared/CHANGELOG.md` | Record the new story under `[Unreleased]`. |
+| Modify: `libs/shared/CHANGELOG.md`                                     | Record the new story under `[Unreleased]`.                                                                                     |
 
 No other file changes. `**/*.stories.ts` is already excluded from `libs/shared/tsconfig.lib.json`, so nothing here ships in the published package — **do not** edit `tsconfig.lib.json`.
 
 ## Commands used throughout
 
-Fast type-check (this config is the only one that *includes* story files):
+Fast type-check (this config is the only one that _includes_ story files):
 
 ```bash
 npx tsc -p libs/shared/.storybook/tsconfig.json --noEmit
@@ -70,6 +70,7 @@ Gets the navigable shell working end-to-end with one screen, proving the routing
 > **Amended after live browser verification.** The code block below is the original draft and is superseded in three places by verified facts #12–#14, which live browser testing forced: (a) the story renders a `ShowcaseRootComponent` (`<router-outlet>`) with `MainLayoutComponent` as a `''` routed parent — NOT `<shared-main-layout>` directly, which left the canvas blank until a menu click; (b) `DashboardComponent` extends `TabViewBase` and declares an empty `<ng-template #ribbon></ng-template>` to avoid NG0100; (c) `ShowcaseSidebarService` carries `@Injectable()`. Read facts #12–#14 before using this block as a reference.
 
 **Files:**
+
 - Create: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
 
 - [ ] **Step 1: Create the file with seed data, sidebar service, Dashboard, routes, and story**
@@ -165,7 +166,13 @@ class ShowcaseSidebarService extends SidebarService {
   protected loadMenus(parentMenu: SidebarMenu | null): Observable<SidebarMenu[]> {
     if (parentMenu?.id === MENU_GENERAL) {
       return of([
-        new SidebarMenu({ id: 21, label: 'Customers', icon: 'fa-address-book', url: '/general/customers', parent: parentMenu }),
+        new SidebarMenu({
+          id: 21,
+          label: 'Customers',
+          icon: 'fa-address-book',
+          url: '/general/customers',
+          parent: parentMenu,
+        }),
         new SidebarMenu({ id: 22, label: 'Units', icon: 'fa-building', url: '/general/units', parent: parentMenu }),
       ]);
     }
@@ -177,9 +184,21 @@ class ShowcaseSidebarService extends SidebarService {
     }
 
     return of([
-      new SidebarMenu({ id: MENU_DASHBOARD, label: 'Dashboard', icon: 'fa-chart-line', url: '/dashboard', region: 'MAIN' }),
+      new SidebarMenu({
+        id: MENU_DASHBOARD,
+        label: 'Dashboard',
+        icon: 'fa-chart-line',
+        url: '/dashboard',
+        region: 'MAIN',
+      }),
       new SidebarMenu({ id: MENU_GENERAL, label: 'General', icon: 'fa-layer-group', childCount: 2, region: 'MAIN' }),
-      new SidebarMenu({ id: MENU_SECURITY, label: 'Security', icon: 'fa-shield-halved', childCount: 1, region: 'ADMINISTRATION' }),
+      new SidebarMenu({
+        id: MENU_SECURITY,
+        label: 'Security',
+        icon: 'fa-shield-halved',
+        childCount: 1,
+        region: 'ADMINISTRATION',
+      }),
     ]);
   }
 }
@@ -201,25 +220,23 @@ interface IDashboardCard {
     <div class="p-6 flex flex-col gap-6">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         @for (card of cards; track card.label) {
-          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <div class="flex items-center gap-3">
-              <i class="fa-solid {{ card.icon }} text-xl text-slate-400"></i>
-              <div>
-                <div class="text-2xl font-semibold text-slate-800">{{ card.value }}</div>
-                <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label }}</div>
-              </div>
+        <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid {{ card.icon }} text-xl text-slate-400"></i>
+            <div>
+              <div class="text-2xl font-semibold text-slate-800">{{ card.value }}</div>
+              <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label }}</div>
             </div>
           </div>
+        </div>
         }
       </div>
 
       <div class="rounded-lg border border-slate-200 bg-white shadow-sm">
-        <div class="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700">
-          Recent activity
-        </div>
+        <div class="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700">Recent activity</div>
         <ul class="divide-y divide-slate-100">
           @for (entry of activity; track entry) {
-            <li class="px-4 py-2 text-sm text-slate-600">{{ entry }}</li>
+          <li class="px-4 py-2 text-sm text-slate-600">{{ entry }}</li>
           }
         </ul>
       </div>
@@ -251,9 +268,7 @@ const showcaseRoutes: Routes = [
     path: 'dashboard',
     component: DefaultTabViewComponent,
     data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
-    children: [
-      { path: '', component: DashboardComponent },
-    ],
+    children: [{ path: '', component: DashboardComponent }],
   },
   // Storybook bootstraps the app at /iframe.html, which matches none of the routes above.
   // This catch-all lands the story on the dashboard instead of relying on TabsComponent's
@@ -315,6 +330,7 @@ Run: `npx nx storybook shared`
 Open `http://localhost:4402` and select **Shared → App Showcase → NavigableApp**.
 
 Expected:
+
 - The sidebar shows a `MAIN` region with **Dashboard** and **General**, and an `ADMINISTRATION` region with **Security**.
 - A tab is open and the Dashboard renders three KPI cards (Users 5, Customers 5, Units 5) and a "Recent activity" list.
 - The browser console has no errors.
@@ -334,6 +350,7 @@ git add libs/shared/src/lib/stories/showcase/app-showcase.stories.ts && git comm
 Adds the first grid screen: a real `TabViewList` with an in-memory dataset and a New/Open/Delete/Refresh ribbon.
 
 **Files:**
+
 - Modify: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
 
 - [ ] **Step 1: Add imports**
@@ -501,6 +518,7 @@ Expected: no output (success).
 With `npx nx storybook shared` running, reload the story and click **Security → Users**.
 
 Expected:
+
 - A second tab opens titled "Users" and a grid renders with columns **Name / Username / Email** and 5 rows starting with Ada Lovelace.
 - The ribbon shows an "Entity" group (New, Open record, Delete) and a "General" group (Refresh). Delete starts disabled.
 - Clicking a row highlights it and **enables Delete**.
@@ -520,6 +538,7 @@ git add libs/shared/src/lib/stories/showcase/app-showcase.stories.ts && git comm
 Adds the first form screen: a real `FormView` bound to a mocked `DataProviderService`, reachable via **Open record** and **New**.
 
 **Files:**
+
 - Modify: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
 
 - [ ] **Step 1: Add imports**
@@ -649,18 +668,18 @@ Insert directly **below** the `UsersListComponent` class:
               controlName="name"
               label="Name"
               [maxLength]="200"
-              [validations]="{ 'required': 'Name is required' }">
+              [validations]="{ required: 'Name is required' }"
+            >
             </lib-form-input-group>
             <lib-form-input-group
               controlName="username"
               label="Username"
               [maxLength]="100"
-              [validations]="{ 'required': 'Username is required' }">
+              [validations]="{ required: 'Username is required' }"
+            >
             </lib-form-input-group>
-            <lib-form-input-group controlName="email" label="Email" [maxLength]="200">
-            </lib-form-input-group>
-            <lib-form-input-group controlName="isActive" label="Active" type="checkbox">
-            </lib-form-input-group>
+            <lib-form-input-group controlName="email" label="Email" [maxLength]="200"> </lib-form-input-group>
+            <lib-form-input-group controlName="isActive" label="Active" type="checkbox"> </lib-form-input-group>
             <lib-form-input-group controlName="mustChangePassword" label="Must change password" type="checkbox">
             </lib-form-input-group>
           </lib-form-group>
@@ -711,6 +730,7 @@ Expected: no output (success).
 With `npx nx storybook shared` running, reload the story and click **Security → Users**.
 
 Expected:
+
 - Select the "Grace Hopper" row, click **Open record** → the tab navigates to the detail view, the breadcrumb/tab title becomes "Grace Hopper", and the form shows Name/Username/Email/Active/Must change password populated and **read-only**.
 - Click **Edit** → fields become editable and a Cancel button appears. Click **Cancel** → fields revert to read-only.
 - Click **Edit**, change the Name, then click **Save** → the button shows a success state and the fields return to read-only.
@@ -731,6 +751,7 @@ git add libs/shared/src/lib/stories/showcase/app-showcase.stories.ts && git comm
 A second, differently-shaped slice under General, proving the pattern generalizes.
 
 **Files:**
+
 - Modify: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
 
 - [ ] **Step 1: Add the Customers detail model and seed lookup**
@@ -863,21 +884,18 @@ class CustomersListComponent extends TabViewList<ICustomersList> {
               controlName="name"
               label="Name"
               [maxLength]="200"
-              [validations]="{ 'required': 'Name is required' }">
+              [validations]="{ required: 'Name is required' }"
+            >
             </lib-form-input-group>
-            <lib-form-input-group controlName="email" label="Email" [maxLength]="200">
-            </lib-form-input-group>
-            <lib-form-input-group controlName="phone" label="Phone" [maxLength]="40">
-            </lib-form-input-group>
-            <lib-form-input-group controlName="isActive" label="Active" type="checkbox">
-            </lib-form-input-group>
+            <lib-form-input-group controlName="email" label="Email" [maxLength]="200"> </lib-form-input-group>
+            <lib-form-input-group controlName="phone" label="Phone" [maxLength]="40"> </lib-form-input-group>
+            <lib-form-input-group controlName="isActive" label="Active" type="checkbox"> </lib-form-input-group>
           </lib-form-group>
         </lib-group-accordion>
 
         <lib-group-accordion label="Address">
           <lib-form-group label="Location">
-            <lib-form-input-group controlName="city" label="City" [maxLength]="100">
-            </lib-form-input-group>
+            <lib-form-input-group controlName="city" label="City" [maxLength]="100"> </lib-form-input-group>
           </lib-form-group>
         </lib-group-accordion>
       </form>
@@ -944,6 +962,7 @@ Expected: no output (success).
 With `npx nx storybook shared` running, reload the story and click **General** to expand it, then **Customers**.
 
 Expected:
+
 - A grid renders with columns **Name / City / Email / Active** and 5 rows starting with Acme Industries.
 - Select "Globex Corporation" and click **Open record** → the detail view opens titled "Globex Corporation" with **two** accordion sections ("Details" and "Address"), and the scroll-spy shows both section titles. Phone shows `+1 514 555 0102`.
 - **Edit** / **Save** / **New** behave as they did for Users.
@@ -961,6 +980,7 @@ git add libs/shared/src/lib/stories/showcase/app-showcase.stories.ts && git comm
 A list with no detail route, so its ribbon deliberately omits New and Open record (no dead links).
 
 **Files:**
+
 - Modify: `libs/shared/src/lib/stories/showcase/app-showcase.stories.ts`
 
 - [ ] **Step 1: Add the Units dataset**
@@ -992,11 +1012,7 @@ Insert directly **below** the `CustomersFormComponent` class:
 
 @Component({
   selector: 'showcase-units-list',
-  imports: [
-    ButtonRefreshComponent,
-    DataGridComponent,
-    RibbonGroupComponent,
-  ],
+  imports: [ButtonRefreshComponent, DataGridComponent, RibbonGroupComponent],
   providers: [{ provide: DataGridDataset, useClass: UnitsDataset }],
   template: `
     <ng-template #ribbon>
@@ -1008,8 +1024,7 @@ Insert directly **below** the `CustomersFormComponent` class:
     <lib-data-grid></lib-data-grid>
   `,
 })
-class UnitsListComponent extends TabViewList<IUnitsList> {
-}
+class UnitsListComponent extends TabViewList<IUnitsList> {}
 ```
 
 - [ ] **Step 3: Register the Units route**
@@ -1042,6 +1057,7 @@ Expected: no output (success).
 With `npx nx storybook shared` running, reload the story and click **General → Units**.
 
 Expected:
+
 - A grid renders with columns **Code / Name / Description** (Code is a narrow fixed column) and 5 rows starting with HQ-01.
 - The ribbon shows only a "General" group with **Refresh** — no New, Open record, or Delete.
 
@@ -1056,6 +1072,7 @@ git add libs/shared/src/lib/stories/showcase/app-showcase.stories.ts && git comm
 ## Task 6: Changelog and full verification
 
 **Files:**
+
 - Modify: `libs/shared/CHANGELOG.md`
 
 - [ ] **Step 1: Read the changelog to find the `[Unreleased]` section**
@@ -1118,27 +1135,28 @@ git add libs/shared/CHANGELOG.md && git commit -m "docs(changelog): record the n
 
 Likely snags and their fixes, so the implementer does not have to re-derive them.
 
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| Console: `Cannot match any routes. URL Segment: 'iframe.html'` | Wildcard route missing or not last | Keep `{ path: '**', redirectTo: 'dashboard' }` as the final entry in `showcaseRoutes`. |
-| Story canvas blank until you click a menu item; `framework-tabs` renders with `*ngIf="hasTabs"` false and no `<router-outlet>` in the DOM | Story renders `<shared-main-layout>` directly, so tabs initializes before initial navigation and opens no tab | Route through `ShowcaseRootComponent` with MainLayout as a `''` routed parent (verified fact #12). |
-| `NG0100: ExpressionChangedAfterItHasBeenCheckedError` at `DefaultTabViewComponent` | Pre-existing `@framework` behaviour — the host assigns its fallback ribbon template before any child can publish one | Expected; dev-mode only, does not affect rendering. Do not attempt a story-level fix (verified fact #13). |
-| A tab shows a spinner instead of a title | Tab opened with no title and `isTitleLoading` defaulting to `true` | Seed it in `ShowcaseRootComponent.ngOnInit` (verified fact #15). |
-| Console: `DEPRECATED: DI is instantiating a token "X" that inherits its @Injectable decorator` | Mock class missing its own decorator | Add `@Injectable()` to it (verified fact #14). |
-| Outlet empty; URL jumps to `/` | Route missing `FRAMEWORK_VIEW_TYPE` in `data` | `TabsComponent.ngOnInit` redirects to `/` when neither List nor Details is found. Add the key. |
-| Post-save URL looks like `//3` or `/customers/general/3` | A route path has more than one segment | Split into nested single-segment routes (verified fact #2). |
-| Save throws on `model.id` | Mock `saveModel` returned no `id` | Return a model carrying `id` (verified fact #5). |
-| Post-save URL is `/entity/NaN` | Used `entityID ?? fallback`; on `/new` `entityID` is `NaN`, which `??` passes through | Guard on `hasEntityID` instead (verified fact #5). |
-| Renaming a record updates the detail title but the list still shows the old value | `saveModel` doesn't write back to the seed array | Upsert into the seed array inside `saveModel` (verified fact #5). |
-| Ribbon group invisible | No visible children | Ensure buttons are present and `allowedActions` is omitted (verified fact #4). |
-| `lib-form-input-group` injection error | Not inside a `[formGroup]` | Wrap in `<form ngNoForm [formGroup]="dataForm">` and import `ReactiveFormsModule` (verified fact #9). |
-| Delete removes a row on mere render | Mutation ran when `onDelete()` was called | Keep the mutation inside `defer(...)` (`deleteById` already does). |
-| `tsc` complains about `override` | Repo has `noImplicitOverride: true` | Add/remove `override` as the compiler asks (verified fact #8). |
-| Top bar looks odd / notification errors | `NotificationsService` is not mocked in this story | Matches the existing `Shared/Layouts → MainLayout` story. Only mock it if it actually breaks; the `TopBar` story in `layouts.stories.ts` shows the provider shape to copy. |
+| Symptom                                                                                                                                   | Cause                                                                                                                | Fix                                                                                                                                                                        |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Console: `Cannot match any routes. URL Segment: 'iframe.html'`                                                                            | Wildcard route missing or not last                                                                                   | Keep `{ path: '**', redirectTo: 'dashboard' }` as the final entry in `showcaseRoutes`.                                                                                     |
+| Story canvas blank until you click a menu item; `framework-tabs` renders with `*ngIf="hasTabs"` false and no `<router-outlet>` in the DOM | Story renders `<shared-main-layout>` directly, so tabs initializes before initial navigation and opens no tab        | Route through `ShowcaseRootComponent` with MainLayout as a `''` routed parent (verified fact #12).                                                                         |
+| `NG0100: ExpressionChangedAfterItHasBeenCheckedError` at `DefaultTabViewComponent`                                                        | Pre-existing `@framework` behaviour — the host assigns its fallback ribbon template before any child can publish one | Expected; dev-mode only, does not affect rendering. Do not attempt a story-level fix (verified fact #13).                                                                  |
+| A tab shows a spinner instead of a title                                                                                                  | Tab opened with no title and `isTitleLoading` defaulting to `true`                                                   | Seed it in `ShowcaseRootComponent.ngOnInit` (verified fact #15).                                                                                                           |
+| Console: `DEPRECATED: DI is instantiating a token "X" that inherits its @Injectable decorator`                                            | Mock class missing its own decorator                                                                                 | Add `@Injectable()` to it (verified fact #14).                                                                                                                             |
+| Outlet empty; URL jumps to `/`                                                                                                            | Route missing `FRAMEWORK_VIEW_TYPE` in `data`                                                                        | `TabsComponent.ngOnInit` redirects to `/` when neither List nor Details is found. Add the key.                                                                             |
+| Post-save URL looks like `//3` or `/customers/general/3`                                                                                  | A route path has more than one segment                                                                               | Split into nested single-segment routes (verified fact #2).                                                                                                                |
+| Save throws on `model.id`                                                                                                                 | Mock `saveModel` returned no `id`                                                                                    | Return a model carrying `id` (verified fact #5).                                                                                                                           |
+| Post-save URL is `/entity/NaN`                                                                                                            | Used `entityID ?? fallback`; on `/new` `entityID` is `NaN`, which `??` passes through                                | Guard on `hasEntityID` instead (verified fact #5).                                                                                                                         |
+| Renaming a record updates the detail title but the list still shows the old value                                                         | `saveModel` doesn't write back to the seed array                                                                     | Upsert into the seed array inside `saveModel` (verified fact #5).                                                                                                          |
+| Ribbon group invisible                                                                                                                    | No visible children                                                                                                  | Ensure buttons are present and `allowedActions` is omitted (verified fact #4).                                                                                             |
+| `lib-form-input-group` injection error                                                                                                    | Not inside a `[formGroup]`                                                                                           | Wrap in `<form ngNoForm [formGroup]="dataForm">` and import `ReactiveFormsModule` (verified fact #9).                                                                      |
+| Delete removes a row on mere render                                                                                                       | Mutation ran when `onDelete()` was called                                                                            | Keep the mutation inside `defer(...)` (`deleteById` already does).                                                                                                         |
+| `tsc` complains about `override`                                                                                                          | Repo has `noImplicitOverride: true`                                                                                  | Add/remove `override` as the compiler asks (verified fact #8).                                                                                                             |
+| Top bar looks odd / notification errors                                                                                                   | `NotificationsService` is not mocked in this story                                                                   | Matches the existing `Shared/Layouts → MainLayout` story. Only mock it if it actually breaks; the `TopBar` story in `layouts.stories.ts` shows the provider shape to copy. |
 
 ## Out of scope
 
 Do not add these; they were explicitly deferred:
+
 - Export and Filter ribbon buttons.
 - Many-to-many child-list sub-grids inside a detail view.
 - A Roles slice or further General entities.

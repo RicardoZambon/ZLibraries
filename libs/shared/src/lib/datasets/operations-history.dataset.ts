@@ -10,9 +10,7 @@ export class OperationsHistoryDataset extends DataGridDataset {
   //#endregion
 
   //#region Variables
-  public override columns: IGridColumn[] = [
-    { field: '', headerName: '' },
-  ];
+  public override columns: IGridColumn[] = [{ field: '', headerName: '' }];
   public controllerName?: string;
 
   protected operationsHistoryService: OperationsHistoryService = inject(OperationsHistoryService);

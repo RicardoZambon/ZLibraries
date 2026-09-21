@@ -8,11 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'shared-operations-history-modal',
   templateUrl: './operations-history-modal.component.html',
   styleUrls: ['./operations-history-modal.component.scss'],
-  imports: [
-    JsonPipe,
-    ModalComponent,
-    TranslatePipe,
-  ],
+  imports: [JsonPipe, ModalComponent, TranslatePipe],
 })
 export class OperationsHistoryModalComponent extends ModalBase {
   //#region ViewChilds, Inputs, Outputs

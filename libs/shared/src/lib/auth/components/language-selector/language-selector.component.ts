@@ -5,9 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   selector: 'shared-language-selector',
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
-  imports: [
-    TranslatePipe,
-  ]
+  imports: [TranslatePipe],
 })
 export class LanguageSelectorComponent {
   //#region ViewChilds, Inputs, Outputs
@@ -56,10 +54,10 @@ export class LanguageSelectorComponent {
     if (this.showDropdown) {
       let target: HTMLElement = <HTMLElement>event.target;
       while (target !== null && target.tagName?.toUpperCase() !== 'BODY') {
-          if (target === this.dropdown.nativeElement) {
-            return;
-          }
-          target = <HTMLElement>target.parentElement;
+        if (target === this.dropdown.nativeElement) {
+          return;
+        }
+        target = <HTMLElement>target.parentElement;
       }
       this.showDropdown = false;
     }

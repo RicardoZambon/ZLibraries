@@ -15,7 +15,7 @@ export class GridConfigsProvider<TGridConfigs extends GridConfigs = GridConfigs>
     return this._configs;
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   constructor() {
     this._configs = {

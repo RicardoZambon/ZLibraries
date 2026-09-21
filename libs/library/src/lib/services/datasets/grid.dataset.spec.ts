@@ -18,18 +18,17 @@ describe('GridDataset', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        ConcreteGridDataset,
-        GridConfigsProvider,
-      ],
+      providers: [ConcreteGridDataset, GridConfigsProvider],
     });
 
     dataset = TestBed.inject(ConcreteGridDataset);
-    dataset.getDataMock.mockReturnValue(of([
-      { id: 1, name: 'Row 1' },
-      { id: 2, name: 'Row 2' },
-      { id: 3, name: 'Row 3' },
-    ]));
+    dataset.getDataMock.mockReturnValue(
+      of([
+        { id: 1, name: 'Row 1' },
+        { id: 2, name: 'Row 2' },
+        { id: 3, name: 'Row 3' },
+      ])
+    );
   });
 
   it('should be created', () => {
@@ -70,7 +69,9 @@ describe('GridDataset', () => {
 
     it('should emit loadStarted', () => {
       let started = false;
-      dataset.loadStarted.subscribe(() => { started = true; });
+      dataset.loadStarted.subscribe(() => {
+        started = true;
+      });
 
       dataset.loadRows();
 
@@ -79,7 +80,9 @@ describe('GridDataset', () => {
 
     it('should emit loadFinished with true on success', () => {
       let finished: boolean | undefined;
-      dataset.loadFinished.subscribe((v: boolean) => { finished = v; });
+      dataset.loadFinished.subscribe((v: boolean) => {
+        finished = v;
+      });
 
       dataset.loadRows();
 
@@ -89,7 +92,9 @@ describe('GridDataset', () => {
     it('should emit loadFinished with false on error', () => {
       dataset.getDataMock.mockReturnValue(throwError(() => new Error('fail')));
       let finished: boolean | undefined;
-      dataset.loadFinished.subscribe((v: boolean) => { finished = v; });
+      dataset.loadFinished.subscribe((v: boolean) => {
+        finished = v;
+      });
 
       dataset.loadRows();
 
@@ -141,9 +146,7 @@ describe('GridDataset', () => {
     it('should pass filters in parameters', () => {
       dataset.setFilters({ status: 'active' });
 
-      expect(dataset.getDataMock).toHaveBeenCalledWith(
-        expect.objectContaining({ filters: { status: 'active' } })
-      );
+      expect(dataset.getDataMock).toHaveBeenCalledWith(expect.objectContaining({ filters: { status: 'active' } }));
     });
   });
 
@@ -305,7 +308,9 @@ describe('GridDataset', () => {
   describe('setFilters', () => {
     it('should store filters and emit filtersChanged', () => {
       let emittedFilters: any = null;
-      dataset.filtersChanged.subscribe((f: any) => { emittedFilters = f; });
+      dataset.filtersChanged.subscribe((f: any) => {
+        emittedFilters = f;
+      });
 
       dataset.setFilters({ type: 'test' });
 

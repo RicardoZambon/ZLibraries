@@ -14,20 +14,20 @@ navigation. However, clicking a nav entry opens a tab whose `<router-outlet>` is
 no routed content or backend data is wired in (the global Storybook config registers
 `provideRouter([])` with an empty route table).
 
-**Goal:** make the sidebar *navigable* in a new story so that clicking an entry renders a
+**Goal:** make the sidebar _navigable_ in a new story so that clicking an entry renders a
 realistic **list-view** or **detail-view** — "the full picture … just mocking the
 backend." Reproduce the screens exactly the way the real Panthor app builds them, so the
 story exercises real production code with only the backend faked.
 
 ## 2. Decisions (locked)
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Fidelity** | Faithful — reuse the real framework hosts | Truest "full picture"; mocks only the backend; exercises tabs + ribbon + grid + form together |
-| **Scope** | Broad showcase across the whole sidebar | Dashboard + General (Customers, Units) + Security (Users) |
-| **Code structure** | Everything inline in **one** new `.stories.ts` file | `**/*.stories.ts` is already excluded from the library build, so mock code can never ship; no `tsconfig.lib.json` change needed |
-| **Story title** | `Shared/App Showcase` (sibling to `Shared/Layouts`) | Keeps the existing minimal shell stories untouched |
-| **Customers detail** | Included | A second, differently-shaped form; shows the form pattern generalizes |
+| Decision             | Choice                                              | Rationale                                                                                                                       |
+| -------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Fidelity**         | Faithful — reuse the real framework hosts           | Truest "full picture"; mocks only the backend; exercises tabs + ribbon + grid + form together                                   |
+| **Scope**            | Broad showcase across the whole sidebar             | Dashboard + General (Customers, Units) + Security (Users)                                                                       |
+| **Code structure**   | Everything inline in **one** new `.stories.ts` file | `**/*.stories.ts` is already excluded from the library build, so mock code can never ship; no `tsconfig.lib.json` change needed |
+| **Story title**      | `Shared/App Showcase` (sibling to `Shared/Layouts`) | Keeps the existing minimal shell stories untouched                                                                              |
+| **Customers detail** | Included                                            | A second, differently-shaped form; shows the form pattern generalizes                                                           |
 
 ## 3. How Panthor builds these screens (the pattern being mirrored)
 
@@ -59,14 +59,14 @@ Reference files (real app): `apps/panthor/src/app/features/security/users/*`,
 
 Mocked `SidebarService` serves this tree; menu `url`s match route `path`s exactly.
 
-| Sidebar entry | Region | URL | Host + view type | Rendered child |
-|---|---|---|---|---|
-| Dashboard | `MAIN` | `/dashboard` | `DefaultTabViewComponent` · List | `DashboardComponent` (cards + recent-activity panel) |
-| General ▸ Customers | `MAIN` | `/general/customers` | `DefaultTabViewComponent` · List | `CustomersListComponent` |
-| ↳ open row / New | | `/general/customers/:id` | `DefaultDetailsTabViewComponent` · Details | `CustomersFormComponent` |
-| General ▸ Units | `MAIN` | `/general/units` | `DefaultTabViewComponent` · List | `UnitsListComponent` (list only) |
-| Security ▸ Users | `ADMINISTRATION` | `/security/users` | `DefaultTabViewComponent` · List | `UsersListComponent` |
-| ↳ open row / New | | `/security/users/:id` | `DefaultDetailsTabViewComponent` · Details | `UsersFormComponent` |
+| Sidebar entry       | Region           | URL                      | Host + view type                           | Rendered child                                       |
+| ------------------- | ---------------- | ------------------------ | ------------------------------------------ | ---------------------------------------------------- |
+| Dashboard           | `MAIN`           | `/dashboard`             | `DefaultTabViewComponent` · List           | `DashboardComponent` (cards + recent-activity panel) |
+| General ▸ Customers | `MAIN`           | `/general/customers`     | `DefaultTabViewComponent` · List           | `CustomersListComponent`                             |
+| ↳ open row / New    |                  | `/general/customers/:id` | `DefaultDetailsTabViewComponent` · Details | `CustomersFormComponent`                             |
+| General ▸ Units     | `MAIN`           | `/general/units`         | `DefaultTabViewComponent` · List           | `UnitsListComponent` (list only)                     |
+| Security ▸ Users    | `ADMINISTRATION` | `/security/users`        | `DefaultTabViewComponent` · List           | `UsersListComponent`                                 |
+| ↳ open row / New    |                  | `/security/users/:id`    | `DefaultDetailsTabViewComponent` · Details | `UsersFormComponent`                                 |
 
 Plus `{ path: '', redirectTo: 'dashboard', pathMatch: 'full' }` so the story has an
 initial view. Every routed leaf carries `FRAMEWORK_VIEW_TYPE` in its route data — required,
@@ -78,33 +78,53 @@ otherwise `TabsComponent.ngOnInit` redirects to `/`.
 const showcaseRoutes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 
-  { path: 'dashboard', component: DefaultTabViewComponent,
+  {
+    path: 'dashboard',
+    component: DefaultTabViewComponent,
     data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
-    children: [{ path: '', component: DashboardComponent }] },
+    children: [{ path: '', component: DashboardComponent }],
+  },
 
-  { path: 'general/customers', component: DefaultTabViewComponent,
+  {
+    path: 'general/customers',
+    component: DefaultTabViewComponent,
     data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
-    children: [{ path: '', component: CustomersListComponent }] },
-  { path: 'general/customers/:id', component: DefaultDetailsTabViewComponent,
-    data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
-            dataProvider: () => new CustomersDataProvider(),
-            defaultTitle: 'New customer' },
-    children: [{ path: '', component: CustomersFormComponent,
-                 data: { icon: 'fa-address-book', title: 'Details' } }] },
+    children: [{ path: '', component: CustomersListComponent }],
+  },
+  {
+    path: 'general/customers/:id',
+    component: DefaultDetailsTabViewComponent,
+    data: {
+      [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
+      dataProvider: () => new CustomersDataProvider(),
+      defaultTitle: 'New customer',
+    },
+    children: [{ path: '', component: CustomersFormComponent, data: { icon: 'fa-address-book', title: 'Details' } }],
+  },
 
-  { path: 'general/units', component: DefaultTabViewComponent,
+  {
+    path: 'general/units',
+    component: DefaultTabViewComponent,
     data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
-    children: [{ path: '', component: UnitsListComponent }] },
+    children: [{ path: '', component: UnitsListComponent }],
+  },
 
-  { path: 'security/users', component: DefaultTabViewComponent,
+  {
+    path: 'security/users',
+    component: DefaultTabViewComponent,
     data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
-    children: [{ path: '', component: UsersListComponent }] },
-  { path: 'security/users/:id', component: DefaultDetailsTabViewComponent,
-    data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
-            dataProvider: () => new UsersDataProvider(),
-            defaultTitle: 'New user' },
-    children: [{ path: '', component: UsersFormComponent,
-                 data: { icon: 'fa-user', title: 'Details' } }] },
+    children: [{ path: '', component: UsersListComponent }],
+  },
+  {
+    path: 'security/users/:id',
+    component: DefaultDetailsTabViewComponent,
+    data: {
+      [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details,
+      dataProvider: () => new UsersDataProvider(),
+      defaultTitle: 'New user',
+    },
+    children: [{ path: '', component: UsersFormComponent, data: { icon: 'fa-user', title: 'Details' } }],
+  },
 ];
 ```
 
@@ -113,22 +133,26 @@ const showcaseRoutes: Routes = [
 Grid column `field`s must match the list-model property names.
 
 ### Users (mirrors Panthor exactly)
+
 - `IUsersList { id: number; name: string; username: string; email: string; isActive: boolean }`
 - `IUsersDisplay { id: number; name: string; username: string; email: string; isActive: boolean; mustChangePassword: boolean }`
 - List columns: name, username, email. Form fields: name (required), username (required),
   email, isActive (checkbox), mustChangePassword (checkbox).
 
 ### Customers
+
 - `ICustomersList { id: number; name: string; city: string; email: string; isActive: boolean }`
 - `ICustomersDisplay { id: number; name: string; email: string; phone: string; city: string; isActive: boolean }`
 - List columns: name, city, email, isActive. Form fields: name (required), email, phone,
   city, isActive (checkbox).
 
 ### Units (list only)
+
 - `IUnitsList { id: number; code: string; name: string; description: string }`
 - List columns: code, name, description. No detail route → ribbon has no New/Open.
 
 ### Dashboard
+
 - Plain standalone component (no `TabViewList`/`FormView`). KPI cards (e.g. total users,
   total customers, active units) + a small static "recent activity" panel. Visually distinct
   from the grid-based lists; no grid dataset required.
@@ -138,12 +162,12 @@ Grid column `field`s must match the list-model property names.
 Uses the real `framework-button-*` inside `lib-ribbon-group`. The host renders the ribbon
 shell; the screen supplies a `#ribbon` template (captured by `TabViewBase`).
 
-| Screen | Ribbon buttons |
-|--------|----------------|
+| Screen                     | Ribbon buttons                                                                               |
+| -------------------------- | -------------------------------------------------------------------------------------------- |
 | Customers list, Users list | New, Open record, Delete (`[action]="onDelete()"`, `[disabled]="!hasRowsSelected"`), Refresh |
-| Units list | Refresh |
-| Customers form, Users form | New, Edit, Save |
-| Dashboard | none (empty ribbon) |
+| Units list                 | Refresh                                                                                      |
+| Customers form, Users form | New, Edit, Save                                                                              |
+| Dashboard                  | none (empty ribbon)                                                                          |
 
 `allowedActions` inputs may be omitted or set to a placeholder; the global `AuthService`
 mock returns "allowed" for any action, so buttons render and act.
@@ -167,11 +191,14 @@ Pure in-memory — no HTTP, no interceptor.
 @Injectable()
 class UsersDataset extends DataGridDataset {
   public override columns: IGridColumn[] = [
-    { field: 'name',     headerName: 'Name' },
+    { field: 'name', headerName: 'Name' },
     { field: 'username', headerName: 'Username' },
-    { field: 'email',    headerName: 'Email' },
+    { field: 'email', headerName: 'Email' },
   ];
-  constructor() { super(); this.configs.selectOnClick = true; }
+  constructor() {
+    super();
+    this.configs.selectOnClick = true;
+  }
   public getData(): Observable<IListResult<IUsersList>> {
     return of({ items: USERS_SEED, totalRows: USERS_SEED.length });
   }
@@ -179,9 +206,11 @@ class UsersDataset extends DataGridDataset {
 
 @Injectable()
 class UsersDataProvider extends DataProviderService<IUsersDisplay> {
-  public getTitle(e: IUsersDisplay): string { return e?.name ?? ''; }
+  public getTitle(e: IUsersDisplay): string {
+    return e?.name ?? '';
+  }
   protected loadModel(id?: number): Observable<IUsersDisplay | null> {
-    return of(id ? (USERS_BY_ID[id] ?? USERS_DISPLAY_SEED[0]) : null);
+    return of(id ? USERS_BY_ID[id] ?? USERS_DISPLAY_SEED[0] : null);
   }
   public saveModel(model: IUsersDisplay): Observable<IUsersDisplay> {
     return of({ ...model, id: this.entityID ?? 999 });
@@ -191,11 +220,16 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
 @Component({
   selector: 'showcase-users-list',
   standalone: true,
-  imports: [DataGridComponent, RibbonGroupComponent, ButtonNewComponent,
-            ButtonOpenRecordComponent, ButtonDeleteComponent, ButtonRefreshComponent],
+  imports: [
+    DataGridComponent,
+    RibbonGroupComponent,
+    ButtonNewComponent,
+    ButtonOpenRecordComponent,
+    ButtonDeleteComponent,
+    ButtonRefreshComponent,
+  ],
   providers: [{ provide: DataGridDataset, useClass: UsersDataset }],
-  template: `
-    <ng-template #ribbon>
+  template: ` <ng-template #ribbon>
       <lib-ribbon-group label="Entity">
         <framework-button-new></framework-button-new>
         <framework-button-open-record></framework-button-open-record>
@@ -206,7 +240,9 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
     <lib-data-grid></lib-data-grid>`,
 })
 class UsersListComponent extends TabViewList<IUsersList> {
-  public onDelete(): Observable<unknown> { /* remove selected from seed, refresh */ return of(null); }
+  public onDelete(): Observable<unknown> {
+    /* remove selected from seed, refresh */ return of(null);
+  }
 }
 ```
 
@@ -290,4 +326,7 @@ Units list, Users list/form), the CSF3 `meta` (`title: 'Shared/App Showcase'`), 
   General ▸ Customers (list) → open a row (detail) → New (empty edit form) → Save; General ▸
   Units (list); Security ▸ Users (list → detail). Capture one or two screenshots to confirm
   content renders inside the layout.
+
+```
+
 ```

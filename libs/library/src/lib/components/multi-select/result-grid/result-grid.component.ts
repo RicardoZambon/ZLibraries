@@ -11,14 +11,9 @@ import { DataGridDataset } from '../../../services';
   templateUrl: './result-grid.component.html',
   styleUrls: ['./result-grid.component.scss'],
   host: {
-    'class': 'flex-grow'
+    class: 'flex-grow',
   },
-  imports: [
-    CommonModule,
-    NgFor,
-    NgIf,
-    TranslatePipe,
-  ]
+  imports: [CommonModule, NgFor, NgIf, TranslatePipe],
 })
 export class MultiSelectResultGridComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -41,17 +36,13 @@ export class MultiSelectResultGridComponent extends BaseComponent implements OnI
   }
 
   public ngOnInit(): void {
-    this.resultDataset.loadStarted
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.isLoading = true;
-      });
+    this.resultDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.isLoading = true;
+    });
 
-    this.resultDataset.loadFinished
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.isLoading = false;
-      });
+    this.resultDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.isLoading = false;
+    });
   }
   //#endregion
 

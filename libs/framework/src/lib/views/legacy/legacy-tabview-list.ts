@@ -30,11 +30,7 @@ export abstract class LegacyTabViewList<TListModel> extends LegacyTabViewBase im
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected dataGridDataset: DataGridDataset,
-    route: ActivatedRoute,
-    tabService: TabService,
-  ) {
+  constructor(protected dataGridDataset: DataGridDataset, route: ActivatedRoute, tabService: TabService) {
     super(route, tabService);
 
     // This will force the screen to initialize with the buttons disabled.
@@ -44,23 +40,17 @@ export abstract class LegacyTabViewList<TListModel> extends LegacyTabViewBase im
   public override ngOnInit(): void {
     super.ngOnInit();
 
-    this.dataGridDataset.loadStarted
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.loading = true;
-      });
+    this.dataGridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.loading = true;
+    });
 
-    this.dataGridDataset.loadFinished
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        setTimeout(() => this.loading = false);
-      });
+    this.dataGridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      setTimeout(() => (this.loading = false));
+    });
 
-    this.dataGridDataset.selectedRowsChanged
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.selectedRowChanged();
-      });
+    this.dataGridDataset.selectedRowsChanged.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.selectedRowChanged();
+    });
   }
   //#endregion
 
@@ -76,7 +66,7 @@ export abstract class LegacyTabViewList<TListModel> extends LegacyTabViewBase im
 
     this._selectedItem = undefined;
     if (this.selectedRows === 1) {
-      this._selectedItem = <TListModel>this.dataGridDataset.getRowData(this.dataGridDataset.selectedRowKeys[0])
+      this._selectedItem = <TListModel>this.dataGridDataset.getRowData(this.dataGridDataset.selectedRowKeys[0]);
     }
   }
   //#endregion

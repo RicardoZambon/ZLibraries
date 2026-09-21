@@ -8,11 +8,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-edit',
   templateUrl: './button-edit.component.html',
-  imports: [
-    NgIf,
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonEditComponent)}]
+  imports: [NgIf, RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonEditComponent) }],
 })
 export class ButtonEditComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -44,11 +41,9 @@ export class ButtonEditComponent extends BaseButton implements OnInit {
   //#region Constructor and Angular life cycle methods
 
   public ngOnInit(): void {
-    this.formService.editCanceled
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.isButtonCancelVisible = false;
-      });
+    this.formService.editCanceled.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.isButtonCancelVisible = false;
+    });
   }
   //#endregion
 

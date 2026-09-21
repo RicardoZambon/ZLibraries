@@ -6,7 +6,7 @@ import { RibbonGroupChild } from '../../models/ribbon-group-child';
   selector: 'lib-ribbon-group',
   templateUrl: './ribbon-group.component.html',
   styleUrls: ['./ribbon-group.component.scss'],
-  host: { '[class.hidden]': '!hasChildren' }
+  host: { '[class.hidden]': '!hasChildren' },
 })
 export class RibbonGroupComponent {
   //#region ViewChilds, Inputs, Outputs
@@ -23,10 +23,10 @@ export class RibbonGroupComponent {
 
   //#region Properties
   protected get hasChildren(): boolean {
-    return this.children?.some(x => x.visible) ?? false;
+    return this.children?.some((x) => x.visible) ?? false;
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   //#endregion
 

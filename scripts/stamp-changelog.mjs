@@ -93,7 +93,10 @@ function stripEmptySubsections(body) {
   }
   flush();
 
-  return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  return out
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 function stamp(content) {
@@ -127,10 +130,7 @@ function stamp(content) {
   if (/^\[Unreleased\]:.*$/m.test(result)) {
     result = result.replace(/^\[Unreleased\]:.*$/m, `[Unreleased]: ${REPO_URL}/compare/${tag}...HEAD`);
     if (!new RegExp(`^\\[${version.replace(/\./g, '\\.')}\\]:`, 'm').test(result)) {
-      result = result.replace(
-        /^(\[Unreleased\]:.*\n)/m,
-        `$1[${version}]: ${REPO_URL}/releases/tag/${tag}\n`,
-      );
+      result = result.replace(/^(\[Unreleased\]:.*\n)/m, `$1[${version}]: ${REPO_URL}/releases/tag/${tag}\n`);
     }
   }
 

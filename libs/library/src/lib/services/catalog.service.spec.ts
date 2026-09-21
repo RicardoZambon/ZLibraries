@@ -65,7 +65,9 @@ describe('CatalogService', () => {
       let errorOccurred = false;
 
       service.search(endpoint, 10).subscribe({
-        error: () => { errorOccurred = true; },
+        error: () => {
+          errorOccurred = true;
+        },
       });
 
       const req = httpMock.expectOne(endpoint);

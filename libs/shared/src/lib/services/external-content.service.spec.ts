@@ -22,7 +22,7 @@ describe(ExternalContentService.name, () => {
 
   function found(menuID: number): IExternalContentEntry | undefined {
     let entry: IExternalContentEntry | undefined;
-    service.find(menuID).subscribe((result: IExternalContentEntry | undefined) => entry = result);
+    service.find(menuID).subscribe((result: IExternalContentEntry | undefined) => (entry = result));
 
     return entry;
   }

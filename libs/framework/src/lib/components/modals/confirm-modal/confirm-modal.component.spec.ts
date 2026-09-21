@@ -5,9 +5,8 @@ import { ConfirmModalComponent } from './confirm-modal.component';
 describe(ConfirmModalComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ ConfirmModalComponent, TranslateModule.forRoot() ]
-    })
-    .compileComponents();
+      imports: [ConfirmModalComponent, TranslateModule.forRoot()],
+    }).compileComponents();
   });
 
   it('should create', () => {

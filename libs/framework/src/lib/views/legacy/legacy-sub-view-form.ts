@@ -9,13 +9,13 @@ import { ViewBase } from '../view-base';
  * @deprecated Use standalone {@link FormView} instead. Migrate by extending FormView
  * and using standalone component imports with inject() for dependency injection.
  */
-@Component({ template: ''})
+@Component({ template: '' })
 export abstract class LegacySubViewForm extends ViewBase implements OnInit {
   @Input() entityId?: number;
   @Input() set model(value: any | null) {
     if (this._model !== value) {
       this._model = value;
-      
+
       if (this.dataForm) {
         this.dataForm.patchValue(this.model);
       }
@@ -45,11 +45,7 @@ export abstract class LegacySubViewForm extends ViewBase implements OnInit {
 
   protected dataProvider: DataProviderService<any> | null;
 
-
-  constructor(
-    protected formBuilder: FormBuilder,
-    protected formService: FormService,
-  ) {
+  constructor(protected formBuilder: FormBuilder, protected formService: FormService) {
     super();
 
     this.dataProvider = inject(DataProviderService, { optional: true });
@@ -63,22 +59,21 @@ export abstract class LegacySubViewForm extends ViewBase implements OnInit {
     if (this.dataProvider) {
       this.formService.loading = true;
 
-      this.dataProvider.getModel$()
+      this.dataProvider
+        .getModel$()
         .pipe(take(1))
         .subscribe((_: any) => {
           this.formService.loading = false;
-        })
+        });
     }
   }
 
-  
   protected updateModel(model: any): void {
     this._model = model;
 
     if (this.isNew) {
       this.beginEdit();
-    }
-    else {
+    } else {
       this.cancelEdit();
     }
   }
@@ -102,22 +97,16 @@ export abstract class LegacySubViewForm extends ViewBase implements OnInit {
 
   /** Extension point: subclasses override this to validate before save. */
   // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-  protected validate(_formModel: any): void {
-  }
+  protected validate(_formModel: any): void {}
 
   save(): Observable<any> {
-    
     this.validate(this.dataForm.getRawValue());
-    
+
     if (this.dataForm.valid) {
       this.dataForm.disable();
 
-      return this.saveModel()
-      .pipe(
-        tap(() => this.dataForm.enable())
-      );
-    }
-    else {
+      return this.saveModel().pipe(tap(() => this.dataForm.enable()));
+    } else {
       this.dataForm.markAllAsTouched();
       return throwError(() => new HttpErrorResponse({ error: { message: 'Form invalid', errors: null }, status: 400 }));
     }

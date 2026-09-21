@@ -8,6 +8,6 @@ export abstract class MultiSelectModal extends ModalBase {
   @Output() public savedChanges: EventEmitter<void> = new EventEmitter();
 
   toggle(): void {
-    this.multiSelect.toggleModal();    
+    this.multiSelect.toggleModal();
   }
 }

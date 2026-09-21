@@ -4,9 +4,8 @@ import { HomeComponent } from './home.component';
 describe(HomeComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ HomeComponent ]
-    })
-    .compileComponents();
+      imports: [HomeComponent],
+    }).compileComponents();
   });
 
   it('should create', () => {

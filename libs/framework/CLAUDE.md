@@ -88,41 +88,49 @@ The system provides three distinct navigation modes:
 ### Navigation Behaviors — Component Triggers
 
 #### From Outside (menu item with URL)
+
 - **Action**: Open a new tab and start a new Tab History
 - **Exception**: If the URL (exact match) is already open — Focus that Tab
 - **Method**: `openTab(tab)` — no `entityBaseUrl` set (list URLs use exact match only)
 
 #### Button New
+
 - **Action**: Redirect current tab and insert the 'new' entity into Tab History
 - **Exception**: If the URL (ENTITY match) is already open — Focus that Tab
 - **Method**: `navigateCurrentTab(tab)` with `entityBaseUrl` set to the `/new` URL
 
 #### Button Open
+
 - **Action**: Redirect current tab and insert entity name into Tab History (loading while tab name is not available)
 - **Exception**: If the URL (ENTITY match) is already open — Focus that Tab (keeping current view)
 - **Method**: `navigateCurrentTab(tab)` with `entityBaseUrl` set to the entity URL
 
 #### Button Views (DEFAULT to Non-default view)
+
 - **Example**: Selects History View
 - **Action**: Redirect current tab and insert View name into Tab History
 - **Method**: `replaceCurrentTabSubView(baseUrl, tab)` — adds sub-view entry after anchor
 
 #### Button Views (Non-default to DEFAULT view)
+
 - **Example**: Selects Details View
 - **Action**: Redirect current tab back to the default view
 - **Method**: `replaceCurrentTabSubView(baseUrl)` — removes sub-view entry, keeps anchor
 
 #### Button Views (Non-default to Another non-default view)
+
 - **Example**: While in History, selects Payments View
 - **Action**: Redirect current tab and replace the last entry (History) with the view name in Tab History
 - **Method**: `replaceCurrentTabSubView(baseUrl, tab)` — replaces existing sub-view with new one
 
 #### Button Save (Save)
+
 - **Action**: Saves the entity and updates the URL in-place (e.g., `/new` to `/:id`)
 - **Method**: `redirectCurrentTab(url)` — also updates `entityBaseUrl` if it matched the old URL
 - **Router sync**: If the Angular router URL differs from the saved entity URL (e.g., still at `/new`), syncs the router invisibly via `setRouteRedirect` + `navigateByUrl`. This ensures subsequent navigations (e.g., clicking New button) don't hit a stale router URL and become no-ops.
 
 #### Button Save (Save And New)
+
 - **Action**: Saves the entity, caches the saved entity component, then navigates to `/new`
 - **Exception**: If the URL (ENTITY match) is already open — Focus that Tab
 - **Router URL check**: Uses `currentRouteUrl !== savedEntityUrl` to decide the navigation path
@@ -131,24 +139,29 @@ The system provides three distinct navigation modes:
 - **Method**: `redirectCurrentTab(url)` + `navigateCurrentTab(tab)` (via `navigateToNew()`)
 
 #### Button Save (Save And Close)
+
 - **Action**: Navigates back one step in Tab History. If it's the last entry, closes the tab.
 - **Method**: `navigateBackOrCloseActiveTab()`
 
 #### Tab Close Button
+
 - **Action**: Closes the entire tab (all history entries)
 - **Method**: `closeTab(index)`
 
 ### Navigation Behaviors — Direct URL Access
 
 #### ListView URL
+
 - **Action**: Open a new tab and start a new Tab History
 - **Method**: `openTab(tab)` — no `entityBaseUrl` (exact match only)
 
 #### Form View (DEFAULT view)
+
 - **Action**: Open a new tab and insert entity name into Tab History (loading while tab name is not available)
 - **Method**: `openTab(tab)` with `entityBaseUrl` set
 
 #### Form View (Non-default view)
+
 - **Action**: Open a new tab and insert entity name into Tab History (loading while tab name is not available), then insert the view name in Tab History
 - **Method**: `openTab(tab)` with `entityBaseUrl`, then `replaceCurrentTabSubView(url, viewTab)` with view title from route `data['title']`
 
@@ -170,20 +183,20 @@ The system provides three distinct navigation modes:
 
 ### TabService Methods Reference
 
-| Method | Used By | Behavior |
-|--------|---------|----------|
-| `openTab(tab)` | TabsComponent, sidebar menu | Opens new tab or focuses existing (exact URL match, then entity match) |
-| `navigateCurrentTab(tab)` | ButtonOpen, ButtonNew, ButtonSave | Pushes entry onto current tab's stack (checks entity match in other tabs first) |
-| `navigateCurrentTabBack(tab)` | Breadcrumbs, internal | Pops stack back to the specified entry |
-| `replaceCurrentTabSubView(baseUrl, tab?)` | ButtonViews, TabsComponent | Replaces sub-view entries after the anchor; propagates `entityBaseUrl` from anchor |
-| `navigateBackOrCloseActiveTab()` | ButtonSave (Save & Close) | Goes back one step in history; closes tab if last entry |
-| `redirectCurrentTab(url)` | ButtonSave (default save) | Updates current entry's URL and `entityBaseUrl` in-place |
-| `activateTab(tab)` | Tab click | Switches focus to another tab |
-| `closeTab(index)` | Tab close button | Closes entire tab and clears cached components |
-| `closeActiveTab()` | AuthService (sign out) | Alias for `closeTab(activeTabIndex)` |
-| `closeAllTabs()` | AuthService (sign out) | Clears all tabs and cached handles |
-| `updateTabTitle(url, title)` | DefaultDetailsTabViewComponent | Updates title on all entries matching the URL |
-| `inheritTitleIfKnown(tab)` | Internal (navigateCurrentTab, openTab) | Copies resolved title from existing entry with same URL |
+| Method                                    | Used By                                | Behavior                                                                           |
+| ----------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------- |
+| `openTab(tab)`                            | TabsComponent, sidebar menu            | Opens new tab or focuses existing (exact URL match, then entity match)             |
+| `navigateCurrentTab(tab)`                 | ButtonOpen, ButtonNew, ButtonSave      | Pushes entry onto current tab's stack (checks entity match in other tabs first)    |
+| `navigateCurrentTabBack(tab)`             | Breadcrumbs, internal                  | Pops stack back to the specified entry                                             |
+| `replaceCurrentTabSubView(baseUrl, tab?)` | ButtonViews, TabsComponent             | Replaces sub-view entries after the anchor; propagates `entityBaseUrl` from anchor |
+| `navigateBackOrCloseActiveTab()`          | ButtonSave (Save & Close)              | Goes back one step in history; closes tab if last entry                            |
+| `redirectCurrentTab(url)`                 | ButtonSave (default save)              | Updates current entry's URL and `entityBaseUrl` in-place                           |
+| `activateTab(tab)`                        | Tab click                              | Switches focus to another tab                                                      |
+| `closeTab(index)`                         | Tab close button                       | Closes entire tab and clears cached components                                     |
+| `closeActiveTab()`                        | AuthService (sign out)                 | Alias for `closeTab(activeTabIndex)`                                               |
+| `closeAllTabs()`                          | AuthService (sign out)                 | Clears all tabs and cached handles                                                 |
+| `updateTabTitle(url, title)`              | DefaultDetailsTabViewComponent         | Updates title on all entries matching the URL                                      |
+| `inheritTitleIfKnown(tab)`                | Internal (navigateCurrentTab, openTab) | Copies resolved title from existing entry with same URL                            |
 
 ### Component Caching (CustomReuseStrategy)
 
@@ -230,6 +243,7 @@ Extends `TabViewList` with `DataProviderService` integration. Binds `parentEntit
 Base for **form/detail views**. Injects `FormBuilder`, `FormService`, and `DataProviderService`. On init: calls the abstract `formSetup()` method, subscribes to the model observable, and auto-enters edit mode for new entities.
 
 Subclasses must implement:
+
 ```typescript
 protected abstract formSetup(): FormGroup;
 ```
@@ -267,6 +281,7 @@ Wrapper for **list views**. Subscribes to `TabViewService` for ribbon template u
 Wrapper for **detail/form views**. Provides `DataProviderService` via factory from route data. Subscribes to model changes and calls `tabService.updateTabTitle()` to update the tab title dynamically. Also subscribes to `DataProviderService.getError$()` and displays an `ErrorModalComponent` when the backend returns an error (e.g., 404 for invalid entity IDs). Used in route config with `FrameworkViewType.Details`.
 
 Route configuration pattern:
+
 ```typescript
 {
   path: ':id',
@@ -295,18 +310,18 @@ Renders the current tab's history stack as clickable breadcrumbs. Clicking a bre
 
 All buttons extend `BaseButton` which provides access control (via `AuthService`), loading state animation, and `RibbonGroupChild` registration.
 
-| Component | Selector | Purpose |
-|-----------|----------|---------|
-| `ButtonComponent` | `framework-button` | Generic customizable ribbon button |
-| `ButtonConfirmComponent` | `framework-button-confirm` | Button with confirmation modal |
-| `ButtonDeleteComponent` | `framework-button-delete` | Delete with confirmation; refreshes grid on success |
-| `ButtonEditComponent` | `framework-button-edit` | Toggle form edit mode |
-| `ButtonFiltersComponent` | `framework-button-filters` | Open filter modal for grid |
-| `ButtonNewComponent` | `framework-button-new` | Navigate to `/new` entity URL |
-| `ButtonOpenRecordComponent` | `framework-button-open-record` | Navigate to selected grid row's detail view |
-| `ButtonRefreshComponent` | `framework-button-refresh` | Refresh grid data |
-| `ButtonSaveComponent` | `framework-button-save` | Save with dropdown: Save, Save & Close, Save & New |
-| `ButtonViewsComponent` | `framework-button-views` | View switcher (Details, History, etc.) |
+| Component                   | Selector                       | Purpose                                             |
+| --------------------------- | ------------------------------ | --------------------------------------------------- |
+| `ButtonComponent`           | `framework-button`             | Generic customizable ribbon button                  |
+| `ButtonConfirmComponent`    | `framework-button-confirm`     | Button with confirmation modal                      |
+| `ButtonDeleteComponent`     | `framework-button-delete`      | Delete with confirmation; refreshes grid on success |
+| `ButtonEditComponent`       | `framework-button-edit`        | Toggle form edit mode                               |
+| `ButtonFiltersComponent`    | `framework-button-filters`     | Open filter modal for grid                          |
+| `ButtonNewComponent`        | `framework-button-new`         | Navigate to `/new` entity URL                       |
+| `ButtonOpenRecordComponent` | `framework-button-open-record` | Navigate to selected grid row's detail view         |
+| `ButtonRefreshComponent`    | `framework-button-refresh`     | Refresh grid data                                   |
+| `ButtonSaveComponent`       | `framework-button-save`        | Save with dropdown: Save, Save & Close, Save & New  |
+| `ButtonViewsComponent`      | `framework-button-views`       | View switcher (Details, History, etc.)              |
 
 ### ButtonSaveComponent Details
 
@@ -343,6 +358,7 @@ Angular `RouteReuseStrategy` implementation. Caches detached component handles k
 ### RouteHelper
 
 Static utility for Angular route tree traversal:
+
 - `getRouteByData(snapshot, key, value)` — find route with matching data property
 - `getRouteWithComponent(snapshot, component)` — find route with matching component
 - `getRouteURL(route, rootLevel?)` — build full URL string from route snapshot
@@ -360,6 +376,7 @@ Tab data model. See [Data Model](#data-model) above.
 ### FrameworkViewType
 
 Enum used in route `data` to identify view types:
+
 - `FrameworkViewType.List` — list/grid view (no data provider)
 - `FrameworkViewType.Details` — detail/form view (with data provider)
 
@@ -425,6 +442,7 @@ All backend calls must handle errors — never assume success. There are three c
 ### Data Loading (DataProviderService)
 
 `DataProviderService.refreshModel()` catches HTTP errors from `loadModel()` and:
+
 - Emits `null` to the model cache (stopping loading spinners in FormView and other consumers)
 - Emits the `HttpErrorResponse` via `getError$()` for consumers to react
 
@@ -435,6 +453,7 @@ All backend calls must handle errors — never assume success. There are three c
 ### Actions (Buttons)
 
 Button components (e.g., `ButtonSaveComponent`, `ButtonDeleteComponent`) handle errors in their subscribe callbacks:
+
 - **400**: Apply validation errors to the form
 - **Other**: Show `ErrorModalComponent` with the error message
 

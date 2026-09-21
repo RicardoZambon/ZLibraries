@@ -22,17 +22,17 @@ describe(DefaultDetailsTabViewComponent.name, () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [ DefaultDetailsTabViewComponent, TranslateModule.forRoot() ],
+      imports: [DefaultDetailsTabViewComponent, TranslateModule.forRoot()],
       providers: [
         { provide: ActivatedRoute, useValue: activatedRouteStub },
         { provide: AuthService, useValue: authServiceStub },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
   });
 
   it('should create', () => {
-    const fixture: ComponentFixture<DefaultDetailsTabViewComponent> = TestBed.createComponent(DefaultDetailsTabViewComponent);
+    const fixture: ComponentFixture<DefaultDetailsTabViewComponent> =
+      TestBed.createComponent(DefaultDetailsTabViewComponent);
     const component: DefaultDetailsTabViewComponent = fixture.componentInstance;
 
     expect(component).toBeTruthy();

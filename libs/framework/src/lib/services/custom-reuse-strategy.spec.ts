@@ -13,20 +13,24 @@ describe('CustomReuseStrategy', () => {
    * and every component in the same chunk reports the very same one.
    */
   function minifiedComponent(): Type<unknown> {
-    return <Type<unknown>><unknown>(() => {
-      class i { }
+    return <Type<unknown>>(<unknown>(() => {
+      class i {}
       return i;
-    })();
+    })());
   }
 
-  function createRouteSnapshot(segments: string[], component: Type<unknown> | null, parent?: ActivatedRouteSnapshot): ActivatedRouteSnapshot {
-    return <ActivatedRouteSnapshot><unknown>{
+  function createRouteSnapshot(
+    segments: string[],
+    component: Type<unknown> | null,
+    parent?: ActivatedRouteSnapshot
+  ): ActivatedRouteSnapshot {
+    return <ActivatedRouteSnapshot>(<unknown>{
       component,
       data: {},
       firstChild: null,
       parent: parent ?? null,
       url: segments.map((segment: string) => new UrlSegment(segment, {})),
-    };
+    });
   }
 
   // Two distinct classes that report the same name, which is what a minified build produces. The
@@ -35,7 +39,7 @@ describe('CustomReuseStrategy', () => {
   const listComponent: Type<unknown> = minifiedComponent();
 
   /** The route chain of a list screen: two empty-path routes under /integrations/<area>. */
-  function createListScreenRoutes(area: string): { list: ActivatedRouteSnapshot, tabView: ActivatedRouteSnapshot } {
+  function createListScreenRoutes(area: string): { list: ActivatedRouteSnapshot; tabView: ActivatedRouteSnapshot } {
     const integrations: ActivatedRouteSnapshot = createRouteSnapshot(['integrations'], null);
     const screen: ActivatedRouteSnapshot = createRouteSnapshot([area], null, integrations);
     const tabView: ActivatedRouteSnapshot = createRouteSnapshot([], tabViewComponent, screen);
@@ -52,7 +56,7 @@ describe('CustomReuseStrategy', () => {
     jest.spyOn(TestBed.inject(ApplicationRef), 'tick').mockImplementation(() => undefined);
 
     strategy = TestBed.runInInjectionContext(() => new CustomReuseStrategy());
-    strategy.tabService = <TabService><unknown>{ isUrlOpen: (): boolean => true };
+    strategy.tabService = <TabService>(<unknown>{ isUrlOpen: (): boolean => true });
   });
 
   afterEach(() => jest.restoreAllMocks());
@@ -66,8 +70,8 @@ describe('CustomReuseStrategy', () => {
       // contributes no segment. Anything keyed on the name alone collapses them into one entry.
       expect(tabView.component?.name).toBe(list.component?.name);
 
-      const tabViewHandle: DetachedRouteHandle = <DetachedRouteHandle><unknown>{ view: 'tabView' };
-      const listHandle: DetachedRouteHandle = <DetachedRouteHandle><unknown>{ view: 'list' };
+      const tabViewHandle: DetachedRouteHandle = <DetachedRouteHandle>(<unknown>{ view: 'tabView' });
+      const listHandle: DetachedRouteHandle = <DetachedRouteHandle>(<unknown>{ view: 'list' });
 
       strategy.store(tabView, tabViewHandle);
       strategy.store(list, listHandle);
@@ -115,12 +119,13 @@ describe('CustomReuseStrategy', () => {
 
   describe('clearHandle', () => {
     it('drops every level of the screen it names, and nothing of another screen', () => {
-      const syncQueue: { list: ActivatedRouteSnapshot, tabView: ActivatedRouteSnapshot } = createListScreenRoutes('sync-queue');
+      const syncQueue: { list: ActivatedRouteSnapshot; tabView: ActivatedRouteSnapshot } =
+        createListScreenRoutes('sync-queue');
       const adpImport: { list: ActivatedRouteSnapshot } = createListScreenRoutes('adp-import');
 
-      strategy.store(syncQueue.tabView, <DetachedRouteHandle><unknown>{ view: 'syncQueue.tabView' });
-      strategy.store(syncQueue.list, <DetachedRouteHandle><unknown>{ view: 'syncQueue.list' });
-      const adpHandle: DetachedRouteHandle = <DetachedRouteHandle><unknown>{ view: 'adpImport.list' };
+      strategy.store(syncQueue.tabView, <DetachedRouteHandle>(<unknown>{ view: 'syncQueue.tabView' }));
+      strategy.store(syncQueue.list, <DetachedRouteHandle>(<unknown>{ view: 'syncQueue.list' }));
+      const adpHandle: DetachedRouteHandle = <DetachedRouteHandle>(<unknown>{ view: 'adpImport.list' });
       strategy.store(adpImport.list, adpHandle);
 
       strategy.clearHandle('/integrations/sync-queue');
@@ -134,7 +139,7 @@ describe('CustomReuseStrategy', () => {
       const { list } = createListScreenRoutes('sync-queue');
       const ngOnDestroy: jest.Mock = jest.fn();
 
-      strategy.store(list, <DetachedRouteHandle><unknown>{ componentRef: { instance: { ngOnDestroy } } });
+      strategy.store(list, <DetachedRouteHandle>(<unknown>{ componentRef: { instance: { ngOnDestroy } } }));
       strategy.clearHandle('/integrations/sync-queue');
 
       expect(ngOnDestroy).toHaveBeenCalledTimes(1);

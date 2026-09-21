@@ -9,7 +9,9 @@ import { GridDataset } from './grid.dataset';
 @Injectable()
 export abstract class DataGridDataset extends GridDataset {
   //#region ViewChilds, Inputs, Outputs
-  public selectedRowsChanged: EventEmitter<{ [id: string]: { rowData: any; selected: boolean }}> = new EventEmitter<{ [id: string]: { rowData: any; selected: boolean }}>();
+  public selectedRowsChanged: EventEmitter<{ [id: string]: { rowData: any; selected: boolean } }> = new EventEmitter<{
+    [id: string]: { rowData: any; selected: boolean };
+  }>();
   //#endregion
 
   //#region Variables
@@ -38,10 +40,10 @@ export abstract class DataGridDataset extends GridDataset {
 
   //#region Constructor and Angular life cycle methods
   constructor() {
-      super();
+    super();
 
-      this.configs = JSON.parse(JSON.stringify(this.configsProvider.configs));
-    }
+    this.configs = JSON.parse(JSON.stringify(this.configsProvider.configs));
+  }
   //#endregion
 
   //#region Event handlers
@@ -57,13 +59,15 @@ export abstract class DataGridDataset extends GridDataset {
 
     this.selectedRowKeys = [];
     this.clearFocusedRow();
-    this.selectedRowsChanged.emit(selectedKeys.reduce((keys: { [id: string]: { rowData: any; selected: boolean } }, key: string) => {
-      keys[key] = {
-        rowData: this.getRowData(key),
-        selected: false
-      };
-      return keys;
-    }, {}));
+    this.selectedRowsChanged.emit(
+      selectedKeys.reduce((keys: { [id: string]: { rowData: any; selected: boolean } }, key: string) => {
+        keys[key] = {
+          rowData: this.getRowData(key),
+          selected: false,
+        };
+        return keys;
+      }, {})
+    );
   }
 
   public export(_format: string, _parameters: IListParameters): Observable<HttpResponse<Blob>> {
@@ -81,7 +85,7 @@ export abstract class DataGridDataset extends GridDataset {
       [key]: {
         rowData: this.getRowData(key),
         selected: false,
-      }
+      },
     });
   }
 
@@ -90,8 +94,7 @@ export abstract class DataGridDataset extends GridDataset {
       return;
     }
 
-    const index: number = this.loadedKeys!.map((key: string) => this.getRowID(key))
-      .indexOf(id);
+    const index: number = this.loadedKeys!.map((key: string) => this.getRowID(key)).indexOf(id);
 
     const key: string = this.loadedKeys![index];
     this.deselectRow(key);
@@ -102,7 +105,8 @@ export abstract class DataGridDataset extends GridDataset {
       return [];
     }
 
-    return this.selectedRowKeys.map((key: string) => this.loadedKeys!.indexOf(key))
+    return this.selectedRowKeys
+      .map((key: string) => this.loadedKeys!.indexOf(key))
       .filter((index: number) => index >= 0)
       .map((index: number) => this.loadedRows![index]);
   }
@@ -124,7 +128,8 @@ export abstract class DataGridDataset extends GridDataset {
     }
 
     if (this.hasSelectedRows) {
-      keys.filter((key: string) => this.isKeySelected(key))
+      keys
+        .filter((key: string) => this.isKeySelected(key))
         .forEach((key: string) => {
           this.removeSelectedRow(key);
         });
@@ -138,7 +143,7 @@ export abstract class DataGridDataset extends GridDataset {
       return;
     }
 
-    if (!this.configs.multiSelect){
+    if (!this.configs.multiSelect) {
       if (this.isKeySelected(key)) {
         return;
       }
@@ -152,7 +157,7 @@ export abstract class DataGridDataset extends GridDataset {
         [key]: {
           rowData: this.getRowData(key),
           selected: true,
-        }
+        },
       });
     }
   }
@@ -164,7 +169,7 @@ export abstract class DataGridDataset extends GridDataset {
 
     if (this.hasRowWithID(id)) {
       const rowIndex: number = this.loadedRows!.findIndex((row: any) => row[this.compareProperty] === id);
-      
+
       if (rowIndex < 0) {
         return;
       }
@@ -183,16 +188,18 @@ export abstract class DataGridDataset extends GridDataset {
 
     // Filter only the keys that are not selected yet.
     const keysNotSelected: string[] = keys.filter((key: string) => !this.isKeySelected(key));
-    
+
     if (keysNotSelected.length > 0) {
       this.selectedRowKeys.push(...keysNotSelected);
-      this.selectedRowsChanged.emit(keys.reduce((keys: { [id: string]: { rowData: any; selected: boolean } }, key: string) => {
-        keys[key] = {
-          rowData: this.getRowData(key),
-          selected: true,
-        };
-        return keys;
-      }, {}));
+      this.selectedRowsChanged.emit(
+        keys.reduce((keys: { [id: string]: { rowData: any; selected: boolean } }, key: string) => {
+          keys[key] = {
+            rowData: this.getRowData(key),
+            selected: true,
+          };
+          return keys;
+        }, {})
+      );
     }
   }
 

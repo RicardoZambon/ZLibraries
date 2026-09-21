@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Requires `@zambon-dev/library` 2.x.** The peer range moved from `^1.6.0` to `^2.0.0`. See the
 library changelog for the `FormInputComponent` output renames; if your application binds those
 outputs directly, apply that migration too.
+
 ## [1.4.1] - 2026-09-19
 
 ### Fixed
@@ -184,7 +185,7 @@ check, and one optional cleanup:
   does) rather than relying on `position: absolute`.
 - If you relied on `framework-button-export`'s first click opening the format menu rather than
   exporting, set `[defaultOption]="-1"` to restore that behaviour.
-- *Optional cleanup:* components extending `TabViewList` can now delete their
+- _Optional cleanup:_ components extending `TabViewList` can now delete their
   `:host { display: flex; flex-grow: 1; overflow: hidden }` / `lib-data-grid { flex-grow: 1 }`
   stylesheets — `DefaultTabViewComponent` styles the inherited `framework-view-list` host class.
 

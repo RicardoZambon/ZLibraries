@@ -1,21 +1,21 @@
 const isValidation = process.env.SEMANTIC_RELEASE_VALIDATION === 'true';
 
 const plugins = [
-    [
-      '@semantic-release/commit-analyzer',
-      {
-        releaseRules: [
-          { scope: 'no-release', release: false },
-          { type: 'bug', release: 'patch' },
-          { type: 'fix', release: 'patch' },
-          { type: 'refactor', release: 'patch' },
-          { type: 'feat', release: 'minor' },
-          { type: 'breaking-changes', release: 'major' },
-          { breaking: true, release: 'major' },
-        ],
-      },
-    ],
-    '@semantic-release/release-notes-generator',
+  [
+    '@semantic-release/commit-analyzer',
+    {
+      releaseRules: [
+        { scope: 'no-release', release: false },
+        { type: 'bug', release: 'patch' },
+        { type: 'fix', release: 'patch' },
+        { type: 'refactor', release: 'patch' },
+        { type: 'feat', release: 'minor' },
+        { type: 'breaking-changes', release: 'major' },
+        { breaking: true, release: 'major' },
+      ],
+    },
+  ],
+  '@semantic-release/release-notes-generator',
 ];
 
 if (!isValidation) {
@@ -32,7 +32,7 @@ if (!isValidation) {
       {
         pkgRoot: '../../dist/libs/shared',
       },
-    ],
+    ]
   );
 }
 

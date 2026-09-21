@@ -11,17 +11,11 @@ import { SidebarItemComponent } from '../sidebar-item/sidebar-item.component';
   selector: 'lib-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [
-    CommonModule,
-    NgFor,
-    NgIf,
-    SidebarItemComponent,
-    TranslatePipe,
-  ],
+  imports: [CommonModule, NgFor, NgIf, SidebarItemComponent, TranslatePipe],
   host: {
     '[class.active]': 'isActive',
     '[class.expanded]': '!isCollapsed',
-  }
+  },
 })
 export class SidebarComponent extends BaseComponent implements AfterViewInit, OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -47,12 +41,12 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   @HostListener('document:keydown.escape', ['$event'])
   private onDocumentKeyDown(event: KeyboardEvent): void {
     event = event || window.event;
-    
+
     let isEscapeKey = false;
     if ('key' in event) {
-      isEscapeKey = (event.key === 'Escape' || event.key === 'Esc')
+      isEscapeKey = event.key === 'Escape' || event.key === 'Esc';
     } else {
-      isEscapeKey = ((<KeyboardEvent>event).keyCode === 27)
+      isEscapeKey = (<KeyboardEvent>event).keyCode === 27;
     }
 
     if (isEscapeKey) {
@@ -92,7 +86,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
     return this.menus.length === 0;
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   constructor() {
     super();
@@ -107,17 +101,18 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
       .pipe(takeUntil(this.destroy$))
       .subscribe((_menu: SidebarMenu) => this.deactivate());
 
-    this.sidebarService.loadRoot()
+    this.sidebarService
+      .loadRoot()
       .pipe(
         take(1),
-        switchMap((menus: SidebarMenu[]) => this.loadAreaChildren(menus)),
+        switchMap((menus: SidebarMenu[]) => this.loadAreaChildren(menus))
       )
       .subscribe({
         next: (menus: SidebarMenu[]) => {
           this.menus = menus;
           this.regions = this.groupIntoRegions(menus);
         },
-        error: () => this.hasFailed = true
+        error: () => (this.hasFailed = true),
       });
   }
   //#endregion
@@ -218,8 +213,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
       return of(menus);
     }
 
-    return forkJoin(areas.map((area: SidebarMenu) => this.sidebarService.loadChildrenFor(area)))
-      .pipe(map(() => menus));
+    return forkJoin(areas.map((area: SidebarMenu) => this.sidebarService.loadChildrenFor(area))).pipe(map(() => menus));
   }
 
   private deactivate(): void {
@@ -231,8 +225,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
 
   private updateShouldActivate(): void {
     this.sidebarService.shouldActivate =
-      (window.innerWidth <= 767 && !this.sidebarService.isCollapsed)
-      || this.sidebarService.isCollapsed;
+      (window.innerWidth <= 767 && !this.sidebarService.isCollapsed) || this.sidebarService.isCollapsed;
   }
   //#endregion
 }

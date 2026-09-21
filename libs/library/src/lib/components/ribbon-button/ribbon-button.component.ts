@@ -11,12 +11,7 @@ import { IRibbonButtonOption } from '../../models/ribbon-button-option';
     '[class.show]': 'showDropdown',
   },
   styleUrls: ['./ribbon-button.component.scss'],
-  imports: [
-    NgClass,
-    NgFor,
-    NgIf,
-    TranslatePipe,
-  ]
+  imports: [NgClass, NgFor, NgIf, TranslatePipe],
 })
 export class RibbonButtonComponent {
   //#region ViewChilds, Inputs, Outputs
@@ -42,11 +37,9 @@ export class RibbonButtonComponent {
       const button: HTMLElement | null | undefined = target.closest('.button-container')?.parentElement;
 
       this.clickedOutside =
-        event.button === 0
-        && !target.closest('.options-dropdown')
-        && (
-          !button || (!button?.classList.contains('dropdown') && !button?.classList.contains('open'))
-        );
+        event.button === 0 &&
+        !target.closest('.options-dropdown') &&
+        (!button || (!button?.classList.contains('dropdown') && !button?.classList.contains('open')));
     }
   }
 
@@ -60,12 +53,12 @@ export class RibbonButtonComponent {
   @HostListener('document:keydown.escape', ['$event'])
   private documentKeyDown(event: KeyboardEvent): void {
     event = event || window.event;
-    
+
     let isEscape = false;
     if ('key' in event) {
-      isEscape = (event.key === 'Escape' || event.key === 'Esc');
+      isEscape = event.key === 'Escape' || event.key === 'Esc';
     } else {
-      isEscape = ((<KeyboardEvent>event).keyCode === 27);
+      isEscape = (<KeyboardEvent>event).keyCode === 27;
     }
 
     if (this.showDropdown && isEscape) {
@@ -96,10 +89,14 @@ export class RibbonButtonComponent {
   }
 
   protected get isButtonDisabled(): boolean {
-    return this.disabled || this.loading || (this.options.length > 0 && !this.options.some((option: IRibbonButtonOption) => this.isOptionVisible(option)));
+    return (
+      this.disabled ||
+      this.loading ||
+      (this.options.length > 0 && !this.options.some((option: IRibbonButtonOption) => this.isOptionVisible(option)))
+    );
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   //#endregion
 
@@ -146,7 +143,13 @@ export class RibbonButtonComponent {
   }
 
   protected isOptionVisible(option: IRibbonButtonOption): boolean {
-    return (option.isVisible ?? true) && (option.allowedActions === undefined || option.allowedActions.length === 0 || option.isAccessAllowed === true || (option.isAccessAllowed == undefined && option.allowedActions?.length > 0));
+    return (
+      (option.isVisible ?? true) &&
+      (option.allowedActions === undefined ||
+        option.allowedActions.length === 0 ||
+        option.isAccessAllowed === true ||
+        (option.isAccessAllowed == undefined && option.allowedActions?.length > 0))
+    );
   }
   //#endregion
 

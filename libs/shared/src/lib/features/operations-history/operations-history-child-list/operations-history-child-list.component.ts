@@ -9,11 +9,8 @@ import { OperationsHistoryModalComponent } from '../operations-history-modal/ope
   selector: 'shared-operations-history-child-list',
   templateUrl: './operations-history-child-list.component.html',
   styleUrls: ['./operations-history-child-list.component.scss'],
-  imports: [
-    DataGridComponent,
-    OperationsHistoryModalComponent,
-  ],
-  providers: [{ provide: DataGridDataset, useClass: OperationsHistoryDataset }]
+  imports: [DataGridComponent, OperationsHistoryModalComponent],
+  providers: [{ provide: DataGridDataset, useClass: OperationsHistoryDataset }],
 })
 export class OperationsHistoryChildListComponent extends ChildList<any> implements AfterViewInit {
   //#region ViewChilds, Inputs, Outputs
@@ -57,7 +54,7 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
 
     if (this.dataGridDataset.hasSelectedRows) {
       const key: string = this.dataGridDataset.selectedRowKeys[0];
-      
+
       const data: IOperationsHistoryList = this.dataGridDataset.getRowData(key);
       this.selectedOldValues = JSON.parse(data.oldValues?.trim() ?? '');
       this.selectedNewValues = JSON.parse(data.newValues?.trim() ?? '');

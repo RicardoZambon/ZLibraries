@@ -47,8 +47,10 @@ export function toSidebarMenuOpenMode(value: unknown): SidebarMenuOpenMode {
   if (typeof value === 'string') {
     const normalized: string = value.toLowerCase();
 
-    return ORDINAL_MODES.find((mode: SidebarMenuOpenMode) => mode.toLowerCase() === normalized)
-      ?? SidebarMenuOpenMode.Internal;
+    return (
+      ORDINAL_MODES.find((mode: SidebarMenuOpenMode) => mode.toLowerCase() === normalized) ??
+      SidebarMenuOpenMode.Internal
+    );
   }
 
   return SidebarMenuOpenMode.Internal;

@@ -11,13 +11,7 @@ import { LanguageSelectorComponent } from '../language-selector/language-selecto
   selector: 'shared-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [
-    LanguageSelectorComponent,
-    NgIf,
-    ReactiveFormsModule,
-    RouterModule,
-    TranslatePipe,
-  ]
+  imports: [LanguageSelectorComponent, NgIf, ReactiveFormsModule, RouterModule, TranslatePipe],
 })
 export class LoginComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -27,13 +21,13 @@ export class LoginComponent implements OnInit {
   //#region Variables
   protected form!: FormGroup;
   protected formState: {
-    error: string | null,
-    loading: boolean,
-    success: boolean,
+    error: string | null;
+    loading: boolean;
+    success: boolean;
   } = {
     error: null,
     loading: false,
-    success: false
+    success: false,
   };
 
   private authenticationService: AuthenticationService = inject(AuthenticationService);
@@ -61,45 +55,46 @@ export class LoginComponent implements OnInit {
 
     if (this.form.valid) {
       this.form.disable();
-      
+
       this.formState.loading = true;
       this.formState.error = null;
 
-      this.authenticationService.authenticate({
-        username: this.form.get('username')?.value.toString() ?? '',
-        password: this.form.get('password')?.value.toString() ?? '',
-        rememberMe: this.form.get('rememberMe')?.value ?? false
-      })
-      .pipe(
-        tap(() => { 
-          this.formState.success = true
-        }),
-        finalize(() => this.formState.loading = false)
-      )
-      .subscribe({
-        next: () => {
-          const params: URLSearchParams = new URLSearchParams(window.location.search);
-          
-          this.router.navigate([params.get('returnUrl') ?? '/']);
-        },
-        error: (e: string) => {
-          this.form.enable();
+      this.authenticationService
+        .authenticate({
+          username: this.form.get('username')?.value.toString() ?? '',
+          password: this.form.get('password')?.value.toString() ?? '',
+          rememberMe: this.form.get('rememberMe')?.value ?? false,
+        })
+        .pipe(
+          tap(() => {
+            this.formState.success = true;
+          }),
+          finalize(() => (this.formState.loading = false))
+        )
+        .subscribe({
+          next: () => {
+            const params: URLSearchParams = new URLSearchParams(window.location.search);
 
-          this.form.controls['password'].setValue('');
-          this.form.controls['password'].markAsUntouched();
-          
-          this.username.nativeElement.focus();
+            this.router.navigate([params.get('returnUrl') ?? '/']);
+          },
+          error: (e: string) => {
+            this.form.enable();
 
-          switch(e) {
-            case 'InvalidUsernamePassword':
-              this.formState.error = 'invalid';
-              break;
-            default:
-              this.formState.error = 'internalServerError';
-              break;
-          }
-        }
-      });
+            this.form.controls['password'].setValue('');
+            this.form.controls['password'].markAsUntouched();
+
+            this.username.nativeElement.focus();
+
+            switch (e) {
+              case 'InvalidUsernamePassword':
+                this.formState.error = 'invalid';
+                break;
+              default:
+                this.formState.error = 'internalServerError';
+                break;
+            }
+          },
+        });
     }
   }
   //#endregion

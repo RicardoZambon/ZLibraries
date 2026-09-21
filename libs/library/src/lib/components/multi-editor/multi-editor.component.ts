@@ -15,15 +15,9 @@ import { ModalComponent } from '../modal/modal.component';
   selector: 'lib-multi-editor',
   templateUrl: './multi-editor.component.html',
   styleUrls: ['./multi-editor.component.scss'],
-  imports: [
-    DataGridComponent,
-    ModalComponent,
-    NgIf,
-    FormGroupComponent,
-    TranslatePipe,
-  ]
+  imports: [DataGridComponent, ModalComponent, NgIf, FormGroupComponent, TranslatePipe],
 })
-export class MultiEditorComponent extends ModalComponent implements OnInit {  
+export class MultiEditorComponent extends ModalComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ModalComponent) private modal!: ModalComponent;
 
@@ -60,50 +54,48 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.dataGridDataset.loadFinished
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.multiEditorDataset.clearChangedValues();
+    this.dataGridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.multiEditorDataset.clearChangedValues();
 
-        this.gridLoading = false;
-        this.selectedKey = undefined;
-        this.selectedValue = undefined;
-      });
+      this.gridLoading = false;
+      this.selectedKey = undefined;
+      this.selectedValue = undefined;
+    });
 
-    this.dataGridDataset.selectedRowsChanged
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        if (this.gridLoading || !this.dataGridDataset.hasLoadedRows || !this.dataGridDataset.hasSelectedRows) {
-          return;
-        }
+    this.dataGridDataset.selectedRowsChanged.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.gridLoading || !this.dataGridDataset.hasLoadedRows || !this.dataGridDataset.hasSelectedRows) {
+        return;
+      }
 
-        if (this.formGroup.disabled) {
-          this.formGroup.enable();
-        }
-        
-        const selectedRowKey: string = this.dataGridDataset.selectedRowKeys[0];
-        if (!!this.selectedKey && this.formGroup.enabled && !this.formGroup.valid && this.selectedKey !== selectedRowKey) {
-          // If the form is invalid, need to stay in the same selected row.
-          this.dataGridDataset.selectRow(this.selectedKey);
-          this.formGroup.markAllAsTouched();
+      if (this.formGroup.disabled) {
+        this.formGroup.enable();
+      }
 
-        } else {
-          this.selectedKey = selectedRowKey;
-          this.selectedValue = this.dataGridDataset.getRowData(selectedRowKey);
-          this.formService.model = this.selectedValue;
+      const selectedRowKey: string = this.dataGridDataset.selectedRowKeys[0];
+      if (
+        !!this.selectedKey &&
+        this.formGroup.enabled &&
+        !this.formGroup.valid &&
+        this.selectedKey !== selectedRowKey
+      ) {
+        // If the form is invalid, need to stay in the same selected row.
+        this.dataGridDataset.selectRow(this.selectedKey);
+        this.formGroup.markAllAsTouched();
+      } else {
+        this.selectedKey = selectedRowKey;
+        this.selectedValue = this.dataGridDataset.getRowData(selectedRowKey);
+        this.formService.model = this.selectedValue;
 
-          this.formGroup.reset();
-          this.formGroup.patchValue(this.selectedValue);
-        }
-      });
+        this.formGroup.reset();
+        this.formGroup.patchValue(this.selectedValue);
+      }
+    });
 
-    this.formGroup.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((_: any) => {
-        if (this.selectedKey && this.formGroup.dirty) {
-          this.multiEditorDataset.updateValues(this.selectedKey, this.formGroup.getRawValue());
-        }
-      });
+    this.formGroup.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((_: any) => {
+      if (this.selectedKey && this.formGroup.dirty) {
+        this.multiEditorDataset.updateValues(this.selectedKey, this.formGroup.getRawValue());
+      }
+    });
 
     // Start with an empty form and, since there is no selected row, disable the form.
     this.formGroup.disable({ emitEvent: false });
@@ -165,7 +157,8 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
       this.modalProcessing = true;
       this.formGroup.disable();
 
-      this.multiEditorDataset.saveChanges()
+      this.multiEditorDataset
+        .saveChanges()
         .pipe(take(1))
         .subscribe({
           next: (_: any) => {
@@ -181,7 +174,7 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
 
               this.formService.setValidationErrorsFromHttpResponse(e);
             }
-          }
+          },
         });
     }
   }
@@ -198,7 +191,7 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
     if (this.modal.isShown) {
       this.gridLoading = true;
       this.dataGridDataset.refresh();
-      
+
       this.selectedKey = undefined;
       this.formGroup.reset({ emitEvent: false });
       this.clearAllFormArrays(this.formGroup);
@@ -214,7 +207,7 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
       if (control instanceof FormArray) {
         control.clear({ emitEvent: false });
       }
-      
+
       // Check for nested FormArrays.
       if (control instanceof FormGroup) {
         this.clearAllFormArrays(control);

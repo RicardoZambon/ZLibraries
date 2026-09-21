@@ -27,7 +27,7 @@ describe(ExternalContentComponent.name, () => {
   function build(): void {
     component = Object.create(ExternalContentComponent.prototype);
 
-    Object.assign(<Record<string, unknown>><unknown>component, {
+    Object.assign(<Record<string, unknown>>(<unknown>component), {
       activatedRoute: { snapshot: { paramMap: { get: () => menuID } } },
       configs,
       destroy$: new Subject<boolean>(),
@@ -209,7 +209,7 @@ describe(ExternalContentComponent.name, () => {
   it('cancels the hint as soon as the frame loads', () => {
     component.ngOnInit();
 
-    (<{ onFrameLoad(): void }><unknown>component).onFrameLoad();
+    (<{ onFrameLoad(): void }>(<unknown>component)).onFrameLoad();
     jest.advanceTimersByTime(configs.slowFrameHintDelay);
 
     expect(read('isSlow')).toBe(false);
@@ -219,14 +219,14 @@ describe(ExternalContentComponent.name, () => {
     const open: jest.SpyInstance = jest.spyOn(window, 'open').mockImplementation(() => null);
     component.ngOnInit();
 
-    (<{ onOpenInNewTab(): void }><unknown>component).onOpenInNewTab();
+    (<{ onOpenInNewTab(): void }>(<unknown>component)).onOpenInNewTab();
 
     expect(open).toHaveBeenCalledWith('https://reports/r?u=42', '_blank', 'noopener,noreferrer');
   });
 
   describe('loading feedback', () => {
     function reload(): void {
-      (<{ onReload(): void }><unknown>component).onReload();
+      (<{ onReload(): void }>(<unknown>component)).onReload();
     }
 
     it('reports the frame as loading as soon as it is mounted, so the ribbon button spins', () => {
@@ -238,14 +238,14 @@ describe(ExternalContentComponent.name, () => {
     it('stops reporting loading once the frame reports load', () => {
       component.ngOnInit();
 
-      (<{ onFrameLoad(): void }><unknown>component).onFrameLoad();
+      (<{ onFrameLoad(): void }>(<unknown>component)).onFrameLoad();
 
       expect(read('isFrameLoading')).toBe(false);
     });
 
     it('clears the frame immediately on reload, so the old content visibly goes away', () => {
       component.ngOnInit();
-      (<{ onFrameLoad(): void }><unknown>component).onFrameLoad();
+      (<{ onFrameLoad(): void }>(<unknown>component)).onFrameLoad();
       const mounted: unknown = read('frameUrl');
 
       reload();
@@ -256,7 +256,7 @@ describe(ExternalContentComponent.name, () => {
 
     it('rebuilds the frame only after yielding, so @if really destroys the element', () => {
       component.ngOnInit();
-      (<{ onFrameLoad(): void }><unknown>component).onFrameLoad();
+      (<{ onFrameLoad(): void }>(<unknown>component)).onFrameLoad();
       const mounted: unknown = read('frameUrl');
 
       reload();

@@ -19,20 +19,20 @@
 
 ## File map
 
-| File | Change |
-|------|--------|
-| `libs/shared/src/styles/variables.scss` | Add semantic sidebar surface/color tokens (live) |
-| `libs/library/src/styles/variables.scss` | Sync the same tokens (library reference default) |
-| `libs/library/src/styles/_variables.scss` | **Delete** (untracked, unused duplicate) |
-| `libs/library/src/lib/components/sidebar/sidebar.component.scss` | Route surfaces through tokens; footer action slot styles |
-| `libs/library/src/lib/components/sidebar/sidebar.component.html` | Add `[sidebar-action]` projection slot |
-| `libs/library/src/lib/components/sidebar-item/sidebar-item.component.scss` | Tokens; pill selection; `.flyout` rendering; flyout panel styles |
-| `libs/library/src/lib/components/sidebar-item/sidebar-item.component.ts` | `displayMode` input; CDK-overlay flyout logic |
-| `libs/library/src/lib/components/sidebar-item/sidebar-item.component.html` | Hover/keyboard hooks; flyout `ng-template` |
-| `libs/library/src/lib/components/sidebar-item/sidebar-item.component.spec.ts` | Real tests (harness + flyout + displayMode + pill) |
-| `libs/library/src/lib/components/sidebar/sidebar.component.spec.ts` | Real tests (harness + action slot) |
-| `libs/library/src/lib/stories/sidebar/sidebar.component.stories.ts` | Story exercising flyout / pill / action slot |
-| `libs/library/CHANGELOG.md` | `[Unreleased]` entries |
+| File                                                                          | Change                                                           |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `libs/shared/src/styles/variables.scss`                                       | Add semantic sidebar surface/color tokens (live)                 |
+| `libs/library/src/styles/variables.scss`                                      | Sync the same tokens (library reference default)                 |
+| `libs/library/src/styles/_variables.scss`                                     | **Delete** (untracked, unused duplicate)                         |
+| `libs/library/src/lib/components/sidebar/sidebar.component.scss`              | Route surfaces through tokens; footer action slot styles         |
+| `libs/library/src/lib/components/sidebar/sidebar.component.html`              | Add `[sidebar-action]` projection slot                           |
+| `libs/library/src/lib/components/sidebar-item/sidebar-item.component.scss`    | Tokens; pill selection; `.flyout` rendering; flyout panel styles |
+| `libs/library/src/lib/components/sidebar-item/sidebar-item.component.ts`      | `displayMode` input; CDK-overlay flyout logic                    |
+| `libs/library/src/lib/components/sidebar-item/sidebar-item.component.html`    | Hover/keyboard hooks; flyout `ng-template`                       |
+| `libs/library/src/lib/components/sidebar-item/sidebar-item.component.spec.ts` | Real tests (harness + flyout + displayMode + pill)               |
+| `libs/library/src/lib/components/sidebar/sidebar.component.spec.ts`           | Real tests (harness + action slot)                               |
+| `libs/library/src/lib/stories/sidebar/sidebar.component.stories.ts`           | Story exercising flyout / pill / action slot                     |
+| `libs/library/CHANGELOG.md`                                                   | `[Unreleased]` entries                                           |
 
 ## Commands reference
 
@@ -48,6 +48,7 @@ npx nx run storybook-host:storybook                  # manual visual check (Side
 ## Task 1: Design tokens (no visual change)
 
 **Files:**
+
 - Modify: `libs/shared/src/styles/variables.scss`
 - Modify: `libs/library/src/styles/variables.scss`
 - Delete: `libs/library/src/styles/_variables.scss`
@@ -60,29 +61,29 @@ In `libs/shared/src/styles/variables.scss`, replace the file contents with (keep
 
 ```scss
 :root {
-    /* Dimensions */
-    --sidebar-animation-duration: 600ms;
-    --sidebar-collapsed-width: 70px;
-    --sidebar-expanded-width: 220px;
-    --sidebar-icon-collapsed-margin: 10px;
-    --sidebar-item-height: 2.75rem;
-    --sidebar-logo-height: 50px;
-    --sidebar-picture-size: 50px;
+  /* Dimensions */
+  --sidebar-animation-duration: 600ms;
+  --sidebar-collapsed-width: 70px;
+  --sidebar-expanded-width: 220px;
+  --sidebar-icon-collapsed-margin: 10px;
+  --sidebar-item-height: 2.75rem;
+  --sidebar-logo-height: 50px;
+  --sidebar-picture-size: 50px;
 
-    /* Surfaces & colors (Phase 1 rework — brand-equivalent defaults) */
-    --sidebar-bg: theme('colors.primary.600');
-    --sidebar-nav-bg: color-mix(in srgb, theme('colors.primary.700') 80%, transparent);
-    --sidebar-text: theme('colors.gray.200');
-    --sidebar-text-muted: color-mix(in srgb, theme('colors.gray.300') 60%, transparent);
-    --sidebar-item-hover-bg: color-mix(in srgb, white 10%, transparent);
-    --sidebar-item-selected-bg: color-mix(in srgb, white 15%, transparent);
-    --sidebar-item-selected-text: theme('colors.white');
-    --sidebar-accent: theme('colors.gray.100');
-    --sidebar-flyout-bg: theme('colors.primary.700');
-    --sidebar-flyout-text: theme('colors.gray.100');
-    --sidebar-flyout-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.19);
-    --sidebar-item-radius: 8px;
-    --sidebar-flyout-radius: 10px;
+  /* Surfaces & colors (Phase 1 rework — brand-equivalent defaults) */
+  --sidebar-bg: theme('colors.primary.600');
+  --sidebar-nav-bg: color-mix(in srgb, theme('colors.primary.700') 80%, transparent);
+  --sidebar-text: theme('colors.gray.200');
+  --sidebar-text-muted: color-mix(in srgb, theme('colors.gray.300') 60%, transparent);
+  --sidebar-item-hover-bg: color-mix(in srgb, white 10%, transparent);
+  --sidebar-item-selected-bg: color-mix(in srgb, white 15%, transparent);
+  --sidebar-item-selected-text: theme('colors.white');
+  --sidebar-accent: theme('colors.gray.100');
+  --sidebar-flyout-bg: theme('colors.primary.700');
+  --sidebar-flyout-text: theme('colors.gray.100');
+  --sidebar-flyout-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.19);
+  --sidebar-item-radius: 8px;
+  --sidebar-flyout-radius: 10px;
 }
 ```
 
@@ -97,19 +98,23 @@ rm libs/library/src/styles/_variables.scss
 - [ ] **Step 3: Route sidebar surfaces through tokens**
 
 In `libs/library/src/lib/components/sidebar/sidebar.component.scss`:
+
 - Line ~25 `:host`: replace `@apply bg-primary-600;` with `background-color: var(--sidebar-bg);`
 - Line ~134 `ul, .loading`: change `@apply bg-primary-700/80 relative;` to:
   ```scss
-  ul, .loading {
-      @apply relative;
-      background-color: var(--sidebar-nav-bg);
+  ul,
+  .loading {
+    @apply relative;
+    background-color: var(--sidebar-nav-bg);
   }
   ```
 - Line ~137 `ul lib-sidebar-item, .loading, .error`: change `@apply font-medium text-gray-200;` to:
   ```scss
-  ul lib-sidebar-item, .loading, .error {
-      @apply font-medium;
-      color: var(--sidebar-text);
+  ul lib-sidebar-item,
+  .loading,
+  .error {
+    @apply font-medium;
+    color: var(--sidebar-text);
   }
   ```
 - Line ~76 `.sidebar-footer`: replace the `text-gray-300/60` utility with a token — change `@apply px-4 py-2 text-xs text-center text-gray-300/60 whitespace-nowrap overflow-hidden;` to:
@@ -119,9 +124,10 @@ In `libs/library/src/lib/components/sidebar/sidebar.component.scss`:
   ```
 
 In `libs/library/src/lib/components/sidebar-item/sidebar-item.component.scss`, the `> div` hover (line ~84): change `&:hover { @apply bg-white/10; }` to:
+
 ```scss
 &:hover {
-    background-color: var(--sidebar-item-hover-bg);
+  background-color: var(--sidebar-item-hover-bg);
 }
 ```
 
@@ -145,6 +151,7 @@ git commit -m "refactor(sidebar): introduce semantic surface tokens (no visual c
 ## Task 2: Test harness (make both sidebar specs green)
 
 **Files:**
+
 - Modify: `libs/library/src/lib/components/sidebar-item/sidebar-item.component.spec.ts`
 - Modify: `libs/library/src/lib/components/sidebar/sidebar.component.spec.ts`
 
@@ -283,6 +290,7 @@ git commit -m "test(sidebar): add mock providers so specs run (fix pre-existing 
 ## Task 3: Pill selection
 
 **Files:**
+
 - Modify: `libs/library/src/lib/components/sidebar-item/sidebar-item.component.scss`
 - Test: `libs/library/src/lib/components/sidebar-item/sidebar-item.component.spec.ts`
 
@@ -321,25 +329,25 @@ Remove the first-level left-bar block (the `&.first-level { &:before { ... } &.s
 
 ```scss
 li {
-    @apply relative h-full;
+  @apply relative h-full;
 
-    > div {
-        @apply relative overflow-hidden mx-2;
-        height: var(--sidebar-item-height);
-        line-height: var(--sidebar-item-height);
-        border-radius: var(--sidebar-item-radius);
+  > div {
+    @apply relative overflow-hidden mx-2;
+    height: var(--sidebar-item-height);
+    line-height: var(--sidebar-item-height);
+    border-radius: var(--sidebar-item-radius);
 
-        &:hover {
-            background-color: var(--sidebar-item-hover-bg);
-        }
-        /* ...existing &.parent:after, a, .loading rules unchanged... */
+    &:hover {
+      background-color: var(--sidebar-item-hover-bg);
     }
+    /* ...existing &.parent:after, a, .loading rules unchanged... */
+  }
 }
 
 :host(.first-level).selected > li > div,
 :host(.selected) > li > div {
-    background-color: var(--sidebar-item-selected-bg);
-    color: var(--sidebar-item-selected-text);
+  background-color: var(--sidebar-item-selected-bg);
+  color: var(--sidebar-item-selected-text);
 }
 ```
 
@@ -364,6 +372,7 @@ git commit -m "feat(sidebar): pill-style item selection replacing the left accen
 ## Task 4: `displayMode` input + `.flyout` expanded rendering
 
 **Files:**
+
 - Modify: `libs/library/src/lib/components/sidebar-item/sidebar-item.component.ts`
 - Modify: `libs/library/src/lib/components/sidebar-item/sidebar-item.component.scss`
 - Test: `libs/library/src/lib/components/sidebar-item/sidebar-item.component.spec.ts`
@@ -392,6 +401,7 @@ Expected: FAIL — `displayMode` does not exist / no `flyout` host class.
 - [ ] **Step 3: Add the input and host binding**
 
 In `sidebar-item.component.ts`:
+
 - Add the input near the other `@Input()`s:
   ```ts
   @Input() public displayMode: 'rail' | 'flyout' = 'rail';
@@ -408,9 +418,10 @@ In `sidebar-item.component.ts`:
   ```
 
 In `sidebar-item.component.scss`, make `.flyout` render like `.expanded` — add inside `:host`, next to `&.active { @include expanded; }`:
+
 ```scss
 &.flyout {
-    @include expanded;
+  @include expanded;
 }
 ```
 
@@ -431,6 +442,7 @@ git commit -m "feat(sidebar): add displayMode input for flyout-style item render
 ## Task 5: Collapsed-rail flyout (CDK overlay)
 
 **Files:**
+
 - Modify: `libs/library/src/lib/components/sidebar-item/sidebar-item.component.ts`
 - Modify: `libs/library/src/lib/components/sidebar-item/sidebar-item.component.html`
 - Modify: `libs/library/src/lib/components/sidebar-item/sidebar-item.component.scss`
@@ -513,17 +525,33 @@ Rewrite `sidebar-item.component.ts` imports and class to add overlay support. Ad
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 ```
+
 Extend the Angular imports on the existing line to include `HostListener`, `TemplateRef`, `ViewContainerRef`:
+
 ```ts
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, inject, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 ```
 
 Add the flyout `ViewChild` next to the existing `menuContainer`:
+
 ```ts
 @ViewChild('flyoutTemplate', { read: TemplateRef }) private flyoutTemplate!: TemplateRef<unknown>;
 ```
 
 Add fields in `//#region Variables`:
+
 ```ts
 protected isFlyoutOpen: boolean = false;
 
@@ -535,6 +563,7 @@ private flyoutCloseTimer?: ReturnType<typeof setTimeout>;
 ```
 
 Add a property in `//#region Properties`:
+
 ```ts
 protected get canFlyout(): boolean {
   return this.displayMode === 'rail' && this.isParent && this.isCollapsed && !this.isActive;
@@ -542,6 +571,7 @@ protected get canFlyout(): boolean {
 ```
 
 Replace `onSelectItem()` so a collapsed parent toggles the flyout instead of activating the rail:
+
 ```ts
 protected onSelectItem(): void {
   if (this.canFlyout) {
@@ -558,6 +588,7 @@ protected onSelectItem(): void {
 ```
 
 Add hover / keyboard handlers and overlay lifecycle in `//#region Event handlers` / `//#region Private methods`:
+
 ```ts
 protected onAnchorEnter(): void {
   if (!this.canFlyout) {
@@ -671,6 +702,7 @@ private focusFirstFlyoutItem(): void {
 ```
 
 Add an overridden `ngOnDestroy` in the lifecycle region:
+
 ```ts
 public override ngOnDestroy(): void {
   this.closeFlyout();
@@ -679,54 +711,54 @@ public override ngOnDestroy(): void {
 ```
 
 Close the flyout when a child navigates — in `ngOnInit`, add a subscription (place with the other subscriptions):
+
 ```ts
-this.sidebarService.menuUrlSelected
-  .pipe(takeUntil(this.destroy$))
-  .subscribe(() => this.closeFlyout());
+this.sidebarService.menuUrlSelected.pipe(takeUntil(this.destroy$)).subscribe(() => this.closeFlyout());
 ```
 
 - [ ] **Step 4: Add the flyout template + hover/keyboard hooks to the HTML**
 
 In `sidebar-item.component.html`, add hover + keyboard hooks to the row container `<div #menuContainer ...>` (append these bindings to the existing element):
+
 ```html
-(mouseenter)="onAnchorEnter()"
-(mouseleave)="onAnchorLeave()"
-(keydown)="onAnchorKeydown($event)"
+(mouseenter)="onAnchorEnter()" (mouseleave)="onAnchorLeave()" (keydown)="onAnchorKeydown($event)"
 ```
 
 Append the flyout template at the end of the file:
+
 ```html
 <ng-template #flyoutTemplate>
-    <div class="sidebar-flyout"
-    (mouseenter)="onFlyoutEnter()"
-    (mouseleave)="onFlyoutLeave()">
-        <div class="sidebar-flyout-header">{{ menu.label | translate }}</div>
-        <ul>
-            <lib-sidebar-item *ngFor="let child of menu.children; trackBy: trackByFn"
-            [menu]="child"
-            [level]="level + 1"
-            [displayMode]="'flyout'">
-            </lib-sidebar-item>
-        </ul>
-    </div>
+  <div class="sidebar-flyout" (mouseenter)="onFlyoutEnter()" (mouseleave)="onFlyoutLeave()">
+    <div class="sidebar-flyout-header">{{ menu.label | translate }}</div>
+    <ul>
+      <lib-sidebar-item
+        *ngFor="let child of menu.children; trackBy: trackByFn"
+        [menu]="child"
+        [level]="level + 1"
+        [displayMode]="'flyout'"
+      >
+      </lib-sidebar-item>
+    </ul>
+  </div>
 </ng-template>
 ```
 
 - [ ] **Step 5: Style the flyout panel**
 
 Append to `sidebar-item.component.scss`:
+
 ```scss
 .sidebar-flyout {
-    @apply overflow-hidden py-1;
-    min-width: var(--sidebar-expanded-width);
-    background-color: var(--sidebar-flyout-bg);
-    color: var(--sidebar-flyout-text);
-    border-radius: var(--sidebar-flyout-radius);
-    box-shadow: var(--sidebar-flyout-shadow);
+  @apply overflow-hidden py-1;
+  min-width: var(--sidebar-expanded-width);
+  background-color: var(--sidebar-flyout-bg);
+  color: var(--sidebar-flyout-text);
+  border-radius: var(--sidebar-flyout-radius);
+  box-shadow: var(--sidebar-flyout-shadow);
 
-    .sidebar-flyout-header {
-        @apply px-3 py-1 text-xs font-semibold uppercase tracking-wide opacity-70;
-    }
+  .sidebar-flyout-header {
+    @apply px-3 py-1 text-xs font-semibold uppercase tracking-wide opacity-70;
+  }
 }
 ```
 
@@ -754,6 +786,7 @@ git commit -m "feat(sidebar): collapsed-rail flyout submenu via CDK overlay"
 ## Task 6: Footer action slot
 
 **Files:**
+
 - Modify: `libs/library/src/lib/components/sidebar/sidebar.component.html`
 - Modify: `libs/library/src/lib/components/sidebar/sidebar.component.scss`
 - Test: `libs/library/src/lib/components/sidebar/sidebar.component.spec.ts`
@@ -763,11 +796,14 @@ Add an optional `[sidebar-action]` projection slot above the existing version fo
 - [ ] **Step 1: Write the failing test**
 
 Add to `sidebar.component.spec.ts`:
+
 ```ts
 it('projects a [sidebar-action] element and keeps it visible when collapsed', () => {
   const fixture = TestBed.createComponent(HostComponent);
   fixture.detectChanges();
-  const action = fixture.nativeElement.querySelector('.sidebar-action [sidebar-action], .sidebar-action button[sidebar-action]');
+  const action = fixture.nativeElement.querySelector(
+    '.sidebar-action [sidebar-action], .sidebar-action button[sidebar-action]'
+  );
   expect(action).toBeTruthy();
   expect(action.textContent).toContain('Add');
 });
@@ -781,10 +817,13 @@ Expected: FAIL — no `.sidebar-action` container.
 - [ ] **Step 3: Add the projection slot**
 
 In `sidebar.component.html`, replace the footer line:
+
 ```html
 <div class="sidebar-footer"><ng-content></ng-content></div>
 ```
+
 with:
+
 ```html
 <div class="sidebar-action"><ng-content select="[sidebar-action]"></ng-content></div>
 <div class="sidebar-footer"><ng-content></ng-content></div>
@@ -793,23 +832,26 @@ with:
 - [ ] **Step 4: Style the slot**
 
 In `sidebar.component.scss`, add the grid area and styles. Update the `:host` `grid-template-rows`/`grid-template-areas` (lines ~31-35) to include an action row:
+
 ```scss
 grid-template-rows: auto minmax(0, 1fr) auto auto;
 grid-template-areas:
-    "toolbar"
-    "nav"
-    "action"
-    "footer";
+  'toolbar'
+  'nav'
+  'action'
+  'footer';
 ```
+
 Then add:
+
 ```scss
 .sidebar-action {
-    @apply px-2 py-2;
-    grid-area: action;
+  @apply px-2 py-2;
+  grid-area: action;
 
-    &:empty {
-        @apply hidden;
-    }
+  &:empty {
+    @apply hidden;
+  }
 }
 ```
 
@@ -830,11 +872,13 @@ git commit -m "feat(sidebar): add [sidebar-action] footer projection slot"
 ## Task 7: Storybook demo
 
 **Files:**
+
 - Modify: `libs/library/src/lib/stories/sidebar/sidebar.component.stories.ts`
 
 - [ ] **Step 1: Extend the Primary story to show the action slot**
 
 In `sidebar.component.stories.ts`, update the `Primary` story `render.template` to project an action button and give the rail room to collapse:
+
 ```ts
 template: `
   <div class="h-[36rem] w-80 bg-slate-100">
@@ -862,24 +906,29 @@ git commit -m "docs(sidebar): storybook demo for flyout, pill, and action slot"
 ## Task 8: Changelog
 
 **Files:**
+
 - Modify: `libs/library/CHANGELOG.md`
 
 - [ ] **Step 1: Add entries under `[Unreleased]`**
 
 Add to `libs/library/CHANGELOG.md` (create the `## [Unreleased]` section if absent, keeping existing content):
+
 ```markdown
 ## [Unreleased]
 
 ### Added
+
 - Sidebar: collapsed-rail **flyout submenus** — a collapsed parent now opens its children in a right-anchored popover (CDK overlay) instead of expanding the whole rail.
 - Sidebar: optional `[sidebar-action]` footer projection slot for a persistent primary action.
 - Sidebar: semantic `--sidebar-*` surface tokens (`--sidebar-bg`, `--sidebar-nav-bg`, `--sidebar-text`, `--sidebar-item-hover-bg`, `--sidebar-item-selected-bg`, `--sidebar-flyout-bg`, `--sidebar-item-radius`, …).
 - `SidebarItemComponent.displayMode` (`'rail' | 'flyout'`) input.
 
 ### Changed
+
 - Sidebar: selected items now use a rounded pill highlight instead of the 4px left accent bar.
 
 ### ⚠ Breaking Changes / Migration
+
 - None.
 ```
 

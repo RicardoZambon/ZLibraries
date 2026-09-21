@@ -5,7 +5,7 @@ import { CustomReuseStrategy } from './custom-reuse-strategy';
 import { ITab } from '../models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TabService {
   //#region ViewChilds, Inputs, Outputs
@@ -48,13 +48,13 @@ export class TabService {
     return this.openTabs[this.activeTabIndex];
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   constructor(
     private applicationRef: ApplicationRef,
     private location: Location,
     private router: Router,
-    routeReuseStrategy: RouteReuseStrategy,
+    routeReuseStrategy: RouteReuseStrategy
   ) {
     this.customReuseStrategy = <CustomReuseStrategy>routeReuseStrategy;
     this.customReuseStrategy.tabService = this;
@@ -145,12 +145,11 @@ export class TabService {
       return tab.clones.indexOf(url) !== -1;
     }
 
-    return false
+    return false;
   }
 
   public isUrlOpen(url: string): boolean {
-    const tabs: ITab[] = this.openTabs
-      .flatMap((tabs: ITab[]) => tabs);
+    const tabs: ITab[] = this.openTabs.flatMap((tabs: ITab[]) => tabs);
 
     return this.isTabExists(tabs, url);
   }
@@ -232,10 +231,9 @@ export class TabService {
 
     const lastIndex: number = this.activeTab.lastIndexOf(tab);
     if (lastIndex !== -1) {
-      this.activeTab.slice(lastIndex + 1)
-        .forEach((tab: ITab) => {
-          this.customReuseStrategy.clearHandle(tab.url);
-        });
+      this.activeTab.slice(lastIndex + 1).forEach((tab: ITab) => {
+        this.customReuseStrategy.clearHandle(tab.url);
+      });
 
       this.openTabs[this.activeTabIndex] = this.activeTab.slice(0, lastIndex + 1);
 
@@ -253,17 +251,16 @@ export class TabService {
       url = clonedUrl;
     }
 
-    this.router.navigate([ url ], { queryParams: tab?.queryParams })
-      .then((navigated: boolean) => {
-        this.customReuseStrategy.redirects = {};
+    this.router.navigate([url], { queryParams: tab?.queryParams }).then((navigated: boolean) => {
+      this.customReuseStrategy.redirects = {};
 
-        // Clean up clone mapping after successful clone-based navigation.
-        if (navigated && this.customReuseStrategy.clones[url]) {
-          delete this.customReuseStrategy.clones[url];
-        }
+      // Clean up clone mapping after successful clone-based navigation.
+      if (navigated && this.customReuseStrategy.clones[url]) {
+        delete this.customReuseStrategy.clones[url];
+      }
 
-        this.applicationRef.tick();
-      });
+      this.applicationRef.tick();
+    });
   }
 
   public openTab(tab: ITab): void {
@@ -364,14 +361,15 @@ export class TabService {
   }
 
   public updateTabTitle(url: string, title: string): void {
-    this.openTabs.flatMap((tabs: ITab[]) => tabs)
+    this.openTabs
+      .flatMap((tabs: ITab[]) => tabs)
       .filter((tab: ITab) => tab.url === url)
       .forEach((tab: ITab) => {
         tab.title = title;
       });
   }
   //#endregion
-  
+
   //#region Private methods
   private findTab(tabs: ITab[], url: string): ITab | undefined {
     return tabs.find((tab: ITab) => this.matchTabUrl(tab, url));
@@ -402,8 +400,7 @@ export class TabService {
         return false;
       }
       const currentView: ITab = tabStack[tabStack.length - 1];
-      return this.matchTabUrl(currentView, url)
-        || (includeChildRoutes && this.isChildRoute(currentView.url, url));
+      return this.matchTabUrl(currentView, url) || (includeChildRoutes && this.isChildRoute(currentView.url, url));
     });
   }
 
@@ -427,8 +424,7 @@ export class TabService {
   }
 
   private matchTabUrl(tab: ITab, url: string): boolean {
-    return tab.url === url
-      || tab.clones.indexOf(url) !== -1;
+    return tab.url === url || tab.clones.indexOf(url) !== -1;
   }
   //#endregion
 }

@@ -26,7 +26,9 @@ describe('TabViewService', () => {
 
     it('should emit on onViewChanged', () => {
       let emitted: string | undefined;
-      service.onViewChanged.subscribe((v: string) => { emitted = v; });
+      service.onViewChanged.subscribe((v: string) => {
+        emitted = v;
+      });
 
       service.setActiveView('history');
 
@@ -37,7 +39,9 @@ describe('TabViewService', () => {
       service.setActiveView('details');
 
       let emitted = false;
-      service.onViewChanged.subscribe(() => { emitted = true; });
+      service.onViewChanged.subscribe(() => {
+        emitted = true;
+      });
 
       service.setActiveView('details');
 
@@ -48,7 +52,9 @@ describe('TabViewService', () => {
       service.setActiveView('details');
 
       let emitted: string | undefined;
-      service.onViewChanged.subscribe((v: string) => { emitted = v; });
+      service.onViewChanged.subscribe((v: string) => {
+        emitted = v;
+      });
 
       service.setActiveView('history');
 
@@ -59,7 +65,9 @@ describe('TabViewService', () => {
   describe('updateRibbonTemplate', () => {
     it('should emit on onUpdateRibbonTemplate', () => {
       let emitted: any = 'not-set';
-      service.onUpdateRibbonTemplate.subscribe((v: any) => { emitted = v; });
+      service.onUpdateRibbonTemplate.subscribe((v: any) => {
+        emitted = v;
+      });
 
       service.updateRibbonTemplate(undefined);
 
@@ -71,7 +79,9 @@ describe('TabViewService', () => {
       service.updateRibbonTemplate(mockTemplate);
 
       let emitted: any = null;
-      service.onUpdateRibbonTemplate.subscribe((v: any) => { emitted = v; });
+      service.onUpdateRibbonTemplate.subscribe((v: any) => {
+        emitted = v;
+      });
 
       expect(emitted).toBe(mockTemplate);
     });

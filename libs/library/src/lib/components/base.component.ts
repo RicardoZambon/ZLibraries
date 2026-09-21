@@ -15,7 +15,7 @@ export abstract class BaseComponent implements OnDestroy {
 
   //#region Properties
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   public ngOnDestroy(): void {
     this.destroy$.next(true);

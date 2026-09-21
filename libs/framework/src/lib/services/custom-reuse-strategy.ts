@@ -20,7 +20,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
   //#region Properties
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   //#endregion
 
@@ -33,8 +33,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
   }
 
   public clearHandle(url: string): void {
-    const keysToRemove: string[] = Object.keys(this.cachedHandles)
-      .filter((key: string) => key.startsWith(`${url}-`));
+    const keysToRemove: string[] = Object.keys(this.cachedHandles).filter((key: string) => key.startsWith(`${url}-`));
 
     keysToRemove.forEach((key: string) => {
       const handle: DetachedRouteHandle | null = this.cachedHandles[key];
@@ -73,8 +72,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     const url: string = this.getUrlFromRoute(route);
     const hasComponent = !!route.component;
 
-    if ((this.tabService?.isUrlOpen(url) ?? false) && hasComponent)
-    {
+    if ((this.tabService?.isUrlOpen(url) ?? false) && hasComponent) {
       const cacheKey: string = this.getCacheKey(route);
       const isCached = !!this.cachedHandles[cacheKey];
       return isCached;
@@ -93,7 +91,11 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     const futureUrl: string = this.getUrlFromRoute(future);
     const currentUrl: string = this.getUrlFromRoute(current);
 
-    return (futureUrl === currentUrl && future.routeConfig === current.routeConfig) || this.redirects[currentUrl] === futureUrl || this.clones[futureUrl] === currentUrl;
+    return (
+      (futureUrl === currentUrl && future.routeConfig === current.routeConfig) ||
+      this.redirects[currentUrl] === futureUrl ||
+      this.clones[futureUrl] === currentUrl
+    );
   }
 
   public store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {

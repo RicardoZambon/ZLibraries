@@ -37,11 +37,7 @@ describe('DataGridComponent', () => {
   let resizeObserverCallback: (() => void) | undefined;
   let originalResizeObserver: typeof ResizeObserver;
 
-  function setupComponent(options?: {
-    lazyLoadRows?: boolean;
-    loadedRows?: any[];
-    hasBeenLoaded?: boolean;
-  }): void {
+  function setupComponent(options?: { lazyLoadRows?: boolean; loadedRows?: any[]; hasBeenLoaded?: boolean }): void {
     const opts = options ?? {};
 
     mockDataGridDataset = {

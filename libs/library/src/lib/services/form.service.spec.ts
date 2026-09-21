@@ -66,7 +66,9 @@ describe('FormService', () => {
 
     it('should emit editCanceled', () => {
       let canceled = false;
-      service.editCanceled.subscribe(() => { canceled = true; });
+      service.editCanceled.subscribe(() => {
+        canceled = true;
+      });
 
       service.cancelEdit();
 
@@ -162,7 +164,9 @@ describe('FormService', () => {
   describe('model', () => {
     it('should emit modelRefreshed when model changes', () => {
       let emittedValue: any = undefined;
-      service.modelRefreshed.subscribe((v: any) => { emittedValue = v; });
+      service.modelRefreshed.subscribe((v: any) => {
+        emittedValue = v;
+      });
 
       service.model = { id: 1 };
 
@@ -174,7 +178,9 @@ describe('FormService', () => {
       service.model = obj;
 
       let emitted = false;
-      service.modelRefreshed.subscribe(() => { emitted = true; });
+      service.modelRefreshed.subscribe(() => {
+        emitted = true;
+      });
 
       service.model = obj;
 
@@ -255,7 +261,9 @@ describe('FormService', () => {
   describe('fieldRefreshed', () => {
     it('should emit from beginFieldLoading', () => {
       let emitted: any = null;
-      service.fieldRefreshed.subscribe((v: any) => { emitted = v; });
+      service.fieldRefreshed.subscribe((v: any) => {
+        emitted = v;
+      });
 
       service.beginFieldLoading('name');
 
@@ -264,7 +272,9 @@ describe('FormService', () => {
 
     it('should emit from setFieldValue', () => {
       let emitted: any = null;
-      service.fieldRefreshed.subscribe((v: any) => { emitted = v; });
+      service.fieldRefreshed.subscribe((v: any) => {
+        emitted = v;
+      });
 
       service.setFieldValue('name', 'newVal');
 

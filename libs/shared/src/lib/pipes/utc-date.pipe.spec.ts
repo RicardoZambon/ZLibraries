@@ -40,9 +40,7 @@ describe('UtcDatePipe', () => {
     // machine, so this asserts the direction of the shift rather than the
     // runner's timezone. Under a real TZ=UTC the shift is zero and an inverted
     // implementation would pass -- which is how the original bug survived.
-    jest.spyOn(Date.prototype, 'getUTCHours').mockImplementation(function (
-      this: Date,
-    ): number {
+    jest.spyOn(Date.prototype, 'getUTCHours').mockImplementation(function (this: Date): number {
       return this.getHours() + 3;
     });
 

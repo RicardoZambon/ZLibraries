@@ -1,9 +1,9 @@
 /* @use 'tailwindcss'; */
 
 :host-context {
-    @apply flex flex-col flex-grow overflow-hidden gap-2;
+  @apply flex flex-col flex-grow overflow-hidden gap-2;
 }
 
 router-outlet {
-    @apply hidden;
+  @apply hidden;
 }

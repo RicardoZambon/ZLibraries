@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'replaceMany'
+  name: 'replaceMany',
 })
 export class ReplaceManyPipe implements PipeTransform {
   //#region ViewChilds, Inputs, Outputs
@@ -12,7 +12,7 @@ export class ReplaceManyPipe implements PipeTransform {
 
   //#region Properties
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   //#endregion
 

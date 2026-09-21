@@ -19,7 +19,7 @@ import { EXTERNAL_CONTENT_ROUTE_PATH, IExternalContentEntry } from '../models';
  * gets the unavailable state on a cold deep link, which is the documented behaviour.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExternalContentService {
   //#region Variables
@@ -45,14 +45,13 @@ export class ExternalContentService {
       return of(known);
     }
 
-    return this.sidebarService.getMenuFromUrl(`/${EXTERNAL_CONTENT_ROUTE_PATH}/${menuID}`)
-      .pipe(
-        take(1),
-        map((menu: SidebarMenu) => !!menu && !!menu.url ? this.toEntry(menu) : undefined),
-        // A menu endpoint that does not know this route shape answers 404, which is an expected
-        // outcome here rather than a failure: the view falls back to its unavailable state.
-        catchError(() => of(undefined)),
-      );
+    return this.sidebarService.getMenuFromUrl(`/${EXTERNAL_CONTENT_ROUTE_PATH}/${menuID}`).pipe(
+      take(1),
+      map((menu: SidebarMenu) => (!!menu && !!menu.url ? this.toEntry(menu) : undefined)),
+      // A menu endpoint that does not know this route shape answers 404, which is an expected
+      // outcome here rather than a failure: the view falls back to its unavailable state.
+      catchError(() => of(undefined))
+    );
   }
 
   /** Remembers a menu so its embedded tab survives a page refresh. */
@@ -84,8 +83,9 @@ export class ExternalContentService {
   }
 
   private readFromStorage(menuID: number): IExternalContentEntry | undefined {
-    const entry: IExternalContentEntry | undefined = this.readAllFromStorage()
-      .find((candidate: IExternalContentEntry) => candidate?.id === menuID);
+    const entry: IExternalContentEntry | undefined = this.readAllFromStorage().find(
+      (candidate: IExternalContentEntry) => candidate?.id === menuID
+    );
 
     if (!!entry && !!entry.url) {
       this.registry.set(entry.id, entry);

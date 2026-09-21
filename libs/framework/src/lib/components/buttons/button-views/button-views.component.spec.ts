@@ -20,10 +20,11 @@ describe('ButtonViewsComponent — view switching logic', () => {
       routeConfig: {
         children: children,
       },
-      children: [
-        { url: [{ path: children[0]?.path ?? '' }] },
-      ],
-      url: baseUrl.split('/').filter(Boolean).map((p: string) => ({ path: p })),
+      children: [{ url: [{ path: children[0]?.path ?? '' }] }],
+      url: baseUrl
+        .split('/')
+        .filter(Boolean)
+        .map((p: string) => ({ path: p })),
       data: {},
       firstChild: null,
       parent: null,
@@ -195,17 +196,13 @@ describe('ButtonViewsComponent — view switching logic', () => {
 
   describe('hasOptions', () => {
     it('should return true when there are visible options without allowedActions', () => {
-      component.options = [
-        { id: '', isVisible: true, label: 'Details' },
-      ];
+      component.options = [{ id: '', isVisible: true, label: 'Details' }];
 
       expect(component.hasOptions).toBe(true);
     });
 
     it('should return false when all options are not visible', () => {
-      component.options = [
-        { id: '', isVisible: false, label: 'Details' },
-      ];
+      component.options = [{ id: '', isVisible: false, label: 'Details' }];
 
       expect(component.hasOptions).toBe(false);
     });

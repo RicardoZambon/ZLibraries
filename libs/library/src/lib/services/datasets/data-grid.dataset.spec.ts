@@ -27,27 +27,23 @@ describe('DataGridDataset', () => {
   let dataset: any;
 
   function loadTestData(): void {
-    dataset.getDataMock.mockReturnValue(of([
-      { id: 1, name: 'Row 1' },
-      { id: 2, name: 'Row 2' },
-      { id: 3, name: 'Row 3' },
-    ]));
+    dataset.getDataMock.mockReturnValue(
+      of([
+        { id: 1, name: 'Row 1' },
+        { id: 2, name: 'Row 2' },
+        { id: 3, name: 'Row 3' },
+      ])
+    );
     dataset.loadRows();
   }
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        ConcreteDataGridDataset,
-        { provide: GridConfigsProvider, useClass: DataGridConfigsProvider },
-      ],
+      providers: [ConcreteDataGridDataset, { provide: GridConfigsProvider, useClass: DataGridConfigsProvider }],
     });
 
     dataset = TestBed.inject(ConcreteDataGridDataset);
-    dataset.columns = [
-      { field: 'id', size: '80px' } as IGridColumn,
-      { field: 'name' } as IGridColumn,
-    ];
+    dataset.columns = [{ field: 'id', size: '80px' } as IGridColumn, { field: 'name' } as IGridColumn];
     dataset.configs.multiSelect = false;
     dataset.configs.selectOnClick = true;
     loadTestData();
@@ -81,7 +77,9 @@ describe('DataGridDataset', () => {
 
     it('should emit selectedRowsChanged', () => {
       let emitted: any = null;
-      dataset.selectedRowsChanged.subscribe((v: any) => { emitted = v; });
+      dataset.selectedRowsChanged.subscribe((v: any) => {
+        emitted = v;
+      });
       const key: string = dataset.loadedKeys![0];
 
       dataset.selectRow(key);
@@ -106,7 +104,9 @@ describe('DataGridDataset', () => {
       dataset.selectRow(key);
 
       let emitted = false;
-      dataset.selectedRowsChanged.subscribe(() => { emitted = true; });
+      dataset.selectedRowsChanged.subscribe(() => {
+        emitted = true;
+      });
 
       dataset.selectRow(key);
 
@@ -158,7 +158,9 @@ describe('DataGridDataset', () => {
       dataset.selectRow(key);
 
       let emitted: any = null;
-      dataset.selectedRowsChanged.subscribe((v: any) => { emitted = v; });
+      dataset.selectedRowsChanged.subscribe((v: any) => {
+        emitted = v;
+      });
 
       dataset.deselectRow(key);
 
@@ -167,7 +169,9 @@ describe('DataGridDataset', () => {
 
     it('should do nothing for unselected key', () => {
       let emitted = false;
-      dataset.selectedRowsChanged.subscribe(() => { emitted = true; });
+      dataset.selectedRowsChanged.subscribe(() => {
+        emitted = true;
+      });
 
       dataset.deselectRow('nonexistent');
 
@@ -191,7 +195,9 @@ describe('DataGridDataset', () => {
       dataset.selectRows([dataset.loadedKeys![0], dataset.loadedKeys![1]]);
 
       let emitted: any = null;
-      dataset.selectedRowsChanged.subscribe((v: any) => { emitted = v; });
+      dataset.selectedRowsChanged.subscribe((v: any) => {
+        emitted = v;
+      });
 
       dataset.clearSelection();
 
@@ -200,7 +206,9 @@ describe('DataGridDataset', () => {
 
     it('should do nothing when no selection', () => {
       let emitted = false;
-      dataset.selectedRowsChanged.subscribe(() => { emitted = true; });
+      dataset.selectedRowsChanged.subscribe(() => {
+        emitted = true;
+      });
 
       dataset.clearSelection();
 

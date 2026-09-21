@@ -41,11 +41,7 @@ const meta: Meta<MultiEditorComponent> = {
   component: MultiEditorComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        CatalogSelectComponent,
-        FormInputGroupComponent,
-        ReactiveFormsModule,
-      ],
+      imports: [CatalogSelectComponent, FormInputGroupComponent, ReactiveFormsModule],
       providers: [
         { provide: DataGridDataset, useClass: StorybookMultiEditorGridDataset },
         { provide: MultiEditorDataset, useClass: StorybookMultiEditorDataset },
@@ -188,4 +184,3 @@ export const PricingEditor: Story = {
     `,
   }),
 };
-

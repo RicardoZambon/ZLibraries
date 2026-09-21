@@ -10,10 +10,7 @@ import { ServicesHistoryChildListComponent } from '../services-history-child-lis
   selector: 'shared-services-history-view',
   templateUrl: './services-history-view.component.html',
   styleUrls: ['./services-history-view.component.scss'],
-  imports: [
-    OperationsHistoryChildListComponent,
-    ServicesHistoryChildListComponent,
-  ]
+  imports: [OperationsHistoryChildListComponent, ServicesHistoryChildListComponent],
 })
 export class ServicesHistoryViewComponent extends ViewBase {
   //#region ViewChilds, Inputs, Outputs
@@ -39,7 +36,8 @@ export class ServicesHistoryViewComponent extends ViewBase {
     }
 
     if (this.dataProviderService) {
-      this.dataProviderService.getModel$()
+      this.dataProviderService
+        .getModel$()
         .pipe(take(1))
         .subscribe((model: any) => {
           this.entityID = model.id;

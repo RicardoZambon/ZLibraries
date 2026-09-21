@@ -22,7 +22,6 @@ export abstract class MultiEditorLegacyModal extends ModalBase implements OnInit
 
   form!: FormGroup;
 
-
   constructor(
     protected dataGridDataset: DataGridDataset,
     protected multiEditorDataset: MultiEditorDataset,
@@ -34,13 +33,10 @@ export abstract class MultiEditorLegacyModal extends ModalBase implements OnInit
   ngOnInit(): void {
     this.form = this.formSetup();
 
-    this.multiEditorDataset.savedChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(() => {
+    this.multiEditorDataset.savedChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.savedChanges.emit();
     });
   }
-
 
   toggle(): void {
     this.multiEditor.toggleModal();

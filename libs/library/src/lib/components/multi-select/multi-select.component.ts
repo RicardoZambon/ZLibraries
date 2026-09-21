@@ -13,15 +13,9 @@ import { MultiSelectResultGridComponent } from './result-grid/result-grid.compon
   selector: 'lib-multi-select',
   templateUrl: './multi-select.component.html',
   styleUrls: ['./multi-select.component.scss'],
-  imports: [
-    DataGridComponent,
-    FormsModule,
-    ModalComponent,
-    MultiSelectResultGridComponent,
-    TranslatePipe,
-  ]
+  imports: [DataGridComponent, FormsModule, ModalComponent, MultiSelectResultGridComponent, TranslatePipe],
 })
-export class MultiSelectComponent extends ModalComponent implements OnInit {  
+export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ModalComponent) private modal!: ModalComponent;
 
@@ -41,7 +35,8 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#region Properties
   private get searchColumn(): string {
     if (this._searchColumn.length === 0) {
-      let columnName = this.dataGridDataset.columns.filter((col: IGridColumn) => col.field !== '')[0]?.field ?? 'Search';
+      let columnName =
+        this.dataGridDataset.columns.filter((col: IGridColumn) => col.field !== '')[0]?.field ?? 'Search';
       columnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
       this._searchColumn = columnName;
     }
@@ -58,44 +53,37 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.dataGridDataset.loadStarted
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.isSearchGridLoading = true;
-      });
+    this.dataGridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.isSearchGridLoading = true;
+    });
 
-    this.dataGridDataset.loadFinished
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.isSearchGridLoading = false;
-        this.updateSelectedItems();
-      });
+    this.dataGridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.isSearchGridLoading = false;
+      this.updateSelectedItems();
+    });
 
-    this.resultDataset.loadFinished
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.isResultGridLoading = false;
-        this.updateSelectedItems();
-      });
+    this.resultDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.isResultGridLoading = false;
+      this.updateSelectedItems();
+    });
 
     this.dataGridDataset.selectedRowsChanged
       .pipe(takeUntil(this.destroy$))
-      .subscribe((selectionChanges: { [id:string]: { rowData: any; selected: boolean } }) => {
+      .subscribe((selectionChanges: { [id: string]: { rowData: any; selected: boolean } }) => {
         if (this.isSearchGridLoading || this.isResultGridLoading) {
           return;
         }
 
-        Object.keys(selectionChanges)
-          .forEach((key: string) => {
-            const selection: { rowData: any; selected: boolean } = selectionChanges[key];
-            const id: any = this.dataGridDataset.getRowID(key);
+        Object.keys(selectionChanges).forEach((key: string) => {
+          const selection: { rowData: any; selected: boolean } = selectionChanges[key];
+          const id: any = this.dataGridDataset.getRowID(key);
 
-            if (selection.selected) {
-              this.resultDataset.setIDToAdd(id, selection.rowData);
-            } else {
-              this.resultDataset.setIDToRemove(id);
-            }
-          });
+          if (selection.selected) {
+            this.resultDataset.setIDToAdd(id, selection.rowData);
+          } else {
+            this.resultDataset.setIDToRemove(id);
+          }
+        });
       });
   }
   //#endregion
@@ -103,7 +91,8 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#region Event handlers
   protected onSave(): void {
     this.modalProcessing = true;
-    this.resultDataset.saveChanges()
+    this.resultDataset
+      .saveChanges()
       .pipe(take(1))
       .subscribe(() => {
         this.modalProcessing = false;
@@ -112,13 +101,12 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   }
 
   protected onSearch(): void {
-    const filters: { [key: string]: string; } = this.dataGridDataset.filters ?? {};
+    const filters: { [key: string]: string } = this.dataGridDataset.filters ?? {};
 
     this.isSearchGridLoading = true;
     if (this.searchCriteria.length > 0) {
       filters[this.searchColumn] = this.searchCriteria;
       this.dataGridDataset.setFilters(filters);
-
     } else if (Object.keys(filters).includes(this.searchColumn)) {
       this.clearSearch();
     }
@@ -145,7 +133,7 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
 
   //#regiosn Private methods
   private clearSearch(): void {
-    const filters: { [key: string]: string; } = this.dataGridDataset.filters ?? {};
+    const filters: { [key: string]: string } = this.dataGridDataset.filters ?? {};
     if (Object.keys(filters).includes(this.searchColumn)) {
       delete filters[this.searchColumn];
     }
@@ -162,10 +150,11 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
       .filter((id: any) => this.resultDataset.idsToRemove.indexOf(id) < 0);
 
     idsFromResult.push(...this.resultDataset.idsToAdd);
-    
+
     // Get each corresponding key from the data grid.
-    const keysToSelect: string[] = (this.dataGridDataset.loadedKeys ?? [])
-      .filter((key: string) => idsFromResult.indexOf(this.dataGridDataset.getRowID(key)) >= 0);
+    const keysToSelect: string[] = (this.dataGridDataset.loadedKeys ?? []).filter(
+      (key: string) => idsFromResult.indexOf(this.dataGridDataset.getRowID(key)) >= 0
+    );
 
     this.dataGridDataset.selectRows(keysToSelect);
   }

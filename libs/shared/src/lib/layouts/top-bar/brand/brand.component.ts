@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { APP_CONFIG, AppConfig } from '@zambon-dev/framework';
 
 @Component({
   selector: 'shared-brand',
   templateUrl: './brand.component.html',
   styleUrls: ['./brand.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BrandComponent {
   //#region Variables

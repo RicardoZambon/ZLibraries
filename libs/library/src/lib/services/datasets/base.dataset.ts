@@ -10,7 +10,7 @@ export abstract class BaseDataset implements OnDestroy {
   //#region Variables
   protected dataProvider: DataProviderService<any> | null;
   protected destroy$: Subject<boolean> = new Subject<boolean>();
-  
+
   // TODO: Remove.
   private _parentEntityId?: any;
   //#endregion
@@ -24,7 +24,7 @@ export abstract class BaseDataset implements OnDestroy {
     this._parentEntityId = value;
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   constructor() {
     this.dataProvider = inject(DataProviderService, { optional: true });

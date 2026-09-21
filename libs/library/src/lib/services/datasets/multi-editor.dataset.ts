@@ -45,9 +45,9 @@ export abstract class MultiEditorDataset extends BaseDataset {
     };
   }
 
-  public removeValue(key: string) : void {
+  public removeValue(key: string): void {
     if (this.modifiedValues.changed[key]) {
-      delete this.modifiedValues.changed[key]; 
+      delete this.modifiedValues.changed[key];
     }
 
     const id: any = this.dataGridDataset.getRowID(key);
@@ -65,13 +65,12 @@ export abstract class MultiEditorDataset extends BaseDataset {
   }
 
   public saveChanges(): Observable<any> {
-    const batchUpdate: IBatchUpdate<any,any> = {
+    const batchUpdate: IBatchUpdate<any, any> = {
       entitiesToInsertOrUpdate: Object.entries(this.modifiedValues.changed).map(([_, v]: [string, string]) => v),
       entitiesToDelete: this.modifiedValues.removed,
     };
 
-    return this.saveData(batchUpdate)
-      .pipe(tap(() => this.savedChanges.emit()));
+    return this.saveData(batchUpdate).pipe(tap(() => this.savedChanges.emit()));
   }
 
   public storeFakeIDGenerated(id: any): void {
@@ -95,6 +94,6 @@ export abstract class MultiEditorDataset extends BaseDataset {
   //#region Abstract methods
   public abstract newData(id: any): any;
 
-  public abstract saveData(batchUpdate: IBatchUpdate<any,any>): Observable<any>;
+  public abstract saveData(batchUpdate: IBatchUpdate<any, any>): Observable<any>;
   //#endregion
 }

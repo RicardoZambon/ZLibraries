@@ -6,10 +6,8 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-refresh',
   templateUrl: './button-refresh.component.html',
-  imports: [
-    RibbonButtonComponent,
-  ],
-  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonRefreshComponent)}]
+  imports: [RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonRefreshComponent) }],
 })
 export class ButtonRefreshComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -25,16 +23,14 @@ export class ButtonRefreshComponent extends BaseButton implements OnInit {
   //#region Constructor and Angular life cycle methods
   constructor() {
     super();
-    
+
     this.disabled = false;
   }
 
   public ngOnInit(): void {
-    this.dataGridDataset?.loadFinished
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.loading = false;
-      });
+    this.dataGridDataset?.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.loading = false;
+    });
   }
   //#endregion
 

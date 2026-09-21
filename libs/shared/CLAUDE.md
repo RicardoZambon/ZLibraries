@@ -56,12 +56,12 @@ The shared library sits between the framework and application layers. It provide
 
 Concrete JWT authentication implementation.
 
-| Method | Purpose |
-|--------|---------|
+| Method                | Purpose                                                                         |
+| --------------------- | ------------------------------------------------------------------------------- |
 | `authenticate(model)` | POST `/Authentication/SignIn` — stores token, refreshToken, userInfo in storage |
-| `tryRefreshToken()` | POST `/Authentication/RefreshToken` — refreshes expired tokens |
-| `getActions()` | POST `/Authentication/GetActions` — returns user's allowed actions |
-| `getUserInfo()` | Decodes base64 userInfo from storage |
+| `tryRefreshToken()`   | POST `/Authentication/RefreshToken` — refreshes expired tokens                  |
+| `getActions()`        | POST `/Authentication/GetActions` — returns user's allowed actions              |
+| `getUserInfo()`       | Decodes base64 userInfo from storage                                            |
 
 **Storage**: Uses `localStorage` (remember me) or `sessionStorage` for token, refreshToken, and userInfo (base64-encoded).
 
@@ -78,6 +78,7 @@ Checks `AuthenticationService.isAuthenticated`. Redirects to `/login?returnUrl=.
 **Scope**: App-provided
 
 HTTP interceptor chain:
+
 1. Checks if request URL matches `AppConfig.BASE_URL`
 2. If JWT is expired, attempts silent refresh via `tryRefreshToken()`
 3. Injects refreshed token into request headers
@@ -87,10 +88,10 @@ Uses `JwtInterceptor` from `@auth0/angular-jwt` for token validation.
 
 ### Auth Components
 
-| Component | Purpose |
-|-----------|---------|
-| `LoginComponent` | Login form with username/password; emits to `AuthenticationService.authenticate()` |
-| `LanguageSelectorComponent` | Language switcher dropdown |
+| Component                   | Purpose                                                                            |
+| --------------------------- | ---------------------------------------------------------------------------------- |
+| `LoginComponent`            | Login form with username/password; emits to `AuthenticationService.authenticate()` |
+| `LanguageSelectorComponent` | Language switcher dropdown                                                         |
 
 ### Auth Routing (AuthModule)
 
@@ -128,9 +129,9 @@ Simple wrapper layout for the login page.
 
 Reusable audit log feature for entity service history. Used across apps via route configuration.
 
-| Component | Purpose |
-|-----------|---------|
-| `ServicesHistoryViewComponent` | Tab view for service audit log |
+| Component                           | Purpose                                       |
+| ----------------------------------- | --------------------------------------------- |
+| `ServicesHistoryViewComponent`      | Tab view for service audit log                |
 | `ServicesHistoryChildListComponent` | Child list displaying service history entries |
 
 **Service**: `ServicesHistoryService` — POSTs to `/{controllerName}/{entityID}/Audit` endpoints.
@@ -140,38 +141,38 @@ Reusable audit log feature for entity service history. Used across apps via rout
 
 Detailed operation-level audit log, typically shown within a service history entry.
 
-| Component | Purpose |
-|-----------|---------|
+| Component                             | Purpose                                 |
+| ------------------------------------- | --------------------------------------- |
 | `OperationsHistoryChildListComponent` | Child list displaying operation details |
-| `OperationsHistoryModalComponent` | Modal for viewing operation details |
+| `OperationsHistoryModalComponent`     | Modal for viewing operation details     |
 
 **Service**: `OperationsHistoryService` — POSTs to `/{controllerName}/{entityID}/Audit/{serviceHistoryID}` endpoints.
 **Dataset**: `OperationsHistoryDataset` — integrates with the service for paginated loading.
 
 ## Services
 
-| Service | Scope | Purpose |
-|---------|-------|---------|
-| `AuthenticationService` | Root | JWT auth (extends `@framework` AuthService) |
-| `ServicesHistoryService` | Root | Service-level audit log API calls |
-| `OperationsHistoryService` | Root | Operation-level audit log API calls |
+| Service                    | Scope | Purpose                                     |
+| -------------------------- | ----- | ------------------------------------------- |
+| `AuthenticationService`    | Root  | JWT auth (extends `@framework` AuthService) |
+| `ServicesHistoryService`   | Root  | Service-level audit log API calls           |
+| `OperationsHistoryService` | Root  | Operation-level audit log API calls         |
 
 ## Models
 
-| Model | Purpose |
-|-------|---------|
-| `IAuthResponse` | Login response (extends ICurrentUserInfo + tokens) |
-| `ICurrentUserInfo` | User profile (costCenterName, name) |
-| `IServicesHistoryList` | Service audit log entry |
-| `IOperationsHistoryList` | Operation audit log entry |
+| Model                    | Purpose                                            |
+| ------------------------ | -------------------------------------------------- |
+| `IAuthResponse`          | Login response (extends ICurrentUserInfo + tokens) |
+| `ICurrentUserInfo`       | User profile (costCenterName, name)                |
+| `IServicesHistoryList`   | Service audit log entry                            |
+| `IOperationsHistoryList` | Operation audit log entry                          |
 
 ## Pipes
 
-| Pipe | Purpose |
-|------|---------|
-| `UtcDatePipe` | Converts UTC date strings to local timezone display |
-| `EnumLabelPipe` | Translates enum values to human-readable labels |
-| `BypassHtmlSanitizerPipe` | Bypasses DomSanitizer for trusted HTML content |
+| Pipe                      | Purpose                                             |
+| ------------------------- | --------------------------------------------------- |
+| `UtcDatePipe`             | Converts UTC date strings to local timezone display |
+| `EnumLabelPipe`           | Translates enum values to human-readable labels     |
+| `BypassHtmlSanitizerPipe` | Bypasses DomSanitizer for trusted HTML content      |
 
 ## Components
 
@@ -181,8 +182,8 @@ Abstract base class for filter components. Standardizes the filter UI pattern ac
 
 ## Helpers
 
-| Helper | Purpose |
-|--------|---------|
+| Helper        | Purpose                                           |
+| ------------- | ------------------------------------------------- |
 | `DateHelpers` | Shared date manipulation and formatting utilities |
 
 ## i18n

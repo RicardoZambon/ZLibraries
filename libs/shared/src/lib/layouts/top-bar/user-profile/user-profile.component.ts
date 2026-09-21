@@ -17,7 +17,10 @@ export class UserProfileComponent implements OnInit {
   //#region Properties
   /** Up to two uppercase initials derived from the user's name, used when no picture is set. */
   protected get initials(): string {
-    const parts: string[] = this.name.trim().split(/\s+/).filter((p: string) => p.length > 0);
+    const parts: string[] = this.name
+      .trim()
+      .split(/\s+/)
+      .filter((p: string) => p.length > 0);
     if (parts.length === 0) {
       return '';
     }

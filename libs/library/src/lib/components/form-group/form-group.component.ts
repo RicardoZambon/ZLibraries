@@ -1,18 +1,16 @@
 import { NgIf } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'lib-form-group',
   templateUrl: './form-group.component.html',
   styleUrls: ['./form-group.component.scss'],
-  imports: [
-    NgIf,
-    TranslatePipe,
-  ],
+  imports: [NgIf, TranslatePipe],
   host: {
-    '[class.expand]': 'shouldExpand'
-  }
+    '[class.expand]': 'shouldExpand',
+  },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormGroupComponent {
   //#region ViewChilds, Inputs, Outputs

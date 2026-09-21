@@ -1,18 +1,28 @@
 <div class="title">
-    <h6 role="button"
+  <h6
+    role="button"
     tabindex="0"
     [attr.aria-expanded]="!collapsed"
     (click)="onToggle()"
     (keydown.enter)="onToggle()"
-    (keydown.space)="onToggle(); $event.preventDefault()"><i class="fas fa-chevron-down fa-sm"></i>{{ this.label }}</h6>
+    (keydown.space)="onToggle(); $event.preventDefault()"
+  >
+    <i class="fas fa-chevron-down fa-sm"></i>{{ this.label }}
+  </h6>
 </div>
 
-<div #container class="content animate"
-[ngStyle]="maxHeight >= 0 && {
-    'height.px': maxHeight,
-    'max-height.px': maxHeight
-} || null">
-    <div #maxHeighContainer>
-        <ng-content></ng-content>
-    </div>
+<div
+  #container
+  class="content animate"
+  [ngStyle]="
+    (maxHeight >= 0 && {
+      'height.px': maxHeight,
+      'max-height.px': maxHeight
+    }) ||
+    null
+  "
+>
+  <div #maxHeighContainer>
+    <ng-content></ng-content>
+  </div>
 </div>

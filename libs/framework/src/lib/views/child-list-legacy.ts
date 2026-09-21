@@ -9,7 +9,6 @@ import { ViewBase } from './view-base';
  */
 @Component({ template: '' })
 export abstract class ChildListLegacy extends ViewBase implements OnInit {
-
   private _entityId?: number;
 
   protected selectionCount = 0;
@@ -25,7 +24,7 @@ export abstract class ChildListLegacy extends ViewBase implements OnInit {
       if (!this.dataGridDataset.loadedRows) {
         this.dataGridDataset.refresh();
       }
-      
+
       if (this.resultDataset) {
         this.resultDataset.parentEntityId = value;
       }
@@ -33,7 +32,6 @@ export abstract class ChildListLegacy extends ViewBase implements OnInit {
   }
 
   @Input() disabled = false;
-
 
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
   protected resultDataset: MultiSelectResultDataset | null = inject(MultiSelectResultDataset, { optional: true });
@@ -43,15 +41,11 @@ export abstract class ChildListLegacy extends ViewBase implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dataGridDataset.loadStarted
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(() => {
+    this.dataGridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.loading = true;
     });
 
-    this.dataGridDataset.loadFinished
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(() => {
+    this.dataGridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.loading = false;
     });
 
@@ -59,13 +53,10 @@ export abstract class ChildListLegacy extends ViewBase implements OnInit {
       this.loading = true;
     }
 
-    this.dataGridDataset.selectedRowsChanged
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(() => {
+    this.dataGridDataset.selectedRowsChanged.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.selectedRowChanged();
     });
   }
-  
 
   selectedRowChanged(): void {
     this.selectionCount = this.dataGridDataset.selectedRowKeys.length;

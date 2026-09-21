@@ -55,7 +55,12 @@ import { externalContentRoutes } from '../../features/external-content';
 import { ServicesHistoryViewComponent } from '../../features/services-history/services-history-view/services-history-view.component';
 import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
 import { INotification, IOperationsHistoryList, IServicesHistoryList } from '../../models';
-import { AuthenticationService, NotificationsService, OperationsHistoryService, ServicesHistoryService } from '../../services';
+import {
+  AuthenticationService,
+  NotificationsService,
+  OperationsHistoryService,
+  ServicesHistoryService,
+} from '../../services';
 
 // ---------------------------------------------------------------------------
 // Mock backend — latency
@@ -175,8 +180,22 @@ interface ICustomerAddressesList {
 const CUSTOMER_ADDRESSES: ICustomerAddressesList[] = [
   { id: 1, customerID: 1, street: '100 King Street West', city: 'Toronto', postalCode: 'M5X 1A9', country: 'Canada' },
   { id: 2, customerID: 1, street: '55 Front Street East', city: 'Toronto', postalCode: 'M5E 1B3', country: 'Canada' },
-  { id: 3, customerID: 2, street: '1200 Rue Sainte-Catherine', city: 'Montreal', postalCode: 'H3B 4W5', country: 'Canada' },
-  { id: 4, customerID: 3, street: '800 West Georgia Street', city: 'Vancouver', postalCode: 'V6C 3E8', country: 'Canada' },
+  {
+    id: 3,
+    customerID: 2,
+    street: '1200 Rue Sainte-Catherine',
+    city: 'Montreal',
+    postalCode: 'H3B 4W5',
+    country: 'Canada',
+  },
+  {
+    id: 4,
+    customerID: 3,
+    street: '800 West Georgia Street',
+    city: 'Vancouver',
+    postalCode: 'V6C 3E8',
+    country: 'Canada',
+  },
   { id: 5, customerID: 3, street: '17 Water Street', city: 'Vancouver', postalCode: 'V6B 1A1', country: 'Canada' },
   { id: 6, customerID: 3, street: '9 Cordova Street', city: 'Vancouver', postalCode: 'V6B 1E1', country: 'Canada' },
   { id: 7, customerID: 4, street: '333 7th Avenue SW', city: 'Calgary', postalCode: 'T2P 2Z1', country: 'Canada' },
@@ -255,7 +274,7 @@ function deleteCustomer(id: number): Observable<unknown> {
 // modal's `id` control is null for a new row); `entitiesToDelete` carries the ids of removed rows.
 function saveCustomerAddresses(
   customerID: number,
-  batchUpdate: IBatchUpdate<Partial<ICustomerAddressesList>, number>,
+  batchUpdate: IBatchUpdate<Partial<ICustomerAddressesList>, number>
 ): Observable<unknown> {
   return defer(() => {
     batchUpdate.entitiesToDelete.forEach((addressID: number) => {
@@ -343,8 +362,9 @@ class ShowcaseSidebarService extends SidebarService {
     // An embedded tab opened from a cold deep link resolves its destination through here, so
     // answer with the real menu. Falling through would hand the view a menu whose url is the
     // /external-content route itself, which is not an http address and would read as blocked.
-    const external: SidebarMenu | undefined = externalMenus()
-      .find((menu: SidebarMenu) => url === `/external-content/${menu.id}`);
+    const external: SidebarMenu | undefined = externalMenus().find(
+      (menu: SidebarMenu) => url === `/external-content/${menu.id}`
+    );
 
     if (external) {
       return of(external);
@@ -363,21 +383,57 @@ class ShowcaseSidebarService extends SidebarService {
   protected loadMenus(parentMenu: SidebarMenu | null): Observable<SidebarMenu[]> {
     if (parentMenu?.id === MENU_GENERAL) {
       return of([
-        new SidebarMenu({ id: 21, label: 'Showcase-Menus-Customers', icon: 'fa-address-book', url: '/general/customers', parent: parentMenu }),
-        new SidebarMenu({ id: 22, label: 'Showcase-Menus-Units', icon: 'fa-building', url: '/general/units', parent: parentMenu }),
+        new SidebarMenu({
+          id: 21,
+          label: 'Showcase-Menus-Customers',
+          icon: 'fa-address-book',
+          url: '/general/customers',
+          parent: parentMenu,
+        }),
+        new SidebarMenu({
+          id: 22,
+          label: 'Showcase-Menus-Units',
+          icon: 'fa-building',
+          url: '/general/units',
+          parent: parentMenu,
+        }),
       ]).pipe(delay(SHOWCASE_READ_LATENCY_MS));
     }
 
     if (parentMenu?.id === MENU_SECURITY) {
       return of([
-        new SidebarMenu({ id: 31, label: 'Showcase-Menus-Users', icon: 'fa-user', url: '/security/users', parent: parentMenu }),
+        new SidebarMenu({
+          id: 31,
+          label: 'Showcase-Menus-Users',
+          icon: 'fa-user',
+          url: '/security/users',
+          parent: parentMenu,
+        }),
       ]).pipe(delay(SHOWCASE_READ_LATENCY_MS));
     }
 
     return of([
-      new SidebarMenu({ id: MENU_DASHBOARD, label: 'Showcase-Menus-Dashboard', icon: 'fa-chart-line', url: '/dashboard', region: 'Showcase-Region-Main' }),
-      new SidebarMenu({ id: MENU_GENERAL, label: 'Showcase-Menus-General', icon: 'fa-layer-group', childCount: 2, region: 'Showcase-Region-Main' }),
-      new SidebarMenu({ id: MENU_SECURITY, label: 'Showcase-Menus-Security', icon: 'fa-shield-halved', childCount: 1, region: 'Showcase-Region-Administration' }),
+      new SidebarMenu({
+        id: MENU_DASHBOARD,
+        label: 'Showcase-Menus-Dashboard',
+        icon: 'fa-chart-line',
+        url: '/dashboard',
+        region: 'Showcase-Region-Main',
+      }),
+      new SidebarMenu({
+        id: MENU_GENERAL,
+        label: 'Showcase-Menus-General',
+        icon: 'fa-layer-group',
+        childCount: 2,
+        region: 'Showcase-Region-Main',
+      }),
+      new SidebarMenu({
+        id: MENU_SECURITY,
+        label: 'Showcase-Menus-Security',
+        icon: 'fa-shield-halved',
+        childCount: 1,
+        region: 'Showcase-Region-Administration',
+      }),
       ...externalMenus(),
     ]).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
@@ -421,7 +477,8 @@ abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
     const lines: string[] = [
       fields.map((field: string) => csvCell(field)).join(','),
       ...rows.map((row: TListModel) =>
-        fields.map((field: string) => csvCell((row as Record<string, unknown>)[field])).join(',')),
+        fields.map((field: string) => csvCell((row as Record<string, unknown>)[field])).join(',')
+      ),
     ];
 
     const response: HttpResponse<Blob> = new HttpResponse({
@@ -441,15 +498,19 @@ abstract class ShowcaseDataset<TListModel> extends DataGridDataset {
   // such as Customers' `isActive` would match both "true" and "false" on a letter like "e", so
   // booleans are intentionally left out of the filter forms.
   private matching(parameters?: IListParameters): TListModel[] {
-    const active: [string, string][] = Object.entries(parameters?.filters ?? {})
-      .filter(([, value]: [string, string]) => value !== null && value !== undefined && `${value}`.trim() !== '');
+    const active: [string, string][] = Object.entries(parameters?.filters ?? {}).filter(
+      ([, value]: [string, string]) => value !== null && value !== undefined && `${value}`.trim() !== ''
+    );
 
     if (active.length === 0) {
       return this.rows();
     }
 
-    return this.rows().filter((row: TListModel) => active.every(([field, value]: [string, string]) =>
-      `${(row as Record<string, unknown>)[field] ?? ''}`.toLowerCase().includes(`${value}`.toLowerCase())));
+    return this.rows().filter((row: TListModel) =>
+      active.every(([field, value]: [string, string]) =>
+        `${(row as Record<string, unknown>)[field] ?? ''}`.toLowerCase().includes(`${value}`.toLowerCase())
+      )
+    );
   }
 }
 
@@ -511,8 +572,9 @@ class UsersDataProvider extends DataProviderService<IUsersDisplay> {
     // `hasEntityID`, not `entityID ?? …`: on the /new route entityID is NaN (Number('new')), and
     // NaN is neither null nor undefined, so `??` would pass NaN straight through as the id.
     // `defer` keeps the write on-subscribe rather than evaluating eagerly at call time.
-    return defer(() => of(saveUser(model, this.hasEntityID ? this.entityID : undefined)))
-      .pipe(delay(SHOWCASE_WRITE_LATENCY_MS));
+    return defer(() => of(saveUser(model, this.hasEntityID ? this.entityID : undefined))).pipe(
+      delay(SHOWCASE_WRITE_LATENCY_MS)
+    );
   }
 
   protected loadModel(entityID?: number): Observable<IUsersDisplay | null> {
@@ -551,8 +613,9 @@ class CustomersDataProvider extends DataProviderService<ICustomersDisplay> {
     // `hasEntityID`, not `entityID ?? …`: on the /new route entityID is NaN (Number('new')), and
     // NaN is neither null nor undefined, so `??` would pass NaN straight through as the id.
     // `defer` keeps the write on-subscribe rather than evaluating eagerly at call time.
-    return defer(() => of(saveCustomer(model, this.hasEntityID ? this.entityID : undefined)))
-      .pipe(delay(SHOWCASE_WRITE_LATENCY_MS));
+    return defer(() => of(saveCustomer(model, this.hasEntityID ? this.entityID : undefined))).pipe(
+      delay(SHOWCASE_WRITE_LATENCY_MS)
+    );
   }
 
   protected loadModel(entityID?: number): Observable<ICustomersDisplay | null> {
@@ -649,20 +712,28 @@ function showcaseServiceHistory(controllerName: string): IServicesHistoryList[] 
 
 @Injectable()
 class ShowcaseServicesHistoryService {
-  public list(controllerName: string, _entityID: number, _parameters: IListParameters): Observable<IServicesHistoryList[]> {
+  public list(
+    controllerName: string,
+    _entityID: number,
+    _parameters: IListParameters
+  ): Observable<IServicesHistoryList[]> {
     return of(showcaseServiceHistory(controllerName)).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
 }
 
 // The two operations an audited service can produce, in the shape the child grid expects.
 const SHOWCASE_OPERATION_MODIFIED_RECORD: IOperationsHistoryList = {
-  id: 1, entityName: 'Record', operationType: 'Modified',
+  id: 1,
+  entityName: 'Record',
+  operationType: 'Modified',
   oldValues: JSON.stringify({ isActive: true, name: 'Globex Corporation' }, null, 2),
   newValues: JSON.stringify({ isActive: false, name: 'Globex Corporation Ltd' }, null, 2),
 };
 
 const SHOWCASE_OPERATION_ADDED_CONTACT: IOperationsHistoryList = {
-  id: 2, entityName: 'Contact', operationType: 'Added',
+  id: 2,
+  entityName: 'Contact',
+  operationType: 'Added',
   oldValues: JSON.stringify({}, null, 2),
   newValues: JSON.stringify({ phone: '+1 514 555 0102' }, null, 2),
 };
@@ -678,9 +749,13 @@ const SHOWCASE_OPERATIONS_BY_SERVICE: Record<number, IOperationsHistoryList[]> =
 
 @Injectable()
 class ShowcaseOperationsHistoryService {
-  public list(_controllerName: string, _entityID: number, serviceHistoryID: number, _parameters: IListParameters): Observable<IOperationsHistoryList[]> {
-    return of(SHOWCASE_OPERATIONS_BY_SERVICE[serviceHistoryID] ?? [])
-      .pipe(delay(SHOWCASE_READ_LATENCY_MS));
+  public list(
+    _controllerName: string,
+    _entityID: number,
+    serviceHistoryID: number,
+    _parameters: IListParameters
+  ): Observable<IOperationsHistoryList[]> {
+    return of(SHOWCASE_OPERATIONS_BY_SERVICE[serviceHistoryID] ?? []).pipe(delay(SHOWCASE_READ_LATENCY_MS));
   }
 }
 
@@ -705,15 +780,15 @@ interface IDashboardCard {
     <div class="p-6 flex flex-col gap-6">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         @for (card of cards; track card.label) {
-          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <div class="flex items-center gap-3">
-              <i class="fa-solid {{ card.icon }} text-xl text-slate-400"></i>
-              <div>
-                <div class="text-2xl font-semibold text-slate-800">{{ card.value }}</div>
-                <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label | translate }}</div>
-              </div>
+        <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid {{ card.icon }} text-xl text-slate-400"></i>
+            <div>
+              <div class="text-2xl font-semibold text-slate-800">{{ card.value }}</div>
+              <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label | translate }}</div>
             </div>
           </div>
+        </div>
         }
       </div>
 
@@ -723,7 +798,7 @@ interface IDashboardCard {
         </div>
         <ul class="divide-y divide-slate-100">
           @for (entry of activity; track entry) {
-            <li class="px-4 py-2 text-sm text-slate-600">{{ entry | translate }}</li>
+          <li class="px-4 py-2 text-sm text-slate-600">{{ entry | translate }}</li>
           }
         </ul>
       </div>
@@ -755,12 +830,7 @@ class DashboardComponent extends TabViewBase {
 
 @Component({
   selector: 'shared-showcase-users-filter',
-  imports: [
-    ButtonFiltersComponent,
-    FormGroupComponent,
-    FormInputGroupComponent,
-    ReactiveFormsModule,
-  ],
+  imports: [ButtonFiltersComponent, FormGroupComponent, FormInputGroupComponent, ReactiveFormsModule],
   template: `
     <framework-button-filters modalSize="xl" modalTitle="Showcase-Users-Filters-Title" [formGroup]="filterForm">
       <lib-form-group>
@@ -786,12 +856,7 @@ class ShowcaseUsersFilterComponent extends FiltersBase {
 
 @Component({
   selector: 'shared-showcase-customers-filter',
-  imports: [
-    ButtonFiltersComponent,
-    FormGroupComponent,
-    FormInputGroupComponent,
-    ReactiveFormsModule,
-  ],
+  imports: [ButtonFiltersComponent, FormGroupComponent, FormInputGroupComponent, ReactiveFormsModule],
   template: `
     <framework-button-filters modalSize="xl" modalTitle="Showcase-Customers-Filters-Title" [formGroup]="filterForm">
       <lib-form-group>
@@ -817,12 +882,7 @@ class ShowcaseCustomersFilterComponent extends FiltersBase {
 
 @Component({
   selector: 'shared-showcase-units-filter',
-  imports: [
-    ButtonFiltersComponent,
-    FormGroupComponent,
-    FormInputGroupComponent,
-    ReactiveFormsModule,
-  ],
+  imports: [ButtonFiltersComponent, FormGroupComponent, FormInputGroupComponent, ReactiveFormsModule],
   template: `
     <framework-button-filters modalSize="xl" modalTitle="Showcase-Units-Filters-Title" [formGroup]="filterForm">
       <lib-form-group>
@@ -921,19 +981,25 @@ class UsersListComponent extends TabViewList<IUsersList> {
               controlName="name"
               label="Showcase-Users-Field-Name"
               [maxLength]="200"
-              [validations]="{ 'required': 'Showcase-Users-Validations-Name-Required' }">
+              [validations]="{ required: 'Showcase-Users-Validations-Name-Required' }"
+            >
             </lib-form-input-group>
             <lib-form-input-group
               controlName="username"
               label="Showcase-Users-Field-Username"
               [maxLength]="100"
-              [validations]="{ 'required': 'Showcase-Users-Validations-Username-Required' }">
+              [validations]="{ required: 'Showcase-Users-Validations-Username-Required' }"
+            >
             </lib-form-input-group>
             <lib-form-input-group controlName="email" label="Showcase-Users-Field-Email" [maxLength]="200">
             </lib-form-input-group>
             <lib-form-input-group controlName="isActive" label="Showcase-Users-Field-IsActive" type="checkbox">
             </lib-form-input-group>
-            <lib-form-input-group controlName="mustChangePassword" label="Showcase-Users-Field-MustChangePassword" type="checkbox">
+            <lib-form-input-group
+              controlName="mustChangePassword"
+              label="Showcase-Users-Field-MustChangePassword"
+              type="checkbox"
+            >
             </lib-form-input-group>
           </lib-form-group>
         </lib-group-accordion>
@@ -1001,12 +1067,7 @@ class CustomersListComponent extends TabViewList<ICustomersList> {
 // instance from the child list's so refreshing one does not disturb the other.
 @Component({
   selector: 'shared-showcase-customer-addresses-multi-editor',
-  imports: [
-    FormInputGroupComponent,
-    MultiEditorComponent,
-    ReactiveFormsModule,
-    TranslatePipe,
-  ],
+  imports: [FormInputGroupComponent, MultiEditorComponent, ReactiveFormsModule, TranslatePipe],
   providers: [
     { provide: DataGridDataset, useClass: CustomerAddressesModalDataset },
     { provide: FormService },
@@ -1018,18 +1079,21 @@ class CustomersListComponent extends TabViewList<ICustomersList> {
       [addButtonLabel]="'Showcase-Addresses-Button-Add' | translate"
       [formGroup]="dataForm"
       [removeButtonLabel]="'Showcase-Addresses-Button-Remove' | translate"
-      [title]="'Showcase-Addresses-Modal-Title' | translate">
+      [title]="'Showcase-Addresses-Modal-Title' | translate"
+    >
       <lib-form-input-group
         controlName="street"
         label="Showcase-Addresses-Field-Street"
         [maxLength]="200"
-        [validations]="{ 'required': 'Showcase-Addresses-Validations-Street-Required' }">
+        [validations]="{ required: 'Showcase-Addresses-Validations-Street-Required' }"
+      >
       </lib-form-input-group>
       <lib-form-input-group
         controlName="city"
         label="Showcase-Addresses-Field-City"
         [maxLength]="100"
-        [validations]="{ 'required': 'Showcase-Addresses-Validations-City-Required' }">
+        [validations]="{ required: 'Showcase-Addresses-Validations-City-Required' }"
+      >
       </lib-form-input-group>
       <lib-form-input-group controlName="postalCode" label="Showcase-Addresses-Field-PostalCode" [maxLength]="20">
       </lib-form-input-group>
@@ -1120,7 +1184,8 @@ class CustomerAddressesChildListComponent extends ChildList<ICustomersDisplay> {
               controlName="name"
               label="Showcase-Customers-Field-Name"
               [maxLength]="200"
-              [validations]="{ 'required': 'Showcase-Customers-Validations-Name-Required' }">
+              [validations]="{ required: 'Showcase-Customers-Validations-Name-Required' }"
+            >
             </lib-form-input-group>
             <lib-form-input-group controlName="email" label="Showcase-Customers-Field-Email" [maxLength]="200">
             </lib-form-input-group>
@@ -1135,10 +1200,9 @@ class CustomerAddressesChildListComponent extends ChildList<ICustomersDisplay> {
              ChildList never loads without one, so on /new the section is hidden rather than shown
              empty. It appears as soon as the customer is saved. -->
         @if (hasEntityID) {
-          <lib-group-accordion [label]="'Showcase-EditSection-Addresses' | translate">
-            <shared-showcase-customer-addresses-child-list>
-            </shared-showcase-customer-addresses-child-list>
-          </lib-group-accordion>
+        <lib-group-accordion [label]="'Showcase-EditSection-Addresses' | translate">
+          <shared-showcase-customer-addresses-child-list> </shared-showcase-customer-addresses-child-list>
+        </lib-group-accordion>
         }
       </form>
     </lib-group-scroll-spy>
@@ -1198,7 +1262,7 @@ const SHOWCASE_LOGO =
       '<rect width="32" height="32" rx="7" fill="#006bb6"/>' +
       '<path d="M9 22.5 17.5 9.5h5.5L14.5 22.5z" fill="#ffffff"/>' +
       '<circle cx="11" cy="11" r="2.5" fill="#ffffff"/>' +
-    '</svg>'
+      '</svg>'
   );
 
 // Plain text, NOT translation keys: NotificationsComponent renders `{{ item.title }}` and
@@ -1234,17 +1298,24 @@ const SHOWCASE_NOTIFICATIONS: INotification[] = [
 // read" and clicking an unread item would be visibly inert.
 const showcaseNotifications$ = new BehaviorSubject<INotification[]>(SHOWCASE_NOTIFICATIONS);
 
-const notificationsServiceMock: Pick<NotificationsService,
-  'getNotifications' | 'getUnreadCount' | 'isEnabled' | 'markAllAsRead' | 'markAsRead' | 'start' | 'stop'> = {
+const notificationsServiceMock: Pick<
+  NotificationsService,
+  'getNotifications' | 'getUnreadCount' | 'isEnabled' | 'markAllAsRead' | 'markAsRead' | 'start' | 'stop'
+> = {
   isEnabled: true,
   getNotifications: () => showcaseNotifications$.asObservable(),
-  getUnreadCount: () => showcaseNotifications$.pipe(
-    map((items: INotification[]) => items.filter((item: INotification) => !item.isRead).length)),
-  markAllAsRead: () => showcaseNotifications$.next(
-    showcaseNotifications$.value.map((item: INotification) => ({ ...item, isRead: true }))),
-  markAsRead: (notification: INotification) => showcaseNotifications$.next(
-    showcaseNotifications$.value.map((item: INotification) =>
-      (item === notification ? { ...item, isRead: true } : item))),
+  getUnreadCount: () =>
+    showcaseNotifications$.pipe(
+      map((items: INotification[]) => items.filter((item: INotification) => !item.isRead).length)
+    ),
+  markAllAsRead: () =>
+    showcaseNotifications$.next(showcaseNotifications$.value.map((item: INotification) => ({ ...item, isRead: true }))),
+  markAsRead: (notification: INotification) =>
+    showcaseNotifications$.next(
+      showcaseNotifications$.value.map((item: INotification) =>
+        item === notification ? { ...item, isRead: true } : item
+      )
+    ),
   start: () => undefined,
   stop: () => Promise.resolve(),
 };
@@ -1319,9 +1390,7 @@ const showcaseRoutes: Routes = [
         path: 'dashboard',
         component: DefaultTabViewComponent,
         data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
-        children: [
-          { path: '', component: DashboardComponent },
-        ],
+        children: [{ path: '', component: DashboardComponent }],
       },
       {
         path: 'general',
@@ -1333,9 +1402,7 @@ const showcaseRoutes: Routes = [
                 path: '',
                 component: DefaultTabViewComponent,
                 data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
-                children: [
-                  { path: '', component: CustomersListComponent },
-                ],
+                children: [{ path: '', component: CustomersListComponent }],
               },
               {
                 path: ':id',
@@ -1346,9 +1413,16 @@ const showcaseRoutes: Routes = [
                   defaultTitle: 'Showcase-Customers-Details-Title-New',
                 },
                 children: [
-                  { path: '', component: CustomersFormComponent, data: { icon: 'fa-address-book', title: 'Button-Views-Details' } },
-                  { path: 'audit', component: ServicesHistoryViewComponent,
-                    data: { controllerName: 'Customers', icon: 'fa-history', title: 'Button-Views-History' } },
+                  {
+                    path: '',
+                    component: CustomersFormComponent,
+                    data: { icon: 'fa-address-book', title: 'Button-Views-Details' },
+                  },
+                  {
+                    path: 'audit',
+                    component: ServicesHistoryViewComponent,
+                    data: { controllerName: 'Customers', icon: 'fa-history', title: 'Button-Views-History' },
+                  },
                 ],
               },
             ],
@@ -1360,9 +1434,7 @@ const showcaseRoutes: Routes = [
                 path: '',
                 component: DefaultTabViewComponent,
                 data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
-                children: [
-                  { path: '', component: UnitsListComponent },
-                ],
+                children: [{ path: '', component: UnitsListComponent }],
               },
             ],
           },
@@ -1378,9 +1450,7 @@ const showcaseRoutes: Routes = [
                 path: '',
                 component: DefaultTabViewComponent,
                 data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.List },
-                children: [
-                  { path: '', component: UsersListComponent },
-                ],
+                children: [{ path: '', component: UsersListComponent }],
               },
               {
                 path: ':id',
@@ -1392,8 +1462,11 @@ const showcaseRoutes: Routes = [
                 },
                 children: [
                   { path: '', component: UsersFormComponent, data: { icon: 'fa-user', title: 'Button-Views-Details' } },
-                  { path: 'audit', component: ServicesHistoryViewComponent,
-                    data: { controllerName: 'Users', icon: 'fa-history', title: 'Button-Views-History' } },
+                  {
+                    path: 'audit',
+                    component: ServicesHistoryViewComponent,
+                    data: { controllerName: 'Users', icon: 'fa-history', title: 'Button-Views-History' },
+                  },
                 ],
               },
             ],

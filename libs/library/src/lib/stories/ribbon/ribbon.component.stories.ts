@@ -18,11 +18,7 @@ const meta: Meta<RibbonComponent> = {
   component: RibbonComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        RibbonButtonComponent,
-        RibbonGroupComponent,
-        StorybookRibbonChildComponent,
-      ],
+      imports: [RibbonButtonComponent, RibbonGroupComponent, StorybookRibbonChildComponent],
     }),
   ],
   title: 'Ribbon/Ribbon',
@@ -31,8 +27,7 @@ export default meta;
 type Story = StoryObj<RibbonComponent>;
 
 export const Primary: Story = {
-  args: {
-  },
+  args: {},
   render: (args) => ({
     props: args,
     template: `
@@ -94,4 +89,3 @@ export const Primary: Story = {
     `,
   }),
 };
-

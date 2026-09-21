@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'enumLabel'
+  name: 'enumLabel',
 })
 export class EnumLabelPipe implements PipeTransform {
   public transform(value?: number, enumType?: any): string {

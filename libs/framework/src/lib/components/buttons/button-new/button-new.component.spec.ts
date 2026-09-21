@@ -13,15 +13,16 @@ describe('ButtonNewComponent — navigation logic', () => {
   let mockDataProviderService: { hasEntityID: boolean } | null;
 
   function lastNavigatedTab(): Tab {
-    return mockTabService.navigateCurrentTab.mock.calls[
-      mockTabService.navigateCurrentTab.mock.calls.length - 1
-    ][0];
+    return mockTabService.navigateCurrentTab.mock.calls[mockTabService.navigateCurrentTab.mock.calls.length - 1][0];
   }
 
   function setupRouterWithDetailsRoute(parentUrl: string): void {
     // Simulate a Details route found by RouteHelper.getRouteByData
     const parentSnapshot: any = {
-      url: parentUrl.split('/').filter(Boolean).map((p: string) => ({ path: p })),
+      url: parentUrl
+        .split('/')
+        .filter(Boolean)
+        .map((p: string) => ({ path: p })),
       data: {},
       firstChild: null,
       parent: null,
@@ -55,7 +56,10 @@ describe('ButtonNewComponent — navigation logic', () => {
 
   function setupRouterWithoutDetailsRoute(currentUrl: string): void {
     const rootSnapshot: any = {
-      url: currentUrl.split('/').filter(Boolean).map((p: string) => ({ path: p })),
+      url: currentUrl
+        .split('/')
+        .filter(Boolean)
+        .map((p: string) => ({ path: p })),
       data: {},
       firstChild: null,
       parent: null,
@@ -156,9 +160,7 @@ describe('ButtonNewComponent — navigation logic', () => {
 
   it('should use option path and parameters when optionId is provided', () => {
     setupRouterWithoutDetailsRoute('/contratacoes');
-    component.options = [
-      { id: 'custom', path: 'special', parameters: { mode: 'fast' } },
-    ];
+    component.options = [{ id: 'custom', path: 'special', parameters: { mode: 'fast' } }];
 
     component.onButtonClicked('custom');
 
@@ -170,9 +172,7 @@ describe('ButtonNewComponent — navigation logic', () => {
   it('should merge option parameters with component parameters', () => {
     setupRouterWithoutDetailsRoute('/contratacoes');
     component.parameters = { type: 'admin' };
-    component.options = [
-      { id: 'custom', path: '', parameters: { mode: 'fast' } },
-    ];
+    component.options = [{ id: 'custom', path: '', parameters: { mode: 'fast' } }];
 
     component.onButtonClicked('custom');
 

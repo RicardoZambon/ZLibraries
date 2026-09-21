@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `RibbonComponent`, `FormGroupComponent` and `GroupContainerComponent` now use
+  `ChangeDetectionStrategy.OnPush`. They render from their inputs only, so behaviour is
+  unchanged, but consuming applications no longer check them on every change detection pass.
+
 ### Deprecated
 
 ### Removed
@@ -62,17 +66,18 @@ catch the mismatch.
 
 Rename the bindings in your templates:
 
-| Before | After |
-| --- | --- |
-| `(blur)` | `(blurred)` |
-| `(change)` | `(changed)` |
-| `(focus)` | `(focused)` |
-| `(input)` | `(inputChanged)` |
+| Before     | After            |
+| ---------- | ---------------- |
+| `(blur)`   | `(blurred)`      |
+| `(change)` | `(changed)`      |
+| `(focus)`  | `(focused)`      |
+| `(input)`  | `(inputChanged)` |
 
 `(fixedValueChanged)` is unchanged, but its payload type is now `string` instead of `any` --
 matching what it always emitted.
 
 If you were relying on the double-fire, expect one call per event now instead of two.
+
 ## [1.6.2] - 2026-09-20
 
 ### Fixed
@@ -154,7 +159,7 @@ If you were relying on the double-fire, expect one call per event now instead of
   The point is where the grouping lives. `region` is a label repeated on every item that belongs to
   a group, matched by exact string equality: a typo silently splits one area into two, and the
   area has no row of its own to carry an order or a translation. Derived from the tree, the area
-  *is* a menu row — it already has a translated label and an order — and nothing has to be
+  _is_ a menu row — it already has a translated label and an order — and nothing has to be
   duplicated across its items.
 
   The children of an area are fetched **eagerly**, at load, because they are rendered without a
@@ -284,7 +289,7 @@ and want external items too, add a subscription to `menuExternalUrlSelected`.
 `lib-multi-editor` now sends rows that `newData()` pre-filled but the user never edited. Nothing to do
 if your `newData()` returns an empty object (`{}`) — the common "blank row" convention — since a
 value-less row is still skipped and the posted batch is byte-for-byte what it was before. If your
-`newData()` *does* return field values, those rows now reach `saveData()` where they were previously
+`newData()` _does_ return field values, those rows now reach `saveData()` where they were previously
 dropped, so a batch may contain entries it did not before; verify your backend rejects or defaults
 them as you expect.
 

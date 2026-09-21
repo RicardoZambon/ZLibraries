@@ -4,9 +4,7 @@ import { FrameworkComponentsModule } from './components';
 @NgModule({
   declarations: [],
   imports: [],
-  exports: [
-    FrameworkComponentsModule,
-  ],
+  exports: [FrameworkComponentsModule],
 })
 /**
  * @deprecated Use standalone component imports instead of FrameworkModule.

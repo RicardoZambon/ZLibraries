@@ -21,9 +21,8 @@ class HostComponent {
 describe(DefaultTabViewComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ DefaultTabViewComponent, HostComponent ]
-    })
-    .compileComponents();
+      imports: [DefaultTabViewComponent, HostComponent],
+    }).compileComponents();
   });
 
   it('should create', () => {
@@ -50,10 +49,12 @@ describe(DefaultTabViewComponent.name, () => {
     const fixture: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
 
-    const view: DefaultTabViewComponent = fixture.debugElement
-      .query(By.directive(DefaultTabViewComponent)).componentInstance;
+    const view: DefaultTabViewComponent = fixture.debugElement.query(
+      By.directive(DefaultTabViewComponent)
+    ).componentInstance;
     const service: TabViewService = fixture.debugElement
-      .query(By.directive(DefaultTabViewComponent)).injector.get(TabViewService);
+      .query(By.directive(DefaultTabViewComponent))
+      .injector.get(TabViewService);
 
     // The child publishes while the view is still unnamed, exactly as ngAfterViewInit does.
     service.updateRibbonTemplate(fixture.componentInstance.ribbonTemplate);

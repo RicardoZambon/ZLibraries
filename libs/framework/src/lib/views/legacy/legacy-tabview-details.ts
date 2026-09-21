@@ -17,7 +17,7 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ButtonNewLegacyComponent) public buttonNew!: ButtonNewLegacyComponent;
   //#endregion
-  
+
   //#region Variables
   public override title = '';
 
@@ -25,7 +25,7 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
   protected entityId?: number;
   protected views: IRibbonButtonOption[] = [
     { id: 'details', label: 'Button-Views-Details', icon: 'fa-dice-d6' },
-    { id: 'history', label: 'Button-Views-History', icon: 'fa-history' }
+    { id: 'history', label: 'Button-Views-History', icon: 'fa-history' },
   ];
   //#endregion
 
@@ -33,7 +33,7 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
   public override get loading(): boolean {
     return super.loading;
   }
-  
+
   public override set loading(value: boolean) {
     super.loading = value;
     this.formService.loading = value;
@@ -49,11 +49,7 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    route: ActivatedRoute,
-    tabService: TabService,
-    protected formService: FormService
-  ) {
+  constructor(route: ActivatedRoute, tabService: TabService, protected formService: FormService) {
     super(route, tabService);
   }
 
@@ -66,17 +62,15 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
 
     super.ngOnInit();
 
-    this.formService.modelRefreshed
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((_: any) => {
-        const id: number | null = this.getModelId();
-        if (id && this.entityId !== id) {
-          this.entityId = id;
-          this.tabService.redirectCurrentTab(`${this.url.substring(0, this.url.indexOf('/new'))}/${id}`);
-        }
+    this.formService.modelRefreshed.pipe(takeUntil(this.destroy$)).subscribe((_: any) => {
+      const id: number | null = this.getModelId();
+      if (id && this.entityId !== id) {
+        this.entityId = id;
+        this.tabService.redirectCurrentTab(`${this.url.substring(0, this.url.indexOf('/new'))}/${id}`);
+      }
 
-        this.updateTitle(this.getModelDescription());
-      });
+      this.updateTitle(this.getModelDescription());
+    });
 
     this.refresh();
   }
@@ -89,7 +83,9 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
   protected override openTabView(): void {
     super.openTabView();
 
-    const activeView: IRibbonButtonOption | undefined = this.views.find((view: IRibbonButtonOption) => view.id === this.activeView);
+    const activeView: IRibbonButtonOption | undefined = this.views.find(
+      (view: IRibbonButtonOption) => view.id === this.activeView
+    );
     if (activeView) {
       activeView.isDisabled = true;
     }
@@ -101,11 +97,11 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
     this.formService.model = null;
 
     this.loadModel()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(model => {
-      this.loading = false;
-      this.formService.model = model;
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((model) => {
+        this.loading = false;
+        this.formService.model = model;
+      });
   }
   protected refreshParameters(): void {
     const currentID: string | null = this.route.snapshot.paramMap.get('id');
@@ -123,7 +119,9 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
       viewId = this.defaultView;
     }
 
-    const activeView: IRibbonButtonOption | undefined = this.views.find((view: IRibbonButtonOption) => view.id === (this.activeView ?? this.defaultView));
+    const activeView: IRibbonButtonOption | undefined = this.views.find(
+      (view: IRibbonButtonOption) => view.id === (this.activeView ?? this.defaultView)
+    );
     if (activeView) {
       activeView.isDisabled = false;
     }
@@ -141,7 +139,7 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
       }
       this.tabService.navigateCurrentTab(new Tab({ url }));
       // this.tabService.changeTabView(this, viewId !== this.defaultView ? viewId : undefined);
-      
+
       this.activeView = newView.id;
 
       // if (!this.activeView) {

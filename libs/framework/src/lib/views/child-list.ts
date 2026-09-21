@@ -31,31 +31,24 @@ export abstract class ChildList<TEntityModel> extends ViewBase implements OnInit
   }
 
   public ngOnInit(): void {
-    this.dataGridDataset.loadStarted
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.loading = true;
-      });
+    this.dataGridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.loading = true;
+    });
 
-    this.dataGridDataset.loadFinished
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.loading = false;
-      });
+    this.dataGridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.loading = false;
+    });
 
-    this.dataGridDataset.selectedRowsChanged
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.selectedRowChanged();
-      });
+    this.dataGridDataset.selectedRowsChanged.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.selectedRowChanged();
+    });
 
-    this.resultDataset?.savedChanges
-      ?.pipe(takeUntil(this.destroy$))
-      ?.subscribe(() => {
-        this.dataGridDataset.refresh();
-      });
+    this.resultDataset?.savedChanges?.pipe(takeUntil(this.destroy$))?.subscribe(() => {
+      this.dataGridDataset.refresh();
+    });
 
-    this.dataProvider?.getModel$()
+    this.dataProvider
+      ?.getModel$()
       .pipe(skip(1), takeUntil(this.destroy$))
       .subscribe(() => {
         this.dataGridDataset.refresh();
@@ -67,7 +60,7 @@ export abstract class ChildList<TEntityModel> extends ViewBase implements OnInit
       if (!this.dataGridDataset.loadedRows) {
         this.dataGridDataset.refresh();
       }
-      
+
       if (this.resultDataset) {
         this.resultDataset.parentEntityId = this.dataProvider.entityID;
       }

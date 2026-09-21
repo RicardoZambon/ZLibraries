@@ -12,12 +12,7 @@ import { TabBreadcrumbsComponent } from '../tab-breadcrumbs/tab-breadcrumbs.comp
   selector: 'framework-tabs',
   templateUrl: './tabs.component.html',
   styleUrls: ['./tabs.component.scss'],
-  imports: [
-    NgFor,
-    NgIf,
-    TabBreadcrumbsComponent,
-    TranslatePipe,
-  ]
+  imports: [NgFor, NgIf, TabBreadcrumbsComponent, TranslatePipe],
 })
 export class TabsComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -58,29 +53,31 @@ export class TabsComponent implements OnInit {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    private router: Router,
-    private tabService: TabService,
-  ) {
-
-  }
+  constructor(private router: Router, private tabService: TabService) {}
 
   public ngOnInit(): void {
-    const activatedDetailsTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.snapshot.root, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
+    const activatedDetailsTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
+      this.router.routerState.snapshot.root,
+      FRAMEWORK_VIEW_TYPE,
+      FrameworkViewType.Details
+    );
     if (activatedDetailsTabView) {
-      const shouldIgnoreFirstChildRoute: boolean = !!activatedDetailsTabView.firstChild && activatedDetailsTabView.firstChild.data && activatedDetailsTabView.firstChild.data['ignoreRoute'] === true;
+      const shouldIgnoreFirstChildRoute: boolean =
+        !!activatedDetailsTabView.firstChild &&
+        activatedDetailsTabView.firstChild.data &&
+        activatedDetailsTabView.firstChild.data['ignoreRoute'] === true;
 
       const url: string = RouteHelper.getRouteURL(activatedDetailsTabView);
       const clones: string[] = [];
 
       if (shouldIgnoreFirstChildRoute) {
         clones.push(RouteHelper.getRouteURL(activatedDetailsTabView.firstChild!));
-
       } else if (activatedDetailsTabView.firstChild) {
         const childPath: string = activatedDetailsTabView.firstChild.url.map((s: any) => s.path).join('/');
-        const defaultChildPath: string = activatedDetailsTabView.routeConfig?.children
-          ?.filter((route: Route) => !!route.data && route.data['ignoreRoute'] !== true)
-          ?.[0]?.path ?? '';
+        const defaultChildPath: string =
+          activatedDetailsTabView.routeConfig?.children?.filter(
+            (route: Route) => !!route.data && route.data['ignoreRoute'] !== true
+          )?.[0]?.path ?? '';
 
         if (childPath !== defaultChildPath) {
           const entityID = Number(activatedDetailsTabView.paramMap.get('id'));
@@ -92,30 +89,40 @@ export class TabsComponent implements OnInit {
             const childTitle: string = activatedDetailsTabView.firstChild?.data?.['title'] ?? '';
             queueMicrotask(() => {
               const childUrl: string = RouteHelper.getRouteURL(activatedDetailsTabView.firstChild!);
-              this.tabService.replaceCurrentTabSubView(url, new Tab({
-                title: childTitle,
-                url: childUrl,
-              }));
+              this.tabService.replaceCurrentTabSubView(
+                url,
+                new Tab({
+                  title: childTitle,
+                  url: childUrl,
+                })
+              );
             });
           }
         }
       }
 
-      this.tabService.openTab(new Tab({
-        clones: clones,
-        entityBaseUrl: url,
-        queryParams: activatedDetailsTabView.queryParams,
-        url: url,
-      }));
-
+      this.tabService.openTab(
+        new Tab({
+          clones: clones,
+          entityBaseUrl: url,
+          queryParams: activatedDetailsTabView.queryParams,
+          url: url,
+        })
+      );
     } else {
-      const activatedTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.snapshot.root, FRAMEWORK_VIEW_TYPE, FrameworkViewType.List);
+      const activatedTabView: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
+        this.router.routerState.snapshot.root,
+        FRAMEWORK_VIEW_TYPE,
+        FrameworkViewType.List
+      );
       if (activatedTabView) {
         const url: string = RouteHelper.getRouteURL(activatedTabView);
-        this.tabService.openTab(new Tab({
-          queryParams: activatedTabView.queryParams,
-          url: url,
-        }));
+        this.tabService.openTab(
+          new Tab({
+            queryParams: activatedTabView.queryParams,
+            url: url,
+          })
+        );
       } else {
         this.router.navigate(['/']);
       }

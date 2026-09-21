@@ -7,10 +7,7 @@ const meta: Meta<GroupContainerComponent> = {
   component: GroupContainerComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        GroupAccordionComponent,
-        GroupScrollSpyComponent,
-      ],
+      imports: [GroupAccordionComponent, GroupScrollSpyComponent],
     }),
   ],
   title: 'Form Components/Group Container',
@@ -103,4 +100,3 @@ export const WithoutHeader: Story = {
     `,
   }),
 };
-

@@ -1,10 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'replace'
+  name: 'replace',
 })
 export class ReplacePipe implements PipeTransform {
-  
   //#region ViewChilds, Inputs, Outputs
   //#endregion
 
@@ -13,7 +12,7 @@ export class ReplacePipe implements PipeTransform {
 
   //#region Properties
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   //#endregion
 

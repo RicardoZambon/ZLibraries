@@ -55,8 +55,7 @@ export default meta;
 type Story = StoryObj<SidebarComponent>;
 
 export const Primary: Story = {
-  args: {
-  },
+  args: {},
   render: (args) => ({
     props: args,
     template: `
@@ -66,4 +65,3 @@ export const Primary: Story = {
     `,
   }),
 };
-

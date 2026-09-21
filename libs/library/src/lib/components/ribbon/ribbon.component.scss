@@ -22,37 +22,37 @@
    Raw `display: none` rather than `@apply hidden`: Tailwind rejects that here as a circular
    dependency, since the utility it would inline is the same `.hidden` class this selector tests. */
 ::ng-deep lib-ribbon:not(:has(lib-ribbon-group:not(.hidden))):not(:has(> div > *:not(lib-ribbon-group))) {
-    display: none;
+  display: none;
 }
 
 :host-context {
-    @apply flex flex-row border rounded-lg p-1 relative;
-    @apply bg-gray-200/80 border-gray-300/90;
-    @apply justify-between;
+  @apply flex flex-row border rounded-lg p-1 relative;
+  @apply bg-gray-200/80 border-gray-300/90;
+  @apply justify-between;
 
-    div {
-        @apply inline-flex gap-2;
-    }
+  div {
+    @apply inline-flex gap-2;
+  }
 
-    ::ng-deep {
-        *[right] {
-            @apply flex;
+  ::ng-deep {
+    *[right] {
+      @apply flex;
 
-            lib-ribbon-group {
-                @apply mr-2 ml-0;
+      lib-ribbon-group {
+        @apply mr-2 ml-0;
 
-                &:first-child {
-                    @apply mr-0 pr-0 pl-2;
-                }
-
-                &:after {
-                    @apply -left-1;
-                }
-
-                lib-ribbon-button .options-dropdown {
-                    @apply right-0;
-                }
-            }
+        &:first-child {
+          @apply mr-0 pr-0 pl-2;
         }
+
+        &:after {
+          @apply -left-1;
+        }
+
+        lib-ribbon-button .options-dropdown {
+          @apply right-0;
+        }
+      }
     }
+  }
 }

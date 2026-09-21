@@ -6,8 +6,8 @@ import { Observable, Subject } from 'rxjs';
 @Injectable()
 export class FormService {
   //#region ViewChilds, Inputs, Outputs
-  public fieldRefreshed = new EventEmitter<{ fieldName: string; value?: any; loading?: boolean; }>();
-  public modelRefreshed = new EventEmitter<any | null>;
+  public fieldRefreshed = new EventEmitter<{ fieldName: string; value?: any; loading?: boolean }>();
+  public modelRefreshed = new EventEmitter<any | null>();
   //#endregion
 
   //#region Variables
@@ -74,7 +74,7 @@ export class FormService {
   public beginFieldLoading(fieldName: string) {
     this.fieldRefreshed.emit({
       fieldName,
-      loading: true
+      loading: true,
     });
   }
 
@@ -150,7 +150,9 @@ export class FormService {
       const errors: { [id: string]: string[] } = <{ [id: string]: string[] }>errorResponse.error.errors;
 
       Object.keys(errors)
-        .map((x: string) => { return { key: x, field: x.substring(0, 1).toLocaleLowerCase() + x.substring(1, x.length) }; })
+        .map((x: string) => {
+          return { key: x, field: x.substring(0, 1).toLocaleLowerCase() + x.substring(1, x.length) };
+        })
         .forEach((err: { key: string; field: string }) => {
           setTimeout(() => {
             const field: FormControl = <FormControl>this.form!.get(err.field);

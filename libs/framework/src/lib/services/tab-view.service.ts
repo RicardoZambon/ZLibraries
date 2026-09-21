@@ -7,7 +7,9 @@ export class TabViewService {
   //#endregion
 
   //#region Variables
-  public onUpdateRibbonTemplate: ReplaySubject<TemplateRef<any> | undefined> = new ReplaySubject<TemplateRef<any> | undefined>(1);
+  public onUpdateRibbonTemplate: ReplaySubject<TemplateRef<any> | undefined> = new ReplaySubject<
+    TemplateRef<any> | undefined
+  >(1);
   public onViewChanged: Subject<string> = new Subject<string>();
 
   private _activeView?: string;
@@ -18,7 +20,7 @@ export class TabViewService {
     return this._activeView ?? '';
   }
   //#endregion
-  
+
   //#region Constructor and Angular life cycle methods
   //#endregion
 
@@ -30,12 +32,12 @@ export class TabViewService {
     if (viewId === this._activeView) {
       return;
     }
-    
+
     this._activeView = viewId;
     this.onViewChanged.next(viewId);
   }
 
-  public updateRibbonTemplate(template: TemplateRef<any>| undefined): void {
+  public updateRibbonTemplate(template: TemplateRef<any> | undefined): void {
     this.onUpdateRibbonTemplate.next(template);
   }
   //#endregion
