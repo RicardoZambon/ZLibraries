@@ -21,11 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [4.0.1] - 2026-09-21
+
+### Fixed
+
 - **Host styles now apply.** The services-history view and both history child lists declared their
   host block as `:host-context {` with no argument, so every rule inside was silently dropped.
   They are `:host {` now.
-
-### ⚠ Breaking Changes / Migration
 
 ## [4.0.0] - 2026-09-21
 
@@ -371,7 +375,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.0.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.0.1...HEAD
+[4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.0.1
 [4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.0.0
 [3.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v3.0.1
 [3.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v3.0.0
