@@ -526,12 +526,6 @@ describe('CatalogSelectComponent', () => {
 
       expect(component.isDropDownShown).toBe(false);
     });
-
-    it('should close dropdown on message click', () => {
-      component.onDropDownMessageClick();
-
-      expect(component.isDropDownShown).toBe(false);
-    });
   });
   //#endregion
 

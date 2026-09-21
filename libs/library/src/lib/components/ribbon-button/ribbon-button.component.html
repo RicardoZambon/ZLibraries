@@ -1,12 +1,17 @@
 <div class="button-container"
 [attr.title]="tooltip || null">
     <a class="button"
+    role="button"
+    [attr.tabindex]="isButtonDisabled ? -1 : 0"
+    [attr.aria-disabled]="isButtonDisabled"
     [class.disabled]="isButtonDisabled"
     [class.success]="status === 'success'"
     [class.warning]="status === 'warning'"
     [class.failure]="status === 'failure'"
     [class.small]="iconSize === 'small'"
     (click)="onButtonClicked()"
+    (keydown.enter)="onButtonClicked()"
+    (keydown.space)="onButtonClicked(); $event.preventDefault()"
     >
         <span class="icon" [class.loading]="loading">
             <i class="fas fa-fw" [ngClass]="[ buttonIcon, color ]"></i>
@@ -23,23 +28,35 @@
     </a>
     
     <a class="button-dropdown" *ngIf="options.length > 0"
+    role="button"
+    [attr.tabindex]="isButtonDisabled ? -1 : 0"
+    [attr.aria-disabled]="isButtonDisabled"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="showDropdown"
     [class.disabled]="isButtonDisabled"
     [class.success]="status === 'success'"
     [class.warning]="status === 'warning'"
     [class.failure]="status === 'failure'"
     [class.small]="iconSize === 'small'"
     (click)="onShowHideDropdown()"
+    (keydown.enter)="onShowHideDropdown()"
+    (keydown.space)="onShowHideDropdown(); $event.preventDefault()"
     >
         <i class="fas fa-chevron-down" [ngClass]="[ color ]"></i>
     </a>
 </div>
 
-<ul class="options-dropdown" *ngIf="options.length > 0">
+<ul class="options-dropdown" *ngIf="options.length > 0" role="menu">
     <li *ngFor="let option of options; let i = index"
+    role="menuitem"
+    [attr.tabindex]="isOptionDisabled(option) || !isOptionVisible(option) ? -1 : 0"
+    [attr.aria-disabled]="isOptionDisabled(option)"
     [class.default-option]="i === defaultOption"
     [class.disabled]="isOptionDisabled(option)"
     [class.hidden]="!isOptionVisible(option)"
     (click)="onOptionClicked(option)"
+    (keydown.enter)="onOptionClicked(option)"
+    (keydown.space)="onOptionClicked(option); $event.preventDefault()"
     >
         <i class="fas fa-fw" *ngIf="!!option.icon" [ngClass]="[ option.icon, color ]"></i> {{ option.label | translate }}
     </li>

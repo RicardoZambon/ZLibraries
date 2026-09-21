@@ -93,6 +93,10 @@ Components, models and pipes are exported from the package root as well.
 
 ## Documentation
 
+Browse the published Storybook at [https://ricardozambon.github.io/ZLibraries/shared/](https://ricardozambon.github.io/ZLibraries/shared/).
+
+To run it locally:
+
 ```bash
 npm run storybook:shared
 ```

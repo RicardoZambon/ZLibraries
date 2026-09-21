@@ -59,6 +59,8 @@ li.active .tab-item, .tab-content {
             .tab-close {
                 @apply flex items-center absolute p-4 top-0 right-0 bottom-0 text-2xl cursor-pointer;
                 @apply transition-colors ease-in-out text-gray-400/80;
+                // Now a real <button>: strip the UA chrome it brings with it.
+                @apply border-none bg-transparent leading-none;
             }
         }
     }

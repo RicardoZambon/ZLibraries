@@ -5,7 +5,12 @@
     [class.loading]="isLoading"
     [class.parent]="isParent"
     [class.selected]="isSelected"
-    (click)="onSelectItem()">
+    role="button"
+    tabindex="0"
+    [attr.aria-current]="isSelected"
+    (click)="onSelectItem()"
+    (keydown.enter)="onSelectItem()"
+    (keydown.space)="onSelectItem(); $event.preventDefault()">
         <a [attr.title]="opensInNewBrowserTab ? externalLinkText : null">
             <i *ngIf="hasIcon && level === 0" class="fa-solid fa-fw {{ menu.icon }}"></i>
             <span>{{ menu.label | translate }}</span>

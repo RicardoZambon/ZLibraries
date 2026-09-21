@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Accessibility.** `TabsComponent` renders proper `tablist`/`tab` semantics with `aria-selected`,
+  its tabs are keyboard-activatable and the close control is a labelled `<button>`.
+  `TabBreadcrumbsComponent` entries are focusable and activate with `Enter`/`Space`.
+- Added the `Tabs-CloseTab` translation key (en, pt) for the tab close button's accessible name.
+
 ### Deprecated
 
 ### Removed
@@ -45,6 +50,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Declared `rxjs` in `peerDependencies`; it is used throughout the package but was never declared.
 - Added a README to the published package.
 
+### ⚠ Breaking Changes / Migration
+
+**Requires `@zambon-dev/library` 2.x.** The peer range moved from `^1.6.0` to `^2.0.0`. See the
+library changelog for the `FormInputComponent` output renames; if your application binds those
+outputs directly, apply that migration too.
 ## [1.4.1] - 2026-09-19
 
 ### Fixed

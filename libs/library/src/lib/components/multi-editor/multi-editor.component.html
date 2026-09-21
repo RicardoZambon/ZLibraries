@@ -12,19 +12,23 @@
 
         <div class="data">
             <div class="buttons">
-                <a *ngIf="showAddButton"
+                <button *ngIf="showAddButton"
                 class="btn gray-500"
+                type="button"
                 [class.disabled]="modalProcessing || gridLoading || formLoading || formGroup.invalid"
+                [disabled]="modalProcessing || gridLoading || formLoading || formGroup.invalid"
                 (click)="onNewClick()">
                     {{ addButtonLabel }}
-                </a>
+                </button>
 
-                <a *ngIf="showDeleteButton && hasSelectedKey"
+                <button *ngIf="showDeleteButton && hasSelectedKey"
                 class="btn red-500"
+                type="button"
                 [class.disabled]="modalProcessing || gridLoading || formLoading"
+                [disabled]="modalProcessing || gridLoading || formLoading"
                 (click)="onDeleteClick()">
                     {{ removeButtonLabel }}
-                </a>
+                </button>
             </div>
 
             <lib-form-group>

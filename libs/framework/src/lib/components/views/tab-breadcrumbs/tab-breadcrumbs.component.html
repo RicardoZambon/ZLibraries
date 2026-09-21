@@ -1,6 +1,11 @@
 <i class="fa-solid fa-angles-right"></i>
 
-<a *ngFor="let history of tabHistory" (click)="onTitleClick(history)">
+<a *ngFor="let history of tabHistory"
+role="button"
+tabindex="0"
+(click)="onTitleClick(history)"
+(keydown.enter)="onTitleClick(history)"
+(keydown.space)="onTitleClick(history); $event.preventDefault()">
     <span *ngIf="!history.isTitleLoading">{{ (history.title ?? '') | translate }}</span>
 
     <svg *ngIf="history.isTitleLoading" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

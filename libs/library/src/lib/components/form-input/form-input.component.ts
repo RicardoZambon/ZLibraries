@@ -43,11 +43,14 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   @Input() public step = 1;
   @Input() public type = 'text';
 
-  @Output() public blur: EventEmitter<any> = new EventEmitter<any>();
-  @Output() public change: EventEmitter<any> = new EventEmitter<any>();
-  @Output() public fixedValueChanged: EventEmitter<any> = new EventEmitter<string>();
-  @Output() public input: EventEmitter<any> = new EventEmitter<any>();
-  @Output() public focus: EventEmitter<any> = new EventEmitter<any>();
+  // Deliberately NOT named blur/change/input/focus. <lib-form-input> is a real DOM
+  // element, so an output sharing a native event name fires the consumer's handler
+  // twice for the bubbling events and shadows the native one for the rest.
+  @Output() public blurred: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public changed: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public fixedValueChanged: EventEmitter<string> = new EventEmitter<string>();
+  @Output() public focused: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public inputChanged: EventEmitter<void> = new EventEmitter<void>();
   //#endregion
 
   //#region Host listeners
@@ -155,19 +158,19 @@ export class FormInputComponent extends BaseComponent implements OnInit {
 
   //#region Event handlers
   protected onBlur(): void {
-    this.blur.emit();
+    this.blurred.emit();
   }
 
   protected onChange(value: any): void {
-    this.change.emit(value);
+    this.changed.emit(value);
   }
 
   protected onFocus(): void {
-    this.focus.emit();
+    this.focused.emit();
   }
 
   protected onInput(): void {
-    this.input.emit();
+    this.inputChanged.emit();
   }
 
   protected onValueChanged(newText: string): void {

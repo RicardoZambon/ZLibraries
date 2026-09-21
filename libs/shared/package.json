@@ -30,8 +30,8 @@
     "@auth0/angular-jwt": "^5.2.0",
     "@microsoft/signalr": "^10.0.0",
     "@ngx-translate/core": "^16.0.4",
-    "@zambon-dev/framework": "^1.0.0",
-    "@zambon-dev/library": "^1.0.0",
+    "@zambon-dev/framework": "^2.0.0",
+    "@zambon-dev/library": "^2.0.0",
     "ngx-translate-multi-http-loader": "^19.0.2",
     "rxjs": "^7.8.0"
   },

@@ -5,12 +5,14 @@ class="body"
     class="row"
     *ngFor="let row of resultDataset.displayedRows; let i = index">
         <div class="cell">
-            <a
+            <button
             class="remove"
+            type="button"
             [class.disabled]="isDisabled"
+            [disabled]="isDisabled"
             (click)="onItemRemoved(i)">
                 <i class="fas fa-times"></i>
-            </a>
+            </button>
         </div> 
 
         <div class="cell">

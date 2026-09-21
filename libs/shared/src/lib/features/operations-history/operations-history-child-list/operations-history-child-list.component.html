@@ -2,7 +2,12 @@
 </lib-data-grid>
 
 <ng-template #operationTemplate let-rowData="rowData">
-    <div class="operation-content" (click)="openModal()">
+    <div class="operation-content"
+    role="button"
+    tabindex="0"
+    (click)="openModal()"
+    (keydown.enter)="openModal()"
+    (keydown.space)="openModal(); $event.preventDefault()">
         <span class="operation"
         [class.added]="rowData.operationType === 'Added'"
         [class.deleted]="rowData.operationType === 'Deleted'"
