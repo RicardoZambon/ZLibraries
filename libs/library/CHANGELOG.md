@@ -15,10 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `RibbonComponent`, `FormGroupComponent` and `GroupContainerComponent` now use
-  `ChangeDetectionStrategy.OnPush`. They render from their inputs only, so behaviour is
-  unchanged, but consuming applications no longer check them on every change detection pass.
-
 ### Deprecated
 
 ### Removed
@@ -26,6 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+## [2.0.1] - 2026-09-21
+
+### Changed
+
+- `RibbonComponent`, `FormGroupComponent` and `GroupContainerComponent` now use
+  `ChangeDetectionStrategy.OnPush`. They render from their inputs only, so behaviour is
+  unchanged, but consuming applications no longer check them on every change detection pass.
 
 ## [2.0.0] - 2026-09-21
 
@@ -370,7 +374,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v2.0.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v2.0.1...HEAD
+[2.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v2.0.1
 [2.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v2.0.0
 [1.6.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.4
 [1.6.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.3
