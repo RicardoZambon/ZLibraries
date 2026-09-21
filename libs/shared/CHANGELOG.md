@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Host styles now apply.** The services-history view and both history child lists declared their
+  host block as `:host-context {` with no argument, so every rule inside was silently dropped.
+  They are `:host {` now.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [4.0.0] - 2026-09-21

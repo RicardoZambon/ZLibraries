@@ -1,5 +1,5 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
   @apply grid grid-flow-col auto-cols-auto;
 }

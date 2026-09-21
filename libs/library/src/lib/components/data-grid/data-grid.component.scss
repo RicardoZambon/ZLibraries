@@ -1,6 +1,6 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
   @apply flex flex-col overflow-hidden select-none;
 
   &:not(.no-borders) {

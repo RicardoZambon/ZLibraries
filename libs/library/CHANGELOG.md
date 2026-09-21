@@ -52,6 +52,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Host styles now apply.** Ten components declared their host block as `:host-context {` with no
+  argument. That is not a valid host selector, so every rule inside was silently dropped -- the
+  ribbon never became a flex row (its buttons stacked vertically), `lib-group-container` never got
+  its card background or border, and `lib-data-grid`, `lib-form-group`, `lib-group-accordion`,
+  `lib-group-scroll-spy`, `lib-catalog-select`, `lib-ribbon-group`, `lib-ribbon-button` and the
+  multi-select result grid all rendered unstyled at the host level. They are `:host {` now.
+
 - `CatalogSelectComponent` subscribed to its `forkJoin` with an empty handler; it now subscribes
   without one. No behavioural change.
 

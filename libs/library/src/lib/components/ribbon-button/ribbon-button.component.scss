@@ -1,6 +1,6 @@
 /* @use 'tailwindcss'; */
 
-:host-context {
+:host {
   &.dropdown {
     .button {
       @apply rounded-r-none;
