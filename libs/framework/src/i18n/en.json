@@ -57,5 +57,5 @@
   "RibbonGroup-Entity": "Entity",
   "RibbonGroup-General": "General",
   "RibbonGroup-Page": "Page",
-  "Tabs-CloseTab": "Close tab"
+  "Tabs-CloseTab": "Close {{title}}"
 }

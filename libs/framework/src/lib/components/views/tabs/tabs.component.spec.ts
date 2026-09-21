@@ -1,6 +1,10 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { RouteHelper } from '../../../helpers';
-import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, Tab } from '../../../models';
+import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, ITab, Tab } from '../../../models';
+import { TabService } from '../../../services/tab.service';
 import { TabsComponent } from './tabs.component';
 
 // Test the ngOnInit routing logic of TabsComponent using a minimal instance
@@ -220,5 +224,141 @@ describe('TabsComponent — ngOnInit routing logic', () => {
 
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tab strip interaction — rendered, because these are all DOM contracts:
+// ARIA wiring, roving focus, and the pointer/key shortcuts.
+// ---------------------------------------------------------------------------
+
+describe('TabsComponent — tab strip interaction', () => {
+  let fixture: ComponentFixture<TabsComponent>;
+  let tabs: ITab[];
+  let activeUrl: string;
+  let tabServiceStub: {
+    activeTabs: ITab[];
+    activeTabsDisplayTitles: (string | undefined)[];
+    activeTabsLoadingStates: boolean[];
+    activateTab: jest.Mock;
+    closeTab: jest.Mock;
+    isTabActive: (tab: ITab) => boolean;
+    openTab: jest.Mock;
+  };
+
+  function tabElements(): HTMLElement[] {
+    return Array.from(fixture.nativeElement.querySelectorAll('[role="tab"]'));
+  }
+
+  beforeEach(async () => {
+    tabs = [
+      new Tab({ isTitleLoading: false, title: 'First', url: '/first' }),
+      new Tab({ isTitleLoading: false, title: 'Second', url: '/second' }),
+      new Tab({ isTitleLoading: true, url: '/third' }),
+    ];
+    activeUrl = '/first';
+
+    tabServiceStub = {
+      activeTabs: tabs,
+      activeTabsDisplayTitles: ['First', 'Second', undefined],
+      activeTabsLoadingStates: [false, false, true],
+      activateTab: jest.fn((tab: ITab) => (activeUrl = tab.url)),
+      closeTab: jest.fn(),
+      isTabActive: (tab: ITab) => tab.url === activeUrl,
+      openTab: jest.fn(),
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [TabsComponent, TranslateModule.forRoot()],
+      providers: [
+        { provide: TabService, useValue: tabServiceStub },
+        { provide: Router, useValue: { routerState: { snapshot: { root: {} } }, navigate: jest.fn() } },
+      ],
+    }).compileComponents();
+
+    // ngOnInit only does route-to-tab bootstrapping, which the suite above covers.
+    jest.spyOn(TabsComponent.prototype, 'ngOnInit').mockImplementation(() => undefined);
+
+    // Without a loaded translation the pipe echoes the key and drops interpolation, so
+    // the close-button label could never be asserted.
+    const translate: TranslateService = TestBed.inject(TranslateService);
+    translate.setTranslation('en', { 'Tabs-CloseTab': 'Close {{title}}' });
+    translate.use('en');
+
+    fixture = TestBed.createComponent(TabsComponent);
+    fixture.detectChanges();
+  });
+
+  afterEach(() => jest.restoreAllMocks());
+
+  it('should point every tab at the panel it controls', () => {
+    const panel: HTMLElement = fixture.nativeElement.querySelector('[role="tabpanel"]');
+    expect(panel).toBeTruthy();
+
+    for (const tab of tabElements()) {
+      expect(tab.getAttribute('aria-controls')).toBe(panel.id);
+    }
+  });
+
+  it('should label the panel with the selected tab', () => {
+    const panel: HTMLElement = fixture.nativeElement.querySelector('[role="tabpanel"]');
+    expect(panel.getAttribute('aria-labelledby')).toBe(tabElements()[0].id);
+  });
+
+  it('should expose the tablist as a single tab stop', () => {
+    // Roving tabindex: Tab reaches the selected tab, arrows move from there.
+    expect(tabElements().map((t: HTMLElement) => t.getAttribute('tabindex'))).toEqual(['0', '-1', '-1']);
+  });
+
+  it('should move selection with the arrow keys', () => {
+    tabElements()[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(tabServiceStub.activateTab).toHaveBeenCalledWith(tabs[1]);
+  });
+
+  it('should wrap around at both ends', () => {
+    tabElements()[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
+    expect(tabServiceStub.activateTab).toHaveBeenCalledWith(tabs[2]);
+  });
+
+  it('should jump to the first and last tab with Home and End', () => {
+    tabElements()[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+    expect(tabServiceStub.activateTab).toHaveBeenLastCalledWith(tabs[2]);
+
+    tabElements()[2].dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
+    expect(tabServiceStub.activateTab).toHaveBeenLastCalledWith(tabs[0]);
+  });
+
+  it('should close a tab with Delete', () => {
+    tabElements()[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }));
+    expect(tabServiceStub.closeTab).toHaveBeenCalledWith(1);
+  });
+
+  it('should close a tab on middle click', () => {
+    tabElements()[1].dispatchEvent(new MouseEvent('auxclick', { button: 1, bubbles: true }));
+    expect(tabServiceStub.closeTab).toHaveBeenCalledWith(1);
+  });
+
+  it('should ignore a right click', () => {
+    tabElements()[1].dispatchEvent(new MouseEvent('auxclick', { button: 2, bubbles: true }));
+    expect(tabServiceStub.closeTab).not.toHaveBeenCalled();
+  });
+
+  it('should name each close button after its tab', () => {
+    const labels: (string | null)[] = Array.from(fixture.nativeElement.querySelectorAll<HTMLElement>('.tab-close')).map(
+      (button: HTMLElement) => button.getAttribute('aria-label'),
+    );
+
+    // Six identical "Close tab" labels tell a screen reader user nothing.
+    expect(labels[0]).toContain('First');
+    expect(labels[1]).toContain('Second');
+    expect(new Set(labels).size).toBe(labels.length);
+  });
+
+  it('should keep a tab at its width while the title is still loading', () => {
+    // The label used to be swapped out for the spinner, so the strip reflowed as each
+    // title arrived. Both are present now; the spinner sits beside the label.
+    const loading: HTMLElement = tabElements()[2];
+    expect(loading.querySelector('.label')).toBeTruthy();
+    expect(loading.querySelector('.spinner')).toBeTruthy();
   });
 });

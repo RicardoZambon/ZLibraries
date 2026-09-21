@@ -1,22 +1,34 @@
 @if (hasTabs) {
   <div class="tabs-container">
-    <ul class="tabs-nav" role="tablist">
+    <!-- Horizontally scrollable. This used to be overflow:hidden, so once the tabs were
+         wider than the bar the ones past the right edge could not be reached at all. -->
+    <ul #tabsNav class="tabs-nav" role="tablist">
       @for (tab of openTabs; track trackByFn(i, tab); let i = $index) {
         <li role="presentation" [class.active]="isTabActive(tab)">
           <a
             class="tab-item"
             role="tab"
-            tabindex="0"
+            [id]="tabId(i)"
+            [attr.aria-controls]="panelId"
             [attr.aria-selected]="isTabActive(tab)"
+            [attr.title]="tabDisplayTitles[i] ?? tab.title ?? null"
+            [attr.tabindex]="isTabActive(tab) ? 0 : -1"
             (click)="onActivateTab(tab)"
+            (auxclick)="onTabAuxClick($event, i)"
             (keydown.enter)="onActivateTab(tab)"
             (keydown.space)="onActivateTab(tab); $event.preventDefault()"
+            (keydown.arrowleft)="onMoveFocus(i, -1); $event.preventDefault()"
+            (keydown.arrowright)="onMoveFocus(i, 1); $event.preventDefault()"
+            (keydown.home)="onMoveFocus(0, 0); $event.preventDefault()"
+            (keydown.end)="onMoveFocus(openTabs.length - 1, 0); $event.preventDefault()"
+            (keydown.delete)="onCloseTab(i); $event.preventDefault()"
           >
-            @if (!tabLoadingStates[i]) {
-              <span>{{ tabDisplayTitles[i] ?? tab.title ?? '' | translate }}</span>
-            }
+            <!-- Rendered whether or not the title has resolved, so the tab keeps its width
+                 and the strip does not reflow as each title arrives. -->
+            <span class="label">{{ tabDisplayTitles[i] ?? tab.title ?? '' | translate }}</span>
+
             @if (tabLoadingStates[i]) {
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg class="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path
                   class="opacity-75"
@@ -26,10 +38,14 @@
               </svg>
             }
           </a>
+
+          <!-- tabindex -1: the tablist is one tab stop, and the close control is reachable
+               from the tab itself with Delete rather than by tabbing through every one. -->
           <button
             class="tab-close"
             type="button"
-            [attr.aria-label]="'Tabs-CloseTab' | translate"
+            tabindex="-1"
+            [attr.aria-label]="'Tabs-CloseTab' | translate: { title: tabDisplayTitles[i] ?? tab.title ?? '' }"
             (click)="onCloseTab(i)"
           >
             <i class="fas fa-times"></i>
@@ -40,7 +56,7 @@
   </div>
 }
 @if (hasTabs) {
-  <div class="tab-content">
+  <div class="tab-content" role="tabpanel" [id]="panelId" [attr.aria-labelledby]="activeTabId">
     <framework-tab-breadcrumbs></framework-tab-breadcrumbs>
     <ng-content></ng-content>
   </div>
