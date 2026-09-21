@@ -12,7 +12,7 @@ export abstract class ChildList<TEntityModel> extends ViewBase implements OnInit
   protected dataGridDataset: DataGridDataset;
   protected dataProvider: DataProviderService<TEntityModel> | null;
   protected resultDataset: MultiSelectResultDataset | null;
-  protected selectionCount: number = 0;
+  protected selectionCount = 0;
   //#endregion
 
   //#region Properties
@@ -68,7 +68,7 @@ export abstract class ChildList<TEntityModel> extends ViewBase implements OnInit
         this.dataGridDataset.refresh();
       }
       
-      if (!!this.resultDataset) {
+      if (this.resultDataset) {
         this.resultDataset.parentEntityId = this.dataProvider.entityID;
       }
     }

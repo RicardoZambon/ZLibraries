@@ -12,7 +12,7 @@ export class TabService {
   //#endregion
 
   //#region Variables
-  private activeTabIndex: number = -1;
+  private activeTabIndex = -1;
   private customReuseStrategy: CustomReuseStrategy;
   private displayTitleIndices: number[] = [];
   private openTabs: ITab[][] = [];
@@ -132,7 +132,7 @@ export class TabService {
     return this.activeTabs[this.activeTabIndex] === tab;
   }
 
-  public isUrlActive(url: string, checkForClones: boolean = false): boolean {
+  public isUrlActive(url: string, checkForClones = false): boolean {
     if (!this.activeTab) {
       return false;
     }
@@ -249,7 +249,7 @@ export class TabService {
 
   public navigateTo(tab: ITab | undefined, clonedUrl?: string): void {
     let url: string = tab?.url ?? '/';
-    if (!!clonedUrl) {
+    if (clonedUrl) {
       url = clonedUrl;
     }
 
@@ -333,7 +333,7 @@ export class TabService {
     this.navigateTo(current[current.length - 1]);
   }
 
-  public redirectCurrentTab(url: string, updateLocation: boolean = true): void {
+  public redirectCurrentTab(url: string, updateLocation = true): void {
     if (!this.activeTab) {
       return;
     }
@@ -385,7 +385,7 @@ export class TabService {
     return tabs.some((tab: ITab) => this.matchTabUrl(tab, url));
   }
 
-  private findTabIndexByEntityMatch(entityBaseUrl: string, excludeIndex: number = -1): number {
+  private findTabIndexByEntityMatch(entityBaseUrl: string, excludeIndex = -1): number {
     return this.openTabs.findIndex((tabStack: ITab[], index: number) => {
       if (index === excludeIndex) {
         return false;
@@ -396,7 +396,7 @@ export class TabService {
     });
   }
 
-  private findTabIndexByCurrentView(url: string, excludeIndex: number = -1, includeChildRoutes: boolean = false): number {
+  private findTabIndexByCurrentView(url: string, excludeIndex = -1, includeChildRoutes = false): number {
     return this.openTabs.findIndex((tabStack: ITab[], index: number) => {
       if (index === excludeIndex) {
         return false;

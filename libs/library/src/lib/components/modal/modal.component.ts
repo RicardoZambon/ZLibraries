@@ -17,9 +17,9 @@ import { BaseComponent } from '../base.component';
 })
 export class ModalComponent extends BaseComponent implements IModal {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public closeButtonText: string = 'Close';
-  @Input() public dialog: boolean = true;
-  @Input() public modalProcessing: boolean = false;
+  @Input() public closeButtonText = 'Close';
+  @Input() public dialog = true;
+  @Input() public modalProcessing = false;
   @Input() public position: 'top' | 'left' | 'right' | 'bottom' | 'center' = 'center';
   @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'auto';
   @Input() public title!: string;
@@ -28,8 +28,8 @@ export class ModalComponent extends BaseComponent implements IModal {
   //#endregion
 
   //#region Variables
-  private _show: boolean = false;
-  private clickedOutside: boolean = false;
+  private _show = false;
+  private clickedOutside = false;
   private elementRef: ElementRef
   //#endregion
 

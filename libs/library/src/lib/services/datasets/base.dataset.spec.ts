@@ -38,7 +38,7 @@ describe('BaseDataset', () => {
 
   describe('ngOnDestroy', () => {
     it('should complete the destroy$ subject', () => {
-      let completed: boolean = false;
+      let completed = false;
       (dataset as any).destroy$.subscribe({ complete: () => { completed = true; } });
 
       dataset.ngOnDestroy();

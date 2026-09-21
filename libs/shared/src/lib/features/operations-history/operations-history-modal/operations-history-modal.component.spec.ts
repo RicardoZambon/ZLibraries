@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
 import { OperationsHistoryModalComponent } from './operations-history-modal.component';
 
 describe(OperationsHistoryModalComponent.name, () => {
-  beforeEach(() => {OperationsHistoryModalComponent
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ OperationsHistoryModalComponent ]
+      imports: [ OperationsHistoryModalComponent, TranslateModule.forRoot() ]
     })
     .compileComponents();
   });

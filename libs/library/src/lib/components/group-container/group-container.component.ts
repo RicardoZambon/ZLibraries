@@ -22,7 +22,7 @@ export class GroupContainerComponent {
     return this.sections?.map(x => x.label) ?? [];
   }
 
-  public activeSection: number = 0;
+  public activeSection = 0;
   
   @Input() title?: string;
 

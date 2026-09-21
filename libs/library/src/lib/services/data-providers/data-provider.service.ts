@@ -11,12 +11,12 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   //#region Variables
   protected activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   protected destroy$: Subject<boolean> = new Subject<boolean>();
-  protected shouldLazyLoad: boolean = false;
+  protected shouldLazyLoad = false;
 
   private _entityID?: number;
   private errorSubject: Subject<HttpErrorResponse> = new Subject<HttpErrorResponse>();
-  private isLoading: boolean = false;
-  private isModelLoaded: boolean = false;
+  private isLoading = false;
+  private isModelLoaded = false;
   private modelCache: ReplaySubject<TEntityModel | null> = new ReplaySubject<TEntityModel | null>(1);
   //#endregion
 
@@ -35,7 +35,7 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
     this.activatedRoute.paramMap
       .pipe(take(1))
       .subscribe((paramMap: ParamMap) => {
-        const newID: number = Number(paramMap.get('id'));
+        const newID = Number(paramMap.get('id'));
         if (newID !== this.entityID) {
           this._entityID = newID;
           

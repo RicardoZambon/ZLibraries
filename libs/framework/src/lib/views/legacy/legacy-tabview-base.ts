@@ -11,7 +11,7 @@ import { ViewBase } from '../view-base';
 @Component({ template: '' })
 export abstract class LegacyTabViewBase extends ViewBase implements OnInit, ITabView {
 
-  title: string = '';
+  title = '';
   url: string;
   activeView?: string;
 

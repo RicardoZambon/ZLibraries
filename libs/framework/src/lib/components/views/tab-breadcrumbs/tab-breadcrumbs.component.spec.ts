@@ -1,89 +1,71 @@
-import { CommonModule } from '@angular/common';
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
-import { Tab } from '../../models';
-import { TabService } from '../../services';
+import { ITab, Tab } from '../../../models';
+import { TabService } from '../../../services';
 import { TabBreadcrumbsComponent } from './tab-breadcrumbs.component';
 
 describe(TabBreadcrumbsComponent.name, () => {
-  // let tabServiceSpy: jasmine.SpyObj<TabService>;
+  let tabServiceStub: { activeTabHistory: ITab[]; navigateCurrentTabBack: jest.Mock };
+  let fixture: ComponentFixture<TabBreadcrumbsComponent>;
+  let component: TabBreadcrumbsComponent;
 
-  // beforeEach(async () => {
-  //   tabServiceSpy = jasmine.createSpyObj<TabService>([ 'navigateCurrentTabBack' ]);
-  //   tabServiceSpy.navigateCurrentTabBack.and.callThrough();
+  const history: ITab[] = [
+    new Tab({ title: 'Home', url: '/home' }),
+    new Tab({ title: 'Test 1', url: '/test1' }),
+    new Tab({ title: 'Test 2', url: '/test2' }),
+  ];
 
-  //   await TestBed.configureTestingModule({
-  //     imports: [ TabBreadcrumbsComponent ],
-  //     imports: [
-  //       CommonModule,
-  //       TranslateModule.forRoot(),
-  //     ],
-  //     providers: [
-  //       { provide: TabService, useValue: tabServiceSpy }
-  //     ],
-  //   })
-  //   .compileComponents();
-  // });
+  beforeEach(async () => {
+    tabServiceStub = { activeTabHistory: [], navigateCurrentTabBack: jest.fn() };
 
-  // it('should create', () => {
-  //   const fixture: ComponentFixture<TabBreadcrumbsComponent> = TestBed.createComponent(TabBreadcrumbsComponent);
-  //   const component: TabBreadcrumbsComponent = fixture.componentInstance;
+    await TestBed.configureTestingModule({
+      imports: [TabBreadcrumbsComponent, TranslateModule.forRoot()],
+      providers: [{ provide: TabService, useValue: tabServiceStub }],
+    }).compileComponents();
 
-  //   expect(component).toBeTruthy();
-  // });
+    fixture = TestBed.createComponent(TabBreadcrumbsComponent);
+    component = fixture.componentInstance;
+  });
 
-  // it('should display tab history', async () => {
-  //   const fixture: ComponentFixture<TabBreadcrumbsComponent> = TestBed.createComponent(TabBreadcrumbsComponent);
-  //   const component: TabBreadcrumbsComponent = fixture.componentInstance;
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-  //   tabServiceSpy['activeTabIndex'] = 0;
-  //   tabServiceSpy['openTabs'] = [
-  //     [
-  //       new Tab({ title: 'Home', url: '/home' }),
-  //       new Tab({ title: 'Test 1', url: '/test1' }),
-  //       new Tab({ title: 'Test 2', url: '/test2' }),
-  //     ]
-  //   ];
+  it('should display tab history', async () => {
+    tabServiceStub.activeTabHistory = history;
 
-  //   fixture.detectChanges();
-  //   await fixture.whenStable();
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-  //   const titlesDebug: DebugElement[] = fixture.debugElement.queryAll(By.css('a'));
-  //   expect(titlesDebug).toBeTruthy();
-  //   expect(titlesDebug.length).toBe(component['tabHistory'].length);
+    const anchors: DebugElement[] = fixture.debugElement.queryAll(By.css('a'));
+    expect(anchors.length).toBe(history.length);
 
-  //   titlesDebug.forEach((title: DebugElement, index: number) => {
-  //     const anchorTitle: HTMLAnchorElement = title.nativeElement;
-  //     expect(anchorTitle).toBeTruthy();
-  //     expect(anchorTitle.innerText).toBe(component['tabHistory'][index].title!);
-  //   });
-  // });
+    anchors.forEach((anchor: DebugElement, index: number) => {
+      expect((anchor.nativeElement as HTMLAnchorElement).textContent?.trim()).toBe(history[index].title);
+    });
+  });
 
-  // it('should move back history when clicked on title', async () => {
-  //   const fixture: ComponentFixture<TabBreadcrumbsComponent> = TestBed.createComponent(TabBreadcrumbsComponent);
-  //   const component: TabBreadcrumbsComponent = fixture.componentInstance;
+  it('should render a spinner instead of a title while the title is loading', async () => {
+    tabServiceStub.activeTabHistory = [new Tab({ url: '/loading' })];
 
-  //   tabServiceSpy['activeTabIndex'] = 0;
-  //   tabServiceSpy['openTabs'] = [
-  //     [
-  //       new Tab({ title: 'Home', url: '/home' }),
-  //       new Tab({ title: 'Test 1', url: '/test1' }),
-  //       new Tab({ title: 'Test 2', url: '/test2' }),
-  //     ]
-  //   ];
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-  //   fixture.detectChanges();
-  //   await fixture.whenStable();
+    expect(fixture.debugElement.query(By.css('a svg'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('a span'))).toBeNull();
+  });
 
-  //   const titlesDebug: DebugElement[] = fixture.debugElement.queryAll(By.css('a'));
-  //   expect(titlesDebug).toBeTruthy();
-  //   expect(titlesDebug.length).toBe(component['tabHistory'].length);
+  it('should move back history when clicked on title', async () => {
+    tabServiceStub.activeTabHistory = history;
 
-  //   const homeAnchor: HTMLAnchorElement = titlesDebug[0].nativeElement;
-  //   homeAnchor.dispatchEvent(new Event('click'));
+    fixture.detectChanges();
+    await fixture.whenStable();
 
-  //   expect(tabServiceSpy.navigateCurrentTabBack).toHaveBeenCalledWith(tabServiceSpy['openTabs'][0][0]);
-  // });
+    const anchors: DebugElement[] = fixture.debugElement.queryAll(By.css('a'));
+    anchors[0].triggerEventHandler('click', new MouseEvent('click'));
+
+    expect(tabServiceStub.navigateCurrentTabBack).toHaveBeenCalledWith(history[0]);
+  });
 });

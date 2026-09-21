@@ -4,7 +4,7 @@ describe('GuidHelper', () => {
   describe('generateGUID', () => {
     it('should return a string in UUID v4 format', () => {
       const guid: string = GuidHelper.generateGUID();
-      const uuidV4Regex: RegExp = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+      const uuidV4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
       expect(guid).toMatch(uuidV4Regex);
     });

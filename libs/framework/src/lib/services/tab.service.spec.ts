@@ -6,6 +6,7 @@ describe('TabService', () => {
   let mockRouter: any;
   let mockLocation: any;
   let mockReuseStrategy: any;
+  let mockApplicationRef: any;
 
   function createTab(url: string, title?: string, entityBaseUrl?: string): ITab {
     return new Tab({ url, title, entityBaseUrl });
@@ -17,6 +18,9 @@ describe('TabService', () => {
   }
 
   beforeEach(() => {
+    mockApplicationRef = {
+      tick: jest.fn(),
+    };
     mockRouter = {
       navigate: jest.fn().mockResolvedValue(true),
     };
@@ -31,7 +35,7 @@ describe('TabService', () => {
       clearAllHandles: jest.fn(),
     };
 
-    service = new TabService(mockLocation, mockRouter, mockReuseStrategy);
+    service = new TabService(mockApplicationRef, mockLocation, mockRouter, mockReuseStrategy);
   });
 
   it('should be created', () => {

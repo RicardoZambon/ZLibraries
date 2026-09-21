@@ -25,7 +25,7 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#region Variables
   private baseUrlPath?: string;
   private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
-  private isInternalNavigation: boolean = false;
+  private isInternalNavigation = false;
   private router: Router = inject(Router);
   private selectedViewId?: string;
   private tabService: TabService = inject(TabService);
@@ -64,7 +64,7 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#region Constructor and Angular life cycle methods
 
   public ngOnInit(): void {
-    if (!!this.detailsViewRoute) {
+    if (this.detailsViewRoute) {
       this.options = this.detailsViewRoute.routeConfig?.children
         ?.filter((route: Route) => !!route.data && route.data['ignoreRoute'] !== true)
         ?.map((route: Route) => {

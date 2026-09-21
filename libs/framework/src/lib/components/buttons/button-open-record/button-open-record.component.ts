@@ -25,7 +25,7 @@ export class ButtonOpenRecordComponent extends BaseButton implements OnInit {
   //#region Variables
   private dataGridDataset: DataGridDataset = inject(DataGridDataset);
   private router: Router = inject(Router);
-  private selectionCount: number = 0;
+  private selectionCount = 0;
   private tabService: TabService = inject(TabService);
   //#endregion
 

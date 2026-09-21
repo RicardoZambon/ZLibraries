@@ -170,7 +170,7 @@ export abstract class DataGridDataset extends GridDataset {
       }
 
       const key: string | undefined = this.loadedKeys![rowIndex];
-      if (!!key) {
+      if (key) {
         this.selectRow(key);
       }
     }

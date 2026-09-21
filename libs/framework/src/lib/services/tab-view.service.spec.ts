@@ -36,7 +36,7 @@ describe('TabViewService', () => {
     it('should not emit when same view is set again', () => {
       service.setActiveView('details');
 
-      let emitted: boolean = false;
+      let emitted = false;
       service.onViewChanged.subscribe(() => { emitted = true; });
 
       service.setActiveView('details');

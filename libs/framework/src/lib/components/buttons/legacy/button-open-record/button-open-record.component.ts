@@ -22,14 +22,14 @@ import { BaseButton } from '../../base-button';
  */
 export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public endpoint: string = 'new';
+  @Input() public endpoint = 'new';
   @Input() public path!: string;
   @Input() public tabView!: ITabView;
   //#endregion
 
   //#region Variables
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  protected selectionCount: number = 0;
+  protected selectionCount = 0;
 
   private tabService: TabService = inject(TabService);
   //#endregion

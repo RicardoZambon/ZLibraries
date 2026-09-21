@@ -17,7 +17,7 @@ export abstract class TabViewList<TListModel> extends TabViewBase implements OnI
   protected dataGridDataset: DataGridDataset;
 
   private _selectedItem?: TListModel;
-  private selectionCount: number = 0;
+  private selectionCount = 0;
   //#endregion
 
   //#region Properties

@@ -8,7 +8,7 @@ import { BaseButton } from '../base-button';
 
 export type ExportFormat = 'xlsx' | 'pdf' | 'csv' | 'xml' | 'mhtml';
 
-export const MaxExportRows: number = 50000;
+export const MaxExportRows = 50000;
 
 @Component({
   selector: 'framework-button-export',
@@ -27,8 +27,8 @@ export class ButtonExportComponent extends BaseButton {
    * Export needing two clicks for the common case while Save (which sets 0) needed one. Set -1 to
    * restore the dropdown-only behaviour.
    */
-  @Input() public defaultOption: number = 0;
-  @Input() public fileBaseName: string = 'export';
+  @Input() public defaultOption = 0;
+  @Input() public fileBaseName = 'export';
   //#endregion
 
   //#region Variables

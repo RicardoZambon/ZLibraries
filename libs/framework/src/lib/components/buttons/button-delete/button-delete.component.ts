@@ -23,10 +23,10 @@ export class ButtonDeleteComponent extends BaseButton {
   @ViewChild(ConfirmModalComponent) private confirmModal!: ConfirmModalComponent;
 
   @Input() public action!: Observable<any>;
-  @Input() public label: string = 'Button-Delete';
-  @Input() public modalConfirmButtonLabel: string = 'Modal-Delete-Confirm';
-  @Input() public modalMessage: string = 'Modal-Delete-Message';
-  @Input() public modalTitle: string = 'Modal-Delete-Title';
+  @Input() public label = 'Button-Delete';
+  @Input() public modalConfirmButtonLabel = 'Modal-Delete-Confirm';
+  @Input() public modalMessage = 'Modal-Delete-Message';
+  @Input() public modalTitle = 'Modal-Delete-Title';
   //#endregion
 
   //#region Variables

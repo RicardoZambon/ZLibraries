@@ -1,14 +1,21 @@
 import { EventEmitter } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ITab } from '@zambon-dev/framework';
+import { APP_CONFIG, AuthService, ITab } from '@zambon-dev/framework';
 import { SidebarMenu, SidebarMenuOpenMode } from '@zambon-dev/library';
 import { Observable, of, Subject, throwError } from 'rxjs';
+import { AuthenticationService } from '../../services';
 import { MainLayoutComponent } from './main-layout.component';
 
 describe(MainLayoutComponent.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ MainLayoutComponent ]
+      imports: [ MainLayoutComponent, TranslateModule.forRoot() ],
+      providers: [
+        { provide: AuthService, useValue: { isAuthenticated: true } },
+        { provide: APP_CONFIG, useValue: { BASE_URL: '', version: '0.0.0-test' } },
+        { provide: AuthenticationService, useValue: { isAuthenticated: true, getUserInfo: () => null } },
+      ],
     })
     .compileComponents();
   });

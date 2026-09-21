@@ -2,7 +2,7 @@
     <ng-container [ngSwitch]="type">
         
         <textarea *ngSwitchCase="'textarea'"
-        [attr.autofocus]="autofocus ? true : null"
+       
         [attr.maxLength]="maxLength ?? null"
         [attr.rows]="rows"
         [class.invalid]="invalid"
@@ -16,7 +16,7 @@
             <input *ngIf="isFormControl; else fixedCheckbox"
             class="switch"
             type="checkbox"
-            [attr.autofocus]="autofocus ? true : null"
+           
             [class.invalid]="invalid"
             [formControlName]="controlName"
             (blur)="onBlur()"
@@ -44,7 +44,7 @@
 
         <ng-container *ngSwitchDefault>
             <input *ngIf="isFormControl; else fixedTextBox"
-            [attr.autofocus]="autofocus ? true : null"
+           
             [attr.maxLength]="maxLength ?? null"
             [attr.min]="minAttributeValue"
             [attr.readonly]="readOnly ? true : null"

@@ -3,7 +3,9 @@ import { of, throwError } from 'rxjs';
 
 // Mock @zambon-dev/framework to avoid symlink resolution issues
 jest.mock('@zambon-dev/framework', () => ({
-  APP_CONFIG: 'APP_CONFIG_TOKEN',
+  // A real InjectionToken, so the service under test can be built through
+  // TestBed and resolve APP_CONFIG the same way it does in an application.
+  APP_CONFIG: new (jest.requireActual('@angular/core').InjectionToken)('APP_CONFIG'),
   AppConfig: class AppConfig {
     public BASE_URL: string;
     constructor(baseUrl: string) { this.BASE_URL = baseUrl; }
@@ -50,6 +52,9 @@ jest.mock('@zambon-dev/framework', () => ({
   TabService: jest.fn(),
 }), { virtual: true });
 
+import { TestBed } from '@angular/core/testing';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { APP_CONFIG, TabService } from '@zambon-dev/framework';
 import { AuthenticationService } from './authentication.service';
 
 interface IAuthResponse {
@@ -95,12 +100,17 @@ describe('AuthenticationService', () => {
       closeAllTabs: jest.fn(),
     };
 
-    service = new (AuthenticationService as any)(
-      mockConfig,
-      mockHttp,
-      mockJwtHelper,
-      mockTabService,
-    );
+    TestBed.configureTestingModule({
+      providers: [
+        AuthenticationService,
+        { provide: APP_CONFIG, useValue: mockConfig },
+        { provide: HttpClient, useValue: mockHttp },
+        { provide: JwtHelperService, useValue: mockJwtHelper },
+        { provide: TabService, useValue: mockTabService },
+      ],
+    });
+
+    service = TestBed.inject(AuthenticationService);
   });
 
   afterEach(() => {

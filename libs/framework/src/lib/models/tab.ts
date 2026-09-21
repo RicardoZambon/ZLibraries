@@ -14,7 +14,7 @@ export class Tab implements ITab{
 
   public entityBaseUrl?: string;
 
-  public isTitleLoading: boolean = true;
+  public isTitleLoading = true;
 
   public queryParams?: { [key: string]: string };
   
@@ -25,13 +25,13 @@ export class Tab implements ITab{
     if (this._title !== value) {
       this._title = value;
   
-      if (!!value) {
+      if (value) {
         this.isTitleLoading = false;
       }
     }
   }
 
-  public url: string = '';
+  public url = '';
 
   constructor(init?: Partial<Tab>) {
     Object.assign(this, init);

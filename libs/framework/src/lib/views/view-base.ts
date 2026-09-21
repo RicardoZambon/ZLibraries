@@ -9,7 +9,7 @@ export abstract class ViewBase implements OnDestroy {
   //#region Variables
   protected destroy$: Subject<boolean> = new Subject<boolean>();
 
-  private _loading: boolean = false;
+  private _loading = false;
   //#endregion
 
   //#region Properties

@@ -16,14 +16,14 @@ export class LanguageSelectorComponent {
   /** When true, the toggle shows the current language's flag (light-gray button) instead of text. */
   @Input() public showFlag = false;
 
-  @Input() public title: string = 'LanguageSelector-Title';
+  @Input() public title = 'LanguageSelector-Title';
   //#endregion
 
   //#region Variables
   private translate: TranslateService = inject(TranslateService);
 
   protected languages: string[] = this.translate.getLangs();
-  protected showDropdown: boolean = false;
+  protected showDropdown = false;
   //#endregion
 
   //#region Properties

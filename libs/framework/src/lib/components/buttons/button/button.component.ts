@@ -14,9 +14,9 @@ import { BaseButton } from '../base-button';
 })
 export class ButtonComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public color: string = 'text-primary-500';
+  @Input() public color = 'text-primary-500';
   @Input() public icon?: string;
-  @Input() public label: string = '';
+  @Input() public label = '';
 
   @Output() public action: EventEmitter<void> = new EventEmitter();
   //#endregion

@@ -20,11 +20,11 @@ import { BaseButton } from '../../base-button';
  */
 export class ButtonEditLegacyComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public cancelColor: string = 'text-red-500';
-  @Input() public cancelIcon: string = 'fa-ban';
-  @Input() public cancelLabel: string = 'Button-Cancel-Edit';
-  @Input() public editIcon: string = 'fa-edit';
-  @Input() public editLabel: string = 'Button-Edit';
+  @Input() public cancelColor = 'text-red-500';
+  @Input() public cancelIcon = 'fa-ban';
+  @Input() public cancelLabel = 'Button-Cancel-Edit';
+  @Input() public editIcon = 'fa-edit';
+  @Input() public editLabel = 'Button-Edit';
   @Input() public form?: LegacySubViewForm;
   @Input() public  modal?: ModalBase;
   //#endregion

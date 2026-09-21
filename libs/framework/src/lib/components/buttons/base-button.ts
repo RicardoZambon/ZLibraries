@@ -14,9 +14,9 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
       this.checkAccessIsAllowed();
     }
   }
-  @Input() public disabled: boolean = false;
+  @Input() public disabled = false;
   @Input() public iconSize: 'small' | 'large' = 'large';
-  @Input() public loading: boolean = false;
+  @Input() public loading = false;
   @Input() public set options(value: IRibbonButtonOption[]) {
     if (this._options !== value) {
       this._options = value;
@@ -26,11 +26,11 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#endregion
 
   //#region Variables
-  public visible: boolean = true;
+  public visible = true;
 
   protected authService: AuthService = inject(AuthService);
   protected destroy$: Subject<boolean> = new Subject<boolean>();
-  protected isAccessLoaded: boolean = false;
+  protected isAccessLoaded = false;
 
   private _allowedActions: string[] = new Array<string>;
   private _options: IRibbonButtonOption[] = [];

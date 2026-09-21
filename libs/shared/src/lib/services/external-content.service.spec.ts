@@ -5,7 +5,7 @@ import { IExternalContentEntry } from '../models';
 import { ExternalContentService } from './external-content.service';
 
 describe(ExternalContentService.name, () => {
-  const storageKey: string = 'zambon.externalContent';
+  const storageKey = 'zambon.externalContent';
 
   let getMenuFromUrl: jest.Mock<Observable<SidebarMenu>, [string]>;
   let service: ExternalContentService;
@@ -91,7 +91,7 @@ describe(ExternalContentService.name, () => {
   });
 
   it('caps how many entries it keeps, so the storage key cannot grow without bound', () => {
-    for (let id: number = 1; id <= 25; id++) {
+    for (let id = 1; id <= 25; id++) {
       service.register(menu({ id, label: `Report ${id}`, url: `https://reports/${id}` }));
     }
 

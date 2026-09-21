@@ -1,7 +1,7 @@
 import { ListRange } from '@angular/cdk/collections';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { NgFor, NgIf, NgStyle } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, Input, NgZone, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, Input, NgZone, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { debounceTime, filter, fromEvent, Subject, takeUntil } from 'rxjs';
@@ -27,29 +27,29 @@ import { DataGridRowComponent } from '../data-grid-row/data-grid-row.component';
     TranslatePipe,
   ]
 })
-export class DataGridComponent extends BaseComponent implements OnInit, AfterViewInit {
+export class DataGridComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('body') private bodyElement!: ElementRef<HTMLDivElement>;
   @ViewChild(CdkVirtualScrollViewport) private viewport?: CdkVirtualScrollViewport;
 
-  @Input() public disabled: boolean = false;
-  @Input() public lazyLoadRows: boolean = false;
-  @Input() public showButtons: boolean = false;
+  @Input() public disabled = false;
+  @Input() public lazyLoadRows = false;
+  @Input() public showButtons = false;
   //#endregion
 
   //#region Variables
   protected changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  protected hasFailed: boolean = false;
-  protected headerRightMargin: number = 0;
-  protected headerScrollLeft: number = 0;
-  protected loading: boolean = false;
+  protected hasFailed = false;
+  protected headerRightMargin = 0;
+  protected headerScrollLeft = 0;
+  protected loading = false;
 
   private bodyResized$: Subject<void> = new Subject<void>();
   private bodyResizeObserver?: ResizeObserver;
-  private gridRoute: string = '';
-  private isGridCurrentUrl: boolean = false;
-  private lastPosition: number = 0;
+  private gridRoute = '';
+  private isGridCurrentUrl = false;
+  private lastPosition = 0;
   private ngZone: NgZone = inject(NgZone);
   private router: Router = inject(Router);
   private selectionColRealSize?: number;

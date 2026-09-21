@@ -21,7 +21,7 @@ import { BaseButton } from '../../base-button';
  */
 export class ButtonNewLegacyComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public endpoint: string = 'new';
+  @Input() public endpoint = 'new';
   @Input() public path!: string;
   @Input() public tabView!: ITabView;
   //#endregion

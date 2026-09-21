@@ -41,7 +41,7 @@ export class ExternalContentService {
   public find(menuID: number): Observable<IExternalContentEntry | undefined> {
     const known: IExternalContentEntry | undefined = this.registry.get(menuID) ?? this.readFromStorage(menuID);
 
-    if (!!known) {
+    if (known) {
       return of(known);
     }
 

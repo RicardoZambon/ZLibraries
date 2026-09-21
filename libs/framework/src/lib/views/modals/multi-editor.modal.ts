@@ -21,7 +21,7 @@ export abstract class MultiEditorModal<TEntityModel> extends ModalBase implement
   protected formBuilder: FormBuilder;
   protected formService: FormService;
   protected multiEditorDataset: MultiEditorDataset;
-  protected selectionCount: number = 0;
+  protected selectionCount = 0;
   //#endregion
 
   //#region Properties

@@ -346,7 +346,7 @@ class ShowcaseSidebarService extends SidebarService {
     const external: SidebarMenu | undefined = externalMenus()
       .find((menu: SidebarMenu) => url === `/external-content/${menu.id}`);
 
-    if (!!external) {
+    if (external) {
       return of(external);
     }
 

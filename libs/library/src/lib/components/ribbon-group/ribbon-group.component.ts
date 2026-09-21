@@ -12,7 +12,7 @@ export class RibbonGroupComponent {
   //#region ViewChilds, Inputs, Outputs
   @ContentChildren(RibbonGroupChild, { descendants: true }) public children?: QueryList<RibbonGroupChild>;
 
-  @Input() public label: string = '';
+  @Input() public label = '';
   //#endregion
 
   //#region Host listeners

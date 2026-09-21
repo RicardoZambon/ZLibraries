@@ -2,7 +2,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { map, Observable, of, ReplaySubject, switchMap, take } from 'rxjs';
 import { TabService } from './tab.service';
 
-const ADMINISTRATIVE_MASTER_ACTION: string = 'AdministrativeMaster';
+const ADMINISTRATIVE_MASTER_ACTION = 'AdministrativeMaster';
 
 export abstract class AuthService {
   //#region ViewChilds, Inputs, Outputs
@@ -10,7 +10,7 @@ export abstract class AuthService {
 
   //#region Variables
   private actionsCache$: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
-  private isActionsCacheInitialized: boolean = false;
+  private isActionsCacheInitialized = false;
   //#endregion
 
   //#region Properties
@@ -66,7 +66,7 @@ export abstract class AuthService {
       .pipe(map((actions: string[]) => actions.includes(this.adminAction) || actions.includes(actionToCheck)));
   }
 
-  public checkActionsAreAllowed(actionsToCheck: string[], checkForAdministrativeMaster: boolean = true): Observable<boolean[]> {
+  public checkActionsAreAllowed(actionsToCheck: string[], checkForAdministrativeMaster = true): Observable<boolean[]> {
     if (!this.isActionsCacheInitialized) {
       this.isActionsCacheInitialized = true;
 

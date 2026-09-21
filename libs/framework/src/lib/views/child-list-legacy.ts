@@ -12,7 +12,7 @@ export abstract class ChildListLegacy extends ViewBase implements OnInit {
 
   private _entityId?: number;
 
-  protected selectionCount: number = 0;
+  protected selectionCount = 0;
 
   get entityId(): number | undefined {
     return this._entityId;
@@ -26,13 +26,13 @@ export abstract class ChildListLegacy extends ViewBase implements OnInit {
         this.dataGridDataset.refresh();
       }
       
-      if (!!this.resultDataset) {
+      if (this.resultDataset) {
         this.resultDataset.parentEntityId = value;
       }
     }
   }
 
-  @Input() disabled: boolean = false;
+  @Input() disabled = false;
 
 
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);

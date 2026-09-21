@@ -18,7 +18,7 @@ import { BaseButton } from '../base-button';
 })
 export class ButtonNewComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public endpoint: string = 'new';
+  @Input() public endpoint = 'new';
   @Input() public parameters?: { [key: string]: string };
   @Input() public path?: string;
   //#endregion
@@ -59,7 +59,7 @@ export class ButtonNewComponent extends BaseButton {
       queryParameters = { ...queryParameters, ...option.parameters };
     }
 
-    let url: string = '';
+    let url = '';
 
     // Try to find the route with ':id' parameters.
     const targetRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(this.router.routerState.root.snapshot, FRAMEWORK_VIEW_TYPE, FrameworkViewType.Details);
@@ -74,7 +74,7 @@ export class ButtonNewComponent extends BaseButton {
       url += `/${path}`;
     }
 
-    const entityUrl: string = `${url}/${this.endpoint}`;
+    const entityUrl = `${url}/${this.endpoint}`;
     const tab: ITab = new Tab({
       entityBaseUrl: entityUrl,
       queryParams: queryParameters,

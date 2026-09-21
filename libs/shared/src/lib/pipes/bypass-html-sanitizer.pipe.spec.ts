@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { BypassHtmlSanitizerPipe } from './bypass-html-sanitizer.pipe';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
@@ -15,7 +16,11 @@ describe('BypassHtmlSanitizerPipe', () => {
       bypassSecurityTrustResourceUrl: jest.fn(),
     } as unknown as jest.Mocked<DomSanitizer>;
 
-    pipe = new BypassHtmlSanitizerPipe(mockSanitizer);
+    TestBed.configureTestingModule({
+      providers: [BypassHtmlSanitizerPipe, { provide: DomSanitizer, useValue: mockSanitizer }],
+    });
+
+    pipe = TestBed.inject(BypassHtmlSanitizerPipe);
   });
 
   it('should create', () => {
@@ -23,13 +28,13 @@ describe('BypassHtmlSanitizerPipe', () => {
   });
 
   it('should call bypassSecurityTrustHtml with the input', () => {
-    const html: string = '<b>bold</b>';
+    const html = '<b>bold</b>';
     pipe.transform(html);
     expect(mockSanitizer.bypassSecurityTrustHtml).toHaveBeenCalledWith(html);
   });
 
   it('should return the sanitizer result', () => {
-    const html: string = '<p>test</p>';
+    const html = '<p>test</p>';
     const result: SafeHtml = pipe.transform(html);
     expect(result).toBe(html);
   });
@@ -40,7 +45,7 @@ describe('BypassHtmlSanitizerPipe', () => {
   });
 
   it('should pass through script tags without sanitizing', () => {
-    const html: string = '<script>alert("xss")</script>';
+    const html = '<script>alert("xss")</script>';
     pipe.transform(html);
     expect(mockSanitizer.bypassSecurityTrustHtml).toHaveBeenCalledWith(html);
   });

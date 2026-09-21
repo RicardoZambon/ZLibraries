@@ -10,7 +10,7 @@
  * }
  * ```
  */
-export const FRAMEWORK_VIEW_TYPE: string = 'frameworkViewType';
+export const FRAMEWORK_VIEW_TYPE = 'frameworkViewType';
 
 /**
  * Values for the {@link FRAMEWORK_VIEW_TYPE} route data key.

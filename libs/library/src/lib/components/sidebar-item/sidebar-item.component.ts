@@ -28,17 +28,17 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('menuContainer') private menuContainer!: ElementRef<HTMLAnchorElement>;
 
-  @Input() public isLast: boolean = false;
-  @Input() public level: number = 0;
+  @Input() public isLast = false;
+  @Input() public level = 0;
   @Input() public menu!: SidebarMenu;
   //#endregion
 
   //#region Variables
-  protected hasFailed: boolean = false;
-  protected isLoading: boolean = false;
-  protected isSelected: boolean = false;
+  protected hasFailed = false;
+  protected isLoading = false;
+  protected isSelected = false;
 
-  private _childHeight: number = 0;
+  private _childHeight = 0;
   private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   private sidebarConfigs: SidebarConfigs = inject(SIDEBAR_CONFIGS);
   private sidebarService: SidebarService = inject(SidebarService);
@@ -128,7 +128,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
           this.hasFailed = false;
           this.updateSubMenuHeight();
 
-          if (!!this.menu.parent) {
+          if (this.menu.parent) {
             this.sidebarService.childrenInitialized.emit(this.menu.parent);
           }
 

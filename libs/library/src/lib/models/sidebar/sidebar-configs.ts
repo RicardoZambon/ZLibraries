@@ -7,10 +7,10 @@ export const SIDEBAR_CONFIGS: InjectionToken<SidebarConfigs> = new InjectionToke
 });
 
 export class SidebarConfigs {
-  public errorText: string = 'Error';
+  public errorText = 'Error';
   /** Tooltip for items that open in a new browser tab. Rendered as-is, like {@link errorText}. */
-  public externalLinkText: string = 'Opens in a new browser tab';
-  public loadingText: string = 'Loading';
+  public externalLinkText = 'Opens in a new browser tab';
+  public loadingText = 'Loading';
   /**
    * Derive region headers from the menu tree instead of from {@link SidebarMenu.region}.
    *
@@ -21,7 +21,7 @@ export class SidebarConfigs {
    *
    * Off by default: without it a top-level parent stays the collapsible group it has always been.
    */
-  public shouldDeriveAreasFromRootMenus: boolean = false;
+  public shouldDeriveAreasFromRootMenus = false;
   public logoCollapsedPath?: string;
   public logoExpandedPath?: string;
 

@@ -21,17 +21,17 @@ export class ConfirmModalComponent implements IModal {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(ModalComponent) private modal!: ModalComponent;
 
-  @Input() public errorMessage: string = '';
-  @Input() public message: string = '';
-  @Input() public messageIcon: string = 'fa-regular fa-circle-question';
-  @Input() public messageIconColor: string = 'text-cyan-500';
-  @Input() public showMessageIcon: boolean = true;
+  @Input() public errorMessage = '';
+  @Input() public message = '';
+  @Input() public messageIcon = 'fa-regular fa-circle-question';
+  @Input() public messageIconColor = 'text-cyan-500';
+  @Input() public showMessageIcon = true;
   @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'xl';
   @Input() public title!: string;
   //#endregion
 
   //#region Variables
-  public isLoading: boolean = false;
+  public isLoading = false;
 
   protected formService: FormService | undefined = inject(FormService, { optional: true }) ?? undefined;
   //#endregion
@@ -57,8 +57,6 @@ export class ConfirmModalComponent implements IModal {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor() {
-  }
   //#endregion
 
   //#region Event handlers
@@ -109,7 +107,7 @@ export class ConfirmModalComponent implements IModal {
       return;
     }
 
-    if (!!this.formGroup) {
+    if (this.formGroup) {
       // TODO: TEST THIS CHANGE
       this.formGroup.reset()
       this.formService?.resetForm();

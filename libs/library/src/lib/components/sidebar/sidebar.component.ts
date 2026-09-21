@@ -48,7 +48,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   private onDocumentKeyDown(event: KeyboardEvent): void {
     event = event || window.event;
     
-    let isEscapeKey: boolean = false;
+    let isEscapeKey = false;
     if ('key' in event) {
       isEscapeKey = (event.key === 'Escape' || event.key === 'Esc')
     } else {
@@ -71,12 +71,12 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
 
   protected configErrorText: string = this.sidebarConfigs.errorText;
   protected configLoadingText: string = this.sidebarConfigs.loadingText;
-  protected hasFailed: boolean = false;
+  protected hasFailed = false;
   protected menus: SidebarMenu[] = [];
   protected regions: SidebarRegion[] = [];
 
   private sidebarService: SidebarService = inject(SidebarService);
-  private wasClickedOutside: boolean = false;
+  private wasClickedOutside = false;
   //#endregion
 
   //#region Properties

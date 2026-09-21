@@ -105,7 +105,7 @@ describe('DataGridDataset', () => {
       const key: string = dataset.loadedKeys![0];
       dataset.selectRow(key);
 
-      let emitted: boolean = false;
+      let emitted = false;
       dataset.selectedRowsChanged.subscribe(() => { emitted = true; });
 
       dataset.selectRow(key);
@@ -166,7 +166,7 @@ describe('DataGridDataset', () => {
     });
 
     it('should do nothing for unselected key', () => {
-      let emitted: boolean = false;
+      let emitted = false;
       dataset.selectedRowsChanged.subscribe(() => { emitted = true; });
 
       dataset.deselectRow('nonexistent');
@@ -199,7 +199,7 @@ describe('DataGridDataset', () => {
     });
 
     it('should do nothing when no selection', () => {
-      let emitted: boolean = false;
+      let emitted = false;
       dataset.selectedRowsChanged.subscribe(() => { emitted = true; });
 
       dataset.clearSelection();

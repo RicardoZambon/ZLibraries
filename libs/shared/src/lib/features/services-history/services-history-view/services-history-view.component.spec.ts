@@ -1,10 +1,25 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { GridConfigsProvider } from '@zambon-dev/library';
+import { ActivatedRoute } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ServicesHistoryViewComponent } from './services-history-view.component';
 
 describe(ServicesHistoryViewComponent.name, () => {
   beforeEach(() => {
+    const activatedRouteStub: unknown = {
+      snapshot: { data: {}, paramMap: new Map<string, string>(), url: [] },
+    };
+
     TestBed.configureTestingModule({
-      imports: [ ServicesHistoryViewComponent ]
+      imports: [ ServicesHistoryViewComponent, TranslateModule.forRoot() ],
+      providers: [
+        GridConfigsProvider,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: ActivatedRoute, useValue: activatedRouteStub },
+      ],
     })
     .compileComponents();
   });

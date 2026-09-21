@@ -23,7 +23,7 @@ export class DateValidators {
   }
 
   public static greaterThanOrEqualToday(control: AbstractControl): ValidationErrors | null {
-    let today: Date = new Date();
+    const today: Date = new Date();
     if (!!control.value && new Date(control.value) < today) {
       return { 'greaterThanOrEqualToday': true };
     }
@@ -31,7 +31,7 @@ export class DateValidators {
   }
 
   public static greaterThanToday(control: AbstractControl): ValidationErrors | null {
-    let today: Date = new Date();
+    const today: Date = new Date();
     if (!!control.value && new Date(control.value) <= today) {
       return { 'greaterThanToday': true };
     }
@@ -59,7 +59,7 @@ export class DateValidators {
   }
 
   public static lessThanOrEqualToday(control: AbstractControl): ValidationErrors | null {
-    let today: Date = new Date();
+    const today: Date = new Date();
     if (!!control.value && new Date(control.value) > today) {
       return { 'lessThanOrEqualToday': true };
     }
@@ -67,7 +67,7 @@ export class DateValidators {
   }
 
   public static lessThanToday(control: AbstractControl): ValidationErrors | null {
-    let today: Date = new Date();
+    const today: Date = new Date();
     if (!!control.value && new Date(control.value) >= today) {
       return { 'lessThanToday': true };
     }

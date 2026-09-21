@@ -13,7 +13,7 @@ export class AuthenticationService extends AuthService {
   //#endregion
 
   //#region Variables
-  public adminAction: string = 'AdministrativeMaster';
+  public adminAction = 'AdministrativeMaster';
 
   private config: AppConfig = inject(APP_CONFIG);
 

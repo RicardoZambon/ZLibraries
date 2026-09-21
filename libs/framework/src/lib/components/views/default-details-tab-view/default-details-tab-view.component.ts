@@ -8,7 +8,10 @@ import { takeUntil } from 'rxjs';
 import { RouteHelper } from '../../../helpers';
 import { ITab } from '../../../models';
 import { TabService, TabViewService } from '../../../services';
-import { ButtonViewsComponent } from '../../buttons';
+// Imported by concrete path, not through the buttons barrel: that barrel re-exports
+// ./legacy, whose buttons import the views barrel, which re-exports this file. Going
+// through it leaves one of this component's imports undefined at evaluation time.
+import { ButtonViewsComponent } from '../../buttons/button-views/button-views.component';
 import { ErrorModalComponent } from '../../modals/error-modal/error-modal.component';
 import { DefaultTabViewComponent } from '../default-tab-view/default-tab-view.component';
 
@@ -48,7 +51,7 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
 
   private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
   private hasEntityID: boolean | null = null;
-  private hasLoadError: boolean = false;
+  private hasLoadError = false;
   private router: Router = inject(Router);
   private tabService: TabService = inject(TabService);
   //#endregion
@@ -82,7 +85,7 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
           this.detailsViewRoute = RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent);
         }
 
-        if (!!this.detailsViewRoute) {
+        if (this.detailsViewRoute) {
           let title: string = this.detailsViewRoute.data['defaultTitle'];
           if (this.dataProviderService!.hasEntityID) {
             title = this.dataProviderService!.getTitle(model);
