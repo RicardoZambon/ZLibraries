@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [2.0.0] - 2026-09-21
+
+### Changed
+
 - **Accessibility.** Every interactive element that previously responded only to a mouse is now
   reachable and operable by keyboard. `RibbonButtonComponent` (button, dropdown toggle and each
   option), `GroupAccordionComponent`, `GroupScrollSpyComponent`, `SidebarItemComponent` and the
@@ -23,14 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   action is a real button.
 - `MultiEditorComponent` and the multi-select result grid render their actions as `<button>`
   rather than `<a>`. They are styled identically but now honour `disabled` natively.
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.6.4] - 2026-09-21
 
@@ -361,7 +365,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.6.4...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v2.0.0...HEAD
+[2.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v2.0.0
 [1.6.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.4
 [1.6.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.3
 [1.6.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.2

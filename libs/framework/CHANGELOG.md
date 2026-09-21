@@ -15,11 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Accessibility.** `TabsComponent` renders proper `tablist`/`tab` semantics with `aria-selected`,
-  its tabs are keyboard-activatable and the close control is a labelled `<button>`.
-  `TabBreadcrumbsComponent` entries are focusable and activate with `Enter`/`Space`.
-- Added the `Tabs-CloseTab` translation key (en, pt) for the tab close button's accessible name.
-
 ### Deprecated
 
 ### Removed
@@ -27,6 +22,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+## [2.0.0] - 2026-09-21
+
+### Changed
+
+- **Accessibility.** `TabsComponent` renders proper `tablist`/`tab` semantics with `aria-selected`,
+  its tabs are keyboard-activatable and the close control is a labelled `<button>`.
+  `TabBreadcrumbsComponent` entries are focusable and activate with `Enter`/`Space`.
+- Added the `Tabs-CloseTab` translation key (en, pt) for the tab close button's accessible name.
 
 ## [1.4.3] - 2026-09-21
 
@@ -226,7 +230,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v2.0.0...HEAD
+[2.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v2.0.0
 [1.4.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.3
 [1.4.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.2
 [1.4.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.1
