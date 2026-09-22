@@ -242,6 +242,9 @@ describe('ButtonViewsComponent — view switching logic', () => {
 
       // 2. Simulate save redirect: router navigates to /94, RouteHelper now returns /94
       const savedRouteSnapshot: any = {
+        // The router matches /new and /:id with the same Route definition, so the snapshot it
+        // hands over after the redirect carries the very same routeConfig object.
+        routeConfig: route.routeConfig,
         data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details },
         url: [{ path: 'configs' }, { path: 'campos-filtros' }, { path: '94' }],
         parent: { url: [{ path: 'configs' }, { path: 'campos-filtros' }], parent: { url: [], parent: null } },
@@ -259,6 +262,42 @@ describe('ButtonViewsComponent — view switching logic', () => {
       expect((component as any).baseUrlPath).toBe('/configs/campos-filtros/94');
     });
 
+    // Regression: every details tab keeps its router subscription alive, including the ones the
+    // reuse strategy has detached, and the lookup reads the router -- which names whichever tab
+    // the navigation went to. A detached tab used to adopt the incoming tab's base path and
+    // switch itself to that tab's view, tearing its own ribbon down and building a fresh one:
+    // an active filter came back without its Clear filters button while the grid stayed
+    // filtered. A list view never triggered it, because it is not a details route at all.
+    it('should ignore a navigation that belongs to another details tab', () => {
+      const route: any = createDetailsViewRoute('/integrations/adp-import/1', defaultChildren());
+      component.detailsViewRoute = route;
+      jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/integrations/adp-import/1');
+
+      component.ngOnInit();
+      component.onViewClicked('audit');
+
+      expect((component as any).baseUrlPath).toBe('/integrations/adp-import/1');
+      expect((component as any).selectedViewId).toBe('audit');
+
+      // Another details tab is opened. Its snapshot is a different Route definition.
+      const otherTabSnapshot: any = {
+        routeConfig: { children: defaultChildren() },
+        data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details },
+        url: [{ path: 'configs' }, { path: 'applications' }, { path: '1' }],
+        parent: null,
+        firstChild: null,
+      };
+      mockRouter.routerState.root.snapshot = otherTabSnapshot;
+      jest.spyOn(RouteHelper, 'getRouteByData').mockReturnValue(otherTabSnapshot);
+      (RouteHelper.getRouteURL as jest.Mock).mockReturnValue('/configs/applications/1');
+
+      mockRouter.events.next(new NavigationEnd(1, '/configs/applications/1', '/configs/applications/1'));
+
+      // This tab keeps its own base and its own view.
+      expect((component as any).baseUrlPath).toBe('/integrations/adp-import/1');
+      expect((component as any).selectedViewId).toBe('audit');
+    });
+
     it('should use updated baseUrlPath when switching views after save redirect', () => {
       // 1. Initialize with /new URL
       const route: any = createDetailsViewRoute('/configs/campos-filtros/new', defaultChildren());
@@ -269,6 +308,9 @@ describe('ButtonViewsComponent — view switching logic', () => {
 
       // 2. Simulate save redirect
       const savedRouteSnapshot: any = {
+        // The router matches /new and /:id with the same Route definition, so the snapshot it
+        // hands over after the redirect carries the very same routeConfig object.
+        routeConfig: route.routeConfig,
         data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details },
         url: [{ path: 'configs' }, { path: 'campos-filtros' }, { path: '94' }],
         parent: { url: [{ path: 'configs' }, { path: 'campos-filtros' }], parent: { url: [], parent: null } },
@@ -300,6 +342,9 @@ describe('ButtonViewsComponent — view switching logic', () => {
 
       // 2. Simulate save redirect
       const savedRouteSnapshot: any = {
+        // The router matches /new and /:id with the same Route definition, so the snapshot it
+        // hands over after the redirect carries the very same routeConfig object.
+        routeConfig: route.routeConfig,
         data: { [FRAMEWORK_VIEW_TYPE]: FrameworkViewType.Details },
         url: [{ path: 'configs' }, { path: 'campos-filtros' }, { path: '94' }],
         parent: { url: [{ path: 'configs' }, { path: 'campos-filtros' }], parent: { url: [], parent: null } },
