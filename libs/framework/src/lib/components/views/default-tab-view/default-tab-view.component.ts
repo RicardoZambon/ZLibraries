@@ -21,7 +21,7 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
   protected destroy$: Subject<boolean> = new Subject<boolean>();
   protected ribbonTemplate?: TemplateRef<any>;
 
-  private hasNamedAView: boolean = false;
+  private hasNamedAView = false;
   private ribbonViewTemplate: { [viewId: string]: TemplateRef<any> | undefined } = {};
   //#endregion
 
@@ -80,7 +80,7 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
    * @param viewId The view that has just become active.
    */
   private claimUnnamedRibbon(viewId: string): void {
-    const isFirstNaming: boolean = !this.hasNamedAView;
+    const isFirstNaming = !this.hasNamedAView;
     this.hasNamedAView = true;
 
     if (
