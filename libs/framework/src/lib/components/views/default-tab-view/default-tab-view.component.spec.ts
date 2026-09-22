@@ -69,6 +69,39 @@ describe(DefaultTabViewComponent.name, () => {
     expect(view).toBeTruthy();
   });
 
+  // Regression: the claim above used to fire on every naming, not just the first. On a tab that
+  // opens at its default view -- whose own id is the empty one, since its URL carries no sub-path
+  // -- switching to a second view handed that default view's template to the incoming one. The
+  // new view showed the old buttons, and going back showed none, because the entry had been moved
+  // away from the id the default view is looked up under.
+  it('leaves the default view its ribbon when another view is opened', () => {
+    const fixture: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
+    fixture.detectChanges();
+
+    const service: TabViewService = fixture.debugElement
+      .query(By.directive(DefaultTabViewComponent))
+      .injector.get(TabViewService);
+
+    // The default view publishes from ngAfterViewInit, before it is named.
+    service.updateRibbonTemplate(fixture.componentInstance.ribbonTemplate);
+    service.setActiveView('');
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('.ribbon-button'))).not.toBeNull();
+
+    // A second view that publishes no ribbon of its own must show no buttons.
+    service.setActiveView('audit');
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('.ribbon-button'))).toBeNull();
+
+    // And coming back must restore the default view's own buttons.
+    service.setActiveView('');
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('.ribbon-button'))).not.toBeNull();
+  });
+
   it('should render an empty ribbon when no view publishes a ribbon template', () => {
     const fixture: ComponentFixture<DefaultTabViewComponent> = TestBed.createComponent(DefaultTabViewComponent);
     fixture.detectChanges();

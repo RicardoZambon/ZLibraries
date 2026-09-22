@@ -21,6 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Switching views in a details tab no longer moves the buttons to the wrong view.** Opening a
+  second view showed the first view's buttons instead of its own, and going back to the first view
+  left it with no buttons at all -- on the employee screen, Histórico showed the Detalhes ribbon and
+  Detalhes then showed an empty one.
+
+  1.4.1 taught a tab to claim a ribbon published before its view had been named, which is what a tab
+  opened straight at a non-default view needs. It claimed on every naming, though, and the empty id
+  is not a spare bucket: it is the default view's own id, since that view is the one whose URL
+  carries no sub-path. From the second switch onwards the template being claimed belonged to the
+  view being left. Only the first naming may claim it now.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.4.1] - 2026-09-19
