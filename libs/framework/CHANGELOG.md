@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.4.4] - 2026-09-22
+
+### Fixed
+
 - **Switching views in a details tab no longer moves the buttons to the wrong view.** Opening a
   second view showed the first view's buttons instead of its own, and going back to the first view
   left it with no buttons at all -- on the employee screen, Histórico showed the Detalhes ribbon and
@@ -31,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is not a spare bucket: it is the default view's own id, since that view is the one whose URL
   carries no sub-path. From the second switch onwards the template being claimed belonged to the
   view being left. Only the first naming may claim it now.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.4.3] - 2026-09-21
 
@@ -227,7 +231,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.4...HEAD
+[1.4.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.4
 [1.4.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.3
 [1.4.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.2
 [1.4.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.1
