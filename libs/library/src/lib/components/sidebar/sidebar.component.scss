@@ -183,7 +183,7 @@ ul lib-sidebar-item, .loading, .error {
     }
 }
 
-:host(:not(.expanded):not(.active)) .sidebar-region-header {
+@mixin region-header-collapsed {
     height: 1.25rem;
 
     span {
@@ -192,6 +192,21 @@ ul lib-sidebar-item, .loading, .error {
 
     &::after {
         @apply opacity-100;
+    }
+}
+
+:host(:not(.expanded):not(.active)) .sidebar-region-header {
+    @include region-header-collapsed;
+}
+
+// Below md the expanded width is never applied -- the rule that widens the bar lives inside the
+// md query, so the bar stays at its collapsed width whatever the class says. The heading has to
+// follow the width rather than the class, or a label sized for the expanded bar is laid over one
+// that has no room for it and spills past its edge. The overlay is the exception: it does widen
+// the bar at any size, which is why .active is still excluded.
+@media not all and (min-width: 768px) {
+    :host(:not(.active)) .sidebar-region-header {
+        @include region-header-collapsed;
     }
 }
 

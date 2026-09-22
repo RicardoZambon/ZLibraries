@@ -21,6 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Group headings in a narrow navigation panel no longer spill their label past the edge.** On a
+  window under 768px the panel opens at its collapsed width, but each group still printed its full
+  label -- clipped mid-word against a bar with no room for it -- where it should show the short
+  divider the collapsed panel uses.
+
+  The width that widens the panel is declared inside the `md` query, so below that breakpoint the
+  panel stays narrow whatever its expanded class says. The heading, though, was keyed off that
+  class rather than the width it actually got. It now follows the width, with the overlay still
+  excluded -- that one does widen the panel at any size.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.6.5] - 2026-09-22
