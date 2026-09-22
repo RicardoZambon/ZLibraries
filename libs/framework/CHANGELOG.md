@@ -21,6 +21,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A filtered view no longer loses its Filter and Clear filters state when another details tab is
+  opened.** The grid stayed filtered while the ribbon came back as though nothing were filtered, so
+  the only way out was to filter again. Opening a list view never did it -- which is what made the
+  behaviour look arbitrary.
+
+  Every details tab keeps its router subscription alive, including the ones the reuse strategy has
+  detached, and the lookup that finds the active details route reads the router, which names
+  whichever tab the navigation went to. A detached tab therefore adopted the incoming tab's base
+  path and switched itself to that tab's view, tearing its own ribbon down and building a fresh
+  one -- and the new buttons knew nothing of the filter still held by the grid. A list view is not
+  a details route, so the lookup found nothing and the tab was left alone.
+
+  A tab now answers only to navigations matching its own route definition, which still covers the
+  one navigation that legitimately changes its path: the redirect from `/new` to `/:id` after a
+  save.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.1.1] - 2026-09-22
