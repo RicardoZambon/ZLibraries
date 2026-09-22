@@ -77,6 +77,10 @@ jobs:
         working-directory: ${{ matrix.package.working-directory }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # setup-node writes an .npmrc that reads NODE_AUTH_TOKEN; semantic-release reads
+          # NPM_TOKEN. Both have to be set, or npm authenticates with an empty credential and
+          # every request comes back 401.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx --no-install semantic-release -e semantic-release-monorepo
 
