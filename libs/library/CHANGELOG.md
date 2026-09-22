@@ -21,6 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`lib-catalog-select` now offers its clear button for a value it did not see arrive.** A field
+  restored from a saved filter showed the value and its label but no way to empty it, so the only
+  escape was to clear the whole filter and start again.
+
+  The button asked an internal field that is written when the component itself takes the value --
+  a pick in the dropdown, or the initial read in `ngOnInit`. A form patched after the component
+  has initialised, and patched without an event, reaches the form control and the display and
+  nothing else. The button now asks the form control, which is the value that actually counts.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.1.0] - 2026-09-21

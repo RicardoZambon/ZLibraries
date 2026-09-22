@@ -577,9 +577,21 @@ describe('CatalogSelectComponent', () => {
     });
 
     it('should not show clear button when no value is selected', () => {
-      component.selectedValue = null;
+      form.get('testControl')!.setValue(null);
 
       expect(component.showClearButton).toBe(false);
+    });
+
+    // Regression: a saved filter is patched into a form this component has already initialised,
+    // and without an event -- so the value reaches the control and the display but never reaches
+    // selectedValue. Keying the button off selectedValue left the field showing a value with no
+    // way to remove it.
+    it('should show clear button for a value patched in without an event', () => {
+      component.selectedValue = null;
+      form.get('testControl')!.setValue(7, { emitEvent: false });
+      form.get('testDisplayControl')!.setValue('Entry 7', { emitEvent: false });
+
+      expect(component.showClearButton).toBe(true);
     });
   });
   //#endregion
