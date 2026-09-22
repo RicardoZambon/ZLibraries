@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   view being left. Only the first naming may claim it now.
 
   Also released as 1.4.2 on the 1.4.x line, for applications still on Angular 19.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.1.0] - 2026-09-21
