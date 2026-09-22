@@ -21,6 +21,7 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
   protected destroy$: Subject<boolean> = new Subject<boolean>();
   protected ribbonTemplate?: TemplateRef<any>;
 
+  private hasNamedAView = false;
   private ribbonViewTemplate: { [viewId: string]: TemplateRef<any> | undefined } = {};
   //#endregion
 
@@ -64,17 +65,30 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
   /**
    * Claims the ribbon published before the active view had a name.
    *
-   * A child view publishes its ribbon from ngAfterViewInit, and the router only names the active
-   * view afterwards, so the first template of a tab is always cached under an empty id. Looking it
-   * up later under the real one misses, and the ribbon is emptied -- permanently, because a tab
-   * being re-activated has its child re-attached rather than re-created, so nothing publishes
-   * again. That is what left a details tab with children showing no buttons at all after visiting
-   * another tab and coming back.
+   * A child view publishes its ribbon from ngAfterViewInit, and the view is only named afterwards,
+   * so the first template of a tab is always cached under an empty id. For a tab opened straight
+   * at a non-default view that id is never looked up again, the ribbon is emptied, and nothing
+   * refills it -- a tab being re-activated has its child re-attached rather than re-created, so
+   * ngAfterViewInit does not run a second time.
+   *
+   * Only the very first naming may claim it. The empty id is not a spare bucket: it is the default
+   * view's own id, because that view is the one whose URL carries no sub-path. Once the user
+   * starts switching views the unnamed template belongs to the view being *left*, and handing it
+   * to the view being entered showed the previous view's buttons on the new one and left the
+   * previous one with no buttons at all.
    *
    * @param viewId The view that has just become active.
    */
   private claimUnnamedRibbon(viewId: string): void {
-    if (!viewId || this.ribbonViewTemplate[viewId] !== undefined || this.ribbonViewTemplate[''] === undefined) {
+    const isFirstNaming = !this.hasNamedAView;
+    this.hasNamedAView = true;
+
+    if (
+      !isFirstNaming ||
+      !viewId ||
+      this.ribbonViewTemplate[viewId] !== undefined ||
+      this.ribbonViewTemplate[''] === undefined
+    ) {
       return;
     }
 
