@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.6.6] - 2026-09-22
+
+### Fixed
+
 - **Group headings in a narrow navigation panel no longer spill their label past the edge.** On a
   window under 768px the panel opens at its collapsed width, but each group still printed its full
   label -- clipped mid-word against a bar with no room for it -- where it should show the short
@@ -30,8 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   panel stays narrow whatever its expanded class says. The heading, though, was keyed off that
   class rather than the width it actually got. It now follows the width, with the overlay still
   excluded -- that one does widen the panel at any size.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.6.5] - 2026-09-22
 
@@ -354,7 +358,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.6.5...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v1.6.6...HEAD
+[1.6.6]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.6
 [1.6.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.5
 [1.6.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.4
 [1.6.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.3
