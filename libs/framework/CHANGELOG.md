@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.1.1] - 2026-09-22
+
+### Fixed
+
 - **Switching views in a details tab no longer moves the buttons to the wrong view.** Opening a
   second view showed the first view's buttons instead of its own, and going back to the first view
   left it with no buttons at all -- on the employee screen, Histórico showed the Detalhes ribbon and
@@ -33,8 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   view being left. Only the first naming may claim it now.
 
   Also released as 1.4.2 on the 1.4.x line, for applications still on Angular 19.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.1.0] - 2026-09-21
 
@@ -307,7 +311,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.1...HEAD
+[3.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.1
 [3.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.0
 [3.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.0.1
 [3.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.0.0
