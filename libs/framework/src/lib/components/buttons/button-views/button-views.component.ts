@@ -122,7 +122,15 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
             FrameworkViewType.Details,
           );
 
-          if (currentRoute) {
+          // Every details tab keeps this subscription alive, including the ones the reuse
+          // strategy has detached, and the lookup above reads the *router*, which names
+          // whichever tab the navigation went to. Without this guard a detached tab adopted
+          // the base path of the tab being opened and then switched itself to that tab's view,
+          // tearing its own ribbon down and rebuilding it -- which is how an active filter lost
+          // its Clear filters button while the grid stayed filtered. Comparing the route
+          // definition rather than the URL keeps the one navigation that legitimately changes
+          // this tab's path: the redirect from /new to /:id after a save.
+          if (currentRoute && currentRoute.routeConfig === this.detailsViewRoute.routeConfig) {
             const url: string = RouteHelper.getRouteURL(currentRoute);
             this.baseUrlPath = url;
 
