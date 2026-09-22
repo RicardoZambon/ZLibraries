@@ -161,8 +161,18 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     return `catalog-select-${this.instanceId}-listbox`;
   }
 
+  /**
+   * Whether the button that empties the field is offered.
+   *
+   * It asks the form control, not {@link selectedValue}. The latter is only written when this
+   * component sees the value arrive -- from a pick in the dropdown, or from the initial sync in
+   * ngOnInit. A value patched in afterwards without an event, which is how a saved filter is
+   * restored into a form this component has already initialised, reaches the control and the
+   * display without ever reaching {@link selectedValue}. Keying the button off it left the field
+   * showing a value with no way to remove it.
+   */
   protected get showClearButton(): boolean {
-    return this.selectedValue != null && !this.readOnly && (this.formControl?.enabled ?? false);
+    return this.formControl?.value != null && !this.readOnly && (this.formControl?.enabled ?? false);
   }
 
   private get hasSearchEndpoint(): boolean {

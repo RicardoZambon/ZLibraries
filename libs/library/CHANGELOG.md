@@ -21,6 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`lib-catalog-select` now offers its clear button for a value it did not see arrive.** A field
+  restored from a saved filter showed the value and its label but no way to empty it, so the only
+  escape was to clear the whole filter and start again.
+
+  The button asked an internal field that is written when the component itself takes the value --
+  a pick in the dropdown, or the initial read in `ngOnInit`. A form patched after the component
+  has initialised, and patched without an event, reaches the form control and the display and
+  nothing else. The button now asks the form control, which is the value that actually counts.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.6.4] - 2026-09-21
@@ -120,7 +129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The point is where the grouping lives. `region` is a label repeated on every item that belongs to
   a group, matched by exact string equality: a typo silently splits one area into two, and the
   area has no row of its own to carry an order or a translation. Derived from the tree, the area
-  *is* a menu row — it already has a translated label and an order — and nothing has to be
+  _is_ a menu row — it already has a translated label and an order — and nothing has to be
   duplicated across its items.
 
   The children of an area are fetched **eagerly**, at load, because they are rendered without a
@@ -250,7 +259,7 @@ and want external items too, add a subscription to `menuExternalUrlSelected`.
 `lib-multi-editor` now sends rows that `newData()` pre-filled but the user never edited. Nothing to do
 if your `newData()` returns an empty object (`{}`) — the common "blank row" convention — since a
 value-less row is still skipped and the posted batch is byte-for-byte what it was before. If your
-`newData()` *does* return field values, those rows now reach `saveData()` where they were previously
+`newData()` _does_ return field values, those rows now reach `saveData()` where they were previously
 dropped, so a batch may contain entries it did not before; verify your backend rejects or defaults
 them as you expect.
 
