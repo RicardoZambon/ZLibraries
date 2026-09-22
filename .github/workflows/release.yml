@@ -7,9 +7,13 @@ on:
       - main
       - 1.4.x
 
+# id-token is deliberately absent on this line. With it, @semantic-release/npm exchanges it for
+# an npm token that may publish but not write dist-tags, and a maintenance release has to write
+# one -- it publishes on its own channel so latest keeps pointing at the current major. Without
+# it the plugin uses NPM_TOKEN, which can. The cost is npm provenance, which is opportunistic
+# here rather than required: publishConfig asks only for public access.
 permissions:
   actions: read
-  id-token: write
   contents: write
   issues: write
   pull-requests: write
@@ -73,6 +77,7 @@ jobs:
         working-directory: ${{ matrix.package.working-directory }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx --no-install semantic-release -e semantic-release-monorepo
 
       - name: Capture released tag
