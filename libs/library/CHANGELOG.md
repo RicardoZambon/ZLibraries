@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.1.1] - 2026-09-22
+
+### Fixed
+
 - **`lib-catalog-select` now offers its clear button for a value it did not see arrive.** A field
   restored from a saved filter showed the value and its label but no way to empty it, so the only
   escape was to clear the whole filter and start again.
@@ -29,8 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a pick in the dropdown, or the initial read in `ngOnInit`. A form patched after the component
   has initialised, and patched without an event, reaches the form control and the display and
   nothing else. The button now asks the form control, which is the value that actually counts.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.1.0] - 2026-09-21
 
@@ -413,7 +417,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.1...HEAD
+[3.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.1
 [3.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.0
 [3.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.0.1
 [3.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.0.0
