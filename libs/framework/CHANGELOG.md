@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.4.5] - 2026-09-22
+
+### Fixed
+
 - **A filtered view no longer loses its Filter and Clear filters state when another details tab is
   opened.** The grid stayed filtered while the ribbon came back as though nothing were filtered, so
   the only way out was to filter again. Opening a list view never did it -- which is what made the
@@ -36,8 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   A tab now answers only to navigations matching its own route definition, which still covers the
   one navigation that legitimately changes its path: the redirect from `/new` to `/:id` after a
   save.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.4.4] - 2026-09-22
 
@@ -247,7 +251,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.4...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.5...HEAD
+[1.4.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.5
 [1.4.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.4
 [1.4.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.3
 [1.4.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.2
