@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [3.1.3] - 2026-09-23
+
+### Added
+
 - **`lib-catalog-select` takes a `searchable` input.** A catalog of one or two entries is a picker,
   not a search: the text box invites typing that only gets in the way, and the minimum-length rule
   hides the very entries the user opened the field to choose from. Setting `[searchable]="false"`
@@ -28,12 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   employee -- kept offering the list it read before the change. Calling `refresh()` re-reads the
   catalog, including whether its endpoint now requires search criteria.
 
-### Changed
-
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - **`lib-catalog-select` no longer reports "no results" when its endpoint arrives after the field
@@ -46,8 +54,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   landed -- unlike `entriesList` and `filters`, which have always refreshed on change. It is now a
   setter and re-reads the catalog, treating a new endpoint as a new catalog rather than carrying
   over what the previous one reported about needing search criteria.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.1.2] - 2026-09-22
 
@@ -457,7 +463,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.3...HEAD
+[3.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.3
 [3.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.2
 [3.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.1
 [3.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.0
