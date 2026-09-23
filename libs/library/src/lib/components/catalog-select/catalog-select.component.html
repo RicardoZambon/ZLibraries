@@ -15,7 +15,7 @@
       [autofocus]="autofocus"
       [controlName]="displayControlName"
       [invalid]="isInvalid && isTouched"
-      [readOnly]="readOnly"
+      [readOnly]="readOnly || !searchable"
       (blurred)="onContainerBlur()"
       (click)="onContainerClick()"
       (focused)="onContainerFocus()"

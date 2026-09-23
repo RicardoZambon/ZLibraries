@@ -97,7 +97,38 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   @Input() public minimumLengthSearch = 3;
   @Input() public notes = '';
   @Input() public readOnly = false;
-  @Input() public searchEndpoint?: string;
+  /**
+   * Whether the field accepts typing to narrow the list.
+   *
+   * A catalog of a handful of entries is a picker, not a search: typing only gets in the way, and
+   * the minimum-length rule would hide the very entries the user opened the field to choose from.
+   * Turning this off leaves the input read-only to the keyboard while the dropdown still opens on
+   * click and the clear button still works -- unlike {@link readOnly}, which means the value
+   * cannot be changed at all.
+   *
+   * It does not suit an endpoint that answers shouldUseCriteria: that endpoint returns nothing
+   * until it is given criteria, and there would be no way left to type any.
+   */
+  @Input() public searchable = true;
+  @Input() public set searchEndpoint(value: string | undefined) {
+    if (this._searchEndpoint === value) {
+      return;
+    }
+
+    this._searchEndpoint = value;
+
+    // A screen that reads the endpoint off a model it loads over HTTP binds an empty string first,
+    // and this component initializes against that: no endpoint takes the static-list path, finds an
+    // empty list and latches "no results". Nothing re-ran the search when the real endpoint landed,
+    // so the field stayed empty until the user typed something and cleared it again.
+    //
+    // Re-initializing rather than merely refreshing, because a different endpoint is a different
+    // catalog: what the previous one reported about needing criteria cannot be carried over.
+    if (this.isSubscriptionInitialized) {
+      const reInitialize = true;
+      this.refreshSearch(reInitialize);
+    }
+  }
   @Input() public validations: { [id: string]: string } = {};
   @Input() public valueProperty = 'value';
   //#endregion
@@ -117,6 +148,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   private static instanceCounter = 0;
   private _entriesList?: any[] | { key: number; value: Observable<any> | string }[] | null;
   private _filters: { [id: string]: any } = {};
+  private _searchEndpoint?: string;
   private catalogService: CatalogService = inject(CatalogService);
   private dataGridDataset: DataGridDataset = inject(DataGridDataset, { optional: true })!;
   private entriesDataSource: ICatalogEntry[] = [];
@@ -143,6 +175,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
   public get filters(): { [id: string]: any } | undefined {
     return this._filters;
+  }
+
+  public get searchEndpoint(): string | undefined {
+    return this._searchEndpoint;
   }
 
   protected get activeDescendantId(): string | null {
@@ -395,6 +431,21 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   protected getOptionId(index: number): string {
     return `catalog-select-${this.instanceId}-option-${index}`;
   }
+
+  /**
+   * Re-reads the catalog from its endpoint.
+   *
+   * The entries are fetched once, when the field initializes, so a screen that changes the data
+   * behind the catalog -- granting a role, moving an employee, anything that alters what the
+   * endpoint would now answer -- otherwise keeps offering the list it read before the change.
+   *
+   * It re-reads rather than merely re-runs the last request, because the number of entries may
+   * have crossed the threshold that decides whether the endpoint requires search criteria.
+   */
+  public refresh(): void {
+    const reInitialize = true;
+    this.refreshSearch(reInitialize);
+  }
   //#endregion
 
   //#region Private methods
@@ -517,7 +568,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
               // The shouldUseCriteria is only set from the initialization.
               this.isDataInitialized = true;
               this.shouldUseCriteria = catalogResult.shouldUseCriteria ?? false;
-              this.showMinimumCharactersMessage = this.displayedEntries.length === 0;
+              this.showMinimumCharactersMessage = this.searchable && this.displayedEntries.length === 0;
             }
           }
 
@@ -604,7 +655,11 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
   private refreshSearch(reInitialize = false): void {
     if (reInitialize) {
+      // Both are written together when a catalog first answers, so both have to go together.
+      // Leaving shouldUseCriteria behind let the previous catalog gate the new one: the
+      // minimum-length check short-circuited the very request that would have corrected it.
       this.isDataInitialized = false;
+      this.shouldUseCriteria = false;
     }
 
     this.applySearchCriteria(this.lastCriteriaUsed);
@@ -692,7 +747,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
   private updateMinimumCharactersMessageVisibility(criteria: string): void {
     this.showMinimumCharactersMessage =
-      this.shouldUseCriteria && this.minimumLengthSearch > 0 && (criteria?.length ?? 0) < this.minimumLengthSearch;
+      this.searchable &&
+      this.shouldUseCriteria &&
+      this.minimumLengthSearch > 0 &&
+      (criteria?.length ?? 0) < this.minimumLengthSearch;
   }
 
   private getNativeInput(): HTMLInputElement | null {

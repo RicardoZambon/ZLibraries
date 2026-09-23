@@ -41,6 +41,7 @@ describe('CatalogSelectComponent', () => {
     searchEndpoint?: string;
     readOnly?: boolean;
     minimumLengthSearch?: number;
+    searchable?: boolean;
     disabled?: boolean;
     apiResult?: ICatalogResult;
   }): void {
@@ -95,6 +96,7 @@ describe('CatalogSelectComponent', () => {
     component.validations = {};
     component.displayProperty = 'display';
     component.valueProperty = 'value';
+    component.searchable = opts.searchable ?? true;
     component.searchEndpoint = opts.searchEndpoint;
 
     // Internal state
@@ -298,6 +300,151 @@ describe('CatalogSelectComponent', () => {
       initComponent();
 
       expect(form.disabled).toBe(true);
+    });
+  });
+  //#endregion
+
+  //#region Search endpoint arriving late
+  describe('search endpoint arriving late', () => {
+    // A screen that reads the endpoint off a model it loads over HTTP binds an empty string
+    // first, and the component initializes against that. Everything here is about what happens
+    // when the real endpoint lands afterwards.
+
+    it('should not call the service while the endpoint is empty', () => {
+      setupComponent({ searchEndpoint: '', apiResult: createApiResult(sampleEntries, false) });
+      initComponent();
+
+      expect(mockCatalogService.search).not.toHaveBeenCalled();
+    });
+
+    it('should search once the endpoint arrives after initialization', () => {
+      setupComponent({ searchEndpoint: '', apiResult: createApiResult(sampleEntries, false) });
+      initComponent();
+
+      component.searchEndpoint = '/api/search';
+
+      expect(mockCatalogService.search).toHaveBeenCalledTimes(1);
+      expect(component.displayedEntries).toHaveLength(sampleEntries.length);
+    });
+
+    it('should clear the stale no-results message when the endpoint arrives', () => {
+      setupComponent({ searchEndpoint: '', apiResult: createApiResult(sampleEntries, false) });
+      initComponent();
+      expect(component.showNoResultsMessage).toBe(true);
+
+      component.searchEndpoint = '/api/search';
+
+      expect(component.showNoResultsMessage).toBe(false);
+    });
+
+    it('should not search again when the endpoint is set to the same value', () => {
+      setupComponent({ searchEndpoint: '/api/search', apiResult: createApiResult(sampleEntries, false) });
+      initComponent();
+      expect(mockCatalogService.search).toHaveBeenCalledTimes(1);
+
+      component.searchEndpoint = '/api/search';
+
+      expect(mockCatalogService.search).toHaveBeenCalledTimes(1);
+    });
+
+    it('should re-read shouldUseCriteria when the endpoint changes', () => {
+      // A different endpoint is a different catalog, so what the previous one said about
+      // needing criteria cannot be carried over.
+      setupComponent({ searchEndpoint: '/api/first', apiResult: createApiResult([], true) });
+      initComponent();
+      expect(component.shouldUseCriteria).toBe(true);
+
+      mockCatalogService.search.mockReturnValue(of(createApiResult(sampleEntries, false)));
+      component.searchEndpoint = '/api/second';
+
+      expect(component.shouldUseCriteria).toBe(false);
+    });
+  });
+  //#endregion
+
+  //#region Refresh
+  describe('refresh', () => {
+    it('should read the catalog again', () => {
+      setupComponent({ searchEndpoint: '/api/search', apiResult: createApiResult(sampleEntries, false) });
+      initComponent();
+      mockCatalogService.search.mockClear();
+
+      component.refresh();
+
+      expect(mockCatalogService.search).toHaveBeenCalledTimes(1);
+    });
+
+    it('should pick up entries added since the field initialized', () => {
+      setupComponent({ searchEndpoint: '/api/search', apiResult: createApiResult([], false) });
+      initComponent();
+      expect(component.displayedEntries).toHaveLength(0);
+
+      mockCatalogService.search.mockReturnValue(of(createApiResult(sampleEntries, false)));
+      component.refresh();
+
+      expect(component.displayedEntries).toHaveLength(sampleEntries.length);
+      expect(component.showNoResultsMessage).toBe(false);
+    });
+
+    it('should re-read shouldUseCriteria', () => {
+      // The catalog may have grown past the threshold that makes the endpoint demand criteria,
+      // or shrunk below it.
+      setupComponent({ searchEndpoint: '/api/search', apiResult: createApiResult([], true) });
+      initComponent();
+      expect(component.shouldUseCriteria).toBe(true);
+
+      mockCatalogService.search.mockReturnValue(of(createApiResult(sampleEntries, false)));
+      component.refresh();
+
+      expect(component.shouldUseCriteria).toBe(false);
+    });
+  });
+  //#endregion
+
+  //#region Searchable
+  describe('searchable', () => {
+    it('should not ask for a minimum length when not searchable', () => {
+      setupComponent({
+        searchEndpoint: '/api/search',
+        searchable: false,
+        apiResult: createApiResult([], true),
+      });
+
+      initComponent();
+
+      expect(component.shouldUseCriteria).toBe(true);
+      expect(component.showMinimumCharactersMessage).toBe(false);
+    });
+
+    it('should search on a short criteria when not searchable', () => {
+      setupComponent({
+        searchEndpoint: '/api/search',
+        searchable: false,
+        apiResult: createApiResult(sampleEntries, false),
+      });
+      initComponent();
+      component.shouldUseCriteria = true;
+      mockCatalogService.search.mockClear();
+
+      component.applySearchCriteria('a');
+
+      expect(mockCatalogService.search).toHaveBeenCalledTimes(1);
+    });
+
+    it('should still wait for the minimum length when searchable', () => {
+      // The control case: the guard above must not loosen the default.
+      setupComponent({
+        searchEndpoint: '/api/search',
+        apiResult: createApiResult(sampleEntries, false),
+      });
+      initComponent();
+      component.shouldUseCriteria = true;
+      mockCatalogService.search.mockClear();
+
+      component.applySearchCriteria('a');
+
+      expect(mockCatalogService.search).not.toHaveBeenCalled();
+      expect(component.showMinimumCharactersMessage).toBe(true);
     });
   });
   //#endregion
