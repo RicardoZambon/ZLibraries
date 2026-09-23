@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.1.4] - 2026-09-23
+
+### Fixed
+
 - **A `lib-catalog-select` with `searchable` off no longer looks disabled.** It was drawn on the
   same grey as a disabled field, so nothing distinguished a picker you are meant to click from a
   control that is not yours to touch.
@@ -29,8 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   paints a read-only input as disabled by default. That default is right for `readOnly`, which
   means the value cannot be changed at all; it is wrong here, where only typing is withheld. The
   disabled appearance is now tied to `readOnly` alone.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.1.3] - 2026-09-23
 
@@ -472,7 +476,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.4...HEAD
+[3.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.4
 [3.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.3
 [3.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.2
 [3.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.1
