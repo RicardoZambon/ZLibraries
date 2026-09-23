@@ -21,6 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A `lib-catalog-select` with `searchable` off no longer looks disabled.** It was drawn on the
+  same grey as a disabled field, so nothing distinguished a picker you are meant to click from a
+  control that is not yours to touch.
+
+  Turning searching off makes the inner input read-only to the keyboard, and `lib-form-input`
+  paints a read-only input as disabled by default. That default is right for `readOnly`, which
+  means the value cannot be changed at all; it is wrong here, where only typing is withheld. The
+  disabled appearance is now tied to `readOnly` alone.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.1.3] - 2026-09-23
