@@ -36,6 +36,7 @@ export const Primary: Story = {
     minimumLengthSearch: 3,
     notes: '',
     readOnly: false,
+    searchable: true,
     searchEndpoint: '',
     validations: {},
     valueProperty: 'value',
@@ -63,6 +64,7 @@ export const Primary: Story = {
             [minimumLengthSearch]="minimumLengthSearch"
             [notes]="notes"
             [readOnly]="readOnly"
+            [searchable]="searchable"
             [searchEndpoint]="searchEndpoint"
             [validations]="validations"
             [valueProperty]="valueProperty">
@@ -153,3 +155,45 @@ export const RemoteSearchWithFilters: Story = {
   }),
 };
 
+/**
+ * A catalog of a couple of entries is a picker, not a search. With `searchable` off the input takes
+ * no typing, while the dropdown still opens on click and the value can still be cleared.
+ */
+export const ShortListWithoutSearch: Story = {
+  args: {
+    ...Primary.args,
+    controlName: 'positionId',
+    displayControlName: 'positionName',
+    entriesList: [
+      { value: 1, display: 'Employee' },
+      { value: 2, display: 'Manager' },
+    ],
+    label: 'New position',
+    searchable: false,
+    validations: { required: 'New position is required' },
+  },
+  render: (args) => ({
+    props: {
+      ...args,
+      form: new FormGroup({
+        positionId: new FormControl<number | null>(null),
+        positionName: new FormControl<string>(''),
+      }),
+    },
+    template: `
+      <form [formGroup]="form" class="p-4 max-w-md">
+        <lib-form-group label="Short catalog">
+          <lib-catalog-select
+            [controlName]="controlName"
+            [displayControlName]="displayControlName"
+            [entriesList]="entriesList"
+            [label]="label"
+            [searchable]="searchable"
+            [validations]="validations"
+            [valueProperty]="valueProperty">
+          </lib-catalog-select>
+        </lib-form-group>
+      </form>
+    `,
+  }),
+};

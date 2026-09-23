@@ -13,6 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`lib-catalog-select` takes a `searchable` input.** A catalog of one or two entries is a picker,
+  not a search: the text box invites typing that only gets in the way, and the minimum-length rule
+  hides the very entries the user opened the field to choose from. Setting `[searchable]="false"`
+  leaves the input read-only to the keyboard while the dropdown still opens on click and the clear
+  button still works.
+
+  It differs from `readOnly`, which means the value cannot be changed at all and takes the clear
+  button away. It does not suit an endpoint that answers `shouldUseCriteria`: that endpoint
+  returns nothing until it is given criteria, and there would be no way left to type any.
+
+- **`lib-catalog-select` exposes `refresh()`.** The entries are fetched once, when the field
+  initialises, so a screen that changes the data behind the catalog -- granting a role, moving an
+  employee -- kept offering the list it read before the change. Calling `refresh()` re-reads the
+  catalog, including whether its endpoint now requires search criteria.
+
 ### Changed
 
 ### Deprecated
@@ -20,6 +35,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- **`lib-catalog-select` no longer reports "no results" when its endpoint arrives after the field
+  does.** A screen that reads the endpoint off a model it loads over HTTP binds an empty string
+  first. The field initialised against that, showed _no results found_ on the first open, and only
+  filled in once the user typed something and cleared it again.
+
+  With no endpoint the component takes its static-list path, finds an empty list and latches the
+  message. `searchEndpoint` was a plain input, so nothing re-ran the search when the real value
+  landed -- unlike `entriesList` and `filters`, which have always refreshed on change. It is now a
+  setter and re-reads the catalog, treating a new endpoint as a new catalog rather than carrying
+  over what the previous one reported about needing search criteria.
 
 ### ⚠ Breaking Changes / Migration
 
