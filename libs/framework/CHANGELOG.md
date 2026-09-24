@@ -21,12 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.1.3] - 2026-09-24
+
+### Fixed
+
 - **A confirm or error modal no longer adds a gap below the page.** Both render nothing but a
   fixed-position modal, yet their host still counted as a child in the parent's layout, so a flex
   column with a gap reserved a slot for it under the last visible element -- which is why a detail
   view and some list views sat further from the bottom of the window than the rest.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.1.2] - 2026-09-22
 
@@ -336,7 +340,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.3...HEAD
+[3.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.3
 [3.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.2
 [3.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.1
 [3.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.0

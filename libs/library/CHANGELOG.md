@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.1.5] - 2026-09-24
+
+### Fixed
+
 - **Pressing Enter in the multi-select search no longer saves the changes.** The search box sits
   inside the modal's form, so Enter submitted it and the confirmation ran alongside the search --
   committing a selection the user was still building. Enter now searches and nothing else.
@@ -38,8 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **A multi-select or multi-editor no longer adds a gap below the page.** Both render nothing but
   a fixed-position modal, yet their host still counted as a child in the parent's layout, so a
   flex column with a gap reserved a slot for it under the last visible element.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.1.4] - 2026-09-23
 
@@ -494,7 +498,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.4...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.5...HEAD
+[3.1.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.5
 [3.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.4
 [3.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.3
 [3.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.2
