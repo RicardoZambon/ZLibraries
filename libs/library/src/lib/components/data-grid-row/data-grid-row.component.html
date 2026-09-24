@@ -2,9 +2,12 @@
 class="cell selection"
 (click)="onToggleSelection()"
 (onResize)="onResizeSelection($event)">
+    <!-- Null, not false. An attribute binding writes disabled="false" when the value is false, and
+    any value at all disables a control -- so bound to the boolean directly every checkbox in the
+    grid rendered disabled and faded, and only the label click toggled a row. -->
     <input class="form-input"
     type="checkbox"
-    [attr.disabled]="disabled"
+    [attr.disabled]="disabled ? true : null"
     [(ngModel)]="selected" />
 </div> 
 

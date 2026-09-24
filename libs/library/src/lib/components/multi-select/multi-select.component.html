@@ -14,7 +14,7 @@
                 type="text"
                 [(ngModel)]="searchCriteria"
                 [disabled]="modalProcessing || isSearchGridLoading"
-                (keydown.enter)="onSearch()" />
+                (keydown.enter)="onSearch($event)" />
             </div>
             
             <lib-data-grid

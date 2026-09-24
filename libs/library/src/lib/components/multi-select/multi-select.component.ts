@@ -111,7 +111,18 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
       });
   }
 
-  protected onSearch(): void {
+  /**
+   * Runs the search.
+   *
+   * The input lives inside the modal's form, so Enter would submit it. Submitting reaches the
+   * footer and saves changes the user has not finished making -- pressing Enter after typing a
+   * name means "find this", never "confirm everything". The event is stopped here rather than in
+   * the template so the reason travels with the code.
+   */
+  protected onSearch(event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+
     const filters: { [key: string]: string; } = this.dataGridDataset.filters ?? {};
 
     this.isSearchGridLoading = true;
