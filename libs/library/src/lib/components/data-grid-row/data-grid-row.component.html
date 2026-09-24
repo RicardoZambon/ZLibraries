@@ -5,7 +5,9 @@ Space on its own. -->
 @if (dataGridDataset.configs.multiSelect) {
   <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
   <label class="cell selection" (click)="onToggleSelection()" (onResize)="onResizeSelection($event)">
-    <input class="form-input" type="checkbox" [attr.disabled]="disabled" [(ngModel)]="selected" />
+    <!-- Null, not false: an attribute binding writes disabled="false" for false, and any value at
+    all disables a control, so every checkbox rendered disabled and faded. -->
+    <input class="form-input" type="checkbox" [attr.disabled]="disabled ? true : null" [(ngModel)]="selected" />
   </label>
 }
 @for (column of columns; track column; let i = $index) {
