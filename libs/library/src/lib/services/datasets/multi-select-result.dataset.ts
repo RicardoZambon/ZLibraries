@@ -56,23 +56,30 @@ export abstract class MultiSelectResultDataset extends GridDataset {
       );
   }
 
+  /**
+   * Records that an entry is to be added, if it is not already recorded or already saved.
+   *
+   * Idempotent: the same entry can be reported more than once, because a click on the grid and a
+   * click in the panel both land here through different paths.
+   */
   public setIDToAdd(idToAdd: any, rowData: any): void {
     const index: number = this._idsToRemove.indexOf(idToAdd);
     if (index >= 0) {
       this._idsToRemove.splice(index, 1);
-    } else if (!this.isExistingID(idToAdd)) {
+    } else if (!this.isExistingID(idToAdd) && this._idsToAdd.indexOf(idToAdd) < 0) {
       this._idsToAdd.push(idToAdd);
       this.addedRowData.push(rowData);
     }
     this.updateDisplayedRows();
   }
 
+  /** Idempotent, for the same reason as {@link setIDToAdd}. */
   public setIDToRemove(idToRemove: any): void {
     const index: number = this._idsToAdd.indexOf(idToRemove);
     if (index >= 0) {
       this._idsToAdd.splice(index, 1);
       this.addedRowData.splice(index, 1);
-    } else if (this.isExistingID(idToRemove)) {
+    } else if (this.isExistingID(idToRemove) && this._idsToRemove.indexOf(idToRemove) < 0) {
       this._idsToRemove.push(idToRemove);
     }
     this.updateDisplayedRows();

@@ -58,6 +58,12 @@ export class MultiSelectResultGridComponent extends BaseComponent implements OnI
   //#region Event handlers
   public onItemRemoved(rowIndex: number): void {
     const id: any = this.resultDataset.displayedIDs[rowIndex];
+
+    // Removing used to go only through the grid on the left, which knows nothing about a row it
+    // has not loaded -- and this panel lists entries the search may never have shown. The click
+    // then did nothing at all. The dataset is told directly, and the grid is still told too so a
+    // row that does happen to be loaded keeps its checkbox in step.
+    this.resultDataset.setIDToRemove(id);
     this.dataGridDataset.deselectRowID(id);
   }
 
