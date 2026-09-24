@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A confirm or error modal no longer adds a gap below the page.** Both render nothing but a
+  fixed-position modal, yet their host still counted as a child in the parent's layout, so a flex
+  column with a gap reserved a slot for it under the last visible element -- which is why a detail
+  view and some list views sat further from the bottom of the window than the rest.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.1.2] - 2026-09-22
