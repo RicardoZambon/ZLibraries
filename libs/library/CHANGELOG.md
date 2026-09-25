@@ -36,6 +36,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   panel publishes the radius that keeps the two parallel, and everywhere else the 0.5rem default
   is exactly what they had.
 
+### ⚠ Breaking Changes / Migration
+
+## [3.1.6] - 2026-09-25
+
+### Fixed
+
 - **Icons drawn in CSS survive a FontAwesome major.** Four pseudo-elements set
   `font-family: 'Font Awesome 6 Free'` literally: the sidebar item's expand/collapse chevron and
   its external-link marker, and the checked-checkbox tick in `form-input` and in the published
@@ -46,8 +52,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   They now read `var(--fa-family-classic, 'Font Awesome 6 Free')`. FontAwesome 7 defines that
   variable; 6 does not, so it takes the fallback. The same stylesheet is correct on both, and on
   8 as well as long as FontAwesome keeps the variable.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.1.5] - 2026-09-24
 
@@ -524,7 +528,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.5...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.6...HEAD
+[3.1.6]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.6
 [3.1.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.5
 [3.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.4
 [3.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.3
