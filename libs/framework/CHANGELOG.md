@@ -46,17 +46,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   container's radius minus its own padding and border, which is the value that keeps an inner box
   looking parallel to it. `@zambon-dev/library`'s grid and group container read it.
 
-<<<<<<< HEAD
-
 ### ⚠ Breaking Changes / Migration
 
 **Requires Tailwind CSS 4**, and `@zambon-dev/shared` 5.x, which ships the theme. The migration
 steps are in the `@zambon-dev/shared` changelog for this release; there is nothing specific to
 this package to do beyond following them.
-
-=======
-
-> > > > > > > origin/main
 
 ## [3.1.4] - 2026-09-25
 
