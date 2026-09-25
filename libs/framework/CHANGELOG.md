@@ -25,6 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.1.5] - 2026-09-25
+
+### Fixed
+
 - **The selected tab and the panel are the same colour again.** Both already named an 88% white,
   but the panel lays its fill over a backdrop it has blurred and the tab laid the identical fill
   over an unblurred one — two results from one token, and a visible seam between them. The tab
@@ -40,11 +46,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   container's radius minus its own padding and border, which is the value that keeps an inner box
   looking parallel to it. `@zambon-dev/library`'s grid and group container read it.
 
+<<<<<<< HEAD
+
 ### ⚠ Breaking Changes / Migration
 
 **Requires Tailwind CSS 4**, and `@zambon-dev/shared` 5.x, which ships the theme. The migration
 steps are in the `@zambon-dev/shared` changelog for this release; there is nothing specific to
 this package to do beyond following them.
+
+=======
+
+> > > > > > > origin/main
 
 ## [3.1.4] - 2026-09-25
 
@@ -373,7 +385,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.4...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.5...HEAD
+[3.1.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.5
 [3.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.4
 [3.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.3
 [3.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.2
