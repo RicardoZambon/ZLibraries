@@ -24,6 +24,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The tab panel's drop shadow is no longer sliced off.** The layout's `.content` was
+  `overflow-y-auto`, which made it a clipping box on both axes, and what it clipped was the
+  panel's shadow — 18px of shadow against the 8px it left below. It never needed to scroll:
+  `framework-tabs` is full height and the panel scrolls inside it, measured as
+  `scrollHeight === clientHeight` with the panel in place. Two nested scroll containers where one
+  will do.
+
+### ⚠ Breaking Changes / Migration
+
+## [4.1.2] - 2026-09-25
+
+### Fixed
+
 - **Icons drawn in CSS survive a FontAwesome major.** Four pseudo-elements set
   `font-family: 'Font Awesome 6 Free'` literally: the sidebar item's expand/collapse chevron and
   its external-link marker, and the checked-checkbox tick in `form-input` and in the published
@@ -35,7 +48,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   variable; 6 does not, so it takes the fallback. The same stylesheet is correct on both, and on
   8 as well as long as FontAwesome keeps the variable.
 
-### ⚠ Breaking Changes / Migration
+## [4.1.1] - 2026-09-25
+
+### Fixed
+
+- **The peer ranges on `@zambon-dev/library` and `@zambon-dev/framework` now match the versions
+  this package is built against.** Both still asked for `^2.0.0` after those packages moved to 3.x,
+  so installing the three together at their current releases failed `npm install` with ERESOLVE. An
+  application could only get past it with `--legacy-peer-deps` or an override, both of which switch
+  off the peer checking that would have caught a genuine mismatch.
 
 **Requires Tailwind CSS 4.** An application on 3.x cannot consume this release: `common.scss`
 references a theme in v4 syntax, and the two versions do not understand each other's directives.
@@ -447,7 +468,9 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.1.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.1.2...HEAD
+[4.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.2
+[4.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.1
 [4.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.0
 [4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.0.1
 [4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.0.0

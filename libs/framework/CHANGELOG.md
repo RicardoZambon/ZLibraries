@@ -25,11 +25,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The selected tab and the panel are the same colour again.** Both already named an 88% white,
+  but the panel lays its fill over a backdrop it has blurred and the tab laid the identical fill
+  over an unblurred one — two results from one token, and a visible seam between them. The tab
+  carries the same blur now.
+
+- **A tab reaching the right edge no longer sticks out past the panel's rounded corner.** The
+  strip spans the panel's full width, so once the tabs filled it the last one's square corner was
+  left standing over the point where the panel had already curved away. The strip carries the
+  panel's corner now, which clips whatever reaches it; the scroll chevron does the same when it
+  is the element at the edge.
+
+- **The tab panel publishes `--surface-radius`** for whatever sits directly inside it — the
+  container's radius minus its own padding and border, which is the value that keeps an inner box
+  looking parallel to it. `@zambon-dev/library`'s grid and group container read it.
+
 ### ⚠ Breaking Changes / Migration
 
 **Requires Tailwind CSS 4**, and `@zambon-dev/shared` 5.x, which ships the theme. The migration
 steps are in the `@zambon-dev/shared` changelog for this release; there is nothing specific to
 this package to do beyond following them.
+
+## [3.1.4] - 2026-09-25
+
+### Fixed
+
+- **The peer range on `@zambon-dev/library` now matches the version this package is built against.**
+  It still asked for `^2.0.0` after the library moved to 3.x, so installing `framework` and
+  `library` together at their current releases failed `npm install` with ERESOLVE. An application
+  could only get past it with `--legacy-peer-deps` or an override, both of which switch off the
+  peer checking that would have caught a genuine mismatch.
+
+## [3.1.3] - 2026-09-24
+
+### Fixed
+
+- **A confirm or error modal no longer adds a gap below the page.** Both render nothing but a
+  fixed-position modal, yet their host still counted as a child in the parent's layout, so a flex
+  column with a gap reserved a slot for it under the last visible element -- which is why a detail
+  view and some list views sat further from the bottom of the window than the rest.
 
 ## [3.1.2] - 2026-09-22
 
@@ -339,7 +373,9 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.4...HEAD
+[3.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.4
+[3.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.3
 [3.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.2
 [3.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.1
 [3.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.0

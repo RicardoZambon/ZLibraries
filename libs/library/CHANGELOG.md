@@ -25,6 +25,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A menu with children no longer runs its label under the expand chevron.** The chevron and the
+  external-link glyph sit in an absolute slot at the row's right edge, outside the anchor's flow,
+  so nothing reserved room for them: "Fluxo de delegação" overlapped the chevron by 11px. The row
+  reserves the slot now and the anchor fills what is left, so a long label ellipsises before it.
+
+  Rows with one of those glyphs give up the fixed anchor width to do this, so their label reflows
+  while the rail collapses instead of sliding out of view. Only those rows, only during the
+  animation.
+
+- **`lib-data-grid` and `lib-group-container` follow their container's corner.** Both were a flat
+  `rounded-lg`, which inside the tab panel put an 8px corner 9px in from a 20px one — close enough
+  to look like a mistake rather than a choice. They read `var(--surface-radius, 0.5rem)` now: the
+  panel publishes the radius that keeps the two parallel, and everywhere else the 0.5rem default
+  is exactly what they had.
+
+### ⚠ Breaking Changes / Migration
+
+## [3.1.6] - 2026-09-25
+
+### Fixed
+
 - **Icons drawn in CSS survive a FontAwesome major.** Four pseudo-elements set
   `font-family: 'Font Awesome 6 Free'` literally: the sidebar item's expand/collapse chevron and
   its external-link marker, and the checked-checkbox tick in `form-input` and in the published
@@ -36,7 +57,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   variable; 6 does not, so it takes the fallback. The same stylesheet is correct on both, and on
   8 as well as long as FontAwesome keeps the variable.
 
-### ⚠ Breaking Changes / Migration
+## [3.1.5] - 2026-09-24
+
+### Fixed
+
+- **Pressing Enter in the multi-select search no longer saves the changes.** The search box sits
+  inside the modal's form, so Enter submitted it and the confirmation ran alongside the search --
+  committing a selection the user was still building. Enter now searches and nothing else.
+
+- **The remove button in the multi-select panel works for an entry the search never showed.** It
+  removed by deselecting the row in the grid on the left, which knows nothing about a row it has
+  not loaded, so clicking the cross on an entry further down the list did nothing. The panel now
+  tells the dataset directly, and still deselects the grid row when there is one.
+
+- **Grid checkboxes are no longer drawn as disabled.** The disabled attribute was bound to the
+  boolean itself, and an attribute binding writes `disabled="false"` for false -- which disables a
+  control just as firmly as any other value. Every checkbox rendered faded and unusable, leaving
+  the row label as the only way to toggle a selection.
+
+- **A multi-select or multi-editor no longer adds a gap below the page.** Both render nothing but
+  a fixed-position modal, yet their host still counted as a child in the parent's layout, so a
+  flex column with a gap reserved a slot for it under the last visible element.
 
 **Requires Tailwind CSS 4**, and `@zambon-dev/shared` 5.x, which ships the theme. The migration
 steps are in the `@zambon-dev/shared` changelog for this release; there is nothing specific to
@@ -495,7 +536,9 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.4...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.6...HEAD
+[3.1.6]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.6
+[3.1.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.5
 [3.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.4
 [3.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.3
 [3.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.2

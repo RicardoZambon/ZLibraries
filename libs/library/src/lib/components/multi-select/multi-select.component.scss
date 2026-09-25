@@ -2,6 +2,14 @@
 
 /* @use 'tailwindcss'; */
 
+/* The host renders nothing of its own -- everything it shows is the fixed-position modal inside
+   it. Left as a normal box it still counts as a child of whatever lays its parent out, so a
+   flex column with a gap reserves a slot for it and the page gains a stray gap below its last
+   visible element. display: contents takes the box out of the tree and leaves the modal. */
+:host {
+  display: contents;
+}
+
 .body-content {
   @apply grid grid-flow-col auto-cols-fr gap-4 h-full;
   @apply grid-rows-[min-content_minmax(0,1fr)];
