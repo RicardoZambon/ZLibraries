@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.1.7] - 2026-09-25
+
+### Fixed
+
 - **A menu with children no longer runs its label under the expand chevron.** The chevron and the
   external-link glyph sit in an absolute slot at the row's right edge, outside the anchor's flow,
   so nothing reserved room for them: "Fluxo de delegação" overlapped the chevron by 11px. The row
@@ -35,8 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to look like a mistake rather than a choice. They read `var(--surface-radius, 0.5rem)` now: the
   panel publishes the radius that keeps the two parallel, and everywhere else the 0.5rem default
   is exactly what they had.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.1.6] - 2026-09-25
 
@@ -528,7 +532,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.6...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.7...HEAD
+[3.1.7]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.7
 [3.1.6]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.6
 [3.1.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.5
 [3.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.4
