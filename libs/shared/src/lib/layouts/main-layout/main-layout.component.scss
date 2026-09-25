@@ -21,7 +21,15 @@
   }
 
   .content {
-    @apply px-3 pt-3 pb-2 overflow-y-auto;
+    /* No overflow here. This used to be overflow-y-auto, which made it a scroll container and so
+       a clipping box on both axes — and what it clipped was the tab panel's drop shadow, which
+       reaches 18px below the panel against the 8px this leaves. The seam showed as the shadow
+       being sliced off rather than fading out.
+
+       It never needed to scroll: framework-tabs is h-full and .tab-content does the scrolling
+       inside it, so this measured scrollHeight === clientHeight with the panel in place. Two
+       nested scroll containers where one will do. */
+    @apply px-3 pt-3 pb-2;
     grid-area: content;
   }
 

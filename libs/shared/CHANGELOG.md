@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The tab panel's drop shadow is no longer sliced off.** The layout's `.content` was
+  `overflow-y-auto`, which made it a clipping box on both axes, and what it clipped was the
+  panel's shadow — 18px of shadow against the 8px it left below. It never needed to scroll:
+  `framework-tabs` is full height and the panel scrolls inside it, measured as
+  `scrollHeight === clientHeight` with the panel in place. Two nested scroll containers where one
+  will do.
+
 - **Icons drawn in CSS survive a FontAwesome major.** Four pseudo-elements set
   `font-family: 'Font Awesome 6 Free'` literally: the sidebar item's expand/collapse chevron and
   its external-link marker, and the checked-checkbox tick in `form-input` and in the published

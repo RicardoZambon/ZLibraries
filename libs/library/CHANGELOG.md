@@ -21,6 +21,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A menu with children no longer runs its label under the expand chevron.** The chevron and the
+  external-link glyph sit in an absolute slot at the row's right edge, outside the anchor's flow,
+  so nothing reserved room for them: "Fluxo de delegação" overlapped the chevron by 11px. The row
+  reserves the slot now and the anchor fills what is left, so a long label ellipsises before it.
+
+  Rows with one of those glyphs give up the fixed anchor width to do this, so their label reflows
+  while the rail collapses instead of sliding out of view. Only those rows, only during the
+  animation.
+
+- **`lib-data-grid` and `lib-group-container` follow their container's corner.** Both were a flat
+  `rounded-lg`, which inside the tab panel put an 8px corner 9px in from a 20px one — close enough
+  to look like a mistake rather than a choice. They read `var(--surface-radius, 0.5rem)` now: the
+  panel publishes the radius that keeps the two parallel, and everywhere else the 0.5rem default
+  is exactly what they had.
+
 - **Icons drawn in CSS survive a FontAwesome major.** Four pseudo-elements set
   `font-family: 'Font Awesome 6 Free'` literally: the sidebar item's expand/collapse chevron and
   its external-link marker, and the checked-checkbox tick in `form-input` and in the published

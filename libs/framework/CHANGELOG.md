@@ -21,6 +21,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The selected tab and the panel are the same colour again.** Both already named an 88% white,
+  but the panel lays its fill over a backdrop it has blurred and the tab laid the identical fill
+  over an unblurred one — two results from one token, and a visible seam between them. The tab
+  carries the same blur now.
+
+- **A tab reaching the right edge no longer sticks out past the panel's rounded corner.** The
+  strip spans the panel's full width, so once the tabs filled it the last one's square corner was
+  left standing over the point where the panel had already curved away. The strip carries the
+  panel's corner now, which clips whatever reaches it; the scroll chevron does the same when it
+  is the element at the edge.
+
+- **The tab panel publishes `--surface-radius`** for whatever sits directly inside it — the
+  container's radius minus its own padding and border, which is the value that keeps an inner box
+  looking parallel to it. `@zambon-dev/library`'s grid and group container read it.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.1.4] - 2026-09-25

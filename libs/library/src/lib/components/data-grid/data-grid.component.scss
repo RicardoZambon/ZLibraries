@@ -4,7 +4,11 @@
   @apply flex flex-col overflow-hidden select-none;
 
   &:not(.no-borders) {
-    @apply border rounded-lg bg-white border-gray-300/90;
+    @apply border bg-white border-gray-300/90;
+    /* Takes the container's corner where the container publishes one — inside the tab panel that
+       is the radius which keeps the two parallel. 0.5rem everywhere else, which is what rounded-lg
+       gave and what this was. */
+    border-radius: var(--surface-radius, 0.5rem);
   }
 
   &.no-borders {
