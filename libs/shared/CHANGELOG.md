@@ -32,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   variable; 6 does not, so it takes the fallback. The same stylesheet is correct on both, and on
   8 as well as long as FontAwesome keeps the variable.
 
-
 ### ⚠ Breaking Changes / Migration
 
 ## [4.1.1] - 2026-09-25
