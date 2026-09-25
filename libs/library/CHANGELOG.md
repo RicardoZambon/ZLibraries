@@ -15,10 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Tailwind CSS 4.** The component styles in this package are compiled against Tailwind 4 now.
-  They are expanded at build time, so nothing in the published bundle changed shape -- but the
-  application consuming it has to be on Tailwind 4 as well.
-
 ### Deprecated
 
 ### Removed
@@ -26,6 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+## [3.2.0] - 2026-09-25
+
+### Changed
+
+- **Tailwind CSS 4.** The component styles in this package are compiled against Tailwind 4 now.
+  They are expanded at build time, so nothing in the published bundle changed shape -- but the
+  application consuming it has to be on Tailwind 4 as well.
 
 ## [3.1.7] - 2026-09-25
 
@@ -540,7 +544,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.1.7...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.0...HEAD
+[3.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.0
 [3.1.7]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.7
 [3.1.6]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.6
 [3.1.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.5

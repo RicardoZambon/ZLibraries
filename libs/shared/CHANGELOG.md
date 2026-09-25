@@ -15,9 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Tailwind CSS 4.** The stylesheets these packages ship are built with Tailwind 4 now. Nothing
-  about the components changed; the framework underneath them did.
-
 ### Deprecated
 
 ### Removed
@@ -25,6 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+## [4.2.0] - 2026-09-25
+
+### Changed
+
+- **Tailwind CSS 4.** The stylesheets these packages ship are built with Tailwind 4 now. Nothing
+  about the components changed; the framework underneath them did.
 
 ## [4.1.3] - 2026-09-25
 
@@ -472,7 +476,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.1.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.2.0...HEAD
+[4.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.0
 [4.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.3
 [4.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.2
 [4.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.1

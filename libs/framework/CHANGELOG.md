@@ -15,10 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Tailwind CSS 4.** The component styles in this package are compiled against Tailwind 4 now.
-  They are expanded at build time, so nothing in the published bundle changed shape -- but the
-  application consuming it has to be on Tailwind 4 as well.
-
 ### Deprecated
 
 ### Removed
@@ -26,6 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+## [3.2.0] - 2026-09-25
+
+### Changed
+
+- **Tailwind CSS 4.** The component styles in this package are compiled against Tailwind 4 now.
+  They are expanded at build time, so nothing in the published bundle changed shape -- but the
+  application consuming it has to be on Tailwind 4 as well.
 
 ## [3.1.5] - 2026-09-25
 
@@ -379,7 +383,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.5...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.2.0...HEAD
+[3.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.0
 [3.1.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.5
 [3.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.4
 [3.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.3
