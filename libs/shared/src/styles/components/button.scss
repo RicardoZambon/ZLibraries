@@ -4,11 +4,11 @@ input[type='submit'],
 button,
 a {
   &.btn {
-    @apply relative px-3 py-1.5 inline-block text-center rounded select-none;
+    @apply relative px-3 py-1.5 inline-block text-center rounded-sm select-none;
     @apply bg-slate-700 text-white;
     @apply transition-all;
 
-    @apply focus:ring-4 focus:ring-slate-600/30 focus:ring-opacity-80;
+    @apply focus:ring-4 focus:ring-slate-600/30;
     @apply focus:bg-slate-800 hover:bg-slate-800;
     @apply active:bg-slate-900;
 

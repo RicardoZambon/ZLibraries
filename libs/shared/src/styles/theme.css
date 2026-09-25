@@ -1,0 +1,75 @@
+/*
+ * The Tailwind entry point and the design tokens built on top of it.
+ *
+ * Tailwind 4 has no JavaScript config: the theme is CSS custom properties declared in `@theme`,
+ * and every one of them doubles as a utility. `--color-primary-600` both defines the token and
+ * creates `bg-primary-600`, `text-primary-600` and the rest, which is why the palette that used to
+ * live in `tailwind.config.js` lives here now.
+ *
+ * Two kinds of file consume this:
+ *
+ *   An application's global stylesheet imports it, and gets the framework plus the theme:
+ *     @import '@zambon-dev/shared/styles/theme.css';
+ *
+ *   A stylesheet that only uses `@apply` references it, and gets the theme without emitting the
+ *   framework a second time:
+ *     @reference '@zambon-dev/shared/styles/theme.css';
+ *
+ * That split is new in 4. In 3 the PostCSS plugin carried the config to every file it processed,
+ * so `@apply` worked anywhere; in 4 a file is on its own unless it says where its theme comes from.
+ */
+
+/*
+ * `theme(static)` emits every theme variable, not only the ones this file is seen to use.
+ * Tailwind 4 prunes unused ones, and the design tokens in variables.scss reference the palette
+ * through `var(--color-gray-100)` from a different file -- which the pruner cannot see. Without
+ * this, those variables resolve to nothing: the sidebar text lost its colour and --app-backdrop's
+ * gradient became invalid and disappeared.
+ */
+@import 'tailwindcss' theme(static);
+
+@plugin '@tailwindcss/forms';
+
+/*
+ * Tailwind 4 changed the default border colour from `gray-200` to `currentColor`, so every element
+ * with a border and no colour of its own inherits the text colour. Across the Storybooks that was
+ * 615 elements going from a light grey hairline to solid black -- a change nothing in the build
+ * reports, which is the case tools/style-snapshot exists to catch.
+ *
+ * This restores the 3.x default. Removing it is a deliberate visual decision, not a cleanup: it
+ * means auditing every bordered element for one that was relying on the old default.
+ */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+/*
+ * Tailwind 4 dropped the preflight rule that gave buttons a pointer cursor; the base reset now
+ * leaves them on the browser default. Restored, because every button in these libraries relied on
+ * it -- 41 elements across the Storybooks lost their pointer.
+ */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@theme {
+  --color-primary-50: #e6f4ff;
+  --color-primary-100: #9acaed;
+  --color-primary-200: #59a5db;
+  --color-primary-300: #2585c8;
+  --color-primary-400: #006bb6;
+  --color-primary-500: #005794;
+  --color-primary-600: #004372;
+  --color-primary-700: #002f50;
+  --color-primary-800: #001b2f;
+  --color-primary-900: #00070d;
+}

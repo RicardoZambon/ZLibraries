@@ -1,7 +1,9 @@
+@reference '../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
-  @apply flex flex-col flex-grow border relative overflow-hidden;
+  @apply flex flex-col grow border relative overflow-hidden;
   @apply bg-white/80 border-gray-300/90;
   /* Takes the container's corner where the container publishes one — inside the tab panel that is
      the radius which keeps the two parallel. 0.5rem everywhere else, which is what rounded-lg gave
@@ -26,9 +28,9 @@
 }
 
 .content-container {
-  @apply flex flex-grow relative overflow-hidden;
+  @apply flex grow relative overflow-hidden;
 
   ::ng-deep > * {
-    @apply flex-grow overflow-hidden;
+    @apply grow overflow-hidden;
   }
 }

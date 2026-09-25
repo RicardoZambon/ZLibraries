@@ -1,3 +1,5 @@
+@reference '../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
@@ -36,7 +38,7 @@ div {
 }
 
 .dropdown {
-  @apply rounded-md border overflow-y-auto overscroll-none border-gray-400 bg-white shadow;
+  @apply rounded-md border overflow-y-auto overscroll-none border-gray-400 bg-white shadow-sm;
   @apply max-h-52;
 
   li {
@@ -64,7 +66,7 @@ div {
       }
 
       &.focused {
-        @apply bg-primary-200/30 outline-none;
+        @apply bg-primary-200/30 outline-hidden;
       }
 
       &,

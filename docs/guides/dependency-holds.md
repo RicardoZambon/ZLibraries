@@ -1,6 +1,6 @@
 # Dependency holds
 
-The workspace is on Angular 22, Nx 23, Storybook 10, Jest 30 and ESLint 10. Three packages are
+The workspace is on Angular 22, Nx 23, Storybook 10, Jest 30 and ESLint 10. Two packages are
 deliberately held below their latest major. Renovate is configured to route each of them through
 dashboard approval rather than opening a PR, so this file is the reason why.
 
@@ -8,16 +8,6 @@ dashboard approval rather than opening a PR, so this file is the reason why.
 
 Not a choice. `@angular/compiler-cli@22` declares `typescript: ">=6.0 <6.1"`. TypeScript 7 (the
 native compiler) cannot be used until Angular supports it. Revisit when Angular's peer range moves.
-
-## Tailwind CSS — held at 3.4.x, latest is 4.x
-
-Tailwind 4 replaces the JavaScript config with CSS-first configuration and changes how `@apply`
-resolves. This workspace has 51 SCSS files built almost entirely on `@apply`, plus
-`tailwind.config.js` and a `@mixin button($color)` that generates utility classes in a `@for` loop.
-
-The migration is real work and its result is visual. It needs someone running the Storybooks and
-the consuming application side by side, not a version bump and a green test suite — no test here
-asserts on computed styles, so a broken upgrade would pass CI.
 
 ## @ngx-translate/core — held at 16.x, latest is 18.x
 
@@ -48,6 +38,30 @@ Everything else tracks latest through Renovate. Angular, the CLI, ng-packagr and
 upgrade as one group; every `@nx/*` package moves with the `nx` core; Storybook moves as a set.
 `ngx-resize-observer` tracks Angular majors one-to-one (4.x is the Angular 22 line), so it upgrades
 alongside the Angular group.
+
+### Tailwind CSS — taken to 4.x
+
+The hold said the migration's result is visual, and that no test here asserts on computed styles so
+a broken upgrade would pass CI. Both were true, so `tools/style-snapshot` was written first and the
+migration was driven by its diff. It earned that: it caught 615 elements whose borders turned black
+(v4's default border colour is `currentColor`), 41 buttons that lost their pointer cursor, and a
+sidebar rendering collapsed because `@screen md` is a v3 directive that v4 leaves as an unknown
+at-rule for the browser to drop. None of the three failed a build.
+
+What the migration involved, beyond the version: the JS config is gone and the theme lives in
+`libs/shared/src/styles/theme.css`, which is also the Tailwind entry point and is now published;
+47 renamed utilities and 7 `@apply … !important` sites converted; 26 `theme()` calls rewritten to
+`var(--color-*)`; and `@reference` added to the 39 component stylesheets that use `@apply`, because
+v4 does not carry the config to every file the way the v3 PostCSS plugin did.
+
+**138 differing computed values in 20 distinct changes remain, triaged and none obviously wrong** —
+the documented `divide-*` selector change, rings and shadows composing their transparent layers
+differently, and three elements 8px shorter. They want an eye before release. Colour differences
+across the board are the same colours in OKLCH, which is what v4's palette is.
+
+One trap worth knowing: Nx does not treat `theme.css` as an input to `build-storybook`, so a change
+to the theme serves a cached Storybook. Two of the three regressions above looked unfixable for a
+while for exactly that reason. Use `--skip-nx-cache` when changing the theme.
 
 ### @fortawesome/fontawesome-free — taken to 7.x
 

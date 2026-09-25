@@ -1,3 +1,5 @@
+@reference '../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 @mixin expanded {
@@ -39,7 +41,7 @@
     'nav'
     'footer';
 
-  @screen md {
+  @media (min-width: 768px) {
     @apply ml-0;
 
     &.expanded {

@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference '../../../../styles/theme.css';
 
 .brand {
   @apply flex items-center gap-2 min-w-0;

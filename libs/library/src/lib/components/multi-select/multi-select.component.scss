@@ -1,3 +1,5 @@
+@reference '../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 /* The host renders nothing of its own -- everything it shows is the fixed-position modal inside
@@ -11,7 +13,7 @@
 .body-content {
   @apply grid grid-flow-col auto-cols-fr gap-4 h-full;
   @apply grid-rows-[min-content_minmax(0,1fr)];
-  @apply grid-flow-row #{!important};
+  @apply grid-flow-row!;
   overflow: clip;
   overflow-clip-margin: 4px;
 }

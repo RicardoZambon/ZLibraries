@@ -23,7 +23,7 @@
   }
 
   ul {
-    @apply absolute hidden py-1 rounded shadow;
+    @apply absolute hidden py-1 rounded-sm shadow-sm;
     @apply bg-white/95 border border-neutral-400 backdrop-blur-md shadow-md;
 
     .dropdown-item {

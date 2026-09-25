@@ -1,3 +1,5 @@
+@reference '../../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
@@ -12,7 +14,7 @@
   }
 
   a {
-    @apply flex items-center gap-1 px-1 rounded cursor-pointer;
+    @apply flex items-center gap-1 px-1 rounded-sm cursor-pointer;
     @apply transition-colors ease-in-out;
 
     &:hover,
@@ -22,7 +24,7 @@
     }
 
     &:focus-visible {
-      @apply outline-none ring-2;
+      @apply outline-hidden ring-2;
       --tw-ring-color: var(--tabs-item-active-text);
     }
 
