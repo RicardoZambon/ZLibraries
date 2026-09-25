@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [4.1.2] - 2026-09-25
+
+### Fixed
+
 - **Icons drawn in CSS survive a FontAwesome major.** Four pseudo-elements set
   `font-family: 'Font Awesome 6 Free'` literally: the sidebar item's expand/collapse chevron and
   its external-link marker, and the checked-checkbox tick in `form-input` and in the published
@@ -31,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   They now read `var(--fa-family-classic, 'Font Awesome 6 Free')`. FontAwesome 7 defines that
   variable; 6 does not, so it takes the fallback. The same stylesheet is correct on both, and on
   8 as well as long as FontAwesome keeps the variable.
-
-### ⚠ Breaking Changes / Migration
 
 ## [4.1.1] - 2026-09-25
 
@@ -408,7 +412,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.1.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.1.2...HEAD
+[4.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.2
 [4.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.1
 [4.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.0
 [4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.0.1
