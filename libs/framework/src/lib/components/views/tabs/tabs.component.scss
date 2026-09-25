@@ -37,8 +37,10 @@
       border-top-left-radius: var(--tabs-item-radius);
     }
 
+    /* --tabs-radius, not --tabs-item-radius: whichever element ends up flush against the panel's
+       right edge has to follow the panel's corner, not a tab's. See .tabs-nav below. */
     &.right {
-      border-top-right-radius: var(--tabs-item-radius);
+      border-top-right-radius: var(--tabs-radius);
     }
 
     &:hover {
@@ -55,6 +57,17 @@
     /* Scrolls rather than clips. This was overflow:hidden, which left any tab past the
        right edge unreachable -- no scroll, no affordance, simply gone. */
     @apply overflow-x-auto overflow-y-hidden overscroll-x-contain;
+
+    /* The strip spans the panel's full width and sits directly on top of it, so once the tabs
+       fill it the last tab's square corner is left standing over the point where the panel has
+       already curved away — a small block floating past the rounded edge. Carrying the panel's
+       corner here clips whatever reaches it to the same curve. The strip is already a clipping
+       box (overflow-x above), so the radius alone does the work.
+
+       Only the right corner: the panel's top-left is square, because that is where the strip and
+       the panel join. When the chevrons are showing, .tabs-scroll.right is the element at the
+       edge instead, and it carries the same radius. */
+    border-top-right-radius: var(--tabs-radius);
 
     /* The scrollbar would sit on the seam between the strip and the panel and break the
        join. The chevrons, the wheel, and scrollIntoView on selection cover reaching the
@@ -122,10 +135,22 @@
         background-color: var(--tabs-item-hover-bg);
       }
 
-      /* The selected tab and the panel share one fill so they read as a single card. */
+      /* The selected tab and the panel share one fill so they read as a single card.
+
+         Naming the same colour is not enough. --tabs-item-active-bg and --tabs-content-bg are both
+         88% white, but the panel lays its 88% over a backdrop it has blurred, and the tab laid the
+         identical 88% over an unblurred one. Two different results from one token, and the join
+         between tab and panel stayed visible. The tab needs the same blur beneath it.
+
+         The panel keeps its blur on a ::before for a reason that does not apply here:
+         backdrop-filter makes an element the containing block for its position:fixed descendants,
+         and the panel contains the views' modal overlays. A tab contains a label and a close
+         button, so it can carry the filter itself. */
       &.active .tab-item {
         background-color: var(--tabs-item-active-bg);
         color: var(--tabs-item-active-text);
+        backdrop-filter: blur(var(--tabs-blur));
+        -webkit-backdrop-filter: blur(var(--tabs-blur));
       }
 
       .tab-close {
@@ -154,6 +179,18 @@
   border-bottom-right-radius: var(--tabs-radius);
   border-top-right-radius: var(--tabs-radius);
   box-shadow: var(--tabs-shadow);
+
+  /* The corner for whatever sits directly inside this panel.
+     Two boxes look parallel when the inner radius is the outer radius minus the gap between them;
+     matching the radii makes the inner corner look too round, and a fixed one makes it too tight.
+     That is what was happening: the grids and group containers carried a flat 8px inside a 20px
+     corner with 9px of gap, where the parallel value is 11px, and the corners visibly disagreed.
+
+     The gap is this panel's own padding plus its border, so the value is derived rather than
+     written down, and it follows --tabs-radius if that is ever retuned. Inner surfaces read it
+     through var(--surface-radius, …) and keep their own default everywhere else — they appear in
+     plenty of places that are not a tab panel. */
+  --surface-radius: calc(var(--tabs-radius) - 0.5rem - 1px);
 
   /* Own stacking context, so the backdrop layer below can sit at z-index -1 behind this
      panel's content without falling behind the app backdrop entirely. */

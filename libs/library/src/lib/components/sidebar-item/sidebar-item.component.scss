@@ -127,6 +127,33 @@ li {
       }
     }
 
+    // Both trailing glyphs sit in an absolute slot at the right edge, outside the anchor's flow,
+    // so nothing reserves room for them and a long label runs underneath: "Fluxo de delegação"
+    // overlapped the chevron by 11px.
+    //
+    // The reservation goes on the row and the anchor is told to follow it. Padding the anchor
+    // instead does nothing useful, because the anchor is a fixed --sidebar-expanded-width and the
+    // row is narrower, so the reservation lands in the part that already overhangs and is clipped.
+    // The overhang is not a fixed amount either — it depends on what the rail is nested in — so
+    // there is no constant to subtract. Width 100% sidesteps all of it: the anchor is whatever the
+    // row leaves, and the ellipsis lands where it should.
+    //
+    // The slot is 12px in from the row's edge (right-3), 10px of glyph, and 8px so the label stops
+    // clear of it. The .failed variant sits further in at right-4 and is covered by the same
+    // reservation.
+    //
+    // The trade: these two kinds of row give up the fixed anchor width, so their label reflows as
+    // the rail collapses rather than sliding out of view with the rest. Only .parent and .external
+    // rows, and only while the animation runs.
+    &.parent,
+    &.external {
+      padding-right: calc(0.75rem + 10px + 0.5rem);
+
+      > a {
+        width: 100%;
+      }
+    }
+
     a {
       @apply block h-full px-3 text-left whitespace-nowrap cursor-pointer overflow-hidden text-ellipsis;
       width: var(--sidebar-expanded-width);
