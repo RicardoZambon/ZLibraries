@@ -21,13 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.1.4] - 2026-09-25
+
+### Fixed
+
 - **The peer range on `@zambon-dev/library` now matches the version this package is built against.**
   It still asked for `^2.0.0` after the library moved to 3.x, so installing `framework` and
   `library` together at their current releases failed `npm install` with ERESOLVE. An application
   could only get past it with `--legacy-peer-deps` or an override, both of which switch off the
   peer checking that would have caught a genuine mismatch.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.1.3] - 2026-09-24
 
@@ -346,7 +350,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.1.4...HEAD
+[3.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.4
 [3.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.3
 [3.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.2
 [3.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.1
