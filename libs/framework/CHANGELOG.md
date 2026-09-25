@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The peer range on `@zambon-dev/library` now matches the version this package is built against.**
+  It still asked for `^2.0.0` after the library moved to 3.x, so installing `framework` and
+  `library` together at their current releases failed `npm install` with ERESOLVE. An application
+  could only get past it with `--legacy-peer-deps` or an override, both of which switch off the
+  peer checking that would have caught a genuine mismatch.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.1.2] - 2026-09-22
