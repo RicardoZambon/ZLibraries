@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference '../../../styles/theme.css';
 
 .main-container {
   @apply grid h-screen w-screen max-h-screen max-w-full;

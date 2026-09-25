@@ -1,7 +1,9 @@
+@reference '../../../styles/theme.css';
+
 // The routed element is a flex item of .tab-content, which is absolutely positioned and clips its
 // overflow, so the host has to flex and allow itself to shrink or the frame collapses to nothing.
 :host {
-  @apply flex flex-col flex-grow overflow-hidden gap-2;
+  @apply flex flex-col grow overflow-hidden gap-2;
   min-height: 0;
 }
 
@@ -22,7 +24,7 @@
 // square through the curve. The container clips instead.
 .external-content-frame-container {
   @include panel;
-  @apply relative flex flex-grow overflow-hidden;
+  @apply relative flex grow overflow-hidden;
   min-height: 0;
 }
 
@@ -39,13 +41,13 @@
 }
 
 .external-content-frame {
-  @apply flex-grow w-full border-0;
+  @apply grow w-full border-0;
   min-height: 0;
 }
 
 .external-content-message {
   @include panel;
-  @apply flex flex-col flex-grow items-center justify-center gap-2 p-6 text-center;
+  @apply flex flex-col grow items-center justify-center gap-2 p-6 text-center;
 
   i {
     @apply text-4xl opacity-40;

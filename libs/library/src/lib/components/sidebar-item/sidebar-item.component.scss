@@ -1,3 +1,5 @@
+@reference '../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 @mixin expanded {
@@ -25,7 +27,7 @@
         }
 
         &.loading .loading {
-          @apply opacity-100 #{!important};
+          @apply opacity-100!;
         }
       }
 
@@ -47,13 +49,13 @@
 
   @media (max-width: 767px) {
     &:not(.active) li > ul {
-      @apply h-0 #{!important};
+      @apply h-0!;
     }
   }
 
-  @screen md {
+  @media (min-width: 768px) {
     &:not(.expanded):not(.active) li > ul {
-      @apply h-0 #{!important};
+      @apply h-0!;
     }
 
     &.expanded {

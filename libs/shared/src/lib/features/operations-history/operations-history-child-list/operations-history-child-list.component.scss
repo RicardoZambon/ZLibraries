@@ -1,3 +1,5 @@
+@reference '../../../../styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
@@ -8,7 +10,7 @@ lib-data-grid {
   @apply h-full;
 
   ::ng-deep .body lib-data-grid-row {
-    @apply p-0 #{!important};
+    @apply p-0!;
   }
 }
 

@@ -62,7 +62,7 @@
     },
     {
       "description": "Held deliberately. See docs/guides/dependency-holds.md before taking any of these.",
-      "matchPackageNames": ["tailwindcss", "typescript", "@ngx-translate/core"],
+      "matchPackageNames": ["typescript", "@ngx-translate/core"],
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
     }

@@ -1,3 +1,5 @@
+@reference '../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
@@ -44,7 +46,7 @@ input[type='time'],
 input[type='url'],
 input[type='week'],
 textarea {
-  @apply block w-full rounded-md shadow-sm px-2 py-1;
+  @apply block w-full rounded-md shadow-xs px-2 py-1;
 
   &.ng-invalid.ng-touched,
   &.invalid {
@@ -56,17 +58,17 @@ textarea {
 }
 
 input[type='checkbox'] {
-  @apply my-1 p-0.5 h-5 w-5 rounded relative;
+  @apply my-1 p-0.5 h-5 w-5 rounded-sm relative;
   @apply inline-flex flex-row justify-end;
   @apply appearance-none bg-white;
 
   @apply disabled:pointer-events-none disabled:opacity-50;
 
   &:not(.switch) {
-    @apply border-2 shadow-md focus:ring focus:shadow-none;
+    @apply border-2 shadow-md focus:ring-3 focus:shadow-none;
 
     &:before {
-      @apply content-[''] rounded;
+      @apply content-[''] rounded-sm;
       @apply flex items-center justify-center absolute inset-0 p-1;
       font-family: var(--fa-family-classic, 'Font Awesome 6 Free');
       font-weight: 900;

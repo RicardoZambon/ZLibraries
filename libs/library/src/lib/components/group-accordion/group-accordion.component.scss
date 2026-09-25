@@ -1,3 +1,5 @@
+@reference '../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
@@ -9,7 +11,7 @@
     }
 
     .content {
-      @apply max-h-0 overflow-hidden #{!important};
+      @apply max-h-0! overflow-hidden!;
     }
   }
 
@@ -26,12 +28,12 @@
   }
 
   h6 {
-    @apply h-12 leading-[3rem] pl-1 mb-0 cursor-pointer uppercase whitespace-nowrap overflow-ellipsis inline pr-2 text-lg;
+    @apply h-12 leading-[3rem] pl-1 mb-0 cursor-pointer uppercase whitespace-nowrap text-ellipsis inline pr-2 text-lg;
   }
 }
 
 .content {
-  @apply flex-grow overflow-y-hidden px-1 box-content;
+  @apply grow overflow-y-hidden px-1 box-content;
 
   &.animate {
     @apply transition-[max-height];

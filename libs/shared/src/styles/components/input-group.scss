@@ -10,7 +10,7 @@
     input[type='text'].form-input,
     input[type='password'].form-input {
       @apply mt-0 rounded-l-none -ml-1;
-      @apply w-1 flex-grow;
+      @apply w-1 grow;
 
       &.ng-touched.ng-invalid {
         ~ .input-group-text {

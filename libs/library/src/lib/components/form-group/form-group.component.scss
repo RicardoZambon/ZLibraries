@@ -1,3 +1,5 @@
+@reference '../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
@@ -5,7 +7,7 @@
     @apply flex flex-col max-h-full overflow-y-hidden;
 
     .content {
-      @apply flex-grow max-h-full overflow-y-hidden;
+      @apply grow max-h-full overflow-y-hidden;
     }
   }
 }

@@ -1,3 +1,5 @@
+@reference '../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
@@ -52,7 +54,7 @@ lib-data-grid-row,
 }
 
 .body {
-  @apply flex-grow relative;
+  @apply grow relative;
 
   cdk-virtual-scroll-viewport {
     @apply absolute inset-0;

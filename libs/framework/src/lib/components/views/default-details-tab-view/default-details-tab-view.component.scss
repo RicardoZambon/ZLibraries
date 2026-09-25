@@ -1,7 +1,9 @@
+@reference '../../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
-  @apply flex flex-col flex-grow overflow-hidden gap-2;
+  @apply flex flex-col grow overflow-hidden gap-2;
 }
 
 router-outlet {

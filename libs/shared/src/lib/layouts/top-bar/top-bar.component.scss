@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference '../../../styles/theme.css';
 
 .top-bar {
   @apply flex items-center justify-between gap-3 w-full;

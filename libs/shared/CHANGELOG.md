@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Tailwind CSS 4.** The stylesheets these packages ship are built with Tailwind 4 now. Nothing
+  about the components changed; the framework underneath them did.
+
 ### Deprecated
 
 ### Removed
@@ -33,6 +36,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   8 as well as long as FontAwesome keeps the variable.
 
 ### ⚠ Breaking Changes / Migration
+
+**Requires Tailwind CSS 4.** An application on 3.x cannot consume this release: `common.scss`
+references a theme in v4 syntax, and the two versions do not understand each other's directives.
+
+Tailwind 4 has no JavaScript config — the theme is CSS custom properties — so the `primary` palette
+that consumers used to declare in their own `tailwind.config.js` now ships here, in
+`@zambon-dev/shared/styles/theme.css`. That file is the Tailwind entry point and the theme in one.
+
+In the application:
+
+1. Install `tailwindcss@^4` and `@tailwindcss/postcss@^4`, and remove `tailwind.config.js`. A
+   `.postcssrc.json` with `{"plugins": {"@tailwindcss/postcss": {}}}` replaces it.
+
+2. Load the theme **before** the shared stylesheet, and load it as CSS rather than through Sass.
+   Sass's `@use` of a plain CSS file drops the `@layer` blocks the theme relies on, silently:
+
+   ```jsonc
+   // angular.json / project.json, styles:
+   "node_modules/@zambon-dev/shared/styles/theme.css",
+   "node_modules/@zambon-dev/shared/styles/common.scss",
+   ```
+
+3. Any stylesheet of your own that uses `@apply` needs to say where its theme comes from:
+   `@reference '@zambon-dev/shared/styles/theme.css';`. In 3.x the PostCSS plugin carried the
+   config to every file; in 4 a file is on its own without this.
+
+4. If you kept a custom palette in `tailwind.config.js`, move it into a `@theme` block. Colours
+   become `--color-<name>-<shade>`.
+
+`theme.css` also restores two v3 defaults that Tailwind 4 dropped, because the components were
+built against them: the default border colour (`gray-200`, not `currentColor`) and the pointer
+cursor on buttons. Both are marked in the file. Taking either away is a visual decision, not a
+cleanup.
+
+**What was verified, and what was not.** `tools/style-snapshot` captures the computed styles of
+every element in all 43 stories and diffs two builds; the migration was driven by that diff rather
+than by reading release notes, and it caught three regressions nothing else reported — 615 elements
+whose borders turned black, 41 buttons that lost their pointer cursor, and a sidebar that rendered
+collapsed because `@screen md` is a v3 directive that 4 leaves as an unknown at-rule for the browser
+to drop.
+
+What remains is 138 differing values in 20 distinct changes, all triaged and none of them obviously
+wrong: `divide-*` moved its border from the top of one element to the bottom of the previous one,
+which is the documented v4 selector change; a handful of rings and shadows compose their transparent
+layers differently; and three elements are 8px shorter. **These want an eye on them before release.**
+Colour values across the board are the same colours in OKLCH, which is what v4's palette is.
 
 ## [4.1.0] - 2026-09-21
 

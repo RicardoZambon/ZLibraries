@@ -1,3 +1,5 @@
+@reference '../../../../../../shared/src/styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
@@ -113,7 +115,7 @@
         }
 
         &:focus-visible {
-          @apply outline-none ring-2 ring-inset;
+          @apply outline-hidden ring-2 ring-inset;
           --tw-ring-color: var(--tabs-item-active-text);
         }
       }

@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference '../../../../styles/theme.css';
 
 .env-badge {
   @apply inline-flex items-center gap-1.5 px-2.5 py-[0.325rem] rounded-full;

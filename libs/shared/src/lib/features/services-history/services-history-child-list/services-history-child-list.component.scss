@@ -1,3 +1,5 @@
+@reference '../../../../styles/theme.css';
+
 /* @use 'tailwindcss'; */
 
 :host {
@@ -8,12 +10,12 @@ lib-data-grid {
   @apply h-full;
 
   ::ng-deep .body lib-data-grid-row {
-    @apply p-0 #{!important};
+    @apply p-0!;
   }
 }
 
 .service-content {
-  @apply flex flex-grow px-3 overflow-hidden;
+  @apply flex grow px-3 overflow-hidden;
 
   .icon {
     @apply flex items-center relative text-blue-500 mr-3;
@@ -37,7 +39,7 @@ lib-data-grid {
   }
 
   .information {
-    @apply flex flex-grow flex-col py-1 overflow-hidden;
+    @apply flex grow flex-col py-1 overflow-hidden;
 
     .service-name {
       @apply font-bold;
