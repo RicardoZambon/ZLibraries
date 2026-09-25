@@ -21,13 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [4.1.1] - 2026-09-25
+
+### Fixed
+
 - **The peer ranges on `@zambon-dev/library` and `@zambon-dev/framework` now match the versions
   this package is built against.** Both still asked for `^2.0.0` after those packages moved to 3.x,
   so installing the three together at their current releases failed `npm install` with ERESOLVE. An
   application could only get past it with `--legacy-peer-deps` or an override, both of which switch
   off the peer checking that would have caught a genuine mismatch.
-
-### ⚠ Breaking Changes / Migration
 
 ## [4.1.0] - 2026-09-21
 
@@ -393,7 +397,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.1.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.1.1...HEAD
+[4.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.1
 [4.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.0
 [4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.0.1
 [4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.0.0
