@@ -21,7 +21,9 @@
    bare button — or using the [right] slot for a counter or search box — keeps their bar. Note
    the rule is global at specificity (0,1,2), so a consumer overriding it needs !important.
 
-   Raw `display: none` rather than `@apply hidden`: Tailwind rejects that here as a circular dependency, since the utility it would inline is the same `.hidden` class this selector tests. */ ::ng-deep lib-ribbon:not(:has(lib-ribbon-group:not(.hidden))):not(:has(> div > *:not(lib-ribbon-group))) { display: none;
+   Raw `display: none` rather than `@apply hidden`: Tailwind rejects that here as a circular dependency, since the utility it would inline is the same `.hidden` class this selector tests. */
+::ng-deep lib-ribbon:not(:has(lib-ribbon-group:not(.hidden))):not(:has(> div > *:not(lib-ribbon-group))) {
+  display: none;
 }
 
 :host {
