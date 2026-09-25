@@ -41,7 +41,7 @@ input[type='checkbox'].form-input {
     &:before {
       @apply content-[''] rounded;
       @apply flex items-center justify-center absolute inset-0 p-1;
-      font-family: 'Font Awesome 6 Free';
+      font-family: var(--fa-family-classic, 'Font Awesome 6 Free');
       font-weight: 900;
     }
   }
