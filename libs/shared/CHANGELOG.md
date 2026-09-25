@@ -21,6 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Icons drawn in CSS survive a FontAwesome major.** Four pseudo-elements set
+  `font-family: 'Font Awesome 6 Free'` literally: the sidebar item's expand/collapse chevron and
+  its external-link marker, and the checked-checkbox tick in `form-input` and in the published
+  `styles/components/input.scss`. FontAwesome 7 renames the family to `Font Awesome 7 Free` and,
+  unlike the FontAwesome 5 names, does not keep a 6 alias — so on an application that had moved to
+  v7 the family stopped resolving and every one of those glyphs rendered as a fallback box.
+
+  They now read `var(--fa-family-classic, 'Font Awesome 6 Free')`. FontAwesome 7 defines that
+  variable; 6 does not, so it takes the fallback. The same stylesheet is correct on both, and on
+  8 as well as long as FontAwesome keeps the variable.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [4.1.1] - 2026-09-25
