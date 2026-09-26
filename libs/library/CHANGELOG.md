@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.2.3] - 2026-09-26
+
+### Fixed
+
 - **A ribbon button's options are no longer cut off by whatever the button sits in.** The list was
   absolutely positioned inside the button, which works only while nothing between it and the page
   clips. `lib-data-grid` does: it is `overflow: hidden`, its buttons bar is its first child, and a
@@ -29,8 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   renders in a CDK overlay attached to the document, as `lib-catalog-select` already did, and the
   overlay also flips it above the button when there is no room below. The ribbon no longer needs
   its own rule to pin a right-hand button’s list to the right, since the overlay works that out.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.2.2] - 2026-09-26
 
@@ -579,7 +583,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.3...HEAD
+[3.2.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.3
 [3.2.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.2
 [3.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.1
 [3.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.0
