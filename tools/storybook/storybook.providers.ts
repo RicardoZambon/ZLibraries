@@ -82,6 +82,18 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Button-Views-Details': 'Details',
     'Button-Views-History': 'History',
     'OperationsHistory-Modal-Title': 'Operation details',
+    // Audit filters — copied verbatim from the shipped i18n (libs/shared/src/i18n/services-history/en.json).
+    'ServicesHistory-Field-ChangedBy': 'Employee',
+    'ServicesHistory-Field-ChangedOnFrom': 'From',
+    'ServicesHistory-Field-ChangedOnTo': 'To',
+    'ServicesHistory-Field-Name': 'Action',
+    'ServicesHistory-Field-OnlyCurrentEntity': 'This record only?',
+    'ServicesHistory-Field-OnlyCurrentEntity-Notes':
+      'An action usually writes to more than one table, and every operation it performed is listed by default — that is what shows the related records a change also touched. Tick this to see only the operations on this record.',
+    'ServicesHistory-Filters-Title': 'History filters',
+    'ServicesHistory-FormGroup-Operations': 'Operations',
+    'ServicesHistory-FormGroup-Period': 'Period',
+    'ServicesHistory-FormGroup-Service': 'Action',
     // Embedded external content — copied verbatim from the shipped i18n (libs/shared/src/i18n/external-content/en.json).
     'ExternalContent-Blocked-Title': 'Cannot be displayed',
     'ExternalContent-Blocked-Message':
@@ -221,6 +233,18 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Button-Views-Details': 'Detalhes',
     'Button-Views-History': 'Histórico',
     'OperationsHistory-Modal-Title': 'Detalhes da operação',
+    // Audit filters — copied verbatim from the shipped i18n (libs/shared/src/i18n/services-history/pt.json).
+    'ServicesHistory-Field-ChangedBy': 'Funcionário',
+    'ServicesHistory-Field-ChangedOnFrom': 'De',
+    'ServicesHistory-Field-ChangedOnTo': 'Até',
+    'ServicesHistory-Field-Name': 'Ação',
+    'ServicesHistory-Field-OnlyCurrentEntity': 'Apenas este registro?',
+    'ServicesHistory-Field-OnlyCurrentEntity-Notes':
+      'Uma ação costuma alterar mais de uma tabela, e por padrão são listadas todas as operações que ela realizou — é isso que mostra os registros relacionados que a alteração também tocou. Marque para ver somente as operações sobre este registro.',
+    'ServicesHistory-Filters-Title': 'Filtros do histórico',
+    'ServicesHistory-FormGroup-Operations': 'Operações',
+    'ServicesHistory-FormGroup-Period': 'Período',
+    'ServicesHistory-FormGroup-Service': 'Ação',
     // Embedded external content — copied verbatim from the shipped i18n (libs/shared/src/i18n/external-content/pt.json).
     'ExternalContent-Blocked-Title': 'Não é possível exibir',
     'ExternalContent-Blocked-Message':
