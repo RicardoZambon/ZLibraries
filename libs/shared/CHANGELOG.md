@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`styles/theme.css` is reachable from an application.** It shipped with the Tailwind 4 release
+  but was missing from the `exports` map, so the one supported way to use it —
+  `@reference '@zambon-dev/shared/styles/theme.css'` in a consumer stylesheet — failed the export
+  check and the build stopped. Found on the first application to migrate.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [4.2.0] - 2026-09-25
