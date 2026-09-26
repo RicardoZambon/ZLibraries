@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [5.0.0] - 2026-09-26
+
+### Added
+
 - **Refresh and filters on the audit view.** `ServicesHistoryViewComponent` now contributes a
   ribbon, with a refresh button and `ServicesHistoryFilterComponent`: the action as text
   (matched with LIKE), the author, a date range, and whether to list only the operations on the
@@ -23,14 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The two picked dates are widened to whole local days and sent as UTC instants, because the
   history stores UTC and the backend compares what it is given: sent as picked, "from the 5th to
   the 5th" is one instant at midnight and matches nothing.
-
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
 
 ### ⚠ Breaking Changes / Migration
 
@@ -519,7 +525,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.2.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v5.0.0...HEAD
+[5.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v5.0.0
 [4.2.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.2
 [4.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.1
 [4.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.0

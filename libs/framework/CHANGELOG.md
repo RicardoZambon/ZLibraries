@@ -21,14 +21,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [4.0.0] - 2026-09-26
+
+### Fixed
+
 - **The filters button no longer waits for an event that has already happened.** It starts
   disabled and learns otherwise from the grid's `loadFinished`, which is right only for a
   button that exists before its grid first loads. A ribbon template is re-created whenever a
   record's views are switched, so a button built then reached a grid that had finished loading
   long ago and stayed unclickable until something made the grid load again. It now reads the
   state from the dataset as well.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.2.2] - 2026-09-26
 
@@ -418,7 +422,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.2.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v4.0.0...HEAD
+[4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.0
 [3.2.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.2
 [3.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.1
 [3.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.0
