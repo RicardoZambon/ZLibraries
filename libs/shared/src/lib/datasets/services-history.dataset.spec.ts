@@ -43,14 +43,27 @@ describe(`${ServicesHistoryDataset.name} period`, () => {
 
     // The bounds are what the local day spans, expressed as instants: an exclusive pair of
     // midnights would be a single point and would match nothing on the day that was picked.
-    expect(sent()?.filters?.['changedOnFrom']).toBe(new Date(2026, 2, 5, 0, 0, 0, 0).toISOString());
-    expect(sent()?.filters?.['changedOnTo']).toBe(new Date(2026, 2, 5, 23, 59, 59, 999).toISOString());
+    expect(sent()?.filters?.['changedOnFrom']).toBe(new Date(2026, 2, 5, 0, 0, 0, 0).toISOString().replace(/Z$/, ''));
+    expect(sent()?.filters?.['changedOnTo']).toBe(
+      new Date(2026, 2, 5, 23, 59, 59, 999).toISOString().replace(/Z$/, ''),
+    );
+  });
+
+  it('sends the instant without a zone designator', () => {
+    const { sent } = datasetSending({ changedOnFrom: '2026-03-05', changedOnTo: '2026-03-05' });
+
+    // DateTime.TryParse on the server reads a trailing Z as an instant and answers with the
+    // machine's local time for it, so the same request would mean different things on a server in
+    // UTC and one in UTC-3 -- while the stored column is plain UTC either way.
+    expect(sent()?.filters?.['changedOnFrom']).not.toMatch(/Z$/);
+    expect(sent()?.filters?.['changedOnTo']).not.toMatch(/Z$/);
+    expect(sent()?.filters?.['changedOnFrom']).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}$/);
   });
 
   it('converts one end without inventing the other', () => {
     const { sent } = datasetSending({ changedOnFrom: '2026-03-05' });
 
-    expect(sent()?.filters?.['changedOnFrom']).toBe(new Date(2026, 2, 5, 0, 0, 0, 0).toISOString());
+    expect(sent()?.filters?.['changedOnFrom']).toBe(new Date(2026, 2, 5, 0, 0, 0, 0).toISOString().replace(/Z$/, ''));
     expect(sent()?.filters?.['changedOnTo']).toBeUndefined();
   });
 

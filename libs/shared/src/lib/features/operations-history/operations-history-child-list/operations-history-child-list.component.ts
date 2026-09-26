@@ -29,8 +29,8 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
    * one of them -- whether to list only the audited record's own operations -- belongs to this
    * list. The rest mean nothing to it, and the backend reads only what it recognises.
    *
-   * Setting filters does not reload on its own; the grid reloads when a service is selected, and
-   * that selection is cleared by the services grid reloading under its new filters.
+   * `setFilters` refreshes the grid itself. With no service selected the dataset answers with an
+   * empty list rather than calling the backend, so a refresh then costs nothing.
    */
   @Input() public set filters(value: { [key: string]: string } | undefined) {
     this.dataGridDataset.setFilters(value);
