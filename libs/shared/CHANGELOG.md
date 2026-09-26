@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The operations list no longer keeps a service the services list has dropped.** Reloading the
+  services grid clears its selection but left the last chosen service behind, so the panel beside
+  it went on showing that service’s operations -- including after a filter that no longer lists
+  it. The selection is dropped with the reload now.
+
 - **The audit date range no longer depends on the server’s time zone.** The two bounds were sent
   as instants with a trailing `Z`, and `DateTime.TryParse` reads that as an instant and answers
   with the _machine’s_ local time for it -- so the same request meant different things on a server

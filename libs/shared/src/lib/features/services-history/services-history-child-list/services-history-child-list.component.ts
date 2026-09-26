@@ -59,6 +59,13 @@ export class ServicesHistoryChildListComponent extends ChildList<any> implements
     this.dataGridDataset.filtersChanged
       .pipe(takeUntil(this.destroy$))
       .subscribe((filters: { [key: string]: string } | undefined) => this.filtersChanged.emit(filters));
+
+    // Reloading clears the grid's selection but would leave the last chosen service behind, and
+    // the operations list beside it still showing that service's rows -- a service the new filters
+    // may not even list any more. Dropped here so the two panels never disagree.
+    this.dataGridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.selectedServiceID = undefined;
+    });
   }
   //#endregion
 
