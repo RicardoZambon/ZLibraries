@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The audit date range no longer depends on the server’s time zone.** The two bounds were sent
+  as instants with a trailing `Z`, and `DateTime.TryParse` reads that as an instant and answers
+  with the _machine’s_ local time for it -- so the same request meant different things on a server
+  in UTC and one in UTC-3, while the stored column is plain UTC either way. They are sent as the
+  UTC wall clock now, with no designator.
+
 - **The peer range on `@zambon-dev/framework` admits 4.x.** 5.0.0 shipped peering `^3.0.0`, hours
   after framework reached 4.0.0, so installing the two together failed with ERESOLVE. Nothing in
   this repository could see it -- the workspace resolves siblings from `dist`, so every build,

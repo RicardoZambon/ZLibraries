@@ -74,6 +74,14 @@ export class ServicesHistoryDataset extends DataGridDataset {
     return { ...params, filters: converted };
   }
 
+  /**
+   * The UTC wall clock of one end of a local day, written without a zone designator.
+   *
+   * Without one on purpose. `DateTime.TryParse` on the server reads a trailing `Z` as an instant
+   * and hands back the *machine's* local time for it, so the same request would mean different
+   * things on a server in UTC and one in UTC-3, and the stored column is plain UTC either way.
+   * Dropping the designator leaves the numbers alone, which is what the column holds.
+   */
   private static toUtcInstant(value: string, edge: 'start' | 'end'): string {
     const [year, month, day]: number[] = value.split('-').map(Number);
 
@@ -83,9 +91,10 @@ export class ServicesHistoryDataset extends DataGridDataset {
       return value;
     }
 
-    return edge === 'start'
-      ? new Date(year, month - 1, day, 0, 0, 0, 0).toISOString()
-      : new Date(year, month - 1, day, 23, 59, 59, 999).toISOString();
+    const instant: Date =
+      edge === 'start' ? new Date(year, month - 1, day, 0, 0, 0, 0) : new Date(year, month - 1, day, 23, 59, 59, 999);
+
+    return instant.toISOString().replace(/Z$/, '');
   }
   //#endregion
 }
