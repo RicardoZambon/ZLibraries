@@ -21,12 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [4.2.1] - 2026-09-26
+
+### Fixed
+
 - **`styles/theme.css` is reachable from an application.** It shipped with the Tailwind 4 release
   but was missing from the `exports` map, so the one supported way to use it —
   `@reference '@zambon-dev/shared/styles/theme.css'` in a consumer stylesheet — failed the export
   check and the build stopped. Found on the first application to migrate.
-
-### ⚠ Breaking Changes / Migration
 
 ## [4.2.0] - 2026-09-25
 
@@ -481,7 +485,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.2.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.2.1...HEAD
+[4.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.1
 [4.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.0
 [4.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.3
 [4.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.2
