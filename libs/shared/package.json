@@ -48,6 +48,14 @@
       "style": "./styles/common.scss",
       "default": "./styles/common.scss"
     },
+    "./styles/theme.css": {
+      "style": "./styles/theme.css",
+      "default": "./styles/theme.css"
+    },
+    "./styles/theme": {
+      "style": "./styles/theme.css",
+      "default": "./styles/theme.css"
+    },
     "./styles/common": {
       "sass": "./styles/common.scss",
       "style": "./styles/common.scss",
