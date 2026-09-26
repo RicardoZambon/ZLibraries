@@ -21,21 +21,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Component styles are compiled again.** The Tailwind 4 migration left every component's own
+  stylesheet unprocessed in the published bundle, so its `@apply` rules reached the browser as an
+  at-rule the browser does not know and it dropped every rule that used one. In practice the
+  components rendered unstyled in any application installing 4.2.0 or 4.2.1. ng-packagr resolves its
+  PostCSS configuration from the library directory rather than from the workspace root, and the
+  migration added one only at the root. Nothing failed along the way: Storybook compiles from source
+  and never sees the packaged artifact, which is why `tools/check-packaged-styles.mjs` now runs
+  against that artifact in CI and again before every publish.
+
+### ⚠ Breaking Changes / Migration
+
+## [4.2.1] - 2026-09-26
+
+### Fixed
+
 - **`styles/theme.css` is reachable from an application.** It shipped with the Tailwind 4 release
   but was missing from the `exports` map, so the one supported way to use it —
   `@reference '@zambon-dev/shared/styles/theme.css'` in a consumer stylesheet — failed the export
   check and the build stopped. Found on the first application to migrate.
-
-- **Component styles are compiled again.** The Tailwind 4 migration left every component's own
-  stylesheet unprocessed in the published bundle, so its `@apply` rules reached the browser as an
-  at-rule the browser does not know and it dropped every rule that used one. In practice the
-  components rendered unstyled in any application installing 4.2.0. ng-packagr resolves its
-  PostCSS configuration from the library directory rather than from the workspace root, and the
-  migration added one only at the root. Nothing failed along the way: Storybook compiles from
-  source and never sees the packaged artifact, which is why `tools/check-packaged-styles.mjs` now
-  runs against that artifact in CI and again before every publish.
-
-### ⚠ Breaking Changes / Migration
 
 ## [4.2.0] - 2026-09-25
 
@@ -490,7 +494,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.2.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v4.2.1...HEAD
+[4.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.1
 [4.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.0
 [4.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.3
 [4.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.2
