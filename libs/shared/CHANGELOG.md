@@ -13,6 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Refresh and filters on the audit view.** `ServicesHistoryViewComponent` now contributes a
+  ribbon, with a refresh button and `ServicesHistoryFilterComponent`: the action as text
+  (matched with LIKE), the author, a date range, and whether to list only the operations on the
+  record being audited. The backend side is `AuditFilters` in ZWebAPI; the author filter needs a
+  catalog, which belongs to the application, so it appears only when the view's
+  `usersCatalogEndpoint` is supplied — through the route's data or bound directly.
+
+  The two picked dates are widened to whole local days and sent as UTC instants, because the
+  history stores UTC and the backend compares what it is given: sent as picked, "from the 5th to
+  the 5th" is one instant at midnight and matches nothing.
+
 ### Changed
 
 ### Deprecated
@@ -22,6 +33,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+- **`ServicesHistoryChildListComponent` no longer provides its own `DataGridDataset`.**
+  `ServicesHistoryViewComponent` provides it instead, so that the ribbon's refresh and filter
+  buttons — which resolve the dataset from their own injector — reach the same instance the grid
+  reads. Nothing changes for the view, which is how this component is meant to be used. Rendering
+  the child list anywhere else now needs the dataset provided above it:
+
+  ```ts
+  providers: [{ provide: DataGridDataset, useClass: ServicesHistoryDataset }],
+  ```
 
 ## [4.2.2] - 2026-09-26
 

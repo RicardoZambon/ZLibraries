@@ -56,6 +56,13 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   }
 
   public ngOnInit(): void {
+    // The constructor disables the button and the two subscriptions below are what re-enable it,
+    // which is right only for a button that exists before its grid first loads. A ribbon template
+    // is re-created whenever a record's views are switched, so a button built then arrives at a
+    // grid that finished loading long ago, waits for an event that has already passed, and stays
+    // unclickable until something makes the grid load again. The dataset knows either way.
+    this.disabled = this.gridDataset.isLoading || !this.gridDataset.hasBeenLoaded;
+
     this.gridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.disabled = true;
       if (this.button.loading) {

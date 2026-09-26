@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The filters button no longer waits for an event that has already happened.** It starts
+  disabled and learns otherwise from the grid's `loadFinished`, which is right only for a
+  button that exists before its grid first loads. A ribbon template is re-created whenever a
+  record's views are switched, so a button built then reached a grid that had finished loading
+  long ago and stayed unclickable until something made the grid load again. It now reads the
+  state from the dataset as well.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.2.2] - 2026-09-26
