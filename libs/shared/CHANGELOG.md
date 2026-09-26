@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The peer range on `@zambon-dev/framework` admits 4.x.** 5.0.0 shipped peering `^3.0.0`, hours
+  after framework reached 4.0.0, so installing the two together failed with ERESOLVE. Nothing in
+  this repository could see it -- the workspace resolves siblings from `dist`, so every build,
+  test and Storybook passes with a range no consumer can satisfy. `tools/check-peer-ranges.mjs`
+  now compares each range against the release tags, in PR validation.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [5.0.0] - 2026-09-26

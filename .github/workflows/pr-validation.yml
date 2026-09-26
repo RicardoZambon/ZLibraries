@@ -57,6 +57,12 @@ jobs:
       - name: Check formatting
         run: npx nx format:check --base=$NX_BASE --head=$NX_HEAD
 
+      # Nothing else here can see a stale peer range: the workspace resolves siblings from dist,
+      # so every target is green with a range no consumer can satisfy. Reads the release tags,
+      # which the fetch-depth: 0 checkout above provides.
+      - name: Check inter-package peer ranges
+        run: node tools/check-peer-ranges.mjs
+
       - name: Lint affected projects
         run: npx nx affected --target=lint --base=$NX_BASE --head=$NX_HEAD
 
