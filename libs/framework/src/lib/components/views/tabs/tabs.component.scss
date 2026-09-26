@@ -45,9 +45,16 @@
       border-top-right-radius: var(--tabs-radius);
     }
 
-    &:hover {
+    &:hover:not(:disabled) {
       background-color: var(--tabs-item-hover-bg);
       color: var(--tabs-item-active-text);
+    }
+
+    /* Dimmed and inert at the end it points at, rather than removed. Keeping it in place is the
+       point: the strip stops changing width as you reach either end, so the button you are
+       pointing at is still under the pointer when the click lands. */
+    &:disabled {
+      @apply cursor-default opacity-40;
     }
   }
 
@@ -181,6 +188,19 @@
   border-bottom-right-radius: var(--tabs-radius);
   border-top-right-radius: var(--tabs-radius);
   box-shadow: var(--tabs-shadow);
+
+  /* While a tab or a scroll button holds the strip's right edge, the card's top-right corner is up
+     there and this one has to be square. Rounding both left whatever sat at the edge standing over
+     the sweep where the panel has curved away and does not exist yet — the piece that looked like
+     it was floating past the corner. Rounding the strip's own top-right, which is where the first
+     attempt at this went, does not help: that corner is at the top of the strip, and the join that
+     shows is at its bottom.
+
+     Only while something is actually at the edge. With the tabs short of it, the card's corner is
+     this one and stays round; the component measures which. */
+  &.flush-right {
+    border-top-right-radius: 0;
+  }
 
   /* The corner for whatever sits directly inside this panel.
      Two boxes look parallel when the inner radius is the outer radius minus the gap between them;

@@ -25,6 +25,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Both tab scroll controls stay put while the strip overflows**, disabled at the end they point
+  at rather than removed. Rendering them per-direction meant the one being reached for disappeared
+  on arrival: the strip changed width under the pointer and the click landed on nothing, which is
+  what made the arrows look like they sometimes did nothing.
+
+- **The last tab no longer floats past the panel's rounded corner.** While a tab or a scroll
+  control holds the strip's right edge, the panel's top-right corner is square, because the card's
+  corner is up on the strip; rounding both left whatever sat at the edge standing over the sweep
+  where the panel had curved away. With the tabs short of the edge the corner is the panel's again
+  and stays round.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.1.5] - 2026-09-25

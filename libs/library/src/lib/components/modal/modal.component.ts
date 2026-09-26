@@ -6,6 +6,7 @@ import {
   inject,
   Input,
   Output,
+  OnInit,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { IModal } from '../../models';
@@ -22,7 +23,7 @@ import { BaseComponent } from '../base.component';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [],
 })
-export class ModalComponent extends BaseComponent implements IModal {
+export class ModalComponent extends BaseComponent implements IModal, OnInit {
   //#region ViewChilds, Inputs, Outputs
   @Input() public closeButtonText = 'Close';
   @Input() public dialog = true;
@@ -52,6 +53,37 @@ export class ModalComponent extends BaseComponent implements IModal {
     super();
 
     this.elementRef = inject(ElementRef);
+  }
+
+  /**
+   * Moves the host to `<body>`.
+   *
+   * The host is `fixed` at `z-index: 50`, which ought to put it over everything. It did not: a
+   * modal opened from a view rendered *under* the navigation, and the tab strip stayed visible and
+   * clickable behind it. z-index only ranks siblings inside one stacking context, and the panel
+   * these views render in is its own — it has to be, so the glass layer behind it can sit at -1
+   * without falling through the app backdrop. Inside that context the modal's 50 counts for
+   * nothing against the sidebar's 20 outside it, and it can never reach over the strip either.
+   *
+   * A bigger number cannot fix that, and dropping the isolation breaks the glass. Leaving the
+   * context is the fix, and the body is the one place with nothing above it.
+   *
+   * Angular keeps rendering into this element wherever it sits, and injection does not care where
+   * the node ends up — the forms and datasets these modals reach for still resolve through the
+   * component tree.
+   */
+  public ngOnInit(): void {
+    // Guarded because the logic specs build these components with Object.create() and never give
+    // them a host; there is nothing to move then, and nothing to do.
+    const host: HTMLElement | undefined = this.elementRef?.nativeElement;
+    host?.ownerDocument.body.appendChild(host);
+  }
+
+  /** Angular drops the view but not the node, now that the host is no longer where it was created. */
+  public override ngOnDestroy(): void {
+    (<HTMLElement | undefined>this.elementRef?.nativeElement)?.remove();
+
+    super.ngOnDestroy();
   }
   //#endregion
 

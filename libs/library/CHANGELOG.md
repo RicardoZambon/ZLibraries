@@ -25,6 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Dialogs no longer open underneath the navigation.** `lib-modal` is `fixed` at `z-index: 50`,
+  which should put it over everything, but z-index only ranks siblings inside one stacking context
+  and the tab panel these views render in is its own. Inside it the 50 counted for nothing against
+  the sidebar outside it, and the tab strip stayed visible and clickable behind the dialog.
+
+  The modal now moves its host to `<body>` on init, which is the one place with nothing above it.
+  This covers every dialog built on it: multi-editor, multi-select, the filter panels, the confirm
+  and error modals, and the operations-history detail.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.1.7] - 2026-09-25

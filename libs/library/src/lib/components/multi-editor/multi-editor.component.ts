@@ -53,7 +53,11 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
     super();
   }
 
-  public ngOnInit(): void {
+  public override ngOnInit(): void {
+    // ModalComponent moves the host to <body> here. Without this call the dialog stays inside the
+    // tab panel's stacking context and renders under the navigation.
+    super.ngOnInit();
+
     this.dataGridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.multiEditorDataset.clearChangedValues();
 
