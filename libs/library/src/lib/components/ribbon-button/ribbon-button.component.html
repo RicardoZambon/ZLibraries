@@ -1,4 +1,4 @@
-<div class="button-container" [attr.title]="tooltip || null">
+<div #buttonContainer class="button-container" [attr.title]="tooltip || null">
   <a
     class="button"
     role="button"
@@ -53,8 +53,11 @@
   }
 </div>
 
-@if (options.length > 0) {
-  <ul class="options-dropdown" role="menu">
+<!-- Rendered into a CDK overlay rather than here, so the list is not cut off by an ancestor that
+     clips -- lib-data-grid does, and its buttons bar sits at the top of it. The `open` class is
+     what the styles key on now that the list is no longer inside this component's `.show` host. -->
+<ng-template #optionsDropdown>
+  <ul class="options-dropdown open" role="menu">
     @for (option of options; track option; let i = $index) {
       <li
         role="menuitem"
@@ -74,4 +77,4 @@
       </li>
     }
   </ul>
-}
+</ng-template>

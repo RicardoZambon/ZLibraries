@@ -50,9 +50,10 @@
           @apply -left-1;
         }
 
-        lib-ribbon-button .options-dropdown {
-          @apply right-0;
-        }
+        /* A button on the right had its options list pinned to the button's right edge, so the
+           list opened inwards instead of off the page. The list is in a CDK overlay now and the
+           overlay chooses that for itself, flipping when there is no room -- which also covers the
+           buttons this rule never reached, and the case of no room below either. */
       }
     }
   }

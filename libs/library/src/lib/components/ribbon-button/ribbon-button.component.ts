@@ -1,5 +1,20 @@
+import { FlexibleConnectedPositionStrategy, Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
 import { NgClass } from '@angular/common';
-import { Component, EventEmitter, HostListener, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  inject,
+  Input,
+  OnDestroy,
+  Output,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IRibbonButtonOption } from '../../models/ribbon-button-option';
 
@@ -14,8 +29,11 @@ import { IRibbonButtonOption } from '../../models/ribbon-button-option';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [NgClass, TranslatePipe],
 })
-export class RibbonButtonComponent {
+export class RibbonButtonComponent implements OnDestroy {
   //#region ViewChilds, Inputs, Outputs
+  @ViewChild('buttonContainer') private buttonContainer!: ElementRef<HTMLElement>;
+  @ViewChild('optionsDropdown') private optionsDropdown?: TemplateRef<unknown>;
+
   @Input() public color = 'text-primary-500';
   @Input() public defaultOption = -1;
   @Input() public disabled = false;
@@ -47,7 +65,7 @@ export class RibbonButtonComponent {
   @HostListener('body:mouseup', ['$event'])
   protected bodyMouseUp(event: MouseEvent): void {
     if (this.showDropdown && this.clickedOutside) {
-      this.showDropdown = false;
+      this.closeDropdown();
     }
   }
 
@@ -60,7 +78,7 @@ export class RibbonButtonComponent {
       'key' in event ? event.key === 'Escape' || event.key === 'Esc' : (<KeyboardEvent>event).keyCode === 27;
 
     if (this.showDropdown && isEscape) {
-      this.showDropdown = false;
+      this.closeDropdown();
     }
   }
   //#endregion
@@ -70,6 +88,10 @@ export class RibbonButtonComponent {
   protected status: null | 'failure' | 'warning' | 'success' = null;
 
   private clickedOutside = false;
+  private overlay: Overlay = inject(Overlay);
+  private overlayRef?: OverlayRef;
+  private positionBuilder: OverlayPositionBuilder = inject(OverlayPositionBuilder);
+  private viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
   //#endregion
 
   //#region Properties
@@ -96,13 +118,16 @@ export class RibbonButtonComponent {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
+  public ngOnDestroy(): void {
+    this.closeDropdown();
+  }
   //#endregion
 
   //#region Event handlers
   protected onButtonClicked(): void {
     if (this.options.length > 0) {
       if (this.defaultOption >= 0 && this.defaultOption < this.options.length) {
-        this.showDropdown = false;
+        this.closeDropdown();
         this.action.emit(this.options[this.defaultOption].id);
       } else {
         this.onShowHideDropdown();
@@ -113,12 +138,16 @@ export class RibbonButtonComponent {
   }
 
   protected onOptionClicked(option: IRibbonButtonOption) {
-    this.showDropdown = false;
+    this.closeDropdown();
     this.action.emit(option.id);
   }
 
   protected onShowHideDropdown(): void {
-    this.showDropdown = !this.showDropdown;
+    if (this.showDropdown) {
+      this.closeDropdown();
+    } else {
+      this.openDropdown();
+    }
   }
   //#endregion
 
@@ -152,5 +181,54 @@ export class RibbonButtonComponent {
   //#endregion
 
   //#region Private methods
+  private closeDropdown(): void {
+    this.showDropdown = false;
+
+    this.overlayRef?.detach();
+    this.overlayRef?.dispose();
+    this.overlayRef = undefined;
+  }
+
+  /**
+   * Opens the options list in an overlay attached to the document rather than inside this button.
+   *
+   * The list is absolutely positioned and used to live in the button's own subtree, which works
+   * only while nothing between it and the page clips. `lib-data-grid` does: it is
+   * `overflow: hidden`, its buttons bar is its first child, and a child list's grid is only a few
+   * rows tall -- so the export button's options opened downwards into the grid and had their lower
+   * part cut off. Measured in Storybook at 129px of list against 65px of room, 64px lost.
+   *
+   * Nothing smaller fixes it. The grid's clipping is load-bearing -- the rows scroll inside it and
+   * its corners are rounded -- and no z-index lifts content out of an ancestor's overflow. Leaving
+   * the subtree is the fix, and it is what `lib-catalog-select` already does for its own dropdown.
+   *
+   * `reposition()` rather than `close()`: the button can move while the list is open, and the list
+   * should follow it rather than disappear.
+   */
+  private openDropdown(): void {
+    if (!this.optionsDropdown) {
+      return;
+    }
+
+    this.closeDropdown();
+
+    const positionStrategy: FlexibleConnectedPositionStrategy = this.positionBuilder
+      .flexibleConnectedTo(this.buttonContainer)
+      .withPositions([
+        { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+        { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' },
+        { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom' },
+        { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom' },
+      ]);
+
+    this.overlayRef = this.overlay.create({
+      positionStrategy,
+      hasBackdrop: false,
+      scrollStrategy: this.overlay.scrollStrategies.reposition(),
+    });
+
+    this.overlayRef.attach(new TemplatePortal(this.optionsDropdown, this.viewContainerRef));
+    this.showDropdown = true;
+  }
   //#endregion
 }
