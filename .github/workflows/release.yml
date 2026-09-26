@@ -68,6 +68,11 @@ jobs:
       - name: Build ${{ matrix.package.project }}
         run: npx nx run ${{ matrix.package.project }}:build --configuration=production
 
+      # Between the build and the publish, because this is the one check whose subject is the
+      # artifact rather than the source, and a package that fails it must not reach the registry.
+      - name: Check packaged styles
+        run: node tools/check-packaged-styles.mjs
+
       - name: Release ${{ matrix.package.project }}
         working-directory: ${{ matrix.package.working-directory }}
         env:
