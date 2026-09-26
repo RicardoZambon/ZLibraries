@@ -451,22 +451,29 @@ describe('TabsComponent — strip overflow', () => {
     expect(scrollButton('right')).toBeNull();
   });
 
-  it('should offer only a forward control at the start of an overflowing strip', async () => {
+  // Both controls stay for as long as the strip overflows, and the one pointing at the end you
+  // have reached is disabled rather than removed. Removing it moved the strip's edge under the
+  // pointer, so a click could land after the button had gone and do nothing at all.
+  it('should disable, not remove, the backward control at the start of an overflowing strip', async () => {
     setGeometry({ clientWidth: 300, scrollWidth: 900, scrollLeft: 0 });
     nav().dispatchEvent(new Event('scroll'));
     await settle();
 
-    expect(scrollButton('left')).toBeNull();
+    expect(scrollButton('left')).not.toBeNull();
+    expect(scrollButton('left')?.disabled).toBe(true);
     expect(scrollButton('right')).not.toBeNull();
+    expect(scrollButton('right')?.disabled).toBe(false);
   });
 
-  it('should offer only a backward control at the end of an overflowing strip', async () => {
+  it('should disable, not remove, the forward control at the end of an overflowing strip', async () => {
     setGeometry({ clientWidth: 300, scrollWidth: 900, scrollLeft: 600 });
     nav().dispatchEvent(new Event('scroll'));
     await settle();
 
     expect(scrollButton('left')).not.toBeNull();
-    expect(scrollButton('right')).toBeNull();
+    expect(scrollButton('left')?.disabled).toBe(false);
+    expect(scrollButton('right')).not.toBeNull();
+    expect(scrollButton('right')?.disabled).toBe(true);
   });
 
   it('should offer both controls in the middle of an overflowing strip', async () => {

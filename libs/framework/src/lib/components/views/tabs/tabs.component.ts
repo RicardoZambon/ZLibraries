@@ -57,6 +57,24 @@ export class TabsComponent implements AfterViewChecked, AfterViewInit, OnDestroy
   /** Drive the scroll buttons. Only ever assigned outside a change-detection pass (see below). */
   protected canScrollLeft = false;
   protected canScrollRight = false;
+
+  /**
+   * Whether the strip holds more tabs than it has room for. This decides that the buttons exist;
+   * canScrollLeft and canScrollRight only decide whether each one is enabled.
+   *
+   * They used to decide both, so a button vanished the moment you reached the end it pointed at.
+   * The strip then changed width under the pointer, and a click could land after the button had
+   * already unmounted and do nothing — which is what "sometimes it does not move" was.
+   */
+  protected isOverflowing = false;
+
+  /**
+   * Whether anything reaches the strip's right edge: a tab, or the right scroll button. While
+   * something does, the panel's top-right corner is square, because the card's corner then belongs
+   * to the strip. Rounding both leaves whatever sits at the edge standing over the sweep where the
+   * panel has curved away and is not there yet — a piece floating past the corner.
+   */
+  protected isFlushRight = false;
   //#endregion
 
   //#region Properties
@@ -345,13 +363,29 @@ export class TabsComponent implements AfterViewChecked, AfterViewInit, OnDestroy
 
     const canLeft: boolean = nav.scrollLeft > SCROLL_EPSILON;
     const canRight: boolean = nav.scrollLeft + nav.clientWidth < nav.scrollWidth - SCROLL_EPSILON;
-    if (canLeft === this.canScrollLeft && canRight === this.canScrollRight) {
+    const overflowing: boolean = nav.scrollWidth > nav.clientWidth + SCROLL_EPSILON;
+
+    // Overflowing means the right button holds the edge. Short of that, the last tab does if it
+    // ends within a pixel of the strip — the case where the tabs happen to fill it exactly.
+    const lastTab: Element | null = nav.lastElementChild;
+    const flushRight: boolean =
+      overflowing ||
+      (lastTab !== null && lastTab.getBoundingClientRect().right >= nav.getBoundingClientRect().right - SCROLL_EPSILON);
+
+    if (
+      canLeft === this.canScrollLeft &&
+      canRight === this.canScrollRight &&
+      overflowing === this.isOverflowing &&
+      flushRight === this.isFlushRight
+    ) {
       return;
     }
 
     this.ngZone.run(() => {
       this.canScrollLeft = canLeft;
       this.canScrollRight = canRight;
+      this.isOverflowing = overflowing;
+      this.isFlushRight = flushRight;
       this.changeDetectorRef.detectChanges();
     });
   }

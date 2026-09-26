@@ -1,14 +1,16 @@
 @if (hasTabs) {
   <div class="tabs-container" [class.can-scroll-left]="canScrollLeft" [class.can-scroll-right]="canScrollRight">
-    <!-- Only rendered while there is something to scroll to, so the strip is not permanently
-         flanked by two dead chevrons. tabindex -1 because the tablist is already one tab stop
-         and the arrow keys reach every tab -- these are a pointer affordance, not a second
-         keyboard path. -->
-    @if (canScrollLeft) {
+    <!-- Both buttons are present whenever the strip overflows, and disabled rather than removed at
+         the end they point at. Rendering them per-direction meant the one being reached for
+         disappeared on arrival: the strip changed width under the pointer and the click landed on
+         nothing. tabindex -1 because the tablist is already one tab stop and the arrow keys reach
+         every tab -- these are a pointer affordance, not a second keyboard path. -->
+    @if (isOverflowing) {
       <button
         class="tabs-scroll left"
         type="button"
         tabindex="-1"
+        [disabled]="!canScrollLeft"
         [attr.aria-label]="'Tabs-ScrollLeft' | translate"
         (click)="onScrollStrip(-1)"
       >
@@ -70,11 +72,12 @@
       }
     </ul>
 
-    @if (canScrollRight) {
+    @if (isOverflowing) {
       <button
         class="tabs-scroll right"
         type="button"
         tabindex="-1"
+        [disabled]="!canScrollRight"
         [attr.aria-label]="'Tabs-ScrollRight' | translate"
         (click)="onScrollStrip(1)"
       >
@@ -84,7 +87,13 @@
   </div>
 }
 @if (hasTabs) {
-  <div class="tab-content" role="tabpanel" [id]="panelId" [attr.aria-labelledby]="activeTabId">
+  <div
+    class="tab-content"
+    [class.flush-right]="isFlushRight"
+    role="tabpanel"
+    [id]="panelId"
+    [attr.aria-labelledby]="activeTabId"
+  >
     <framework-tab-breadcrumbs></framework-tab-breadcrumbs>
     <ng-content></ng-content>
   </div>

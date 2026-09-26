@@ -53,7 +53,11 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
     this.closeButtonText = 'Button-Modal-Cancel';
   }
 
-  public ngOnInit(): void {
+  public override ngOnInit(): void {
+    // ModalComponent moves the host to <body> here. Without this call the dialog stays inside the
+    // tab panel's stacking context and renders under the navigation.
+    super.ngOnInit();
+
     this.dataGridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.isSearchGridLoading = true;
     });
