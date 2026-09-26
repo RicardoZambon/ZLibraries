@@ -183,7 +183,17 @@
   @apply absolute flex flex-col p-2 bottom-0 w-full max-w-full overflow-y-auto;
   top: var(--tabs-height);
 
+  /* Three sides, not four. --tabs-border is a light rim meant to read against the backdrop the
+     card floats on, which is what it does on the left, right and bottom. The top edge does not
+     face the backdrop: the strip is there, and under the selected tab the rim met that tab's fill
+     instead — 60% white against 88% white is a *darker* hairline drawn exactly along the join,
+     which is what made the tab look like a separate, slightly lighter shape sitting on the panel.
+     The top of this card belongs to the tabs, and they carry no border of their own.
+
+     Removed rather than made transparent: ::before is inset to the padding box, so a transparent
+     top border would leave 1px of bare backdrop between the tab and the glass — worse. */
   border: 1px solid var(--tabs-border);
+  border-top: 0;
   border-bottom-left-radius: var(--tabs-radius);
   border-bottom-right-radius: var(--tabs-radius);
   border-top-right-radius: var(--tabs-radius);
