@@ -21,6 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Component styles are compiled again.** The Tailwind 4 migration left every component's own
+  stylesheet unprocessed in the published bundle, so its `@apply` rules reached the browser as an
+  at-rule the browser does not know and it dropped every rule that used one. In practice the
+  components rendered unstyled in any application installing 3.2.1. ng-packagr resolves its
+  PostCSS configuration from the library directory rather than from the workspace root, and the
+  migration added one only at the root. Nothing failed along the way: Storybook compiles from
+  source and never sees the packaged artifact, which is why `tools/check-packaged-styles.mjs` now
+  runs against that artifact in CI and again before every publish.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.2.1] - 2026-09-26
