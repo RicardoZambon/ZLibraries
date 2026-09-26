@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [5.0.1] - 2026-09-26
+
+### Fixed
+
 - **The operations list no longer keeps a service the services list has dropped.** Reloading the
   services grid clears its selection but left the last chosen service behind, so the panel beside
   it went on showing that service’s operations -- including after a filter that no longer lists
@@ -37,8 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   this repository could see it -- the workspace resolves siblings from `dist`, so every build,
   test and Storybook passes with a range no consumer can satisfy. `tools/check-peer-ranges.mjs`
   now compares each range against the release tags, in PR validation.
-
-### ⚠ Breaking Changes / Migration
 
 ## [5.0.0] - 2026-09-26
 
@@ -542,7 +546,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v5.0.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v5.0.1...HEAD
+[5.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v5.0.1
 [5.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v5.0.0
 [4.2.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.2
 [4.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.1
