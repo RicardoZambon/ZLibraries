@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.2.1] - 2026-09-26
+
+### Fixed
+
 - **Both tab scroll controls stay put while the strip overflows**, disabled at the end they point
   at rather than removed. Rendering them per-direction meant the one being reached for disappeared
   on arrival: the strip changed width under the pointer and the click landed on nothing, which is
@@ -31,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   corner is up on the strip; rounding both left whatever sat at the edge standing over the sweep
   where the panel had curved away. With the tabs short of the edge the corner is the panel's again
   and stays round.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.2.0] - 2026-09-25
 
@@ -394,7 +398,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.2.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v3.2.1...HEAD
+[3.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.1
 [3.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.0
 [3.1.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.5
 [3.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.4

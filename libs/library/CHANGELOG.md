@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.2.1] - 2026-09-26
+
+### Fixed
+
 - **Dialogs no longer open underneath the navigation.** `lib-modal` is `fixed` at `z-index: 50`,
   which should put it over everything, but z-index only ranks siblings inside one stacking context
   and the tab panel these views render in is its own. Inside it the 50 counted for nothing against
@@ -29,8 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The modal now moves its host to `<body>` on init, which is the one place with nothing above it.
   This covers every dialog built on it: multi-editor, multi-select, the filter panels, the confirm
   and error modals, and the operations-history detail.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.2.0] - 2026-09-25
 
@@ -553,7 +557,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.1...HEAD
+[3.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.1
 [3.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.0
 [3.1.7]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.7
 [3.1.6]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.6
