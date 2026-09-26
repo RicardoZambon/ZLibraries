@@ -1,0 +1,14 @@
+{
+  "ServicesHistory-Field-ChangedBy": "Funcionário",
+  "ServicesHistory-Field-ChangedOnFrom": "De",
+  "ServicesHistory-Field-ChangedOnTo": "Até",
+  "ServicesHistory-Field-Name": "Ação",
+  "ServicesHistory-Field-OnlyCurrentEntity": "Apenas este registro?",
+  "ServicesHistory-Field-OnlyCurrentEntity-Notes": "Uma ação costuma alterar mais de uma tabela, e por padrão são listadas todas as operações que ela realizou — é isso que mostra os registros relacionados que a alteração também tocou. Marque para ver somente as operações sobre este registro.",
+  "ServicesHistory-Filters-Title": "Filtros do histórico",
+  "ServicesHistory-FormGroup-Operations": "Operações",
+  "ServicesHistory-FormGroup-Period": "Período",
+  "ServicesHistory-FormGroup-Service": "Ação",
+
+  "": ""
+}

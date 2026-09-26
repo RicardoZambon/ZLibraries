@@ -1,0 +1,35 @@
+<framework-button-filters modalSize="2xl" modalTitle="ServicesHistory-Filters-Title" [formGroup]="filterForm">
+  <lib-form-group label="ServicesHistory-FormGroup-Service">
+    <lib-form-input-group controlName="name" label="ServicesHistory-Field-Name" [autofocus]="true" [maxLength]="200">
+    </lib-form-input-group>
+
+    @if (hasUsersCatalog) {
+      <lib-catalog-select
+        controlName="changedByID"
+        displayControlName="changedByName"
+        label="ServicesHistory-Field-ChangedBy"
+        [readOnly]="false"
+        [searchEndpoint]="usersCatalogEndpoint!"
+      >
+      </lib-catalog-select>
+    }
+  </lib-form-group>
+
+  <lib-form-group label="ServicesHistory-FormGroup-Period">
+    <lib-form-input-group controlName="changedOnFrom" label="ServicesHistory-Field-ChangedOnFrom" [type]="'date'">
+    </lib-form-input-group>
+
+    <lib-form-input-group controlName="changedOnTo" label="ServicesHistory-Field-ChangedOnTo" [type]="'date'">
+    </lib-form-input-group>
+  </lib-form-group>
+
+  <lib-form-group label="ServicesHistory-FormGroup-Operations">
+    <lib-form-input-group
+      controlName="onlyCurrentEntity"
+      label="ServicesHistory-Field-OnlyCurrentEntity"
+      notes="ServicesHistory-Field-OnlyCurrentEntity-Notes"
+      [type]="'checkbox'"
+    >
+    </lib-form-input-group>
+  </lib-form-group>
+</framework-button-filters>

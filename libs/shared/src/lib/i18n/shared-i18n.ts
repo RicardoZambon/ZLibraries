@@ -22,6 +22,7 @@ export const ZAMBON_SHARED_I18N_RESOURCES: TranslationResource[] = [
   { prefix: `/${ZAMBON_SHARED_I18N_ASSET_PATH}/language-selector/`, suffix: '.json' },
   { prefix: `/${ZAMBON_SHARED_I18N_ASSET_PATH}/login/`, suffix: '.json' },
   { prefix: `/${ZAMBON_SHARED_I18N_ASSET_PATH}/operations-history/`, suffix: '.json' },
+  { prefix: `/${ZAMBON_SHARED_I18N_ASSET_PATH}/services-history/`, suffix: '.json' },
   { prefix: `/${ZAMBON_SHARED_I18N_ASSET_PATH}/top-bar/`, suffix: '.json' },
 ];
 

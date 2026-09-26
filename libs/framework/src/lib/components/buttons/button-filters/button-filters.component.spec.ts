@@ -1,5 +1,7 @@
+import { EventEmitter } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { DisplayControls } from '@zambon-dev/library';
+import { Subject } from 'rxjs';
 import { ButtonFiltersComponent } from './button-filters.component';
 
 describe(ButtonFiltersComponent.name, () => {
@@ -77,5 +79,43 @@ describe(ButtonFiltersComponent.name, () => {
     component.setFilters({});
 
     expect(setFilters).toHaveBeenCalledWith();
+  });
+
+  /**
+   * The constructor disables the button, and the grid's load events are what re-enable it. A
+   * ribbon template is re-created whenever a record's views are switched, so a button built then
+   * reaches a grid that finished loading long ago and would otherwise wait for an event that has
+   * already happened -- staying unclickable until something made the grid load again.
+   */
+  describe('initial state', () => {
+    function initialiseAgainst(gridState: { hasBeenLoaded: boolean; isLoading: boolean }): ButtonFiltersComponent {
+      const button: ButtonFiltersComponent = Object.create(ButtonFiltersComponent.prototype);
+
+      Object.assign(<Record<string, unknown>>(<unknown>button), {
+        destroy$: new Subject<boolean>(),
+        disabled: true,
+        gridDataset: {
+          ...gridState,
+          loadFinished: new EventEmitter<boolean>(),
+          loadStarted: new EventEmitter<void>(),
+        },
+      });
+
+      button.ngOnInit();
+
+      return button;
+    }
+
+    it('is clickable when it arrives at a grid that has already loaded', () => {
+      expect(initialiseAgainst({ hasBeenLoaded: true, isLoading: false }).disabled).toBe(false);
+    });
+
+    it('waits while the grid it arrived at is still loading', () => {
+      expect(initialiseAgainst({ hasBeenLoaded: true, isLoading: true }).disabled).toBe(true);
+    });
+
+    it('waits when the grid has not loaded yet', () => {
+      expect(initialiseAgainst({ hasBeenLoaded: false, isLoading: false }).disabled).toBe(true);
+    });
   });
 });

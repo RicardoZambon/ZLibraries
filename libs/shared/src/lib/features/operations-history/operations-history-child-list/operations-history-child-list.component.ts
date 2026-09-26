@@ -22,6 +22,20 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
     (<OperationsHistoryDataset>this.dataGridDataset).controllerName = value;
   }
 
+  /**
+   * Filters to send with the list.
+   *
+   * The audit view applies its filters to the services grid and hands the same set here, because
+   * one of them -- whether to list only the audited record's own operations -- belongs to this
+   * list. The rest mean nothing to it, and the backend reads only what it recognises.
+   *
+   * Setting filters does not reload on its own; the grid reloads when a service is selected, and
+   * that selection is cleared by the services grid reloading under its new filters.
+   */
+  @Input() public set filters(value: { [key: string]: string } | undefined) {
+    this.dataGridDataset.setFilters(value);
+  }
+
   @Input() public set serviceID(value: number | undefined) {
     (<OperationsHistoryDataset>this.dataGridDataset).serviceId = value;
   }

@@ -1,0 +1,14 @@
+{
+  "ServicesHistory-Field-ChangedBy": "Employee",
+  "ServicesHistory-Field-ChangedOnFrom": "From",
+  "ServicesHistory-Field-ChangedOnTo": "To",
+  "ServicesHistory-Field-Name": "Action",
+  "ServicesHistory-Field-OnlyCurrentEntity": "This record only?",
+  "ServicesHistory-Field-OnlyCurrentEntity-Notes": "An action usually writes to more than one table, and every operation it performed is listed by default — that is what shows the related records a change also touched. Tick this to see only the operations on this record.",
+  "ServicesHistory-Filters-Title": "History filters",
+  "ServicesHistory-FormGroup-Operations": "Operations",
+  "ServicesHistory-FormGroup-Period": "Period",
+  "ServicesHistory-FormGroup-Service": "Action",
+
+  "": ""
+}
