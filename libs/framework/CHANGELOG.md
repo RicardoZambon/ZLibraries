@@ -21,14 +21,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [4.0.1] - 2026-09-26
+
+### Fixed
+
 - **The selected tab and the panel no longer have a seam between them.** The panel drew its rim
   on all four sides, and along the top that rim met the selected tab’s fill rather than the
   backdrop it was meant for: `--tabs-border` is 60% white against the tab’s 88%, so a _darker_
   hairline ran exactly along the join and made the tab read as a separate, slightly lighter shape
   sitting on the panel. The top edge belongs to the tabs, which carry no border, so the panel no
   longer draws one there.
-
-### ⚠ Breaking Changes / Migration
 
 ## [4.0.0] - 2026-09-26
 
@@ -429,7 +433,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v4.0.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v4.0.1...HEAD
+[4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.1
 [4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.0
 [3.2.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.2
 [3.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.1
