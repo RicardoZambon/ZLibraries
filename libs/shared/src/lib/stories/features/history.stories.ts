@@ -1,5 +1,8 @@
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TabViewService } from '@zambon-dev/framework';
+import { IListParameters, RibbonComponent } from '@zambon-dev/library';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { IListParameters } from '@zambon-dev/library';
 import { Observable, of } from 'rxjs';
 import { OperationsHistoryModalComponent } from '../../features/operations-history/operations-history-modal/operations-history-modal.component';
 import { ServicesHistoryViewComponent } from '../../features/services-history/services-history-view/services-history-view.component';
@@ -45,12 +48,44 @@ class StorybookServicesHistoryService {
   }
 }
 
+/**
+ * Renders the view together with the ribbon it contributes.
+ *
+ * The view hands its ribbon template to TabViewService and the application's tab view is what
+ * renders it, so a story showing the view alone shows no refresh and no filter button. This does
+ * that part's job, and nothing else.
+ */
+@Component({
+  selector: 'shared-story-history-host',
+  template: `
+    <div class="flex h-[32rem] flex-col gap-2 overflow-hidden bg-white p-4">
+      <lib-ribbon>
+        <ng-container *ngTemplateOutlet="tabViewService.onUpdateRibbonTemplate | async"></ng-container>
+      </lib-ribbon>
+
+      <shared-services-history-view
+        class="flex grow flex-col overflow-hidden"
+        controllerName="Customers"
+        usersCatalogEndpoint="/api/Employees/Catalog"
+        [entityID]="1"
+      >
+      </shared-services-history-view>
+    </div>
+  `,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [AsyncPipe, NgTemplateOutlet, RibbonComponent, ServicesHistoryViewComponent],
+})
+class StoryHistoryHostComponent {
+  protected tabViewService: TabViewService = inject(TabViewService);
+}
+
 const meta: Meta<ServicesHistoryViewComponent> = {
   component: ServicesHistoryViewComponent,
   decorators: [
     moduleMetadata({
-      imports: [OperationsHistoryModalComponent],
+      imports: [OperationsHistoryModalComponent, StoryHistoryHostComponent],
       providers: [
+        TabViewService,
         { provide: OperationsHistoryService, useClass: StorybookOperationsHistoryService },
         { provide: ServicesHistoryService, useClass: StorybookServicesHistoryService },
       ],
@@ -76,6 +111,12 @@ export const ServicesAndOperations: Story = {
         </shared-services-history-view>
       </div>
     `,
+  }),
+};
+
+export const WithRibbonAndFilters: Story = {
+  render: () => ({
+    template: `<shared-story-history-host></shared-story-history-host>`,
   }),
 };
 
