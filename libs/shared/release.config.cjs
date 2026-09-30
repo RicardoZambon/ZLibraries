@@ -37,7 +37,12 @@ if (!isValidation) {
 }
 
 module.exports = {
-  branches: isValidation ? [process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || 'main'] : ['main'],
+  // 2.1.x is the maintenance line for applications still on Angular 19: main moved to Angular 22,
+  // so a release from there cannot be consumed by them. It publishes under its own dist-tag rather
+  // than latest, which must keep pointing at the current line.
+  branches: isValidation
+    ? [process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || 'main']
+    : ['main', { name: '2.1.x', range: '2.1.x', channel: '2.1.x' }],
   tagFormat: 'shared-v${version}',
   plugins,
 };
