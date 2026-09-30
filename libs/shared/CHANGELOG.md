@@ -15,12 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `UtcDatePipe.transform()` accepts `Date | string`. An API response holds the timestamp as a
-  string even where the model types it as `Date`; existing calls compile unchanged.
-
 ### Deprecated
 
 ### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [2.1.4] - 2026-09-30
+
+### Changed
+
+- `UtcDatePipe.transform()` accepts `Date | string`. An API response holds the timestamp as a
+  string even where the model types it as `Date`; existing calls compile unchanged.
 
 ### Fixed
 
@@ -36,8 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **A value that is not a date returns `null`**, the same as an empty one, instead of an invalid
   `Date` that makes Angular's `date` pipe throw.
-
-### ⚠ Breaking Changes / Migration
 
 ## [2.1.3] - 2026-09-21
 
@@ -349,7 +355,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v2.1.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v2.1.4...HEAD
+[2.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.4
 [2.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.3
 [2.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.2
 [2.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.1
