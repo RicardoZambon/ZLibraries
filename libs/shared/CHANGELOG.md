@@ -15,11 +15,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `UtcDatePipe.transform()` accepts `Date | string`. An API response holds the timestamp as a
+  string even where the model types it as `Date`; existing calls compile unchanged.
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- **`utcDate` no longer moves a timestamp to the previous day east of Greenwich.** It re-read the
+  UTC wall-clock time with hour arithmetic that kept the time of day but, at any positive UTC
+  offset, landed on the day before: `2026-06-15T14:30` showed as June 14 in Madrid (UTC+2). It
+  never showed on CI, which runs in UTC, nor west of Greenwich, where the arithmetic happens to
+  come out right. The pipe now shifts by the zone's offset.
+
+- **A timestamp that already declares its zone is no longer shifted a second time.** A string
+  ending in `Z` or `±hh:mm` is parsed as the right instant by `Date` itself, so the pipe now
+  returns it as is, and keeps working if an API starts sending the marker.
+
+- **A value that is not a date returns `null`**, the same as an empty one, instead of an invalid
+  `Date` that makes Angular's `date` pipe throw.
 
 ### ⚠ Breaking Changes / Migration
 
