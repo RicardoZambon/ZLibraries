@@ -13,6 +13,7 @@ export default [
           ignoredFiles: [
             '{projectRoot}/eslint.config.{js,cjs,mjs}',
             '{projectRoot}/jest.config.ts',
+            '{projectRoot}/jest.time-zone-environment.cjs',
             '{projectRoot}/.storybook/**/*',
             '{projectRoot}/src/test-setup.ts',
             '{projectRoot}/src/**/*.spec.ts',
