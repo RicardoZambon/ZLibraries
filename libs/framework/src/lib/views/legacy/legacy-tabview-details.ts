@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, forwardRef, ViewChild, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormService, IRibbonButtonOption } from '@zambon-dev/library';
 import { Observable, takeUntil } from 'rxjs';
@@ -15,7 +15,10 @@ import { LegacyTabViewBase } from './legacy-tabview-base';
 @Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements AfterViewInit, OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ButtonNewLegacyComponent) public buttonNew!: ButtonNewLegacyComponent;
+  // A forward reference: the legacy buttons import the views barrel, so this class is defined before
+  // ButtonNewLegacyComponent -- and in the published bundle it sits further down the file, where
+  // reading it eagerly throws the moment a JIT runtime such as Jest loads the package.
+  @ViewChild(forwardRef(() => ButtonNewLegacyComponent)) public buttonNew!: ButtonNewLegacyComponent;
   //#endregion
 
   //#region Variables
