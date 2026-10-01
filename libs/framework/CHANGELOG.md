@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.4.7] - 2026-10-01
+
+### Fixed
+
 - **Loading the package under Jest no longer throws `Cannot access 'ButtonNewLegacyComponent'
   before initialization`.** `LegacyTabViewDetails` queries its New button with `@ViewChild`, and
   the legacy buttons import the views barrel back, so the class is defined before the button: in
@@ -29,8 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the package is imported, so every spec that imported anything from `@zambon-dev/framework`
   failed before running a test. The query is a forward reference now. Nothing to change in
   applications, and specs excluded for this reason can be put back.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.4.6] - 2026-09-24
 
@@ -269,7 +273,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.6...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v1.4.7...HEAD
+[1.4.7]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.7
 [1.4.6]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.6
 [1.4.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.5
 [1.4.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.4
