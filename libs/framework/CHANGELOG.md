@@ -21,6 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Loading the package under Jest no longer throws `Cannot access 'ButtonNewLegacyComponent'
+  before initialization`.** `LegacyTabViewDetails` queries its New button with `@ViewChild`, and
+  the legacy buttons import the views barrel back, so the class is defined before the button: in
+  the published bundle the button sits further down the file. An application build never noticed,
+  because its linker moves the reference into a function, but a JIT runtime reads it the moment
+  the package is imported, so every spec that imported anything from `@zambon-dev/framework`
+  failed before running a test. The query is a forward reference now. Nothing to change in
+  applications, and specs excluded for this reason can be put back.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [1.4.6] - 2026-09-24
