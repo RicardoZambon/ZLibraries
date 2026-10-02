@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [4.0.3] - 2026-10-02
+
+### Fixed
+
 - **Closing a tab no longer sends the tab beside it back to its root.** The focused tab was
   navigated to `activeTabs[i]`, which is each tab’s _root_ — the entry the strip takes its label
   from — rather than the top of its history. A tab opened as a list and then drilled into a record
@@ -33,8 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   list view showed 1rem where its host asked for 0.5rem — while a detail view, whose outlet is
   nested inside `lib-group-container`, showed 0.5rem. The outlet is out of the flow now, which
   leaves the spacing to the host rather than to what each view happens to contain.
-
-### ⚠ Breaking Changes / Migration
 
 ## [4.0.2] - 2026-10-01
 
@@ -460,7 +464,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v4.0.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v4.0.3...HEAD
+[4.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.3
 [4.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.2
 [4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.1
 [4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.0
