@@ -67,9 +67,7 @@ export class TabService {
   //#region Public methods
   public activateTab(tab: ITab): void {
     this.activeTabIndex = this.activeTabs.indexOf(tab);
-    const tabStack: ITab[] = this.openTabs[this.activeTabIndex];
-    const currentView: ITab = tabStack[tabStack.length - 1];
-    this.navigateTo(currentView);
+    this.navigateTo(this.currentViewOf(this.activeTabIndex));
   }
 
   public cloneCurrentTab(url: string): void {
@@ -109,12 +107,16 @@ export class TabService {
     this.displayTitleIndices.splice(index, 1);
 
     if (wasActive) {
-      // Closed the active tab — pick an adjacent tab to focus.
-      if (this.activeTabIndex >= this.activeTabs.length) {
-        this.activeTabIndex = this.activeTabs.length - 1;
+      // Closed the active tab — pick an adjacent tab to focus, and put it back on the view it was
+      // left on. This used to navigate to activeTabs[i], which is that tab's *root*: a tab opened
+      // as a list and then drilled into a record went back to the list, under the record's own
+      // tab, until the tab was clicked again.
+      if (this.activeTabIndex >= this.openTabs.length) {
+        this.activeTabIndex = this.openTabs.length - 1;
       }
 
-      this.navigateTo(this.activeTabs[this.activeTabIndex]);
+      // Undefined once the last tab is gone, which navigateTo answers with the home URL.
+      this.navigateTo(this.currentViewOf(this.activeTabIndex));
     } else if (index < this.activeTabIndex) {
       // Closed a tab before the active one — shift index to keep the same tab active.
       this.activeTabIndex--;
@@ -371,6 +373,20 @@ export class TabService {
   //#endregion
 
   //#region Private methods
+  /**
+   * The view a tab is showing: the top of its history stack.
+   *
+   * Not `activeTabs[index]`, which is the stack's *root* -- the entry the strip takes each tab's
+   * label from. The two are the same only for a tab nobody has drilled into, which is why
+   * reaching for the wrong one survives most testing. Undefined for an index with no tab, which
+   * is what closing the last tab leaves behind.
+   */
+  private currentViewOf(index: number): ITab | undefined {
+    const history: ITab[] | undefined = this.openTabs[index];
+
+    return history?.[history.length - 1];
+  }
+
   private findTab(tabs: ITab[], url: string): ITab | undefined {
     return tabs.find((tab: ITab) => this.matchTabUrl(tab, url));
   }
