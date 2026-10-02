@@ -6,6 +6,18 @@
   @apply flex flex-col grow overflow-hidden gap-2;
 }
 
+/* The outlet renders nothing, but it is still a flex item of the host above, and a flex item of
+   zero height takes a gap on each side all the same. So the ribbon and the list it sits over were
+   two gaps apart -- 1rem -- while a detail view, whose outlet is nested inside
+   lib-group-container, kept the 0.5rem the host asks for. Taking the outlet out of the flow is
+   what makes the gap the host's to decide, rather than something each view has to allow for.
+
+   The routed component is a *sibling* of this element rather than a child of it, so hiding the
+   outlet hides nothing that renders. default-details-tab-view already does this. */
+router-outlet {
+  @apply hidden;
+}
+
 /* Routed list screens (anything extending TabViewList) get a full-height layout here rather than
    in each consuming component. ::ng-deep is required: a component created through router-outlet
    does not carry this component's _ngcontent-* attribute. Mirrors what lib-group-container

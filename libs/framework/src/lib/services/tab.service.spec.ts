@@ -207,6 +207,44 @@ describe('TabService', () => {
       expect(service.isTabActive(service.activeTabs[1])).toBe(true);
       expect(service.activeTabs[1].url).toBe('/settings');
     });
+
+    /**
+     * The tab being focused keeps whatever view it was left on. `activeTabs` is the tabs' *roots*
+     * -- what the strip labels each tab with -- so navigating to one of those sends a tab that was
+     * drilled into a record back to the list it was opened from, while the strip still shows the
+     * record's tab as selected. Every other navigation in this service already takes the top of
+     * the history stack.
+     */
+    it('should navigate to the focused tab’s current view, not its root', () => {
+      service.openTab(createTab('/employees', 'Employees'));
+      service.navigateCurrentTab(createTab('/employees/7', 'Ada Lovelace'));
+      service.openTab(createTab('/employees', 'Employees'));
+
+      mockRouter.navigate.mockClear();
+      service.closeTab(1);
+
+      expect(getNavigatedUrl()).toBe('/employees/7');
+    });
+
+    it('should navigate to the root of a tab that was never drilled into', () => {
+      service.openTab(createTab('/employees', 'Employees'));
+      service.openTab(createTab('/roles', 'Roles'));
+
+      mockRouter.navigate.mockClear();
+      service.closeTab(1);
+
+      expect(getNavigatedUrl()).toBe('/employees');
+    });
+
+    it('should go home when the last tab is closed', () => {
+      service.openTab(createTab('/employees', 'Employees'));
+      service.navigateCurrentTab(createTab('/employees/7', 'Ada Lovelace'));
+
+      mockRouter.navigate.mockClear();
+      service.closeTab(0);
+
+      expect(getNavigatedUrl()).toBe('/');
+    });
   });
 
   // =========================================================================
