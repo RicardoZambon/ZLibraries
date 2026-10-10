@@ -180,8 +180,20 @@
 }
 
 .tab-content {
-  @apply absolute flex flex-col p-2 bottom-0 w-full max-w-full overflow-y-auto;
+  @apply absolute flex flex-col gap-2 p-2 bottom-0 w-full max-w-full overflow-y-auto;
   top: var(--tabs-height);
+
+  /* The panel spaces its children itself, as the views below it do, rather than each child
+     carrying a margin for whatever follows it. Which is why the breadcrumbs dropped theirs.
+
+     The consumer projects a router-outlet in here, and an outlet renders nothing while still
+     being a flex item -- so it would silently eat one of these gaps and double the space under
+     the breadcrumbs. ::ng-deep because the outlet is declared in the consumer's template and
+     carries that component's scoping attribute, not this one's; anchored on :host so the emitted
+     rule stays inside this component's subtree. */
+  ::ng-deep router-outlet {
+    @apply hidden;
+  }
 
   /* Three sides, not four. --tabs-border is a light rim meant to read against the backdrop the
      card floats on, which is what it does on the left, right and bottom. The top edge does not

@@ -2,8 +2,12 @@
 
 /* @use 'tailwindcss'; */
 
+/* No spacing of its own below the rule, and none above it either: the panel spaces its children
+   with a gap now, the way the views do. This carried pb-2 *and* mb-2, which put 8px + rule + 8px
+   between the crumbs and the ribbon against the 8px the ribbon has below it — the top of the panel
+   read as loose. The rule stays on the crumbs, because it is theirs. */
 :host {
-  @apply flex flex-wrap items-center gap-1 pb-2 mb-2 select-none;
+  @apply flex flex-wrap items-center gap-1 select-none;
   @apply text-sm font-semibold;
   border-bottom: 1px solid var(--tabs-border);
   color: var(--tabs-item-text);
