@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [4.0.4] - 2026-10-10
+
+### Fixed
+
 - **A record’s non-form views can render their edit button again.** `framework-button-edit` asks
   for `FormService` and `DataProviderService` together, and the details shell provided only the
   second — so a child list routed as its own view (Aplicações → Visões → Business Places, Centros
@@ -31,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   They carried `padding-bottom` _and_ `margin-bottom` around their rule, 8px + rule + 8px, against
   the 8px below the ribbon. The tab panel spaces its children with a gap now, as the views do, and
   the breadcrumbs carry neither — 9px, the gap plus the rule itself.
-
-### ⚠ Breaking Changes / Migration
 
 ## [4.0.3] - 2026-10-02
 
@@ -475,7 +479,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v4.0.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v4.0.4...HEAD
+[4.0.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.4
 [4.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.3
 [4.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.2
 [4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.1
