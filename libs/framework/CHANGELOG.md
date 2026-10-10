@@ -21,6 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A record’s non-form views can render their edit button again.** `framework-button-edit` asks
+  for `FormService` and `DataProviderService` together, and the details shell provided only the
+  second — so a child list routed as its own view (Aplicações → Visões → Business Places, Centros
+  de Custo) threw `NG0201: No provider found for FormService` before it rendered at all. The shell
+  provides one now; a form view’s own provider still shadows it, so forms are unchanged.
+
+- **The breadcrumbs no longer sit further from the ribbon than the ribbon does from its content.**
+  They carried `padding-bottom` _and_ `margin-bottom` around their rule, 8px + rule + 8px, against
+  the 8px below the ribbon. The tab panel spaces its children with a gap now, as the views do, and
+  the breadcrumbs carry neither — 9px, the gap plus the rule itself.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [4.0.3] - 2026-10-02

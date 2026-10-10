@@ -12,6 +12,7 @@ import {
 import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterModule } from '@angular/router';
 import {
   DataProviderService,
+  FormService,
   GroupContainerComponent,
   RibbonComponent,
   RibbonGroupComponent,
@@ -50,6 +51,17 @@ function dataProviderFactory(route: ActivatedRoute): DataProviderService<any> {
   providers: [
     { provide: TabViewService },
     { provide: DataProviderService, useFactory: dataProviderFactory, deps: [ActivatedRoute] },
+    // A record's views are siblings: the form is one route, a child list is another, and only the
+    // form provides a FormService of its own. So anything a non-form view renders has to find one
+    // here or not at all -- and framework-button-edit asks for FormService and DataProviderService
+    // together, of which this shell supplied only the second. Opening a child-list view threw
+    // NG0201 before the component rendered at all.
+    //
+    // A form view's own provider shadows this one inside its subtree, so nothing changes there.
+    // What reaches this instance is a view that has no form of its own, where the service sits
+    // idle: the edit button reads `loading` and listens for `editCanceled`, and in modal mode --
+    // which is why a child list has that button -- it never begins an edit on it.
+    { provide: FormService },
   ],
 })
 export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent implements OnDestroy, OnInit {
