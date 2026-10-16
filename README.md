@@ -88,6 +88,23 @@ Scoping a commit `no-release` suppresses a release regardless of type.
 Merging to `main` triggers `Release`, which versions and publishes each package independently, stamps the
 `[Unreleased]` changelog section with the resolved version, and opens an aggregate GitHub release.
 
+`main` is the only release branch. Everything published from here targets Angular 22.
+
+### Retired maintenance lines
+
+While `main` moved to Angular 22, three branches kept publishing for applications still on Angular 19,
+each under its own npm dist-tag. They are retired: every fix they carried also shipped on `main`, and
+their final state is kept in a tag rather than a branch.
+
+| Line           | Package                 | Last release | Tag                          |
+| -------------- | ----------------------- | ------------ | ---------------------------- |
+| former `1.4.x` | `@zambon-dev/framework` | 1.4.7        | `angular-19/framework-1.4.x` |
+| former `1.6.x` | `@zambon-dev/library`   | 1.6.9        | `angular-19/library-1.6.x`   |
+| former `2.1.x` | `@zambon-dev/shared`    | 2.1.4        | `angular-19/shared-2.1.x`    |
+
+Those versions stay installable from npm; nothing further will be published on those lines. To work on
+one, check the tag out into a branch of its own.
+
 ## License
 
 MIT © Ricardo Zambon

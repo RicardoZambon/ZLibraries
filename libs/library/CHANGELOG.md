@@ -238,6 +238,105 @@ this package to do beyond following them.
 - `MultiEditorComponent` and the multi-select result grid render their actions as `<button>`
   rather than `<a>`. They are styled identically but now honour `disabled` natively.
 
+> **The 1.6.x line is retired.** It carried the library for applications still on Angular 19 while
+> `main` moved to Angular 22, publishing under its own `1.6.x` dist-tag. Its branch is gone; the
+> final state is kept in the `angular-19/library-1.6.x` tag. Every fix recorded below also shipped
+> in a 3.x release, which requires Angular 22.
+
+## [1.6.9] - 2026-09-24
+
+### Fixed
+
+- **Pressing Enter in the multi-select search no longer saves the changes.** The search box sits
+  inside the modal's form, so Enter submitted it and the confirmation ran alongside the search --
+  committing a selection the user was still building. Enter now searches and nothing else.
+
+- **The remove button in the multi-select panel works for an entry the search never showed.** It
+  removed by deselecting the row in the grid on the left, which knows nothing about a row it has
+  not loaded, so clicking the cross on an entry further down the list did nothing. The panel now
+  tells the dataset directly, and still deselects the grid row when there is one.
+
+- **Grid checkboxes are no longer drawn as disabled.** The disabled attribute was bound to the
+  boolean itself, and an attribute binding writes `disabled="false"` for false -- which disables a
+  control just as firmly as any other value. Every checkbox rendered faded and unusable, leaving
+  the row label as the only way to toggle a selection.
+
+- **A multi-select or multi-editor no longer adds a gap below the page.** Both render nothing but
+  a fixed-position modal, yet their host still counted as a child in the parent's layout, so a
+  flex column with a gap reserved a slot for it under the last visible element.
+
+## [1.6.8] - 2026-09-23
+
+### Fixed
+
+- **A `lib-catalog-select` with `searchable` off no longer looks disabled.** It was drawn on the
+  same grey as a disabled field, so nothing distinguished a picker you are meant to click from a
+  control that is not yours to touch.
+
+  Turning searching off makes the inner input read-only to the keyboard, and `lib-form-input`
+  paints a read-only input as disabled by default. That default is right for `readOnly`, which
+  means the value cannot be changed at all; it is wrong here, where only typing is withheld. The
+  disabled appearance is now tied to `readOnly` alone.
+
+## [1.6.7] - 2026-09-23
+
+### Added
+
+- **`lib-catalog-select` takes a `searchable` input.** A catalog of one or two entries is a picker,
+  not a search: the text box invites typing that only gets in the way, and the minimum-length rule
+  hides the very entries the user opened the field to choose from. Setting `[searchable]="false"`
+  leaves the input read-only to the keyboard while the dropdown still opens on click and the clear
+  button still works.
+
+  It differs from `readOnly`, which means the value cannot be changed at all and takes the clear
+  button away. It does not suit an endpoint that answers `shouldUseCriteria`: that endpoint
+  returns nothing until it is given criteria, and there would be no way left to type any.
+
+- **`lib-catalog-select` exposes `refresh()`.** The entries are fetched once, when the field
+  initialises, so a screen that changes the data behind the catalog -- granting a role, moving an
+  employee -- kept offering the list it read before the change. Calling `refresh()` re-reads the
+  catalog, including whether its endpoint now requires search criteria.
+
+### Fixed
+
+- **`lib-catalog-select` no longer reports "no results" when its endpoint arrives after the field
+  does.** A screen that reads the endpoint off a model it loads over HTTP binds an empty string
+  first. The field initialised against that, showed _no results found_ on the first open, and only
+  filled in once the user typed something and cleared it again.
+
+  With no endpoint the component takes its static-list path, finds an empty list and latches the
+  message. `searchEndpoint` was a plain input, so nothing re-ran the search when the real value
+  landed -- unlike `entriesList` and `filters`, which have always refreshed on change. It is now a
+  setter and re-reads the catalog, treating a new endpoint as a new catalog rather than carrying
+  over what the previous one reported about needing search criteria.
+
+## [1.6.6] - 2026-09-22
+
+### Fixed
+
+- **Group headings in a narrow navigation panel no longer spill their label past the edge.** On a
+  window under 768px the panel opens at its collapsed width, but each group still printed its full
+  label -- clipped mid-word against a bar with no room for it -- where it should show the short
+  divider the collapsed panel uses.
+
+  The width that widens the panel is declared inside the `md` query, so below that breakpoint the
+  panel stays narrow whatever its expanded class says. The heading, though, was keyed off that
+  class rather than the width it actually got. It now follows the width, with the overlay still
+  excluded -- that one does widen the panel at any size.
+
+## [1.6.5] - 2026-09-22
+
+### Fixed
+
+- **`lib-catalog-select` now offers its clear button for a value it did not see arrive.** A field
+  restored from a saved filter showed the value and its label but no way to empty it, so the only
+  escape was to clear the whole filter and start again.
+
+  The button asked an internal field that is written when the component itself takes the value --
+  a pick in the dropdown, or the initial read in `ngOnInit`. A form patched after the component
+  has initialised, and patched without an event, reaches the form control and the display and
+  nothing else. The button now asks the form control, which is the value that actually counts.
+
 ## [1.6.4] - 2026-09-21
 
 ### Fixed
@@ -600,6 +699,11 @@ config options and the `getUserProfile()` method still exist but are no longer c
 [3.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.0.0
 [2.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v2.0.1
 [2.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v2.0.0
+[1.6.9]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.9
+[1.6.8]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.8
+[1.6.7]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.7
+[1.6.6]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.6
+[1.6.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.5
 [1.6.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.4
 [1.6.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.3
 [1.6.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.2
