@@ -1,6 +1,6 @@
 # @framework Library
 
-Core UI framework library providing tab-based navigation, CRUD view scaffolding, and reusable button components for Angular 19 applications. This library is generic and must not contain project-specific logic.
+Core UI framework library providing tab-based navigation, CRUD view scaffolding, and reusable button components for Angular 22 applications. This library is generic and must not contain project-specific logic.
 
 Path alias: `@framework` (mapped in `tsconfig.base.json`)
 

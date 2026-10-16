@@ -246,6 +246,33 @@ Colour values across the board are the same colours in OKLCH, which is what v4's
 - **Accessibility.** The operations-history row opens its detail modal from the keyboard as well as
   the mouse.
 
+> **The 2.1.x line is retired.** It carried shared for applications still on Angular 19 while
+> `main` moved to Angular 22, publishing under its own `2.1.x` dist-tag. Its branch is gone; the
+> final state is kept in the `angular-19/shared-2.1.x` tag. Every fix recorded below also shipped
+> in a 5.x release, which requires Angular 22.
+
+## [2.1.4] - 2026-09-30
+
+### Changed
+
+- `UtcDatePipe.transform()` accepts `Date | string`. An API response holds the timestamp as a
+  string even where the model types it as `Date`; existing calls compile unchanged.
+
+### Fixed
+
+- **`utcDate` no longer moves a timestamp to the previous day east of Greenwich.** It re-read the
+  UTC wall-clock time with hour arithmetic that kept the time of day but, at any positive UTC
+  offset, landed on the day before: `2026-06-15T14:30` showed as June 14 in Madrid (UTC+2). It
+  never showed on CI, which runs in UTC, nor west of Greenwich, where the arithmetic happens to
+  come out right. The pipe now shifts by the zone's offset.
+
+- **A timestamp that already declares its zone is no longer shifted a second time.** A string
+  ending in `Z` or `±hh:mm` is parsed as the right instant by `Date` itself, so the pipe now
+  returns it as is, and keeps working if an API starts sending the marker.
+
+- **A value that is not a date returns `null`**, the same as an empty one, instead of an invalid
+  `Date` that makes Angular's `date` pipe throw.
+
 ## [2.1.3] - 2026-09-21
 
 - Maintenance release (no consumer-facing changes were documented).
@@ -583,6 +610,7 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
 [4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.0.0
 [3.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v3.0.1
 [3.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v3.0.0
+[2.1.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.4
 [2.1.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.3
 [2.1.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.2
 [2.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.1

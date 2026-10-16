@@ -1,6 +1,6 @@
 # @library Library
 
-Low-level UI component library providing form controls, data grids, modals, navigation components, and shared services for Angular 19 applications. This library is generic and must not contain project-specific logic.
+Low-level UI component library providing form controls, data grids, modals, navigation components, and shared services for Angular 22 applications. This library is generic and must not contain project-specific logic.
 
 Path alias: `@library` (mapped in `tsconfig.base.json`)
 
@@ -47,7 +47,7 @@ The library provides foundational UI building blocks consumed by `@framework` an
 
 ## Components
 
-All components are standalone (Angular 19 pattern with `imports` array, no NgModule declarations).
+All components are standalone: an `imports` array, no NgModule declarations.
 
 ### Form Components
 

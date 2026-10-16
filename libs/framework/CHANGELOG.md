@@ -268,6 +268,68 @@ this package to do beyond following them.
   `TabBreadcrumbsComponent` entries are focusable and activate with `Enter`/`Space`.
 - Added the `Tabs-CloseTab` translation key (en, pt) for the tab close button's accessible name.
 
+> **The 1.4.x line is retired.** It carried the framework for applications still on Angular 19
+> while `main` moved to Angular 22, publishing under its own `1.4.x` dist-tag. Its branch is gone;
+> the final state is kept in the `angular-19/framework-1.4.x` tag. Every fix recorded below also
+> shipped in a 3.x or 4.x release, which requires Angular 22.
+
+## [1.4.7] - 2026-10-01
+
+### Fixed
+
+- **Loading the package under Jest no longer throws `Cannot access 'ButtonNewLegacyComponent'
+before initialization`.** `LegacyTabViewDetails` queries its New button with `@ViewChild`, and
+  the legacy buttons import the views barrel back, so the class is defined before the button: in
+  the published bundle the button sits further down the file. An application build never noticed,
+  because its linker moves the reference into a function, but a JIT runtime reads it the moment
+  the package is imported, so every spec that imported anything from `@zambon-dev/framework`
+  failed before running a test. The query is a forward reference now. Nothing to change in
+  applications, and specs excluded for this reason can be put back.
+
+## [1.4.6] - 2026-09-24
+
+### Fixed
+
+- **A confirm or error modal no longer adds a gap below the page.** Both render nothing but a
+  fixed-position modal, yet their host still counted as a child in the parent's layout, so a flex
+  column with a gap reserved a slot for it under the last visible element -- which is why a detail
+  view and some list views sat further from the bottom of the window than the rest.
+
+## [1.4.5] - 2026-09-22
+
+### Fixed
+
+- **A filtered view no longer loses its Filter and Clear filters state when another details tab is
+  opened.** The grid stayed filtered while the ribbon came back as though nothing were filtered, so
+  the only way out was to filter again. Opening a list view never did it -- which is what made the
+  behaviour look arbitrary.
+
+  Every details tab keeps its router subscription alive, including the ones the reuse strategy has
+  detached, and the lookup that finds the active details route reads the router, which names
+  whichever tab the navigation went to. A detached tab therefore adopted the incoming tab's base
+  path and switched itself to that tab's view, tearing its own ribbon down and building a fresh
+  one -- and the new buttons knew nothing of the filter still held by the grid. A list view is not
+  a details route, so the lookup found nothing and the tab was left alone.
+
+  A tab now answers only to navigations matching its own route definition, which still covers the
+  one navigation that legitimately changes its path: the redirect from `/new` to `/:id` after a
+  save.
+
+## [1.4.4] - 2026-09-22
+
+### Fixed
+
+- **Switching views in a details tab no longer moves the buttons to the wrong view.** Opening a
+  second view showed the first view's buttons instead of its own, and going back to the first view
+  left it with no buttons at all -- on the employee screen, Histórico showed the Detalhes ribbon and
+  Detalhes then showed an empty one.
+
+  1.4.1 taught a tab to claim a ribbon published before its view had been named, which is what a tab
+  opened straight at a non-default view needs. It claimed on every naming, though, and the empty id
+  is not a spare bucket: it is the default view's own id, since that view is the one whose URL
+  carries no sub-path. From the second switch onwards the template being claimed belonged to the
+  view being left. Only the first naming may claim it now.
+
 ## [1.4.3] - 2026-09-21
 
 ### Fixed
@@ -497,6 +559,10 @@ None.
 [3.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.0.1
 [3.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.0.0
 [2.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v2.0.0
+[1.4.7]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.7
+[1.4.6]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.6
+[1.4.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.5
+[1.4.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.4
 [1.4.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.3
 [1.4.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.2
 [1.4.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.1
