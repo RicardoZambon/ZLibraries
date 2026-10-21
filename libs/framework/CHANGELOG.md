@@ -15,13 +15,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The view and button base classes no longer declare a change-detection strategy.** This is not
+  a behaviour change: Angular has never inherited `changeDetection`, so the `Eager` these carried
+  applied to the base class itself -- which is never instantiated -- and never to your subclasses.
+  Your components have compiled to OnPush since you upgraded to Angular 22, whatever the base said.
+  The declaration is gone because it described nothing.
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+- **Ribbon buttons appear once their access check resolves.** `BaseButton` resolved visibility
+  from an asynchronous `checkActionsAreAllowed` call and assigned a plain field, which told Angular
+  nothing. Under Angular 22's default strategy the button stayed hidden until something else forced
+  a render.
+- **The tab strip re-measures when it narrows.** Bringing the selected tab back into view hung off
+  `ngAfterViewChecked`, which only ever ran because zone.js produced a pass on every event. The
+  `ResizeObserver` -- which is how a browser actually reports a box changing -- now does the full
+  re-measure, and the post-render work uses `afterEveryRender`.
+
 ### ⚠ Breaking Changes / Migration
+
+- **`BaseButton.visible` is now `isVisible`, and it is a signal.** Every component that extends
+  `BaseButton` is affected, in its template and its code:
+
+  | Replace               | With                    |
+  | --------------------- | ----------------------- |
+  | `@if (visible)`       | `@if (isVisible())`     |
+  | `this.visible`        | `this.isVisible()`      |
+  | `!isAccessLoaded`     | `!isAccessLoaded()`     |
+  | `this.isAccessLoaded` | `this.isAccessLoaded()` |
+
+  Both were renamed or re-typed deliberately, so a call site you miss is a compile error rather
+  than a button that quietly never appears. Before you start, turn on `strictTemplates` and
+  `"interpolatedSignalNotInvoked": "error"` under `angularCompilerOptions.extendedDiagnostics` in
+  your `tsconfig.json`, which makes `{{ someSignal }}` a build failure too.
+
+- **`TabsComponent` no longer injects `ChangeDetectorRef`.** Only relevant if you construct it
+  yourself; used through its selector, nothing changes.
 
 ## [4.0.4] - 2026-10-10
 

@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Injectable, signal, WritableSignal } from '@angular/core';
 import { map, Observable, take, tap } from 'rxjs';
 import { ISidebarProfile, SidebarMenu, SidebarMenuOpenMode, toSidebarMenuOpenMode } from '../models';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -17,15 +17,41 @@ export abstract class SidebarService {
   //#endregion
 
   //#region Variables
-  public isActive = false;
-  public isCollapsed = false;
-  public shouldActivate = false;
+  // Signals rather than plain fields: a sidebar component reads these through a getter in its
+  // template, and a signal read there is tracked, so flipping one renders the sidebar whatever
+  // change-detection strategy the host application uses. A plain assignment told Angular nothing,
+  // which is why the sidebar could sit on a stale frame until the user clicked something.
+  private readonly _isActive: WritableSignal<boolean> = signal(false);
+  private readonly _isCollapsed: WritableSignal<boolean> = signal(false);
+  private readonly _shouldActivate: WritableSignal<boolean> = signal(false);
 
   private menus: SidebarMenu[] = [];
   private selectedMenu: SidebarMenu | null = null;
   //#endregion
 
   //#region Properties
+  /** Whether the collapsed sidebar is currently held open. */
+  public get isActive(): boolean {
+    return this._isActive();
+  }
+  public set isActive(value: boolean) {
+    this._isActive.set(value);
+  }
+
+  public get isCollapsed(): boolean {
+    return this._isCollapsed();
+  }
+  public set isCollapsed(value: boolean) {
+    this._isCollapsed.set(value);
+  }
+
+  /** Whether a click should hold the sidebar open, which depends on width and collapsed state. */
+  public get shouldActivate(): boolean {
+    return this._shouldActivate();
+  }
+  public set shouldActivate(value: boolean) {
+    this._shouldActivate.set(value);
+  }
   //#endregion
 
   //#region Constructor and Angular life cycle methods

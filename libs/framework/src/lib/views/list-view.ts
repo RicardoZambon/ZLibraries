@@ -1,8 +1,12 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { DataProviderService, MultiSelectResultDataset } from '@zambon-dev/library';
 import { TabViewList } from './tabview-list';
 
-@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
+// No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
+// describe a class that is never instantiated, while every subclass compiles to whatever it
+// declares -- which in v22 means OnPush. Correctness comes from the state below notifying
+// Angular, never from this decorator. See docs/guides/reactivity.md.
+@Component({ template: '' })
 export abstract class ListView<TEntityModel, TListModel> extends TabViewList<TListModel> implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   //#endregion

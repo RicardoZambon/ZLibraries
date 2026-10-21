@@ -2,7 +2,7 @@
   <lib-ribbon-button
     icon="fa-eye"
     label="Button-Views"
-    [disabled]="!isAccessLoaded || isNewEntity"
+    [disabled]="!isAccessLoaded() || isNewEntity"
     [options]="options"
     (action)="onViewClicked($event)"
   >

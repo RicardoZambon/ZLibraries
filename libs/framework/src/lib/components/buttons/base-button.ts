@@ -1,9 +1,13 @@
-import { Component, inject, Input, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, Input, OnDestroy, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
 import { IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { Subject, take } from 'rxjs';
 import { AuthService } from '../../services';
 
-@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
+// No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
+// describe a class that is never instantiated, while every subclass compiles to whatever it
+// declares -- which in v22 means OnPush. Correctness comes from the state below notifying
+// Angular, never from this decorator. See docs/guides/reactivity.md.
+@Component({ template: '' })
 export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(RibbonButtonComponent) protected button!: RibbonButtonComponent;
@@ -26,11 +30,15 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#endregion
 
   //#region Variables
-  public visible = true;
+  // Both are read from templates -- `isVisible` additionally from RibbonGroupComponent's host
+  // binding, which runs in that component's own pass. Signals, so the access check resolving
+  // asynchronously actually reaches the screen.
+  protected readonly isAccessLoaded: WritableSignal<boolean> = signal(false);
 
   protected authService: AuthService = inject(AuthService);
   protected destroy$: Subject<boolean> = new Subject<boolean>();
-  protected isAccessLoaded = false;
+
+  private readonly _isVisible: WritableSignal<boolean> = signal(true);
 
   private _allowedActions: string[] = new Array<string>();
   private _options: IRibbonButtonOption[] = [];
@@ -41,16 +49,14 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
     return this._allowedActions;
   }
 
-  public get isVisible(): boolean {
-    return this.visible;
-  }
+  public readonly isVisible: Signal<boolean> = this._isVisible.asReadonly();
 
   public get options(): IRibbonButtonOption[] {
     return this._options;
   }
 
   protected get isButtonDisabled(): boolean {
-    return this.disabled || !this.isAccessLoaded;
+    return this.disabled || !this.isAccessLoaded();
   }
   //#endregion
 
@@ -83,8 +89,8 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#region Private methods
   private checkAccessIsAllowed(): void {
     if (this.allowedActions.length === 0) {
-      this.isAccessLoaded = true;
-      this.visible = true;
+      this.isAccessLoaded.set(true);
+      this._isVisible.set(true);
       return;
     }
 
@@ -92,8 +98,8 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
       .checkActionsAreAllowed(this.allowedActions)
       .pipe(take(1))
       .subscribe((result: boolean[]) => {
-        this.isAccessLoaded = true;
-        this.visible = result.some((isAllowed: boolean) => isAllowed === true);
+        this.isAccessLoaded.set(true);
+        this._isVisible.set(result.some((isAllowed: boolean) => isAllowed === true));
       });
   }
 

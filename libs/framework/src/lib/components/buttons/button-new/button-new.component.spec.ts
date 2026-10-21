@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { Tab, FRAMEWORK_VIEW_TYPE, FrameworkViewType } from '../../../models';
 import { TabService } from '../../../services';
 import { RouteHelper } from '../../../helpers';
@@ -91,8 +92,8 @@ describe('ButtonNewComponent — navigation logic', () => {
     component.path = undefined;
     component.options = [];
     component.disabled = false;
-    component.visible = true;
-    component.isAccessLoaded = true;
+    component.isVisible = signal(true);
+    component.isAccessLoaded = signal(true);
 
     // Inject mocks via private field names
     (component as any).tabService = mockTabService;

@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Tab, FRAMEWORK_VIEW_TYPE, FrameworkViewType } from '../../../models';
@@ -133,8 +134,8 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
       { id: 'save-and-new', label: 'Save & New', icon: 'fa-save' },
     ];
     component.disabled = false;
-    component.visible = true;
-    component.isAccessLoaded = true;
+    component.isVisible = signal(true);
+    component.isAccessLoaded = signal(true);
     component.button = mockButton;
 
     (component as any).tabService = mockTabService;

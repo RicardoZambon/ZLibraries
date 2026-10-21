@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 import { ButtonExportComponent, MaxExportRows } from './button-export.component';
@@ -28,8 +29,8 @@ describe('ButtonExportComponent', () => {
 
     component = Object.create(ButtonExportComponent.prototype);
     component.disabled = false;
-    component.visible = true;
-    component.isAccessLoaded = true;
+    component.isVisible = signal(true);
+    component.isAccessLoaded = signal(true);
     component.fileBaseName = 'report';
     component.dataGridDataset = mockDataGridDataset;
     component.translateService = mockTranslateService;

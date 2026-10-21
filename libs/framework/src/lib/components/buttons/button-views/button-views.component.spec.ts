@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { NavigationEnd } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, Tab } from '../../../models';
@@ -66,8 +67,8 @@ describe('ButtonViewsComponent — view switching logic', () => {
     (component as any).authService = mockAuthService;
     component.options = [];
     component.disabled = false;
-    component.visible = true;
-    component.isAccessLoaded = true;
+    component.isVisible = signal(true);
+    component.isAccessLoaded = signal(true);
     component.destroy$ = new Subject();
 
     // Inject mocks via private field names

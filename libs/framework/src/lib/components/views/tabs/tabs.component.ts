@@ -1,14 +1,14 @@
 import {
-  AfterViewChecked,
+  afterEveryRender,
   AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   NgZone,
   OnDestroy,
   OnInit,
+  signal,
   ViewChild,
+  WritableSignal,
 } from '@angular/core';
 import { ActivatedRouteSnapshot, Route, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -28,10 +28,9 @@ const SCROLL_BUTTON_STEP = 0.8;
   selector: 'framework-tabs',
   templateUrl: './tabs.component.html',
   styleUrls: ['./tabs.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TabBreadcrumbsComponent, TranslatePipe],
 })
-export class TabsComponent implements AfterViewChecked, AfterViewInit, OnDestroy, OnInit {
+export class TabsComponent implements AfterViewInit, OnDestroy, OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('tabsNav') private tabsNav?: ElementRef<HTMLElement>;
   //#endregion
@@ -55,8 +54,8 @@ export class TabsComponent implements AfterViewChecked, AfterViewInit, OnDestroy
   private isDestroyed = false;
 
   /** Drive the scroll buttons. Only ever assigned outside a change-detection pass (see below). */
-  protected canScrollLeft = false;
-  protected canScrollRight = false;
+  protected readonly canScrollLeft: WritableSignal<boolean> = signal(false);
+  protected readonly canScrollRight: WritableSignal<boolean> = signal(false);
 
   /**
    * Whether the strip holds more tabs than it has room for. This decides that the buttons exist;
@@ -66,7 +65,7 @@ export class TabsComponent implements AfterViewChecked, AfterViewInit, OnDestroy
    * The strip then changed width under the pointer, and a click could land after the button had
    * already unmounted and do nothing — which is what "sometimes it does not move" was.
    */
-  protected isOverflowing = false;
+  protected readonly isOverflowing: WritableSignal<boolean> = signal(false);
 
   /**
    * Whether anything reaches the strip's right edge: a tab, or the right scroll button. While
@@ -74,7 +73,7 @@ export class TabsComponent implements AfterViewChecked, AfterViewInit, OnDestroy
    * to the strip. Rounding both leaves whatever sits at the edge standing over the sweep where the
    * panel has curved away and is not there yet — a piece floating past the corner.
    */
-  protected isFlushRight = false;
+  protected readonly isFlushRight: WritableSignal<boolean> = signal(false);
   //#endregion
 
   //#region Properties
@@ -118,11 +117,24 @@ export class TabsComponent implements AfterViewChecked, AfterViewInit, OnDestroy
 
   //#region Constructor and Angular life cycle methods
   constructor(
-    private changeDetectorRef: ChangeDetectorRef,
     private ngZone: NgZone,
     private router: Router,
     private tabService: TabService,
-  ) {}
+  ) {
+    // Replaces ngAfterViewChecked + queueMicrotask. That pair only ever ran because zone.js
+    // produced an ambient pass on every event; with no zone there is nothing to piggyback on and
+    // the strip silently stopped re-measuring. afterEveryRender is the supported hook for reading
+    // layout, and it runs after the bindings have been checked, so writing the affordance here
+    // cannot raise NG0100 either.
+    afterEveryRender(() => {
+      const signature: string = this.stripSignature();
+      if (signature === this.lastStripSignature) {
+        return;
+      }
+      this.lastStripSignature = signature;
+      this.remeasureStrip();
+    });
+  }
 
   public ngAfterViewInit(): void {
     const nav: HTMLElement | undefined = this.tabsNav?.nativeElement;
@@ -139,24 +151,9 @@ export class TabsComponent implements AfterViewChecked, AfterViewInit, OnDestroy
       // Catches the window resizing and the sidebar collapsing -- both change how many tabs
       // fit without changing the tab list, so nothing else would tell us to re-check.
       if (typeof ResizeObserver === 'function') {
-        this.navResizeObserver = new ResizeObserver(() => this.onNavScroll());
+        this.navResizeObserver = new ResizeObserver(() => this.remeasureStrip());
         this.navResizeObserver.observe(nav);
       }
-    });
-  }
-
-  public ngAfterViewChecked(): void {
-    // This hook runs AFTER the bindings below have been checked, so assigning canScrollLeft or
-    // canScrollRight here would throw NG0100 in dev mode on every cycle. Everything that
-    // touches them is therefore deferred to a microtask, which lands after the pass completes.
-    const signature: string = this.stripSignature();
-    if (signature === this.lastStripSignature) {
-      return;
-    }
-    this.lastStripSignature = signature;
-    queueMicrotask(() => {
-      this.scrollActiveTabIntoView();
-      this.syncScrollAffordance();
     });
   }
 
@@ -373,21 +370,25 @@ export class TabsComponent implements AfterViewChecked, AfterViewInit, OnDestroy
       (lastTab !== null && lastTab.getBoundingClientRect().right >= nav.getBoundingClientRect().right - SCROLL_EPSILON);
 
     if (
-      canLeft === this.canScrollLeft &&
-      canRight === this.canScrollRight &&
-      overflowing === this.isOverflowing &&
-      flushRight === this.isFlushRight
+      canLeft === this.canScrollLeft() &&
+      canRight === this.canScrollRight() &&
+      overflowing === this.isOverflowing() &&
+      flushRight === this.isFlushRight()
     ) {
       return;
     }
 
-    this.ngZone.run(() => {
-      this.canScrollLeft = canLeft;
-      this.canScrollRight = canRight;
-      this.isOverflowing = overflowing;
-      this.isFlushRight = flushRight;
-      this.changeDetectorRef.detectChanges();
-    });
+    this.canScrollLeft.set(canLeft);
+    this.canScrollRight.set(canRight);
+    this.isOverflowing.set(overflowing);
+    this.isFlushRight.set(flushRight);
+  }
+
+  /** Everything a geometry change implies: the selected tab may be off-screen, and the scroll
+   *  buttons may have appeared or gone. */
+  private remeasureStrip(): void {
+    this.scrollActiveTabIntoView();
+    this.syncScrollAffordance();
   }
 
   /** Arrow function: registered and removed as a listener, so it must keep its `this`. */

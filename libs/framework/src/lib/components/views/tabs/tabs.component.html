@@ -1,16 +1,16 @@
 @if (hasTabs) {
-  <div class="tabs-container" [class.can-scroll-left]="canScrollLeft" [class.can-scroll-right]="canScrollRight">
+  <div class="tabs-container" [class.can-scroll-left]="canScrollLeft()" [class.can-scroll-right]="canScrollRight()">
     <!-- Both buttons are present whenever the strip overflows, and disabled rather than removed at
          the end they point at. Rendering them per-direction meant the one being reached for
          disappeared on arrival: the strip changed width under the pointer and the click landed on
          nothing. tabindex -1 because the tablist is already one tab stop and the arrow keys reach
          every tab -- these are a pointer affordance, not a second keyboard path. -->
-    @if (isOverflowing) {
+    @if (isOverflowing()) {
       <button
         class="tabs-scroll left"
         type="button"
         tabindex="-1"
-        [disabled]="!canScrollLeft"
+        [disabled]="!canScrollLeft()"
         [attr.aria-label]="'Tabs-ScrollLeft' | translate"
         (click)="onScrollStrip(-1)"
       >
@@ -72,12 +72,12 @@
       }
     </ul>
 
-    @if (isOverflowing) {
+    @if (isOverflowing()) {
       <button
         class="tabs-scroll right"
         type="button"
         tabindex="-1"
-        [disabled]="!canScrollRight"
+        [disabled]="!canScrollRight()"
         [attr.aria-label]="'Tabs-ScrollRight' | translate"
         (click)="onScrollStrip(1)"
       >
@@ -89,7 +89,7 @@
 @if (hasTabs) {
   <div
     class="tab-content"
-    [class.flush-right]="isFlushRight"
+    [class.flush-right]="isFlushRight()"
     role="tabpanel"
     [id]="panelId"
     [attr.aria-labelledby]="activeTabId"

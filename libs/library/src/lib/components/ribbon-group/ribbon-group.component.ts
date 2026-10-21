@@ -1,4 +1,4 @@
-import { Component, ContentChildren, Input, QueryList, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, contentChildren, Input, Signal } from '@angular/core';
 
 import { RibbonGroupChild } from '../../models/ribbon-group-child';
 
@@ -6,12 +6,14 @@ import { RibbonGroupChild } from '../../models/ribbon-group-child';
   selector: 'lib-ribbon-group',
   templateUrl: './ribbon-group.component.html',
   styleUrls: ['./ribbon-group.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  host: { '[class.hidden]': '!hasChildren' },
+  host: { '[class.hidden]': '!hasChildren()' },
 })
 export class RibbonGroupComponent {
   //#region ViewChilds, Inputs, Outputs
-  @ContentChildren(RibbonGroupChild, { descendants: true }) public children?: QueryList<RibbonGroupChild>;
+  // A signal query, so a child arriving or leaving re-runs `hasChildren` on its own.
+  public readonly children: Signal<readonly RibbonGroupChild[]> = contentChildren(RibbonGroupChild, {
+    descendants: true,
+  });
 
   @Input() public label = '';
   //#endregion
@@ -23,9 +25,9 @@ export class RibbonGroupComponent {
   //#endregion
 
   //#region Properties
-  protected get hasChildren(): boolean {
-    return this.children?.some((x) => x.visible) ?? false;
-  }
+  protected readonly hasChildren: Signal<boolean> = computed(() =>
+    this.children().some((child: RibbonGroupChild) => child.isVisible()),
+  );
   //#endregion
 
   //#region Constructor and Angular life cycle methods

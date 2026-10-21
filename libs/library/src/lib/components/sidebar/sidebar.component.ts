@@ -1,4 +1,14 @@
-import { AfterViewInit, Component, HostListener, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  HostListener,
+  inject,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { forkJoin, map, merge, Observable, of, switchMap, take, takeUntil } from 'rxjs';
 import { SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu, SidebarRegion } from '../../models';
@@ -11,7 +21,6 @@ import { SidebarItemComponent } from '../sidebar-item/sidebar-item.component';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
   imports: [SidebarItemComponent, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.active]': 'isActive',
     '[class.expanded]': '!isCollapsed',
@@ -62,9 +71,9 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
 
   protected configErrorText: string = this.sidebarConfigs.errorText;
   protected configLoadingText: string = this.sidebarConfigs.loadingText;
-  protected hasFailed = false;
-  protected menus: SidebarMenu[] = [];
-  protected regions: SidebarRegion[] = [];
+  protected readonly hasFailed: WritableSignal<boolean> = signal(false);
+  protected readonly menus: WritableSignal<SidebarMenu[]> = signal<SidebarMenu[]>([]);
+  protected readonly regions: WritableSignal<SidebarRegion[]> = signal<SidebarRegion[]>([]);
 
   private sidebarService: SidebarService = inject(SidebarService);
   private wasClickedOutside = false;
@@ -79,9 +88,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
     return this.sidebarService.isCollapsed;
   }
 
-  protected get isLoading(): boolean {
-    return this.menus.length === 0;
-  }
+  protected readonly isLoading: Signal<boolean> = computed(() => this.menus().length === 0);
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -106,10 +113,10 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
       )
       .subscribe({
         next: (menus: SidebarMenu[]) => {
-          this.menus = menus;
-          this.regions = this.groupIntoRegions(menus);
+          this.menus.set(menus);
+          this.regions.set(this.groupIntoRegions(menus));
         },
-        error: () => (this.hasFailed = true),
+        error: () => this.hasFailed.set(true),
       });
   }
   //#endregion

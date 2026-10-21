@@ -1,6 +1,6 @@
-@if (visible && !isButtonCancelVisible && hasDataProviderEntityID) {
+@if (isVisible() && !isButtonCancelVisible && hasDataProviderEntityID) {
   <lib-ribbon-button
-    [disabled]="disabled || !isAccessLoaded || isFormLoading"
+    [disabled]="disabled || !isAccessLoaded() || isFormLoading"
     [icon]="editIcon"
     [iconSize]="iconSize"
     [label]="editLabel"
@@ -9,10 +9,10 @@
   >
   </lib-ribbon-button>
 }
-@if (visible && isButtonCancelVisible && hasDataProviderEntityID) {
+@if (isVisible() && isButtonCancelVisible && hasDataProviderEntityID) {
   <lib-ribbon-button
     [color]="cancelColor"
-    [disabled]="disabled || !isAccessLoaded || isFormLoading"
+    [disabled]="disabled || !isAccessLoaded() || isFormLoading"
     [icon]="cancelIcon"
     [label]="cancelLabel"
     [loading]="loading"

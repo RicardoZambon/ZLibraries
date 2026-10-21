@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DataGridDataset } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
@@ -9,7 +9,11 @@ import { LegacyTabViewBase } from './legacy-tabview-base';
  * @deprecated Use standalone {@link TabViewList} instead. Migrate by extending TabViewList
  * and using standalone component imports with inject() for dependency injection.
  */
-@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
+// No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
+// describe a class that is never instantiated, while every subclass compiles to whatever it
+// declares -- which in v22 means OnPush. Correctness comes from the state below notifying
+// Angular, never from this decorator. See docs/guides/reactivity.md.
+@Component({ template: '' })
 export abstract class LegacyTabViewList<TListModel> extends LegacyTabViewBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   //#endregion

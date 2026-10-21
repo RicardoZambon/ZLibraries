@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DebugElement, ViewChild, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { ApplicationRef, Component, DebugElement, forwardRef, signal, ViewChild, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -33,8 +33,8 @@ describe(RibbonGroupComponent.name, () => {
     await fixture.whenStable();
     expect(component.ribbonGroupComponent).toBeTruthy();
 
-    expect(component.ribbonGroupComponent?.children).toBeTruthy();
-    expect(component.ribbonGroupComponent?.children?.length).toBe(1);
+    expect(component.ribbonGroupComponent?.children()).toBeTruthy();
+    expect(component.ribbonGroupComponent?.children()?.length).toBe(1);
   });
 
   it('should remain visible when children are visible', async () => {
@@ -83,12 +83,14 @@ describe(RibbonGroupComponent.name, () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const ribbonGroupChild: RibbonGroupChild = <RibbonGroupChild>component.ribbonGroupComponent?.children?.get(0);
+    const ribbonGroupChild: RibbonGroupChild = <RibbonGroupChild>component.ribbonGroupComponent?.children()?.[0];
     expect(ribbonGroupChild).toBeTruthy();
 
-    ribbonGroupChild.visible = false;
-    fixture.detectChanges();
-    await fixture.whenStable();
+    (<WritableSignal<boolean>>ribbonGroupChild.isVisible).set(false);
+    // The production pass, not fixture.detectChanges(): under a zoneless test environment
+    // detectChanges() forces every test view, which would refresh the group whether or not the
+    // child's change actually reached it.
+    TestBed.inject(ApplicationRef).tick();
 
     const ribbonGroupDebugElement: DebugElement = fixture.debugElement.query(By.directive(RibbonGroupComponent));
     expect(ribbonGroupDebugElement).toBeTruthy();
@@ -101,16 +103,14 @@ describe(RibbonGroupComponent.name, () => {
 @Component({
   selector: 'test-ribbon-button',
   template: ``,
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => RibbonGroupButtonTestComponent) }],
 })
 class RibbonGroupButtonTestComponent extends RibbonGroupChild {
-  public visible = true;
+  public readonly isVisible: WritableSignal<boolean> = signal(true);
 }
 
 @Component({
   imports: [RibbonGroupComponent, RibbonGroupButtonTestComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <lib-ribbon-group>
       <test-ribbon-button></test-ribbon-button>

@@ -394,7 +394,19 @@ describe('TabsComponent — strip overflow', () => {
     });
   }
 
-  /** The component defers its own updates to a microtask to stay clear of NG0100. */
+  /**
+   * Replays what the browser does when the strip's box changes: it reports it through the
+   * ResizeObserver. Nothing else can -- the tab list is untouched, so no binding changed and no
+   * render is scheduled. Driving this directly is also the only honest way to assert it, since a
+   * resize is not something a change-detection pass can discover on its own.
+   */
+  function reportResize(): void {
+    const observerCalls: unknown[][] = (<jest.Mock>(<unknown>global.ResizeObserver)).mock.calls;
+    const callback: ResizeObserverCallback = <ResizeObserverCallback>observerCalls[0][0];
+    callback([], <ResizeObserver>resizeObserverStub);
+  }
+
+  /** The component defers its own updates to a render hook to stay clear of NG0100. */
   async function settle(): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 0));
     fixture.detectChanges();
@@ -543,7 +555,7 @@ describe('TabsComponent — strip overflow', () => {
     selected.scrollIntoView = scrollIntoView;
 
     setGeometry({ clientWidth: 300, scrollWidth: 900, scrollLeft: 600 });
-    fixture.detectChanges();
+    reportResize();
     await settle();
 
     expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest', inline: 'nearest' });

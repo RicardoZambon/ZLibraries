@@ -1,7 +1,7 @@
-@if (visible) {
+@if (isVisible()) {
   <lib-ribbon-button
     [color]="color"
-    [disabled]="disabled || !isAccessLoaded"
+    [disabled]="disabled || !isAccessLoaded()"
     [icon]="icon"
     [iconSize]="iconSize"
     [label]="label"
