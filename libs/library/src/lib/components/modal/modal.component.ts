@@ -93,6 +93,24 @@ export class ModalComponent extends BaseComponent implements IModal, OnInit {
       this.closeModal();
     }
   }
+
+  /**
+   * Refuses the native submission of the form the content sits in.
+   *
+   * A submit button in here -- framework-button-filters' Confirm is one, and any <button> without a
+   * type is another -- makes the browser submit this form once the button's own click handler has
+   * run: a GET to the current URL, which reloads the whole application. Before the host moved to
+   * <body> the submit bubbled through the consumer, and the FormGroupDirective of its [formGroup]
+   * binding cancelled it; that was never this component's doing, and it stopped when the event
+   * stopped passing through the consumer. A modal is never meant to submit natively, so the form
+   * says so itself, wherever the host lives.
+   *
+   * Only the default is prevented. The event still bubbles, and the click that caused it has already
+   * done its work.
+   */
+  protected onFormSubmit(event: Event): void {
+    event.preventDefault();
+  }
   //#endregion
 
   //#region Public methods
