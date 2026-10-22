@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.2.4] - 2026-10-22
+
+### Fixed
+
 - **A submit button inside a modal no longer reloads the whole application.** Confirming a filter
   applied it and then, about a second later, reloaded the page. The modal's content sits in a native
   `<form>`, and a `type="submit"` button — `framework-button-filters`' Confirm, or any `<button>`
@@ -28,8 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Nothing in the modal ever cancelled that; the consumer's `FormGroupDirective` did, by accident,
   for as long as the submit bubbled through it. Since 3.2.1 moved the modal's host to `<body>` it no
   longer does, so the form now prevents its own native submission. The event still bubbles.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.2.3] - 2026-09-26
 
@@ -690,7 +694,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.4...HEAD
+[3.2.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.4
 [3.2.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.3
 [3.2.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.2
 [3.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.1
