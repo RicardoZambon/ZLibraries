@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [3.2.5] - 2026-10-22
+
+### Fixed
+
 - **A list reopened from the menu no longer comes back empty.** Opening a record from a list that
   had been scrolled, then reopening that list from the menu, showed the column headers over an empty
   body. The tab reuses the list's cached view, as it should, but while that view sat detached the
@@ -31,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   were rendered, translated to the top, while the viewport showed where the user had scrolled to.
   Whether something later rescued it was a matter of timing, which is why it came and went. A
   detached grid now measures nothing; coming back is a resize as well, so it measures on the way in.
-
-### ⚠ Breaking Changes / Migration
 
 ## [3.2.4] - 2026-10-22
 
@@ -705,7 +709,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.4...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.5...HEAD
+[3.2.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.5
 [3.2.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.4
 [3.2.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.3
 [3.2.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.2
