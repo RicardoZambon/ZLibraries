@@ -21,6 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A list reopened from the menu no longer comes back empty.** Opening a record from a list that
+  had been scrolled, then reopening that list from the menu, showed the column headers over an empty
+  body. The tab reuses the list's cached view, as it should, but while that view sat detached the
+  grid kept measuring its CDK viewport: the body leaving the document is a resize, and a load that
+  finishes after the user has left is followed by a re-measure too. Measured detached, the viewport
+  worked out its range from a scroll offset of 0 and left its own change-detection flag stuck, so
+  once reattached it computed the right range but could not write the content offset out — the rows
+  were rendered, translated to the top, while the viewport showed where the user had scrolled to.
+  Whether something later rescued it was a matter of timing, which is why it came and went. A
+  detached grid now measures nothing; coming back is a resize as well, so it measures on the way in.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.2.4] - 2026-10-22

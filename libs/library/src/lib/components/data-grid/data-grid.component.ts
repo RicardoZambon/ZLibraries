@@ -130,6 +130,22 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
   protected get shouldDisplayMessageWhenEmpty(): boolean {
     return this.dataGridDataset?.configs?.showMessageOnEmpty ?? true;
   }
+
+  /**
+   * Whether the grid is in the document, which it is not while the route-reuse strategy holds its
+   * view detached -- the list a tab keeps in its history while the user is on a record.
+   *
+   * Nothing may measure the CDK viewport then. The body leaving the document is itself a resize,
+   * to nothing, and measuring makes the viewport work out its rendered range from a scroll offset
+   * of 0 and write that out while detached, which leaves its own change-detection flag stuck until
+   * the view renders again. Reattached and scrolled back, the viewport then computes the right
+   * range but cannot write the content offset out: the rows are rendered, translated to the top,
+   * and the viewport shows the place the user had scrolled to -- an empty list. Coming back is a
+   * resize as well, from nothing to the panel, so the measurement still happens, on the way in.
+   */
+  private get isBodyAttached(): boolean {
+    return this.bodyElement?.nativeElement?.isConnected ?? false;
+  }
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -174,8 +190,12 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
 
       this.changeDetectorRef.detectChanges();
 
+      // A load can finish after the user has left the list -- a record opened while the next page
+      // was still coming in -- and a detached grid must not be measured. See isBodyAttached.
       setTimeout(() => {
-        this.viewport?.checkViewportSize();
+        if (this.isBodyAttached) {
+          this.viewport?.checkViewportSize();
+        }
       });
     });
 
@@ -222,6 +242,12 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
     });
 
     this.bodyResized$.pipe(debounceTime(150), takeUntil(this.destroy$)).subscribe(() => {
+      // Leaving the document is a resize too. A detached grid has nothing to measure, and measuring
+      // it is what left the list empty when it came back; see isBodyAttached.
+      if (!this.isBodyAttached) {
+        return;
+      }
+
       const viewportWidth: number = this.viewport?.measureViewportSize('horizontal') ?? 0;
       if (viewportWidth > 0) {
         this.headerRightMargin = this.bodyElement.nativeElement.clientWidth - viewportWidth;
