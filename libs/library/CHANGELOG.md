@@ -21,6 +21,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A submit button inside a modal no longer reloads the whole application.** Confirming a filter
+  applied it and then, about a second later, reloaded the page. The modal's content sits in a native
+  `<form>`, and a `type="submit"` button — `framework-button-filters`' Confirm, or any `<button>`
+  without a type — made the browser submit it: a GET to the current URL, leaving a bare `?` behind.
+  Nothing in the modal ever cancelled that; the consumer's `FormGroupDirective` did, by accident,
+  for as long as the submit bubbled through it. Since 3.2.1 moved the modal's host to `<body>` it no
+  longer does, so the form now prevents its own native submission. The event still bubbles.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [3.2.3] - 2026-09-26
