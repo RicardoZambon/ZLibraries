@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Going back in one tab no longer drops a view another tab still has open.** Every open tab keeps
+  its views in the reuse cache — the one it shows or one in its history — and a view should leave
+  that cache only once no tab has its URL open. `navigateCurrentTabBack` cleared the handle of every
+  entry it removed regardless, so a record open in two tabs lost its cached view in the other one
+  too. It now checks first, as `closeTab` and `replaceCurrentTabSubView` already did.
+
 ### ⚠ Breaking Changes / Migration
 
 ## [4.0.4] - 2026-10-10

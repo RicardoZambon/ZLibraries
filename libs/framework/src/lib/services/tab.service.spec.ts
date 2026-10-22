@@ -512,6 +512,27 @@ describe('TabService', () => {
       expect(mockReuseStrategy.clearHandle).toHaveBeenCalledWith('/users/9');
       expect(mockReuseStrategy.clearHandle).toHaveBeenCalledWith('/users/9/audit');
     });
+
+    // Every open tab keeps its views in the reuse cache, the current one or one in its history, and
+    // going back in one tab must not take a view another tab still holds. closeTab and
+    // replaceCurrentTabSubView already checked; this path cleared every popped URL unconditionally.
+    it('should keep the handle of a removed entry that another tab still has open', () => {
+      // Tab 0: /users -> /users/9 -> /users/10, so /users/9 is in its history, not on top.
+      service.openTab(createTab('/users', 'Users'));
+      service.navigateCurrentTab(createTab('/users/9', 'User 9', '/users/9'));
+      service.navigateCurrentTab(createTab('/users/10', 'User 10', '/users/10'));
+
+      // Tab 1: /roles -> /users/9. Entity matching only looks at the top of other tabs, and Tab 0's
+      // top is /users/10, so /users/9 is pushed here as well.
+      service.openTab(createTab('/roles', 'Roles'));
+      service.navigateCurrentTab(createTab('/users/9', 'User 9', '/users/9'));
+
+      mockReuseStrategy.clearHandle.mockClear();
+      service.navigateCurrentTabBack(service.activeTabHistory[0]);
+
+      expect(service.activeTabHistory.map((tab: ITab) => tab.url)).toEqual(['/roles']);
+      expect(mockReuseStrategy.clearHandle).not.toHaveBeenCalledWith('/users/9');
+    });
   });
 
   // =========================================================================

@@ -233,15 +233,24 @@ export class TabService {
 
     const lastIndex: number = this.activeTab.lastIndexOf(tab);
     if (lastIndex !== -1) {
-      this.activeTab.slice(lastIndex + 1).forEach((tab: ITab) => {
-        this.customReuseStrategy.clearHandle(tab.url);
-      });
+      const removedEntries: ITab[] = this.activeTab.slice(lastIndex + 1);
 
       this.openTabs[this.activeTabIndex] = this.activeTab.slice(0, lastIndex + 1);
 
       if (this.displayTitleIndices[this.activeTabIndex] > lastIndex) {
         this.displayTitleIndices[this.activeTabIndex] = lastIndex;
       }
+
+      // Every open tab keeps its views in the reuse cache, the one it shows or one in its history,
+      // so a view leaves the cache only once no tab has its URL open. This cleared every removed
+      // URL unconditionally and could take a view out from under another tab; closeTab and
+      // replaceCurrentTabSubView already made this check. The history is cut first, so the removed
+      // entries no longer count as open themselves.
+      removedEntries.forEach((entry: ITab) => {
+        if (!this.isUrlOpen(entry.url)) {
+          this.customReuseStrategy.clearHandle(entry.url);
+        }
+      });
     }
 
     this.navigateTo(tab);
