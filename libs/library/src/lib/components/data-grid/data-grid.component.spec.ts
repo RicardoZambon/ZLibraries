@@ -31,7 +31,7 @@ describe('DataGridComponent', () => {
   };
   let mockChangeDetectorRef: { detectChanges: jest.Mock };
   let mockNgZone: { runOutsideAngular: jest.Mock };
-  let mockBodyElement: { nativeElement: { clientWidth: number } };
+  let mockBodyElement: { nativeElement: { clientWidth: number; isConnected: boolean } };
 
   let mockResizeObserverInstance: { observe: jest.Mock; disconnect: jest.Mock };
   let resizeObserverCallback: (() => void) | undefined;
@@ -81,8 +81,11 @@ describe('DataGridComponent', () => {
       runOutsideAngular: jest.fn((fn: () => void) => fn()),
     };
 
+    // Attached by default, which is the grid on screen. A grid whose view the route-reuse strategy
+    // has detached keeps its element but loses its place in the document; tests model that by
+    // setting isConnected to false.
     mockBodyElement = {
-      nativeElement: { clientWidth: 520 },
+      nativeElement: { clientWidth: 520, isConnected: true },
     };
 
     component = Object.create(DataGridComponent.prototype);
@@ -222,6 +225,20 @@ describe('DataGridComponent', () => {
       jest.useRealTimers();
     });
 
+    // A load can finish after the user has already left the list -- open a record while the next
+    // page is still coming in -- and by then the view sits detached in the route-reuse cache.
+    it('should not measure the viewport for a load that finishes while the grid is detached', () => {
+      jest.useFakeTimers();
+      mockBodyElement.nativeElement.isConnected = false;
+
+      mockDataGridDataset.loadFinished.emit(true);
+      jest.runAllTimers();
+
+      expect(mockViewport.checkViewportSize).not.toHaveBeenCalled();
+
+      jest.useRealTimers();
+    });
+
     it('should recalculate headerRightMargin after loadFinished', () => {
       jest.useFakeTimers();
       mockViewport.measureViewportSize.mockReturnValue(500);
@@ -347,6 +364,50 @@ describe('DataGridComponent', () => {
 
       resizeObserverCallback!();
       resizeObserverCallback!();
+      resizeObserverCallback!();
+      jest.advanceTimersByTime(150);
+
+      expect(mockViewport.checkViewportSize).toHaveBeenCalledTimes(1);
+
+      jest.useRealTimers();
+    });
+
+    /**
+     * The empty list after reopening a screen from the menu.
+     *
+     * The route-reuse strategy detaches a list's view when the user opens a record, and the body
+     * leaving the document is itself a resize -- to nothing -- so the observer fires. Measuring
+     * then makes the CDK viewport work out its rendered range from a scroll offset of 0 and write
+     * that out while detached, which leaves its own change-detection flag stuck until the view is
+     * rendered again. Once reattached and scrolled back, the viewport computes the right range but
+     * cannot write the content offset out: the rows are there, translated to the top, while the
+     * viewport shows the place the user had scrolled to. An empty list.
+     *
+     * A detached grid has nothing to measure, so it measures nothing.
+     */
+    it('should leave the viewport alone while the grid is detached', () => {
+      jest.useFakeTimers();
+      mockBodyElement.nativeElement.isConnected = false;
+
+      resizeObserverCallback!();
+      jest.advanceTimersByTime(150);
+
+      expect(mockViewport.checkViewportSize).not.toHaveBeenCalled();
+      expect(mockChangeDetectorRef.detectChanges).not.toHaveBeenCalled();
+
+      jest.useRealTimers();
+    });
+
+    // Reattaching is a resize too -- from nothing back to the panel -- so skipping the detached one
+    // loses nothing: the measurement happens on the way back in.
+    it('should measure again once the grid is back in the document', () => {
+      jest.useFakeTimers();
+
+      mockBodyElement.nativeElement.isConnected = false;
+      resizeObserverCallback!();
+      jest.advanceTimersByTime(150);
+
+      mockBodyElement.nativeElement.isConnected = true;
       resizeObserverCallback!();
       jest.advanceTimersByTime(150);
 
