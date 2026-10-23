@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { ApplicationRef, ChangeDetectorRef, Injectable } from '@angular/core';
+import { ApplicationRef, Injectable, signal, WritableSignal } from '@angular/core';
 import { Router, RouteReuseStrategy } from '@angular/router';
 import { CustomReuseStrategy } from './custom-reuse-strategy';
 import { ITab } from '../models';
@@ -12,6 +12,14 @@ export class TabService {
   //#endregion
 
   //#region Variables
+  // Tab state is a tree of arrays mutated in place -- spliced, pushed, and with ITab objects
+  // whose titles are rewritten as they resolve. A signal over the array could not see any of
+  // that, so this counter stands in for it: every write below bumps it, and the public getters
+  // read it, which is what makes a template that reads them re-render. It is a bridge, not the
+  // destination -- the tab state itself still wants to become signals. See
+  // docs/guides/reactivity.md.
+  private readonly revision: WritableSignal<number> = signal(0);
+
   private activeTabIndex = -1;
   private customReuseStrategy: CustomReuseStrategy;
   private displayTitleIndices: number[] = [];
@@ -20,14 +28,17 @@ export class TabService {
 
   //#region Properties
   public get activeTabHistory(): ITab[] {
+    this.revision();
     return this.openTabs[this.activeTabIndex] ?? [];
   }
 
   public get activeTabs(): ITab[] {
+    this.revision();
     return this.openTabs.map((tabs: ITab[]) => tabs[0]) ?? [];
   }
 
   public get activeTabsDisplayTitles(): (string | undefined)[] {
+    this.revision();
     return this.openTabs.map((tabs: ITab[], i: number) => {
       const displayIndex: number = this.displayTitleIndices[i] ?? 0;
       return tabs[displayIndex]?.title;
@@ -35,6 +46,7 @@ export class TabService {
   }
 
   public get activeTabsLoadingStates(): boolean[] {
+    this.revision();
     return this.openTabs.map((tabs: ITab[], i: number) => {
       const displayIndex: number = this.displayTitleIndices[i] ?? 0;
       return tabs[displayIndex]?.isTitleLoading ?? true;
@@ -67,6 +79,7 @@ export class TabService {
   //#region Public methods
   public activateTab(tab: ITab): void {
     this.activeTabIndex = this.activeTabs.indexOf(tab);
+    this.touched();
     this.navigateTo(this.currentViewOf(this.activeTabIndex));
   }
 
@@ -91,8 +104,11 @@ export class TabService {
 
   public closeAllTabs(): void {
     this.openTabs = [];
+    this.touched();
     this.displayTitleIndices = [];
+    this.touched();
     this.activeTabIndex = -1;
+    this.touched();
     this.customReuseStrategy.clearAllHandles();
   }
 
@@ -104,7 +120,9 @@ export class TabService {
     const wasActive: boolean = index === this.activeTabIndex;
     const closedTab: ITab[] = this.openTabs[index];
     this.openTabs.splice(index, 1);
+    this.touched();
     this.displayTitleIndices.splice(index, 1);
+    this.touched();
 
     if (wasActive) {
       // Closed the active tab — pick an adjacent tab to focus, and put it back on the view it was
@@ -113,6 +131,7 @@ export class TabService {
       // tab, until the tab was clicked again.
       if (this.activeTabIndex >= this.openTabs.length) {
         this.activeTabIndex = this.openTabs.length - 1;
+        this.touched();
       }
 
       // Undefined once the last tab is gone, which navigateTo answers with the home URL.
@@ -179,6 +198,7 @@ export class TabService {
       const entityMatchIndex: number = this.findTabIndexByEntityMatch(tab.entityBaseUrl, this.activeTabIndex);
       if (entityMatchIndex !== -1) {
         this.activeTabIndex = entityMatchIndex;
+        this.touched();
         const otherTab: ITab[] = this.openTabs[entityMatchIndex];
         this.navigateTo(otherTab[otherTab.length - 1]);
         return;
@@ -188,6 +208,7 @@ export class TabService {
       const showingIndex: number = this.findTabIndexByCurrentView(tab.url, this.activeTabIndex, true);
       if (showingIndex !== -1) {
         this.activeTabIndex = showingIndex;
+        this.touched();
         const otherTab: ITab[] = this.openTabs[showingIndex];
         this.navigateTo(otherTab[otherTab.length - 1]);
         return;
@@ -213,6 +234,7 @@ export class TabService {
 
     this.activeTab.push(tab);
     this.displayTitleIndices[this.activeTabIndex] = this.activeTab.length - 1;
+    this.touched();
 
     this.navigateTo(tab, clonedUrl);
   }
@@ -226,6 +248,7 @@ export class TabService {
     const otherTabIndex: number = this.findTabIndexByCurrentView(tab.url, this.activeTabIndex);
     if (otherTabIndex !== -1) {
       this.activeTabIndex = otherTabIndex;
+      this.touched();
       const otherTab: ITab[] = this.openTabs[otherTabIndex];
       this.navigateTo(otherTab[otherTab.length - 1]);
       return;
@@ -236,9 +259,11 @@ export class TabService {
       const removedEntries: ITab[] = this.activeTab.slice(lastIndex + 1);
 
       this.openTabs[this.activeTabIndex] = this.activeTab.slice(0, lastIndex + 1);
+      this.touched();
 
       if (this.displayTitleIndices[this.activeTabIndex] > lastIndex) {
         this.displayTitleIndices[this.activeTabIndex] = lastIndex;
+        this.touched();
       }
 
       // Every open tab keeps its views in the reuse cache, the one it shows or one in its history,
@@ -279,6 +304,7 @@ export class TabService {
     const exactMatchIndex: number = this.findTabIndexByCurrentView(tab.url);
     if (exactMatchIndex !== -1) {
       this.activeTabIndex = exactMatchIndex;
+      this.touched();
       const currentTab: ITab[] = this.openTabs[exactMatchIndex];
       this.navigateTo(currentTab[currentTab.length - 1]);
       return;
@@ -289,6 +315,7 @@ export class TabService {
       const entityMatchIndex: number = this.findTabIndexByEntityMatch(tab.entityBaseUrl);
       if (entityMatchIndex !== -1) {
         this.activeTabIndex = entityMatchIndex;
+        this.touched();
         const existingTab: ITab[] = this.openTabs[entityMatchIndex];
         this.navigateTo(existingTab[existingTab.length - 1]);
         return;
@@ -298,8 +325,11 @@ export class TabService {
     // 3. No match — open a new tab.
     this.inheritTitleIfKnown(tab);
     this.openTabs.push([tab]);
+    this.touched();
     this.displayTitleIndices.push(0);
+    this.touched();
     this.activeTabIndex = this.openTabs.length - 1;
+    this.touched();
     this.navigateTo(tab);
   }
 
@@ -325,8 +355,10 @@ export class TabService {
       }
 
       this.openTabs[this.activeTabIndex] = [...keptEntries, tab];
+      this.touched();
     } else {
       this.openTabs[this.activeTabIndex] = keptEntries;
+      this.touched();
     }
 
     // Clear reuse-strategy handles for removed entries no longer open anywhere
@@ -368,6 +400,7 @@ export class TabService {
   public updateActiveTabRootTitle(title: string): void {
     if (this.activeTab && this.activeTab.length > 0) {
       this.activeTab[0].title = title;
+      this.touched();
     }
   }
 
@@ -377,11 +410,17 @@ export class TabService {
       .filter((tab: ITab) => tab.url === url)
       .forEach((tab: ITab) => {
         tab.title = title;
+        this.touched();
       });
   }
   //#endregion
 
   //#region Private methods
+  /** Announces that the tab state changed, so views reading it re-render. */
+  private touched(): void {
+    this.revision.update((revision: number) => revision + 1);
+  }
+
   /**
    * The view a tab is showing: the top of its history stack.
    *
@@ -440,7 +479,9 @@ export class TabService {
 
     if (existing) {
       tab.title = existing.title;
+      this.touched();
       tab.isTitleLoading = false;
+      this.touched();
     }
   }
 

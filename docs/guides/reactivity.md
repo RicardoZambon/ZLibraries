@@ -111,6 +111,17 @@ Three rules make it an oracle rather than decoration:
 declaring `Eager` stays just as stale as one declaring nothing. A clean Storybook console proves
 nothing — see the NG0100 notes in `libs/framework/CLAUDE.md`.
 
+## One bridge, deliberately
+
+`TabService` keeps a `revision` signal: every write to the tab state bumps it, and the public
+getters read it. That read is what makes a template using them re-render.
+
+It is a bridge, not the destination. The tab state is a tree of arrays mutated in place, with
+`ITab` objects whose titles are rewritten as they resolve, so a signal holding the array could
+not see any of it; converting that service properly is its own change. The rendering guarantee
+holds either way, which is the point -- but do not copy this shape into a component. There, the
+state itself becomes the signal.
+
 ## Deferrals that are not change-detection dodges
 
 Do not "fix" these:
@@ -122,8 +133,8 @@ Do not "fix" these:
 ## Where this stands
 
 Done: all 20 view/button/filter base classes; `SidebarService`, `SidebarComponent`,
-`SidebarItemComponent`, `RibbonGroupComponent`, `RibbonGroupChild`, `BaseButton`, `TabsComponent`
-and `ServicesHistoryFilterComponent`.
+`SidebarItemComponent`, `RibbonGroupComponent`, `RibbonGroupChild`, `BaseButton`,
+`TabsComponent`, `TabService` (via the bridge above) and `ServicesHistoryFilterComponent`.
 
 Remaining: the lists in the three `change-detection-contract.spec.ts` files — 21 in framework, 11 in
 library, 9 in the shared public API, plus `LanguageSelectorComponent` and `LoginComponent`, which

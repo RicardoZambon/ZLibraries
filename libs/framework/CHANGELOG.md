@@ -31,6 +31,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   from an asynchronous `checkActionsAreAllowed` call and assigned a plain field, which told Angular
   nothing. Under Angular 22's default strategy the button stayed hidden until something else forced
   a render.
+- **The tab strip renders the tabs you open.** In an application whose root component uses
+  Angular 22's default strategy, opening anything from the menu changed the URL and left the tab
+  bar, the view, the ribbon and the breadcrumbs blank: `TabsComponent` reads the open tabs
+  through getters on `TabService`, which mutates its arrays in place, and nothing told the
+  component to render. `TabService` now announces its own changes, so the tabs, the titles that
+  resolve later, and the breadcrumbs all reach the screen. Found by running SecurityHub against
+  this package rather than by a test -- which is why one now guards it.
+
 - **The tab strip re-measures when it narrows.** Bringing the selected tab back into view hung off
   `ngAfterViewChecked`, which only ever ran because zone.js produced a pass on every event. The
   `ResizeObserver` -- which is how a browser actually reports a box changing -- now does the full
