@@ -64,6 +64,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   any of them as a field -- `public override isActive = false;` -- delete that line. A field
   shadows the accessor, and the sidebar stops reacting to it.
 
+## [3.2.5] - 2026-10-22
+
+### Fixed
+
+- **A list reopened from the menu no longer comes back empty.** Opening a record from a list that
+  had been scrolled, then reopening that list from the menu, showed the column headers over an empty
+  body. The tab reuses the list's cached view, as it should, but while that view sat detached the
+  grid kept measuring its CDK viewport: the body leaving the document is a resize, and a load that
+  finishes after the user has left is followed by a re-measure too. Measured detached, the viewport
+  worked out its range from a scroll offset of 0 and left its own change-detection flag stuck, so
+  once reattached it computed the right range but could not write the content offset out — the rows
+  were rendered, translated to the top, while the viewport showed where the user had scrolled to.
+  Whether something later rescued it was a matter of timing, which is why it came and went. A
+  detached grid now measures nothing; coming back is a resize as well, so it measures on the way in.
+
+## [3.2.4] - 2026-10-22
+
+### Fixed
+
+- **A submit button inside a modal no longer reloads the whole application.** Confirming a filter
+  applied it and then, about a second later, reloaded the page. The modal's content sits in a native
+  `<form>`, and a `type="submit"` button — `framework-button-filters`' Confirm, or any `<button>`
+  without a type — made the browser submit it: a GET to the current URL, leaving a bare `?` behind.
+  Nothing in the modal ever cancelled that; the consumer's `FormGroupDirective` did, by accident,
+  for as long as the submit bubbled through it. Since 3.2.1 moved the modal's host to `<body>` it no
+  longer does, so the form now prevents its own native submission. The event still bubbles.
+
 ## [3.2.3] - 2026-09-26
 
 ### Fixed
@@ -723,7 +750,9 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.5...HEAD
+[3.2.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.5
+[3.2.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.4
 [3.2.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.3
 [3.2.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.2
 [3.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.1
