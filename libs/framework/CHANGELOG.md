@@ -53,6 +53,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `"interpolatedSignalNotInvoked": "error"` under `angularCompilerOptions.extendedDiagnostics` in
   your `tsconfig.json`, which makes `{{ someSignal }}` a build failure too.
 
+- **A component that delegates its visibility to an inner button needs a signal view query.** If
+  you implement `RibbonGroupChild` by wrapping a `framework-button` and forwarding its state,
+  a rename alone is not enough -- a `computed` reading a plain `@ViewChild` never re-runs when
+  the query resolves:
+
+  ```ts
+  // before
+  @ViewChild(ButtonComponent) private buttonComponent!: ButtonComponent;
+  public get visible(): boolean {
+    return this.buttonComponent?.visible ?? false;
+  }
+
+  // after
+  private readonly buttonComponent = viewChild(ButtonComponent);
+  public readonly isVisible: Signal<boolean> = computed(() => this.buttonComponent()?.isVisible() ?? false);
+  ```
+
+  Every other read of that query moves to `this.buttonComponent()?.…` as well.
+
 - **`TabsComponent` no longer injects `ChangeDetectorRef`.** Only relevant if you construct it
   yourself; used through its selector, nothing changes.
 
