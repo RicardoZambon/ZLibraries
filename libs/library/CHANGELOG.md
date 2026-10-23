@@ -15,10 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **A test harness that catches a component which silently stops rendering**, published as
   `@zambon-dev/library/testing`. `renderUnderOnPush(MyComponent)` renders a component beneath a
-  clean OnPush ancestor -- which is what your application is -- and `render.tick()` runs the real
-  `ApplicationRef.tick()`. A component that updates state without telling Angular cannot update its
-  DOM under it, which is the failure a plain `TestBed` fixture cannot express. Use it on your own
-  components as you remove `ChangeDetectionStrategy.Eager` from them.
+  clean OnPush ancestor -- which is what your application is -- and `render.tick()` runs a pass
+  that such an ancestor can still short-circuit. A component that updates state without telling
+  Angular cannot update its DOM under it, which is the failure a plain `TestBed` fixture cannot
+  express. Use it on your own components as you remove `ChangeDetectionStrategy.Eager` from them.
+  It works under both a zone and a zoneless test environment, so you can adopt it without
+  changing your test setup first.
 
 ### Changed
 

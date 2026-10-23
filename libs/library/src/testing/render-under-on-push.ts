@@ -1,4 +1,4 @@
-import { ApplicationRef, ComponentRef, Type } from '@angular/core';
+import { ApplicationRef, ComponentRef, Type, ɵZONELESS_ENABLED as ZONELESS_ENABLED } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InertHostComponent } from './inert-host';
 
@@ -14,11 +14,10 @@ export interface OnPushRender<TComponent> {
   /** Binds an input the way a template would, notifying Angular. */
   setInput(name: string, value: unknown): void;
   /**
-   * Runs the production change-detection pass.
+   * Runs a change-detection pass that a clean `OnPush` ancestor can still short-circuit.
    *
-   * Use this and never `fixture.detectChanges()`: the fixture's root host view is `CheckAlways`,
-   * and under a zoneless test environment `detectChanges()` additionally forces every test view,
-   * either of which hands the component a refresh it did not earn.
+   * Call this and never `fixture.detectChanges()` yourself -- under a zoneless test environment
+   * that call forces every test view and hands the component a refresh it did not earn.
    */
   tick(): void;
 }
@@ -48,8 +47,20 @@ export function renderUnderOnPush<TComponent>(
 
   Object.entries(inputs).forEach(([name, value]: [string, unknown]) => componentRef.setInput(name, value));
 
+  // Which call reaches the component differs by test environment, and getting it wrong makes the
+  // harness useless in opposite directions.
+  //
+  // Zoneless: the fixture registers its host view for auto-detection, so ApplicationRef.tick()
+  // reaches it -- and fixture.detectChanges() must be avoided, because it sets includeAllTestViews
+  // and refreshes everything regardless of what notified.
+  //
+  // Zone (what consumer applications still use): the host view is NOT registered, so tick() does
+  // nothing at all. fixture.detectChanges() is the one that works, and it still discriminates --
+  // it refreshes the fixture's own CheckAlways host view in Global mode, where a clean OnPush
+  // ancestor is skipped and the descent below it continues in Targeted mode.
   const applicationRef: ApplicationRef = TestBed.inject(ApplicationRef);
-  const tick = (): void => applicationRef.tick();
+  const isZoneless: boolean = TestBed.inject(ZONELESS_ENABLED, false, { optional: true }) ?? false;
+  const tick = (): void => (isZoneless ? applicationRef.tick() : fixture.detectChanges());
 
   // The component under test is brand new and therefore dirty, so this first pass paints it and
   // then leaves the whole path clean -- the state a consumer application sits in between events.

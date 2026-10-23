@@ -93,6 +93,12 @@ render.tick();           // ApplicationRef.tick(), the production pass
 expect(render.element.querySelector('.loading')).toBeNull();
 ```
 
+`render.tick()` picks the pass that actually discriminates in the environment it finds:
+`ApplicationRef.tick()` under zoneless, where the fixture registers its host view for
+auto-detection, and `fixture.detectChanges()` under zone, where it does not and `tick()` would
+reach nothing. Both leave a clean OnPush ancestor free to short-circuit. That is why a consumer
+still on zone can use this harness without changing their test setup first.
+
 Three rules make it an oracle rather than decoration:
 
 1. **Drive the source after the call returns.** Before the first paint every strategy renders.
