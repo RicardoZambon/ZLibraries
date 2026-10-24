@@ -11,6 +11,16 @@
       "glob": "CHANGELOG.md",
       "input": ".",
       "output": "."
+    },
+    {
+      "glob": "**/*.scss",
+      "input": "src/styles",
+      "output": "styles"
+    },
+    {
+      "glob": "**/*.css",
+      "input": "src/styles",
+      "output": "styles"
     }
   ],
   "lib": {

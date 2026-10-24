@@ -3,7 +3,7 @@ import { MultiSelectComponent } from '../../components/multi-select/multi-select
 
 const meta: Meta<MultiSelectComponent> = {
   component: MultiSelectComponent,
-  title: 'Modals/Multi Select',
+  title: 'Library/Modals/Multi Select',
 };
 export default meta;
 type Story = StoryObj<MultiSelectComponent>;

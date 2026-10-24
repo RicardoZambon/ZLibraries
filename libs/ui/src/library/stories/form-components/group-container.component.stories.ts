@@ -10,7 +10,7 @@ const meta: Meta<GroupContainerComponent> = {
       imports: [GroupAccordionComponent, GroupScrollSpyComponent],
     }),
   ],
-  title: 'Form Components/Group Container',
+  title: 'Library/Form Components/Group Container',
 };
 export default meta;
 type Story = StoryObj<GroupContainerComponent>;

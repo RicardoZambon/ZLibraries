@@ -3,7 +3,7 @@ import { ModalComponent } from '../../components/modal/modal.component';
 
 const meta: Meta<ModalComponent> = {
   component: ModalComponent,
-  title: 'Modals/Simple Modal',
+  title: 'Library/Modals/Simple Modal',
 };
 export default meta;
 type Story = StoryObj<ModalComponent>;

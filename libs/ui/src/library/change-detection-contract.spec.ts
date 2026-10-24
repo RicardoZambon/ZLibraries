@@ -2,7 +2,7 @@ import { Type, ɵgetComponentDef as getComponentDef } from '@angular/core';
 import * as publicApi from '../index';
 
 /**
- * The migration ratchet for `@zambon-dev/library`.
+ * The migration ratchet for `@zambon-dev/ui/library`.
  *
  * Angular 22 compiles a component that declares no strategy to OnPush, so `Eager` here is an
  * explicit opt-out: the component still depends on being walked on every pass and has not been

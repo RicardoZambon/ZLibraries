@@ -1,6 +1,7 @@
 export { IBatchUpdate } from './batch-update';
 export { ICatalogEntry } from './catalog-entry';
 export { ICatalogResult } from './catalog-result';
+export { AngularAssetPattern } from './angular-asset-pattern';
 export * from './configs';
 export { IListParameters, ISummaryParameters } from './data-grid-parameters';
 export { IGridColumn } from './grid-column';

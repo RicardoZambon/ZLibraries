@@ -41,5 +41,17 @@
   },
   "sideEffects": [
     "**/*.scss"
-  ]
+  ],
+  "exports": {
+    "./styles/variables": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    },
+    "./styles/variables.scss": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    }
+  }
 }

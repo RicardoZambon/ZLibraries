@@ -3,7 +3,7 @@ import { GroupAccordionComponent } from '../../components/group-accordion/group-
 
 const meta: Meta<GroupAccordionComponent> = {
   component: GroupAccordionComponent,
-  title: 'Form Components/Group Accordion',
+  title: 'Library/Form Components/Group Accordion',
 };
 export default meta;
 type Story = StoryObj<GroupAccordionComponent>;

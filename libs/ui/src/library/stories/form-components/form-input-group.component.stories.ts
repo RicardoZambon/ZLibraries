@@ -10,7 +10,7 @@ const meta: Meta<FormInputGroupComponent> = {
       imports: [FormGroupComponent, ReactiveFormsModule],
     }),
   ],
-  title: 'Form Components/Form Input Group',
+  title: 'Library/Form Components/Form Input Group',
 };
 export default meta;
 type Story = StoryObj<FormInputGroupComponent>;

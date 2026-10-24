@@ -7,7 +7,7 @@ import { DataGridDataset } from '../../services/datasets/data-grid.dataset';
 
 const meta: Meta<DataGridComponent> = {
   component: DataGridComponent,
-  title: 'Data Grid/Data Grid',
+  title: 'Library/Data Grid/Data Grid',
 };
 export default meta;
 type Story = StoryObj<DataGridComponent>;

@@ -49,7 +49,7 @@ const meta: Meta<SidebarComponent> = {
       ],
     }),
   ],
-  title: 'Sidebar/Sidebar',
+  title: 'Library/Sidebar/Sidebar',
 };
 export default meta;
 type Story = StoryObj<SidebarComponent>;

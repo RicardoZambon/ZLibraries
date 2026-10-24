@@ -10,7 +10,7 @@ const meta: Meta<CatalogSelectComponent> = {
       imports: [FormGroupComponent, ReactiveFormsModule],
     }),
   ],
-  title: 'Form Components/Catalog Select',
+  title: 'Library/Form Components/Catalog Select',
 };
 export default meta;
 type Story = StoryObj<CatalogSelectComponent>;

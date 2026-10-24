@@ -22,7 +22,7 @@ const meta: Meta<RibbonComponent> = {
       imports: [RibbonButtonComponent, RibbonGroupComponent, StorybookRibbonChildComponent],
     }),
   ],
-  title: 'Ribbon/Ribbon',
+  title: 'Library/Ribbon/Ribbon',
 };
 export default meta;
 type Story = StoryObj<RibbonComponent>;

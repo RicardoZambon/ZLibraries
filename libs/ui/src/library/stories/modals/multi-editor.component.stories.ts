@@ -48,7 +48,7 @@ const meta: Meta<MultiEditorComponent> = {
       ],
     }),
   ],
-  title: 'Modals/Multi Editor',
+  title: 'Library/Modals/Multi Editor',
 };
 export default meta;
 type Story = StoryObj<MultiEditorComponent>;
