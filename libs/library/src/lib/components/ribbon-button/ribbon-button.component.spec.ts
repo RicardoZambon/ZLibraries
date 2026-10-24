@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { RibbonButtonComponent } from './ribbon-button.component';
 import { IRibbonButtonOption } from '../../models/ribbon-button-option';
 
@@ -8,19 +9,19 @@ describe('RibbonButtonComponent', () => {
 
   beforeEach(() => {
     component = Object.create(RibbonButtonComponent.prototype);
-    component.color = 'text-primary-500';
-    component.defaultOption = -1;
-    component.disabled = false;
-    component.icon = 'fa-save';
-    component.iconSize = 'large';
-    component.label = 'Test';
-    component.loading = false;
-    component.options = [];
-    component.tooltip = '';
+    component.color = signal('text-primary-500');
+    component.defaultOption = signal(-1);
+    component.disabled = signal(false);
+    component.icon = signal('fa-save');
+    component.iconSize = signal('large');
+    component.label = signal('Test');
+    component.loading = signal(false);
+    component.options = signal([]);
+    component.tooltip = signal('');
     component.action = { emit: jest.fn() } as any;
-    (component as any).showDropdown = false;
+    (component as any).showDropdown = signal(false);
     (component as any).clickedOutside = false;
-    (component as any).status = null;
+    (component as any).status = signal(null);
 
     // The options list is rendered through a CDK overlay so it is not cut off by an ancestor that
     // clips -- lib-data-grid does. Stubbed rather than instantiated: what these tests are about is
@@ -28,8 +29,9 @@ describe('RibbonButtonComponent', () => {
     overlayRef = { attach: jest.fn(), detach: jest.fn(), dispose: jest.fn() };
     createOverlay = jest.fn().mockReturnValue(overlayRef);
 
-    (component as any).buttonContainer = { nativeElement: document.createElement('div') };
-    (component as any).optionsDropdown = {};
+    // View queries are signals too, and Object.create() runs no field initialiser.
+    (component as any).buttonContainer = signal({ nativeElement: document.createElement('div') });
+    (component as any).optionsDropdown = signal({});
     (component as any).overlay = {
       create: createOverlay,
       scrollStrategies: { reposition: jest.fn() },
@@ -44,46 +46,47 @@ describe('RibbonButtonComponent', () => {
     it('should emit action with no value when there are no options', () => {
       (component as any).onButtonClicked();
 
-      expect(component.action.emit).toHaveBeenCalledWith();
+      // output() has no no-argument overload, so 'no option chosen' is an explicit undefined.
+      expect(component.action.emit).toHaveBeenCalledWith(undefined);
     });
 
     it('should toggle dropdown when there are options but no default option', () => {
-      component.options = [
+      component.options = signal([
         { id: 'opt-1', label: 'Option 1' },
         { id: 'opt-2', label: 'Option 2' },
-      ];
+      ]);
 
       (component as any).onButtonClicked();
 
-      expect((component as any).showDropdown).toBe(true);
+      expect((component as any).showDropdown()).toBe(true);
       expect(component.action.emit).not.toHaveBeenCalled();
     });
 
     it('should close dropdown and emit default option when defaultOption is set', () => {
-      component.options = [
+      component.options = signal([
         { id: 'save', label: 'Save' },
         { id: 'save-and-close', label: 'Save & Close' },
-      ];
-      component.defaultOption = 0;
-      (component as any).showDropdown = true;
+      ]);
+      component.defaultOption = signal(0);
+      (component as any).showDropdown = signal(true);
 
       (component as any).onButtonClicked();
 
-      expect((component as any).showDropdown).toBe(false);
+      expect((component as any).showDropdown()).toBe(false);
       expect(component.action.emit).toHaveBeenCalledWith('save');
     });
 
     it('should close dropdown before emitting when default option is used (dropdown was open)', () => {
-      component.options = [
+      component.options = signal([
         { id: 'save', label: 'Save' },
         { id: 'save-and-close', label: 'Save & Close' },
-      ];
-      component.defaultOption = 0;
-      (component as any).showDropdown = true;
+      ]);
+      component.defaultOption = signal(0);
+      (component as any).showDropdown = signal(true);
 
       let dropdownStateWhenEmitted: boolean | undefined;
       (component.action.emit as jest.Mock).mockImplementation(() => {
-        dropdownStateWhenEmitted = (component as any).showDropdown;
+        dropdownStateWhenEmitted = (component as any).showDropdown();
       });
 
       (component as any).onButtonClicked();
@@ -94,31 +97,31 @@ describe('RibbonButtonComponent', () => {
 
   describe('onOptionClicked', () => {
     it('should close dropdown and emit the selected option id', () => {
-      (component as any).showDropdown = true;
+      (component as any).showDropdown = signal(true);
       const option: IRibbonButtonOption = { id: 'save-and-new', label: 'Save & New' };
 
       (component as any).onOptionClicked(option);
 
-      expect((component as any).showDropdown).toBe(false);
+      expect((component as any).showDropdown()).toBe(false);
       expect(component.action.emit).toHaveBeenCalledWith('save-and-new');
     });
   });
 
   describe('onShowHideDropdown', () => {
     it('should toggle showDropdown from false to true', () => {
-      (component as any).showDropdown = false;
+      (component as any).showDropdown = signal(false);
 
       (component as any).onShowHideDropdown();
 
-      expect((component as any).showDropdown).toBe(true);
+      expect((component as any).showDropdown()).toBe(true);
     });
 
     it('should toggle showDropdown from true to false', () => {
-      (component as any).showDropdown = true;
+      (component as any).showDropdown = signal(true);
 
       (component as any).onShowHideDropdown();
 
-      expect((component as any).showDropdown).toBe(false);
+      expect((component as any).showDropdown()).toBe(false);
     });
   });
 
@@ -132,94 +135,94 @@ describe('RibbonButtonComponent', () => {
     });
 
     it('should set loading to false and status to the given value', () => {
-      component.loading = true;
+      component.loading = signal(true);
 
       component.finishLoading('success');
 
-      expect(component.loading).toBe(false);
-      expect((component as any).status).toBe('success');
+      expect(component.loading()).toBe(false);
+      expect((component as any).status()).toBe('success');
     });
 
     it('should reset status to null after 1 second', () => {
       component.finishLoading('warning');
 
-      expect((component as any).status).toBe('warning');
+      expect((component as any).status()).toBe('warning');
 
       jest.advanceTimersByTime(1000);
 
-      expect((component as any).status).toBeNull();
+      expect((component as any).status()).toBeNull();
     });
   });
 
   describe('startLoading', () => {
     it('should set loading to true', () => {
-      component.loading = false;
+      component.loading = signal(false);
 
       component.startLoading();
 
-      expect(component.loading).toBe(true);
+      expect(component.loading()).toBe(true);
     });
   });
 
   describe('tooltip', () => {
     it('should expose an empty tooltip by default', () => {
-      expect(component.tooltip).toBe('');
+      expect(component.tooltip()).toBe('');
     });
   });
 
   describe('buttonIcon', () => {
     it('should return success icon when status is success', () => {
-      (component as any).status = 'success';
+      (component as any).status = signal('success');
       expect((component as any).buttonIcon).toBe('fa-check');
     });
 
     it('should return failure icon when status is failure', () => {
-      (component as any).status = 'failure';
+      (component as any).status = signal('failure');
       expect((component as any).buttonIcon).toBe('fa-times');
     });
 
     it('should return warning icon when status is warning', () => {
-      (component as any).status = 'warning';
+      (component as any).status = signal('warning');
       expect((component as any).buttonIcon).toBe('fa-exclamation');
     });
 
     it('should return configured icon when no status', () => {
-      (component as any).status = null;
-      component.icon = 'fa-edit';
+      (component as any).status = signal(null);
+      component.icon = signal('fa-edit');
       expect((component as any).buttonIcon).toBe('fa-edit');
     });
 
     it('should return empty string when no status and no icon', () => {
-      (component as any).status = null;
-      component.icon = undefined;
+      (component as any).status = signal(null);
+      component.icon = signal(undefined);
       expect((component as any).buttonIcon).toBe('');
     });
   });
 
   describe('isButtonDisabled', () => {
     it('should be disabled when disabled input is true', () => {
-      component.disabled = true;
+      component.disabled = signal(true);
       expect((component as any).isButtonDisabled).toBe(true);
     });
 
     it('should be disabled when loading is true', () => {
-      component.loading = true;
+      component.loading = signal(true);
       expect((component as any).isButtonDisabled).toBe(true);
     });
 
     it('should be disabled when all options are not visible', () => {
-      component.options = [
+      component.options = signal([
         { id: 'opt-1', label: 'Option 1', isVisible: false },
         { id: 'opt-2', label: 'Option 2', isVisible: false },
-      ];
+      ]);
       expect((component as any).isButtonDisabled).toBe(true);
     });
 
     it('should not be disabled when at least one option is visible', () => {
-      component.options = [
+      component.options = signal([
         { id: 'opt-1', label: 'Option 1', isVisible: false },
         { id: 'opt-2', label: 'Option 2', isVisible: true },
-      ];
+      ]);
       expect((component as any).isButtonDisabled).toBe(false);
     });
   });
@@ -233,10 +236,10 @@ describe('RibbonButtonComponent', () => {
    */
   describe('the options overlay', () => {
     beforeEach(() => {
-      component.options = [
+      component.options = signal([
         { id: 'opt-1', label: 'Option 1' },
         { id: 'opt-2', label: 'Option 2' },
-      ];
+      ]);
     });
 
     it('creates one overlay when the list opens', () => {
@@ -253,12 +256,12 @@ describe('RibbonButtonComponent', () => {
 
       expect(overlayRef.detach).toHaveBeenCalledTimes(1);
       expect(overlayRef.dispose).toHaveBeenCalledTimes(1);
-      expect((component as any).showDropdown).toBe(false);
+      expect((component as any).showDropdown()).toBe(false);
     });
 
     it('disposes of it when an option is chosen', () => {
       (component as any).onShowHideDropdown();
-      (component as any).onOptionClicked(component.options[1]);
+      (component as any).onOptionClicked(component.options()[1]);
 
       expect(overlayRef.dispose).toHaveBeenCalledTimes(1);
       expect(component.action.emit).toHaveBeenCalledWith('opt-2');
@@ -280,12 +283,13 @@ describe('RibbonButtonComponent', () => {
     });
 
     it('stays closed when there is no list to show', () => {
-      (component as any).optionsDropdown = undefined;
+      // The query resolves to nothing: a signal that answers undefined, not an absent signal.
+      (component as any).optionsDropdown = signal(undefined);
 
       (component as any).onShowHideDropdown();
 
       expect(createOverlay).not.toHaveBeenCalled();
-      expect((component as any).showDropdown).toBe(false);
+      expect((component as any).showDropdown()).toBe(false);
     });
   });
 });
