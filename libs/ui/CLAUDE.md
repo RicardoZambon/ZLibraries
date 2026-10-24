@@ -35,8 +35,15 @@ a `viewChild()`/`contentChildren()`, a getter composed of those, or a constant f
 component's lifetime.
 
 No template here reads a mutable field, a getter over mutable service state, or a value assigned
-inside `.subscribe()`. No component here declares `changeDetection`, uses `ChangeDetectorRef`, or
-injects `NgZone`.
+inside `.subscribe()`.
+
+**No component declares `Eager`.** That is the rule, not "declares no strategy": eight components
+declare an explicit `ChangeDetectionStrategy.OnPush`, which is the same behaviour Angular 22 gives
+a component that declares nothing, and which both the lint rule and the contract specs accept.
+
+Three places still reach for change detection directly, and they are the work that remains rather
+than an exception to the rule: `DataGridRowComponent` injects `ChangeDetectorRef`, and
+`TabsComponent` and `DataGridComponent` inject `NgZone`. Do not add a fourth.
 
 **What that buys the consumer:** a component from `@zambon-dev/ui` renders correctly under any
 change-detection strategy the host application chooses, and under
