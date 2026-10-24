@@ -17,13 +17,14 @@
 > no-op and the listeners run normally, which nothing depends on -- but a component that needed
 > it to be correct would be broken, so never write one.
 >
-> **What this guarantees a consumer:** a component from these packages renders correctly under any
-> change-detection strategy the host application uses, and under `provideZonelessChangeDetection()`.
-> Our packages do not make the host application's choice of strategy part of their API.
+> **What this guarantees a consumer:** a component from `@zambon-dev/ui` renders correctly under
+> any change-detection strategy the host application uses, and under
+> `provideZonelessChangeDetection()`. The package does not make the host application's choice of
+> strategy part of its API.
 >
 > **What stays the consumer's:** the state their own components own. If one of their components
-> assigns a field inside a `.subscribe()` and renders it in its own template, nothing in these
-> packages can know.
+> assigns a field inside a `.subscribe()` and renders it in its own template, nothing in this
+> package can know.
 
 Boundary rule: **Observables cross boundaries; signals hold state a template reads.** RxJS is not
 going anywhere — HTTP calls, and hot notifications with no current value, stay streams. Convert at
@@ -139,24 +140,30 @@ Do not "fix" these:
 
 ## Where this stands
 
-**`@zambon-dev/library` is done.** Every component in it renders without being walked on every
-event, its `STILL_EAGER` list is empty, and
-`@angular-eslint/prefer-on-push-component-change-detection` is an error there. The services and
-datasets behind them -- `FormService`, `SidebarService`, `DataGridDataset`,
-`MultiSelectResultDataset` -- announce their own changes too.
+**The migration is finished, layer by layer.**
 
-**`@zambon-dev/framework` is done too**, as of the ribbon buttons. Its `STILL_EAGER` list is
-empty and the lint rule is an error there as well. `ViewBase.loading`, `LegacySubViewForm.viewMode`
-and `DataProviderService`'s entity id went onto signals behind their existing accessors, which is
-what made the buttons' own templates correct without changing a single call site.
+The **library** layer went first. Its services and datasets came before its components --
+`FormService`, `SidebarService`, `DataGridDataset`, `MultiSelectResultDataset` announce their own
+changes, which is what let the components above them stop watching.
 
-**`@zambon-dev/shared` is done, and with it the migration.** All three `STILL_EAGER` lists are
-empty, all three lint rules are errors, and nothing in these packages declares a
-change-detection strategy any more -- not a component, not a base class, not a test host, not a
-story. A consuming application chooses its own strategy, zoneless included, and these packages
-render correctly underneath it.
+The **framework** layer followed, finishing with the ribbon buttons. `ViewBase.loading`,
+`LegacySubViewForm.viewMode` and `DataProviderService`'s entity id went onto signals behind their
+existing accessors, which made the buttons' templates correct without changing a single call site.
 
-Two components here are not exported, so the contract spec cannot reach them:
+The **shared** layer closed it out.
+
+All three `STILL_EAGER` lists are empty, and
+`@angular-eslint/prefer-on-push-component-change-detection` is an error for the whole package --
+one rule now, not one per package, since the three became `@zambon-dev/ui`.
+
+Be precise about what holds: **no component declares `Eager`**. A few still carry a redundant
+explicit `OnPush`, which changes nothing and which both the lint rule and the contract specs
+accept. "Declares no strategy" would be the wrong rule to state, and it was stated for a while.
+
+A consuming application chooses its own strategy, zoneless included, and the package renders
+correctly underneath it.
+
+Two components are not exported, so no contract spec can reach them:
 `LanguageSelectorComponent` and `LoginComponent`. The lint rule is what covers those.
 
 **The order that worked, and why.** Take a package's services and datasets before the components
@@ -166,6 +173,6 @@ example -- it looked safe because removing an item flipped a loading flag whose 
 refresh the view, while `onItemRemoved` changed the rows with no flag anywhere near it.
 
 **What costs the most time.** Not the components: the specs. The `Object.create(X.prototype)`
-pattern in `libs/framework/CLAUDE.md` runs no field initialiser, so every stubbed field has to
+pattern in `libs/ui/CLAUDE.md` runs no field initialiser, so every stubbed field has to
 become a stubbed signal and every assertion has to read it rather than compare the signal object.
 A `!` or a missing `()` there is silent. Budget for it, and retire that pattern where you can.
