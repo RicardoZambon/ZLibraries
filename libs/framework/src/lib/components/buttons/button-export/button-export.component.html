@@ -2,11 +2,11 @@
   <lib-ribbon-button
     label="Button-Export"
     icon="fa-file-export"
-    [defaultOption]="defaultOption"
+    [defaultOption]="defaultOption()"
     [disabled]="isButtonDisabled"
-    [loading]="loading"
-    [iconSize]="iconSize"
-    [options]="options"
+    [loading]="loading()"
+    [iconSize]="iconSize()"
+    [options]="options()"
     [tooltip]="tooltip"
     (action)="onButtonClicked($event)"
   >

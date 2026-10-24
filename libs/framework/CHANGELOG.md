@@ -15,13 +15,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Every component in this package now renders under any change-detection strategy the host
+  application chooses, zoneless included.** The ribbon buttons were the last group still
+  declaring `Eager`, and the one that depended on it most: a button answers to things that
+  arrive after the first paint -- an access check resolving, a grid announcing a selection, a
+  load finishing -- and none of that reached the screen beneath a clean `OnPush` ancestor.
+  Their state is signals now, and `src/lib/change-detection-contract.spec.ts` asserts over the
+  public API that nothing in this package opts out again.
+
+- **A view's `loading` flag notifies.** `ViewBase` backs it with a signal behind the same
+  accessors, so a subclass reading or writing `this.loading` needs no change and its own
+  template finally reflects it.
+
+- **The legacy form's `viewMode` notifies.** Same treatment, same accessors. It is what the
+  legacy Edit and Save buttons render from.
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+- **A button no longer asks twice whether its actions are allowed.** `allowedActions` fired the
+  check from its setter _and_ the constructor fired it again before any input had arrived, so
+  every button with an access list made two requests. It is one stream over the input now.
+
+- **A button with an access list is disabled until the answer arrives**, rather than clickable
+  and then hidden. This is what `RibbonButtonComponent` already does with a dropdown option
+  whose access has not come back.
+
+- **The confirm and delete buttons show their modal's spinner again.** Their footer button read
+  `modal.isLoading` through a template reference, which became a signal object in 5.0.3 -- and
+  an object is always truthy, so the spinner was permanently on.
+
 ### ⚠ Breaking Changes / Migration
+
+- **`BaseButton`'s state is signals.** Binding to any of them from a template is unchanged.
+  Code that touches them is not:
+
+  | Before                       | After                      |
+  | ---------------------------- | -------------------------- |
+  | `this.disabled = true`       | `this.disabled.set(true)`  |
+  | `this.loading = true`        | `this.loading.set(true)`   |
+  | `this.options = [...]`       | `this.options.set([...])`  |
+  | `this.options.find(...)`     | `this.options().find(...)` |
+  | `this.allowedActions`        | `this.allowedActions()`    |
+  | `this.iconSize`              | `this.iconSize()`          |
+  | `this.button.startLoading()` | `this.startLoading()`      |
+
+  `startLoading()` and `finishLoading(status)` keep their signatures. `disabled`, `loading` and
+  `options` are `model()`, so a subclass can still drive them; the rest are `input()`.
+
+- **Every button component's own inputs are signals too**, and so are the view queries they
+  expose. The ones a host application is most likely to read directly:
+  `ButtonFiltersComponent.modal` is now a `Signal<ModalComponent | undefined>`, and
+  `ButtonViewsLegacyComponent.views` is an `input()`. A template reading one through a
+  reference -- `#btn` then `btn.disabled` -- needs `btn.disabled()`; without the call it reads
+  the signal object, which is always truthy.
+
+- **`ViewBase` has a new protected member, `loadingState`**, the signal behind `loading`. A
+  subclass that already declares something by that name has to rename it.
+
+- **`DefaultDetailsTabViewComponent`'s protected state is signals**: `containerIcon`,
+  `containerTitle` and `detailsViewRoute`. A subclass that reads one needs `()`; one that
+  assigns one needs `.set(...)`.
+
+- The New, Edit and Views buttons only appear once a record exists, which they read from
+  `DataProviderService`. That now announces its entity id, so install the `@zambon-dev/library`
+  released alongside this version rather than an older 4.x.
 
 ## [5.0.3] - 2026-10-24
 

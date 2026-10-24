@@ -1,4 +1,4 @@
-import { Component, EventEmitter, forwardRef, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { BaseButton } from '../../base-button';
 
@@ -6,7 +6,6 @@ import { BaseButton } from '../../base-button';
   selector: 'framework-button-views-legacy',
   templateUrl: './button-views.component.html',
   imports: [RibbonButtonComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonViewsLegacyComponent) }],
 })
 /**
@@ -15,9 +14,9 @@ import { BaseButton } from '../../base-button';
  * and using inject() for dependency injection.
  */
 export class ButtonViewsLegacyComponent extends BaseButton {
-  @Input() views!: IRibbonButtonOption[];
+  public readonly views: InputSignal<IRibbonButtonOption[]> = input<IRibbonButtonOption[]>([]);
 
-  @Output() viewChanged = new EventEmitter<string | undefined>();
+  public readonly viewChanged: OutputEmitterRef<string | undefined> = output<string | undefined>();
 
   clicked(option?: string): void {
     this.viewChanged.emit(option);

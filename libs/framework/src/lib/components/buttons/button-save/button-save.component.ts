@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, forwardRef, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, inject, input, InputSignal, Signal, viewChild } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { DataProviderService, FormService, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { Observable, take, throwError } from 'rxjs';
@@ -13,14 +13,13 @@ import { BaseButton } from '../base-button';
   selector: 'framework-button-save',
   templateUrl: './button-save.component.html',
   imports: [ErrorModalComponent, RibbonButtonComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonSaveComponent) }],
 })
 export class ButtonSaveComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ErrorModalComponent) private errorModal!: ErrorModalComponent;
+  private readonly errorModal: Signal<ErrorModalComponent | undefined> = viewChild(ErrorModalComponent);
 
-  @Input() public defaultOption = 0;
+  public readonly defaultOption: InputSignal<number> = input(0);
   //#endregion
 
   //#region Variables
@@ -44,11 +43,11 @@ export class ButtonSaveComponent extends BaseButton {
   constructor() {
     super();
 
-    this.options = [
+    this.options.set([
       { id: 'save', label: 'Button-Save', icon: 'fa-save' },
       { id: 'save-and-close', label: 'Button-Save-And-Close', icon: 'fa-save' },
       { id: 'save-and-new', label: 'Button-Save-And-New', icon: 'fa-save' },
-    ];
+    ]);
   }
   //#endregion
 
@@ -141,7 +140,7 @@ export class ButtonSaveComponent extends BaseButton {
             if (typeof e.error === 'string') {
               errorMessage = e.error;
             }
-            this.errorModal.showModal(errorMessage);
+            this.errorModal()?.showModal(errorMessage);
           }
         },
         complete: () => {

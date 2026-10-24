@@ -2,8 +2,8 @@
   <lib-ribbon-button
     [label]="'Button-New'"
     [icon]="'fa-plus'"
-    [disabled]="disabled"
-    [loading]="loading"
+    [disabled]="disabled()"
+    [loading]="loading()"
     (action)="clicked()"
   ></lib-ribbon-button>
 }

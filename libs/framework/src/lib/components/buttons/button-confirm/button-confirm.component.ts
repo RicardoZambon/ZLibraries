@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, forwardRef, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, inject, input, InputSignal, Signal, viewChild } from '@angular/core';
 import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, take } from 'rxjs';
@@ -10,23 +10,22 @@ import { BaseButton } from '../base-button';
   selector: 'framework-button-confirm',
   templateUrl: './button-confirm.component.html',
   imports: [ConfirmModalComponent, RibbonButtonComponent, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonConfirmComponent) }],
 })
 export class ButtonConfirmComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ConfirmModalComponent) private confirmModal!: ConfirmModalComponent;
+  private readonly confirmModal: Signal<ConfirmModalComponent | undefined> = viewChild(ConfirmModalComponent);
 
-  @Input() public action!: Observable<any>;
-  @Input() public color = 'text-primary-500';
-  @Input() public icon!: string;
-  @Input() public label!: string;
-  @Input() public modalConfirmButtonColor!: string;
-  @Input() public modalConfirmButtonLabel!: string;
-  @Input() public modalMessage!: string;
-  @Input() public modalMessageIcon = 'fa-solid fa-circle-question';
-  @Input() public modalMessageIconColor!: string;
-  @Input() public modalTitle!: string;
+  public readonly action: InputSignal<Observable<any>> = input.required<Observable<any>>();
+  public readonly color: InputSignal<string> = input('text-primary-500');
+  public readonly icon: InputSignal<string> = input('');
+  public readonly label: InputSignal<string> = input('');
+  public readonly modalConfirmButtonColor: InputSignal<string> = input('');
+  public readonly modalConfirmButtonLabel: InputSignal<string> = input('');
+  public readonly modalMessage: InputSignal<string> = input('');
+  public readonly modalMessageIcon: InputSignal<string> = input('fa-solid fa-circle-question');
+  public readonly modalMessageIconColor: InputSignal<string> = input('');
+  public readonly modalTitle: InputSignal<string> = input('');
   //#endregion
 
   //#region Variables
@@ -40,32 +39,35 @@ export class ButtonConfirmComponent extends BaseButton {
   constructor() {
     super();
 
-    this.disabled = true;
+    this.disabled.set(true);
   }
   //#endregion
 
   //#region Event handlers
   protected onButtonClicked(): void {
-    this.confirmModal.toggleModal();
+    this.confirmModal()?.toggleModal();
   }
 
   protected onDelete(): void {
-    if (this.confirmModal.isLoading() || !this.confirmModal.isOpen()) {
+    const confirmModal: ConfirmModalComponent | undefined = this.confirmModal();
+    if (!confirmModal || confirmModal.isLoading() || !confirmModal.isOpen()) {
       return;
     }
 
-    this.confirmModal.beginLoading();
+    confirmModal.beginLoading();
 
-    this.action.pipe(take(1)).subscribe({
-      next: () => {
-        this.finishLoading('success');
-        this.confirmModal.finishLoading(true);
-        this.gridDataset.refresh();
-      },
-      error: (e: HttpErrorResponse) => {
-        this.confirmModal.setErrorMessage(e);
-      },
-    });
+    this.action()
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.finishLoading('success');
+          confirmModal.finishLoading(true);
+          this.gridDataset.refresh();
+        },
+        error: (e: HttpErrorResponse) => {
+          confirmModal.setErrorMessage(e);
+        },
+      });
   }
   //#endregion
 

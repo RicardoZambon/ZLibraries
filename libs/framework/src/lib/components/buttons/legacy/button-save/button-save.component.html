@@ -1,11 +1,13 @@
+@let legacyForm = form();
+
 @if (isVisible()) {
   <lib-ribbon-button
     label="Button-Save"
     icon="fa-save"
-    [defaultOption]="defaultOption"
-    [disabled]="disabled || form?.viewMode !== 'edit' || (form?.loading ?? false)"
-    [loading]="loading"
-    [options]="options"
+    [defaultOption]="defaultOption()"
+    [disabled]="disabled() || legacyForm?.viewMode !== 'edit' || (legacyForm?.loading ?? false)"
+    [loading]="loading()"
+    [options]="options()"
     (action)="onButtonClick($event)"
   >
   </lib-ribbon-button>

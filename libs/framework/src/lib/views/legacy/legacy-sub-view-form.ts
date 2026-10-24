@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataProviderService, FormService } from '@zambon-dev/library';
 import { Observable, take, tap, throwError } from 'rxjs';
@@ -38,14 +38,25 @@ export abstract class LegacySubViewForm extends ViewBase implements OnInit {
   get isNew(): boolean {
     return !this.entityId;
   }
+
+  // A signal rather than a field: the legacy edit and save buttons decide what to render from
+  // `form.viewMode`, and this flips inside beginEdit/cancelEdit with nothing marking their views
+  // dirty. The accessors keep the old shape.
+  get viewMode(): 'view' | 'edit' {
+    return this._viewMode();
+  }
+
+  set viewMode(value: 'view' | 'edit') {
+    this._viewMode.set(value);
+  }
   get model(): any | null {
     return this._model;
   }
 
   dataForm!: FormGroup;
-  viewMode: 'view' | 'edit' = 'view';
 
   private _model: any | null = null;
+  private readonly _viewMode: WritableSignal<'view' | 'edit'> = signal('view');
 
   protected dataProvider: DataProviderService<any> | null;
 

@@ -1,10 +1,10 @@
 @if (isVisible()) {
   <lib-ribbon-button
-    [color]="color"
-    [disabled]="disabled"
-    [icon]="icon"
-    [label]="label"
-    [loading]="loading"
+    [color]="color()"
+    [disabled]="disabled()"
+    [icon]="icon()"
+    [label]="label()"
+    [loading]="loading()"
     (action)="onButtonClicked()"
   >
   </lib-ribbon-button>
@@ -12,19 +12,19 @@
 
 <framework-confirm-modal
   #modal
-  [message]="modalMessage"
-  [messageIcon]="modalMessageIcon"
-  [messageIconColor]="modalMessageIconColor"
-  [title]="modalTitle"
+  [message]="modalMessage()"
+  [messageIcon]="modalMessageIcon()"
+  [messageIconColor]="modalMessageIconColor()"
+  [title]="modalTitle()"
 >
   <div footer>
     <button
-      class="btn {{ modalConfirmButtonColor }}"
+      class="btn {{ modalConfirmButtonColor() }}"
       type="button"
-      [class.loading]="modal.isLoading"
+      [class.loading]="modal.isLoading()"
       (click)="onDelete()"
     >
-      {{ modalConfirmButtonLabel | translate }}
+      {{ modalConfirmButtonLabel() | translate }}
     </button>
   </div>
 </framework-confirm-modal>

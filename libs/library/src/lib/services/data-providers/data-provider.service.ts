@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable, OnDestroy } from '@angular/core';
+import { inject, Injectable, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Observable, ReplaySubject, Subject, take } from 'rxjs';
 
@@ -13,7 +13,10 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   protected destroy$: Subject<boolean> = new Subject<boolean>();
   protected shouldLazyLoad = false;
 
-  private _entityID?: number;
+  // A signal rather than a field: `hasEntityID` is read from templates -- the New and Edit
+  // buttons are only shown once a record exists -- and the route resolving or a save assigning
+  // an id told Angular nothing. The accessors below keep their old shape.
+  private readonly _entityID: WritableSignal<number | undefined> = signal(undefined);
   private errorSubject: Subject<HttpErrorResponse> = new Subject<HttpErrorResponse>();
   private isLoading = false;
   private isModelLoaded = false;
@@ -22,7 +25,7 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
 
   //#region Properties
   public get entityID(): number | undefined {
-    return this._entityID;
+    return this._entityID();
   }
 
   public get hasEntityID(): boolean {
@@ -35,7 +38,7 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
     this.activatedRoute.paramMap.pipe(take(1)).subscribe((paramMap: ParamMap) => {
       const newID = Number(paramMap.get('id'));
       if (newID !== this.entityID) {
-        this._entityID = newID;
+        this._entityID.set(newID);
 
         // Need to wait for the data-provider to be initialized.
         queueMicrotask(() => {
@@ -95,7 +98,7 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   }
 
   public resetForNewEntity(): void {
-    this._entityID = undefined;
+    this._entityID.set(undefined);
     this.isModelLoaded = false;
     this.modelCache.next(null);
   }
@@ -107,7 +110,7 @@ export abstract class DataProviderService<TEntityModel> implements OnDestroy {
 
     // Update entity ID if changed.
     if (model && (model as any).id !== this.entityID) {
-      this._entityID = (model as any).id;
+      this._entityID.set((model as any).id);
     }
 
     this.modelCache.next(model);

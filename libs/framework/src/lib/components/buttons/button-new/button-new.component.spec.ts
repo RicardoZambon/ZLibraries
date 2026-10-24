@@ -87,11 +87,13 @@ describe('ButtonNewComponent — navigation logic', () => {
 
     // Create a minimal component-like object to test onButtonClicked
     component = Object.create(ButtonNewComponent.prototype);
-    component.endpoint = 'new';
-    component.parameters = undefined;
-    component.path = undefined;
-    component.options = [];
-    component.disabled = false;
+    // Object.create skips field initialisers, so every signal the component would have built
+    // has to be supplied here.
+    component.endpoint = signal('new');
+    component.parameters = signal(undefined);
+    component.path = signal(undefined);
+    component.options = signal([]);
+    component.disabled = signal(false);
     component.isVisible = signal(true);
     component.isAccessLoaded = signal(true);
 
@@ -129,7 +131,7 @@ describe('ButtonNewComponent — navigation logic', () => {
 
   it('should use custom path when provided', () => {
     setupRouterWithoutDetailsRoute('/contratacoes');
-    component.path = 'items';
+    component.path = signal('items');
 
     component.onButtonClicked();
 
@@ -140,7 +142,7 @@ describe('ButtonNewComponent — navigation logic', () => {
 
   it('should use custom endpoint when provided', () => {
     setupRouterWithoutDetailsRoute('/contratacoes');
-    component.endpoint = 'create';
+    component.endpoint = signal('create');
 
     component.onButtonClicked();
 
@@ -151,7 +153,7 @@ describe('ButtonNewComponent — navigation logic', () => {
 
   it('should pass query parameters to the tab', () => {
     setupRouterWithoutDetailsRoute('/contratacoes');
-    component.parameters = { type: 'admin' };
+    component.parameters = signal({ type: 'admin' });
 
     component.onButtonClicked();
 
@@ -161,7 +163,7 @@ describe('ButtonNewComponent — navigation logic', () => {
 
   it('should use option path and parameters when optionId is provided', () => {
     setupRouterWithoutDetailsRoute('/contratacoes');
-    component.options = [{ id: 'custom', path: 'special', parameters: { mode: 'fast' } }];
+    component.options = signal([{ id: 'custom', path: 'special', parameters: { mode: 'fast' } }]);
 
     component.onButtonClicked('custom');
 
@@ -172,8 +174,8 @@ describe('ButtonNewComponent — navigation logic', () => {
 
   it('should merge option parameters with component parameters', () => {
     setupRouterWithoutDetailsRoute('/contratacoes');
-    component.parameters = { type: 'admin' };
-    component.options = [{ id: 'custom', path: '', parameters: { mode: 'fast' } }];
+    component.parameters = signal({ type: 'admin' });
+    component.options = signal([{ id: 'custom', path: '', parameters: { mode: 'fast' } }]);
 
     component.onButtonClicked('custom');
 

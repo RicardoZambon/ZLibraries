@@ -1,10 +1,22 @@
-import { Component, inject, Input, OnInit, ViewChild, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  forwardRef,
+  inject,
+  input,
+  InputSignal,
+  OnInit,
+  signal,
+  Signal,
+  viewChild,
+  WritableSignal,
+} from '@angular/core';
 import { FormGroupDirective } from '@angular/forms';
 import {
   DataGridDataset,
   DisplayControls,
   FormService,
   ModalComponent,
+  ModalSize,
   RibbonButtonComponent,
   RibbonGroupChild,
 } from '@zambon-dev/library';
@@ -17,33 +29,34 @@ import { BaseButton } from '../base-button';
   templateUrl: './button-filters.component.html',
   styleUrls: ['./button-filters.component.scss'],
   imports: [ModalComponent, RibbonButtonComponent, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [FormService, { provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonFiltersComponent) }],
 })
 export class ButtonFiltersComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ModalComponent) modal!: ModalComponent;
+  public readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
-  @Input() public modalSize:
-    'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' = 'xl';
-  @Input() public modalTitle!: string;
-  @Input() public validateFormFunction?: () => void;
+  public readonly modalSize: InputSignal<ModalSize> = input<ModalSize>('xl');
+  public readonly modalTitle: InputSignal<string> = input('');
+  public readonly validateFormFunction: InputSignal<(() => void) | undefined> = input<() => void>();
   //#endregion
 
   //#region Variables
   protected gridDataset: DataGridDataset = inject(DataGridDataset);
   protected readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
 
-  private filters: { [key: string]: string } = {};
+  // A signal rather than a field: submitting or clearing the filters changes which buttons the
+  // ribbon shows, and both happen from a click handler deep inside the modal.
+  private readonly filters: WritableSignal<{ [key: string]: string }> = signal({});
   //#endregion
 
   //#region Properties
   protected get hasFiltersApplied(): boolean {
-    return Object.keys(this.filters).length > 0;
+    return Object.keys(this.filters()).length > 0;
   }
 
   protected get singleColumn(): boolean {
-    return this.modalSize === 'sm' || this.modalSize === 'md' || this.modalSize === 'lg' || this.modalSize === 'xl';
+    const modalSize: ModalSize = this.modalSize();
+    return modalSize === 'sm' || modalSize === 'md' || modalSize === 'lg' || modalSize === 'xl';
   }
   //#endregion
 
@@ -52,7 +65,7 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
     super();
 
     // This will force the screen to initialize with the filter disabled.
-    this.disabled = true;
+    this.disabled.set(true);
   }
 
   public ngOnInit(): void {
@@ -61,39 +74,36 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
     // is re-created whenever a record's views are switched, so a button built then arrives at a
     // grid that finished loading long ago, waits for an event that has already passed, and stays
     // unclickable until something makes the grid load again. The dataset knows either way.
-    this.disabled = this.gridDataset.isLoading || !this.gridDataset.hasBeenLoaded;
+    this.disabled.set(this.gridDataset.isLoading || !this.gridDataset.hasBeenLoaded);
 
     this.gridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.disabled = true;
-      if (this.button.loading()) {
-        this.finishLoading('success');
-      }
+      this.disabled.set(true);
+      this.finishLoadingIfStarted();
     });
 
     this.gridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.disabled = false;
-      if (this.button.loading()) {
-        this.finishLoading('success');
-      }
+      this.disabled.set(false);
+      this.finishLoadingIfStarted();
     });
   }
   //#endregion
 
   //#region Event handlers
   protected onFiltersButtonClicked(): void {
-    this.modal.toggleModal();
+    this.modal()?.toggleModal();
     this.formGroup.form.reset();
-    this.formGroup.form.patchValue(this.filters, { emitEvent: false });
+    this.formGroup.form.patchValue(this.filters(), { emitEvent: false });
   }
 
   protected onFiltersSubmitClicked(): void {
-    if (this.validateFormFunction) {
-      this.validateFormFunction();
+    const validateFormFunction: (() => void) | undefined = this.validateFormFunction();
+    if (validateFormFunction) {
+      validateFormFunction();
     }
 
     if (this.formGroup.form.valid) {
-      this.button.startLoading();
-      this.modal.toggleModal();
+      this.startLoading();
+      this.modal()?.toggleModal();
 
       const formValue: any = this.formGroup.form.getRawValue();
       const formFilters: { [key: string]: any } = Object.fromEntries(
@@ -105,10 +115,10 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   }
 
   protected onResetButtonClicked(): void {
-    this.button.startLoading();
+    this.startLoading();
 
     this.formGroup.form.reset();
-    this.filters = {};
+    this.filters.set({});
 
     this.gridDataset.setFilters();
   }
@@ -120,7 +130,7 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
     // catalog select backed by a search endpoint cannot recover its label from the identifier --
     // it only resolves a display from a local entries list. Dropping the labels here would leave
     // the field showing a selection with no text.
-    this.filters = filters;
+    this.filters.set(filters);
 
     if (this.hasFiltersApplied) {
       this.gridDataset.setFilters(this.withoutDisplayControls(filters));
@@ -131,6 +141,12 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   //#endregion
 
   //#region Private methods
+  private finishLoadingIfStarted(): void {
+    if (this.button()?.loading()) {
+      this.finishLoading('success');
+    }
+  }
+
   /**
    * Drops the controls that only hold a catalog selection's label.
    *
