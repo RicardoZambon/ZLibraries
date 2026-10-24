@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
+## [4.0.2] - 2026-10-24
+
+- Maintenance release (no consumer-facing changes were documented).
+
 ## [4.0.1] - 2026-10-24
 
 ### Changed
@@ -837,7 +841,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.2...HEAD
+[4.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.2
 [4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.1
 [4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.0
 [3.2.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.5
