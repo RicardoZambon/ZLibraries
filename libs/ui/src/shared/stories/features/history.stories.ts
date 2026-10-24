@@ -1,5 +1,5 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TabViewService } from '@zambon-dev/ui/framework';
 import { IListParameters, RibbonComponent } from '@zambon-dev/ui/library';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
@@ -72,7 +72,6 @@ class StorybookServicesHistoryService {
       </shared-services-history-view>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [AsyncPipe, NgTemplateOutlet, RibbonComponent, ServicesHistoryViewComponent],
 })
 class StoryHistoryHostComponent {

@@ -25,12 +25,29 @@ per-layer ESLint overrides. One package does not mean one prefix.
 **The layer barrels are not the root barrel.** A spec that wants its own layer's public API
 imports `./index`, not `../index`; the latter is the root and carries all three layers.
 
-**The OnPush ratchet is per layer.** `prefer-on-push-component-change-detection` is an **error**
-under `src/library/` and `src/framework/`, whose migrations are finished, and a warning under
-`src/shared/`, which still has components that depend on being walked on every event — they are
-listed in its own `change-detection-contract.spec.ts`. A new component in a finished layer that
-declares a strategy fails lint. Make the rule an error for everything, and delete the
-layer-scoped block, once the shared list is empty too.
+**A component may not declare a change-detection strategy.** See Reactivity below;
+`prefer-on-push-component-change-detection` is an error package-wide, so this fails lint.
+
+## Reactivity (required)
+
+Every value a template in this package reads is a `signal`, a `computed`, an `input()`/`model()`,
+a `viewChild()`/`contentChildren()`, a getter composed of those, or a constant fixed for the
+component's lifetime.
+
+No template here reads a mutable field, a getter over mutable service state, or a value assigned
+inside `.subscribe()`. No component here declares `changeDetection`, uses `ChangeDetectorRef`, or
+injects `NgZone`.
+
+**What that buys the consumer:** a component from `@zambon-dev/ui` renders correctly under any
+change-detection strategy the host application chooses, and under
+`provideZonelessChangeDetection()`. Our strategy is not part of our API.
+
+Three things hold this, and they cover different ground. Each layer's
+`change-detection-contract.spec.ts` asserts it over that layer's **exported** components.
+`prefer-on-push-component-change-detection` is an error package-wide, which covers the ones a
+layer does not export — `LanguageSelectorComponent` and `LoginComponent` among them. The
+`renders-under-on-push` specs render a component under an OnPush ancestor and assert it still
+updates, which is the behaviour the other two only approximate.
 
 ## Commands
 

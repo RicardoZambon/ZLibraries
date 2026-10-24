@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { Signal, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { TabService, TabViewService } from '@zambon-dev/ui/framework';
@@ -20,9 +20,9 @@ describe(ExternalContentComponent.name, () => {
   let resolve: jest.Mock;
   let updateActiveTabRootTitle: jest.Mock;
 
-  /** Reads a member the template uses but TypeScript keeps protected. */
+  /** Reads a member the template uses but TypeScript keeps protected. Every one is a signal. */
   function read<T>(name: string): T {
-    return <T>(<Record<string, unknown>>(<unknown>component))[name];
+    return (<Record<string, Signal<T>>>(<unknown>component))[name]();
   }
 
   function build(): void {
@@ -35,15 +35,17 @@ describe(ExternalContentComponent.name, () => {
       externalContentService: { find: jest.fn(() => of(entry)) },
       externalUrlResolverService: { isAllowed, resolve },
       document: { location: { protocol: pageProtocol } },
-      isBlocked: false,
-      isFrameLoading: false,
-      isInsecure: false,
-      isSlow: false,
-      isUnavailable: false,
-      label: '',
-      // Object.create skips field initialisers, and ViewBase backs `loading` with a signal.
+      // Object.create skips field initialisers, so every signal the component would have built
+      // has to be supplied here -- `loadingState` is the one behind ViewBase's `loading`.
+      frameUrl: signal(undefined),
+      isBlocked: signal(false),
+      isFrameLoading: signal(false),
+      isInsecure: signal(false),
+      isSlow: signal(false),
+      isUnavailable: signal(false),
+      label: signal(''),
       loadingState: signal(false),
-      resolvedUrl: '',
+      resolvedUrl: signal(''),
       sanitizer: { bypassSecurityTrustResourceUrl },
       tabService: { updateActiveTabRootTitle },
     });

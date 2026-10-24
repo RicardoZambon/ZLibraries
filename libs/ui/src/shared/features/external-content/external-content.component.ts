@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, DOCUMENT, ChangeDetectionStrategy } from '@angular/core';
+import { Component, DOCUMENT, inject, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ButtonComponent, TabService, TabViewBase } from '@zambon-dev/ui/framework';
@@ -22,7 +22,6 @@ import { ExternalContentService, ExternalUrlResolverService } from '../../servic
   selector: 'shared-external-content',
   templateUrl: './external-content.component.html',
   styleUrls: ['./external-content.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ButtonComponent, RibbonGroupComponent, TranslatePipe],
 })
 export class ExternalContentComponent extends TabViewBase implements OnInit, OnDestroy {
@@ -30,14 +29,17 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
   //#endregion
 
   //#region Variables
-  protected frameUrl?: SafeResourceUrl;
-  protected isBlocked = false;
-  protected isFrameLoading = false;
-  protected isInsecure = false;
-  protected isSlow = false;
-  protected isUnavailable = false;
-  protected label = '';
-  protected resolvedUrl = '';
+  // Signals, every one: this whole screen is decided after the first paint, by a lookup that
+  // resolves, a frame that loads or fails to, and a timeout that gives up waiting. None of
+  // those is a binding on this view, so as fields they changed nothing on screen.
+  protected readonly frameUrl: WritableSignal<SafeResourceUrl | undefined> = signal(undefined);
+  protected readonly isBlocked: WritableSignal<boolean> = signal(false);
+  protected readonly isFrameLoading: WritableSignal<boolean> = signal(false);
+  protected readonly isInsecure: WritableSignal<boolean> = signal(false);
+  protected readonly isSlow: WritableSignal<boolean> = signal(false);
+  protected readonly isUnavailable: WritableSignal<boolean> = signal(false);
+  protected readonly label: WritableSignal<string> = signal('');
+  protected readonly resolvedUrl: WritableSignal<string> = signal('');
 
   private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private configs: ExternalContentConfigs = inject(EXTERNAL_CONTENT_CONFIGS);
@@ -67,7 +69,7 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
     const menuID = Number(this.activatedRoute.snapshot.paramMap.get('menuID'));
 
     if (!menuID) {
-      this.isUnavailable = true;
+      this.isUnavailable.set(true);
       this.loading = false;
 
       return;
@@ -84,18 +86,18 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
   protected onFrameLoad(): void {
     this.clearSlowHint();
 
-    this.isFrameLoading = false;
-    this.isSlow = false;
+    this.isFrameLoading.set(false);
+    this.isSlow.set(false);
   }
 
   protected onOpenInNewTab(): void {
-    window.open(this.resolvedUrl, '_blank', 'noopener,noreferrer');
+    window.open(this.resolvedUrl(), '_blank', 'noopener,noreferrer');
   }
 
   protected onReload(): void {
-    const url: SafeResourceUrl | undefined = this.frameUrl;
+    const url: SafeResourceUrl | undefined = this.frameUrl();
 
-    if (!url || this.isFrameLoading) {
+    if (!url || this.isFrameLoading()) {
       return;
     }
 
@@ -109,8 +111,8 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
     // value go A -> undefined -> A and never toggles: the element is never destroyed, nothing
     // navigates, no `load` ever fires, and the view spins until the timeout gives up. Yielding to
     // a timeout lets a cycle run with the frame unmounted, which is what really tears it down.
-    this.frameUrl = undefined;
-    this.isFrameLoading = true;
+    this.frameUrl.set(undefined);
+    this.isFrameLoading.set(true);
 
     setTimeout(() => this.displayFrame(url));
   }
@@ -157,12 +159,12 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
     this.loading = false;
 
     if (!entry || !entry.url) {
-      this.isUnavailable = true;
+      this.isUnavailable.set(true);
 
       return;
     }
 
-    this.label = entry.label;
+    this.label.set(entry.label);
 
     // MainLayoutComponent only resolves a deep-linked title through getMenuFromUrl, and a Tab
     // starts with isTitleLoading true, so a tab re-created by TabsComponent after a refresh would
@@ -178,17 +180,17 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
         `Embedded menu item "${entry.label}" points to an address that is not allowed and was not displayed.`,
         url,
       );
-      this.isBlocked = true;
+      this.isBlocked.set(true);
 
       return;
     }
 
     // Set before the mixed-content check, not after: that state still offers 'open in a new
     // browser tab', and the button reads this to decide whether it has anywhere to go.
-    this.resolvedUrl = url;
+    this.resolvedUrl.set(url);
 
     if (this.isMixedContent(url)) {
-      this.isInsecure = true;
+      this.isInsecure.set(true);
 
       return;
     }
@@ -200,8 +202,8 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
   }
 
   private displayFrame(url: SafeResourceUrl): void {
-    this.isFrameLoading = true;
-    this.frameUrl = url;
+    this.isFrameLoading.set(true);
+    this.frameUrl.set(url);
 
     this.startSlowHint();
   }
@@ -218,8 +220,8 @@ export class ExternalContentComponent extends TabViewBase implements OnInit, OnD
       // Stop claiming it is loading. A destination that never reports `load` -- a refused frame
       // among them -- would otherwise spin forever and keep the actions disabled; hand the
       // controls back and let the hint do the explaining.
-      this.isFrameLoading = false;
-      this.isSlow = true;
+      this.isFrameLoading.set(false);
+      this.isSlow.set(true);
     }, this.configs.slowFrameHintDelay);
   }
   //#endregion

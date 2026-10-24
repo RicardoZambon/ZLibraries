@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, signal, Signal, viewChild, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -10,25 +10,28 @@ import { LanguageSelectorComponent } from '../language-selector/language-selecto
   selector: 'shared-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [LanguageSelectorComponent, ReactiveFormsModule, RouterModule, TranslatePipe],
 })
 export class LoginComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild('username') public username!: ElementRef<HTMLInputElement>;
+  public readonly username: Signal<ElementRef<HTMLInputElement> | undefined> =
+    viewChild<ElementRef<HTMLInputElement>>('username');
   //#endregion
 
   //#region Variables
   protected form!: FormGroup;
-  protected formState: {
+  // A signal holding one object, replaced rather than edited: every one of these is rendered --
+  // the validation banner, the button's spinner, its success tick -- and each is written from
+  // inside the authentication stream, where nothing marks this view.
+  protected readonly formState: WritableSignal<{
     error: string | null;
     loading: boolean;
     success: boolean;
-  } = {
+  }> = signal({
     error: null,
     loading: false,
     success: false,
-  };
+  });
 
   private authenticationService: AuthenticationService = inject(AuthenticationService);
   private formBuilder: FormBuilder = inject(FormBuilder);
@@ -56,8 +59,7 @@ export class LoginComponent implements OnInit {
     if (this.form.valid) {
       this.form.disable();
 
-      this.formState.loading = true;
-      this.formState.error = null;
+      this.formState.update((state) => ({ ...state, error: null, loading: true }));
 
       this.authenticationService
         .authenticate({
@@ -66,10 +68,8 @@ export class LoginComponent implements OnInit {
           rememberMe: this.form.get('rememberMe')?.value ?? false,
         })
         .pipe(
-          tap(() => {
-            this.formState.success = true;
-          }),
-          finalize(() => (this.formState.loading = false)),
+          tap(() => this.formState.update((state) => ({ ...state, success: true }))),
+          finalize(() => this.formState.update((state) => ({ ...state, loading: false }))),
         )
         .subscribe({
           next: () => {
@@ -83,16 +83,10 @@ export class LoginComponent implements OnInit {
             this.form.controls['password'].setValue('');
             this.form.controls['password'].markAsUntouched();
 
-            this.username.nativeElement.focus();
+            this.username()?.nativeElement.focus();
 
-            switch (e) {
-              case 'InvalidUsernamePassword':
-                this.formState.error = 'invalid';
-                break;
-              default:
-                this.formState.error = 'internalServerError';
-                break;
-            }
+            const error: string = e === 'InvalidUsernamePassword' ? 'invalid' : 'internalServerError';
+            this.formState.update((state) => ({ ...state, error }));
           },
         });
     }

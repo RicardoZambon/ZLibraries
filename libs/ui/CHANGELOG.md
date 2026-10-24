@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
-- **The layers in this release are `library` 4.0.4, `framework` 5.0.4 and `shared` 6.0.2.**
+- **The layers in this release are `library` 4.0.4, `framework` 5.0.4 and `shared` 6.0.3.**
   Moving here from an earlier version of any of the three means taking that layer's remaining
   releases too; they are under **Package history** below. The one worth naming is
   `ModalComponent.isShown`, which became `isOpen` and is a `Signal<boolean>`: reading the
@@ -1646,7 +1646,46 @@ None.
 
 ### Shared
 
-Authentication, layouts, audit-history features and cross-cutting services. Published as `@zambon-dev/shared` through 6.0.2.
+Authentication, layouts, audit-history features and cross-cutting services. Published as `@zambon-dev/shared` through 6.0.3.
+
+#### [6.0.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.3) - 2026-10-24
+
+##### Changed
+
+- **Every component in this package now renders under any change-detection strategy the host
+  application chooses, zoneless included.** This was the last package. The state each one shows
+  is signals: the embedded-content screen, which decides everything after its menu lookup
+  answers; the notifications panel and the language list, both closed from a window click that
+  is no binding of theirs; the user profile, filled on init; the login form's error, spinner and
+  success state; and the audit screens' selected service and operation.
+
+##### ⚠ Breaking Changes / Migration
+
+- **The state these components expose is signals.** Binding to an input from a template is
+  unchanged. Code that reads one needs `()`:
+
+  | Component                             | Members                                                                                                           |
+  | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+  | `ServicesHistoryViewComponent`        | `controllerName`, `entityID`, `usersCatalogEndpoint` -- `model()`, so setting one still works through `.set(...)` |
+  | `ServicesHistoryChildListComponent`   | `selectedServiceID`                                                                                               |
+  | `OperationsHistoryChildListComponent` | `selectedNewValues`, `selectedOldValues`                                                                          |
+  | `OperationsHistoryModalComponent`     | `newValues`, `oldValues`                                                                                          |
+  | `NotificationsComponent`              | `dropdown`                                                                                                        |
+  | `LanguageSelectorComponent`           | `dropdown`, `showFlag`, `title`                                                                                   |
+  | `LoginComponent`                      | `username`                                                                                                        |
+
+  A template reading one through a reference -- `#list` then `list.selectedServiceID` -- needs
+  the call; without it the signal object itself is read, and an object is always truthy.
+
+- **`ServicesHistoryViewComponent.controllerName` is no longer a required input.** It is a
+  `model()` defaulting to `''`, because the component also fills it from the route's
+  `controllerName` data -- where nothing binds it and `required` never applied. Routed usage is
+  unchanged; a template that binds it is unchanged; a template that forgot to is no longer a
+  compile error, so check yours.
+
+- **`TopBarComponent.logout` and `ServicesHistoryChildListComponent.filtersChanged` are
+  `output()` rather than `EventEmitter`.** Binding to them is unchanged; calling `.emit()` on
+  one from outside the component no longer compiles, which was never supported anyway.
 
 #### [6.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.2) - 2026-10-24
 

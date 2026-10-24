@@ -1,16 +1,16 @@
-<div #dropdown class="dropdown right" [class.show]="showDropdown">
+<div #dropdown class="dropdown right" [class.show]="showDropdown()">
   <button
     class="btn"
     type="button"
     (click)="onDropdownClick()"
-    [class.gray-300]="showFlag"
-    [class.lang-flag-toggle]="showFlag"
-    [attr.aria-label]="showFlag ? (title | translate) : null"
+    [class.gray-300]="showFlag()"
+    [class.lang-flag-toggle]="showFlag()"
+    [attr.aria-label]="showFlag() ? (title() | translate) : null"
   >
-    @if (showFlag) {
+    @if (showFlag()) {
       <span class="flag flag-{{ selectedLanguage }}"></span>
     } @else {
-      {{ title | translate }}
+      {{ title() | translate }}
     }
   </button>
 
