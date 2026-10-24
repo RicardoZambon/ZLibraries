@@ -1,0 +1,814 @@
+import { FlexibleConnectedPositionStrategy, Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
+
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  Input,
+  InputSignal,
+  KeyValueChanges,
+  KeyValueDiffer,
+  KeyValueDiffers,
+  OnDestroy,
+  OnInit,
+  Signal,
+  signal,
+  TemplateRef,
+  viewChild,
+  ViewContainerRef,
+  WritableSignal,
+} from '@angular/core';
+import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  debounceTime,
+  forkJoin,
+  Observable,
+  of,
+  pairwise,
+  startWith,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import { DisplayControls } from '../../helpers';
+import { ICatalogEntry, ICatalogResult } from '../../models';
+import { CatalogService, DataGridDataset } from '../../services';
+import { BaseComponent } from '../base.component';
+import { FormInputGroupComponent } from '../form-input-group/form-input-group.component';
+import { FormInputComponent } from '../form-input/form-input.component';
+
+@Component({
+  selector: 'lib-catalog-select',
+  templateUrl: './catalog-select.component.html',
+  styleUrls: ['./catalog-select.component.scss'],
+  imports: [FormInputComponent, FormInputGroupComponent, TranslatePipe],
+})
+export class CatalogSelectComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
+  //#region HostListeners
+  @HostListener('body:mousedown', ['$event'])
+  protected bodyMouseDown(event: MouseEvent): void {
+    const target: HTMLElement = <HTMLElement>event.target;
+    if (this.isDropDownShown() && !target.closest('.catalog-container.show')) {
+      this.wasClickedOutside = (event.button === 0 && !target.closest('.dropdown-container')) ?? false;
+    }
+  }
+
+  @HostListener('body:mouseup', ['$event'])
+  protected bodyMouseUp(event: MouseEvent): void {
+    if (this.isDropDownShown() && this.wasClickedOutside) {
+      this.closeDropdownOverlay();
+      this.wasClickedOutside = false;
+    }
+  }
+  //#endregion
+
+  //#region ViewChilds, Inputs, Outputs
+  private readonly dropdownTemplate: Signal<TemplateRef<any> | undefined> = viewChild('dropdownTemplate', {
+    read: TemplateRef,
+  });
+  private readonly inputElement: Signal<ElementRef<HTMLDivElement> | undefined> = viewChild('input', {
+    read: ElementRef,
+  });
+
+  public readonly autofocus: InputSignal<boolean> = input(false);
+  public readonly controlName: InputSignal<string> = input.required<string>();
+  public readonly displayControlName: InputSignal<string> = input.required<string>();
+  public readonly displayProperty: InputSignal<string> = input('display');
+  @Input() public set entriesList(
+    value: any[] | { key: number; value: Observable<any> | string }[] | null | undefined,
+  ) {
+    if (this._entriesList !== value) {
+      this._entriesList = value;
+      if (this.isSubscriptionInitialized) {
+        this.entriesDataSource = [];
+        this.initializeEntriesDataSource();
+        this.refreshSearch();
+      }
+    }
+  }
+  @Input() public set filters(value: { [id: string]: any }) {
+    if (this._filters !== value) {
+      this._filters = value;
+      this.updateFilters();
+    }
+  }
+  public readonly label: InputSignal<string> = input('');
+  public readonly maxEntries: InputSignal<number> = input(100);
+  public readonly minimumLengthSearch: InputSignal<number> = input(3);
+  public readonly notes: InputSignal<string> = input('');
+  public readonly readOnly: InputSignal<boolean> = input(false);
+  /**
+   * Whether the field accepts typing to narrow the list.
+   *
+   * A catalog of a handful of entries is a picker, not a search: typing only gets in the way, and
+   * the minimum-length rule would hide the very entries the user opened the field to choose from.
+   * Turning this off leaves the input read-only to the keyboard while the dropdown still opens on
+   * click and the clear button still works -- unlike {@link readOnly}, which means the value
+   * cannot be changed at all.
+   *
+   * It does not suit an endpoint that answers shouldUseCriteria: that endpoint returns nothing
+   * until it is given criteria, and there would be no way left to type any.
+   */
+  public readonly searchable: InputSignal<boolean> = input(true);
+  @Input() public set searchEndpoint(value: string | undefined) {
+    if (this._searchEndpoint === value) {
+      return;
+    }
+
+    this._searchEndpoint = value;
+
+    // A screen that reads the endpoint off a model it loads over HTTP binds an empty string first,
+    // and this component initializes against that: no endpoint takes the static-list path, finds an
+    // empty list and latches "no results". Nothing re-ran the search when the real endpoint landed,
+    // so the field stayed empty until the user typed something and cleared it again.
+    //
+    // Re-initializing rather than merely refreshing, because a different endpoint is a different
+    // catalog: what the previous one reported about needing criteria cannot be carried over.
+    if (this.isSubscriptionInitialized) {
+      const reInitialize = true;
+      this.refreshSearch(reInitialize);
+    }
+  }
+  public readonly validations: InputSignal<{ [id: string]: string }> = input<{ [id: string]: string }>({});
+  public readonly valueProperty: InputSignal<string> = input('value');
+  //#endregion
+
+  //#region Variables
+  // The three setter inputs below -- entriesList, filters and searchEndpoint -- stay decorator
+  // inputs on purpose. They are imperative configuration that re-initialises the search, no
+  // template reads them, and converting them would move that side effect into an effect() for
+  // no gain in what reaches the screen.
+  protected readonly displayedEntries: WritableSignal<ICatalogEntry[]> = signal<ICatalogEntry[]>([]);
+  protected readonly focusedIndex: WritableSignal<number> = signal(-1);
+  protected readonly isDropDownShown: WritableSignal<boolean> = signal(false);
+  protected readonly isFocused: WritableSignal<boolean> = signal(false);
+  protected readonly isLoading: WritableSignal<boolean> = signal(false);
+  protected readonly selectedValue: WritableSignal<any> = signal(undefined);
+  protected readonly shouldUseCriteria: WritableSignal<boolean> = signal(false);
+  protected readonly showFailureMessage: WritableSignal<boolean> = signal(false);
+  protected readonly showMinimumCharactersMessage: WritableSignal<boolean> = signal(false);
+  protected readonly showNoResultsMessage: WritableSignal<boolean> = signal(false);
+
+  private static instanceCounter = 0;
+  private _entriesList?: any[] | { key: number; value: Observable<any> | string }[] | null;
+  private _filters: { [id: string]: any } = {};
+  private _searchEndpoint?: string;
+  private catalogService: CatalogService = inject(CatalogService);
+  private dataGridDataset: DataGridDataset = inject(DataGridDataset, { optional: true })!;
+  private entriesDataSource: ICatalogEntry[] = [];
+  private filterDiffer?: KeyValueDiffer<string, any>;
+  private readonly formGroup: FormGroupDirective = inject(FormGroupDirective);
+  private readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
+  private instanceId: number;
+  private isDataInitialized = false;
+  private isSubscriptionInitialized = false;
+  private keyValueDiffers: KeyValueDiffers = inject(KeyValueDiffers);
+  private lastCriteriaUsed: string | null = null;
+  private overlay: Overlay = inject(Overlay);
+  private overlayRef?: OverlayRef;
+  private positionBuilder: OverlayPositionBuilder = inject(OverlayPositionBuilder);
+  private searchSubject: Subject<string | null> = new Subject<string | null>();
+  private viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
+  private wasClickedOutside = false;
+  //#endregion
+
+  //#region Properties
+  public get entriesList(): any[] | { key: number; value: Observable<any> | string }[] | null | undefined {
+    return this._entriesList;
+  }
+
+  public get filters(): { [id: string]: any } | undefined {
+    return this._filters;
+  }
+
+  public get searchEndpoint(): string | undefined {
+    return this._searchEndpoint;
+  }
+
+  protected get activeDescendantId(): string | null {
+    if (this.focusedIndex() >= 0 && this.focusedIndex() < this.displayedEntries().length) {
+      return `catalog-select-${this.instanceId}-option-${this.focusedIndex()}`;
+    }
+    return null;
+  }
+
+  protected get displayControl(): FormControl {
+    return <FormControl>this.formGroup.form.get(this.formDisplayControlName);
+  }
+
+  protected get formControl(): FormControl {
+    return <FormControl>this.formGroup.form.get(this.formControlName);
+  }
+
+  protected get formControlName(): string {
+    return [...(this.formGroupName?.path ?? []), this.controlName()].join('.');
+  }
+
+  protected get formDisplayControlName(): string {
+    return [...(this.formGroupName?.path ?? []), this.displayControlName()].join('.');
+  }
+
+  protected get isInvalid(): boolean {
+    return this.formControl.invalid;
+  }
+
+  protected get isTouched(): boolean {
+    return this.formControl.touched;
+  }
+
+  protected get listboxId(): string {
+    return `catalog-select-${this.instanceId}-listbox`;
+  }
+
+  /**
+   * Whether the button that empties the field is offered.
+   *
+   * It asks the form control, not {@link selectedValue}. The latter is only written when this
+   * component sees the value arrive -- from a pick in the dropdown, or from the initial sync in
+   * ngOnInit. A value patched in afterwards without an event, which is how a saved filter is
+   * restored into a form this component has already initialised, reaches the control and the
+   * display without ever reaching {@link selectedValue}. Keying the button off it left the field
+   * showing a value with no way to remove it.
+   */
+  protected get showClearButton(): boolean {
+    return this.formControl?.value != null && !this.readOnly() && (this.formControl?.enabled ?? false);
+  }
+
+  private get hasSearchEndpoint(): boolean {
+    return !!this.searchEndpoint && this.searchEndpoint.length > 0;
+  }
+  //#endregion
+
+  //#region Constructor and Angular life cycle methods
+  constructor() {
+    super();
+    this.instanceId = CatalogSelectComponent.instanceCounter++;
+  }
+
+  public ngAfterViewInit(): void {
+    this.setInputAriaAttributes();
+  }
+
+  public override ngOnDestroy(): void {
+    this.closeDropdownOverlay();
+    super.ngOnDestroy();
+  }
+
+  public ngOnInit(): void {
+    // Check and add the display control, if it does not exist.
+    const wasFormDisabled: boolean = this.formGroup.form.disabled;
+    this.checkAndAddDisplayControl();
+    if (wasFormDisabled) {
+      this.formGroup.form.disable();
+    }
+
+    // Initialize the entries data source from the entries list, if provided.
+    this.initializeEntriesDataSource();
+
+    // Initialize the search functionality.
+    this.initializeSearch();
+
+    // Subscribe to changes in the display control to apply search criteria.
+    this.displayControl?.valueChanges
+      .pipe(
+        takeUntil(this.destroy$),
+        tap(() => {
+          if (!this.isFocused()) {
+            return;
+          }
+          this.isLoading.set(true);
+          this.resetMessages();
+        }),
+        debounceTime(500),
+        startWith(null),
+        pairwise(),
+      )
+      .subscribe(([previous, current]: string[]) => {
+        if (!this.isFocused() || previous === current) {
+          this.isLoading.set(false);
+          return;
+        }
+        this.applySearchCriteria(current);
+      });
+
+    this.filterDiffer = this.keyValueDiffers.find(this._filters).create();
+
+    // Subscribe to changes in the form control to update the selected value and display control states.
+    this.syncFormControlsEnabledDisabled();
+
+    this.formControl?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: any) => {
+      this.syncFormControlsEnabledDisabled();
+
+      if (!this.shouldRefreshDisplay(value)) {
+        return;
+      }
+
+      this.selectedValue.set(value);
+      if (this.hasSearchEndpoint) {
+        if (!value) {
+          this.displayControl?.reset(null, { emitEvent: false });
+        }
+      } else {
+        this.displayControl?.setValue(this.resolveDisplay(value), { emitEvent: false });
+      }
+    });
+
+    // Initial sync: if the form control already has a value (e.g., the model was loaded
+    // before this component initialized), sync the display control immediately.
+    this.syncDisplayFromCurrentValue();
+  }
+  //#endregion
+
+  //#region Event handlers
+  protected onContainerBlur(): void {
+    this.isFocused.set(false);
+  }
+
+  protected onContainerClick(): void {
+    if (
+      (!this.isDropDownShown() || this.readOnly()) &&
+      (this.formGroup.form?.enabled ?? false) &&
+      (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
+    ) {
+      this.openDropdownOverlay();
+    }
+  }
+
+  protected onContainerFocus(): void {
+    this.isFocused.set(true);
+    if (
+      !this.isDropDownShown() &&
+      !this.readOnly() &&
+      (this.formGroup.form?.enabled ?? false) &&
+      (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
+    ) {
+      this.openDropdownOverlay();
+    }
+  }
+
+  protected onClearClick(event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (this.formControl) {
+      this.formControl.setValue(null);
+      this.formControl.markAsDirty();
+      this.formControl.markAsTouched();
+    }
+
+    if (this.displayControl) {
+      this.displayControl.setValue('', { emitEvent: false });
+      this.displayControl.markAsDirty();
+      this.displayControl.markAsTouched();
+    }
+
+    this.selectedValue.set(null);
+  }
+
+  protected onKeyDown(event: KeyboardEvent): void {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        if (!this.isDropDownShown()) {
+          this.openDropdownOverlay();
+        }
+        if (this.displayedEntries().length > 0) {
+          this.focusedIndex.set(Math.min(this.focusedIndex() + 1, this.displayedEntries().length - 1));
+          this.scrollFocusedItemIntoView();
+        }
+        this.updateInputAriaActiveDescendant();
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        if (this.isDropDownShown() && this.displayedEntries().length > 0) {
+          this.focusedIndex.set(Math.max(this.focusedIndex() - 1, 0));
+          this.scrollFocusedItemIntoView();
+        }
+        this.updateInputAriaActiveDescendant();
+        break;
+
+      case 'Enter':
+        event.preventDefault();
+        if (
+          this.isDropDownShown() &&
+          this.focusedIndex() >= 0 &&
+          this.focusedIndex() < this.displayedEntries().length
+        ) {
+          this.onDropDownItemClick(this.displayedEntries()[this.focusedIndex()]);
+        }
+        break;
+
+      case 'Escape':
+        if (this.isDropDownShown()) {
+          event.preventDefault();
+          this.closeDropdownOverlay();
+        }
+        break;
+
+      case 'Tab':
+        if (this.isDropDownShown()) {
+          this.closeDropdownOverlay();
+        }
+        break;
+    }
+  }
+
+  protected onDropDownErrorClick(): void {
+    this.refreshSearch();
+  }
+
+  protected onDropDownItemClick(entry: ICatalogEntry): void {
+    if (this.displayControl) {
+      this.displayControl.markAsDirty();
+      this.displayControl.markAllAsTouched();
+      this.displayControl.setValue(entry.display, { emitEvent: false });
+    }
+
+    if (this.formControl) {
+      this.formControl.markAsDirty();
+      this.formControl.markAsTouched();
+      this.formControl.setValue(entry.value);
+    }
+
+    this.closeDropdownOverlay();
+  }
+
+  //#endregion
+
+  //#region Public methods
+  protected getOptionId(index: number): string {
+    return `catalog-select-${this.instanceId}-option-${index}`;
+  }
+
+  /**
+   * Re-reads the catalog from its endpoint.
+   *
+   * The entries are fetched once, when the field initializes, so a screen that changes the data
+   * behind the catalog -- granting a role, moving an employee, anything that alters what the
+   * endpoint would now answer -- otherwise keeps offering the list it read before the change.
+   *
+   * It re-reads rather than merely re-runs the last request, because the number of entries may
+   * have crossed the threshold that decides whether the endpoint requires search criteria.
+   */
+  public refresh(): void {
+    const reInitialize = true;
+    this.refreshSearch(reInitialize);
+  }
+  //#endregion
+
+  //#region Private methods
+  private applySearchCriteria(criteria: string | null): void {
+    this.isLoading.set(true);
+    this.resetMessages();
+
+    this.searchSubject.next(criteria);
+  }
+
+  private checkAndAddDisplayControl(): void {
+    let parent: FormGroup = this.formGroup.form;
+    const controlNames: string[] = this.formDisplayControlName.split('.');
+
+    controlNames.forEach((name, index) => {
+      if (index < controlNames.length - 1) {
+        parent = <FormGroup>parent.get(name);
+      } else {
+        if (!parent.get(name)) {
+          parent.addControl(name, new FormControl(''));
+        }
+
+        // Marked whether this component created it or the screen declared it: what makes a control
+        // a display control is being driven as one, not who wrote it down. A filters form reads the
+        // mark to keep it out of what it submits.
+        DisplayControls.markAsDisplayControl(parent.get(name));
+      }
+    });
+  }
+
+  private closeDropdownOverlay(): void {
+    this.isDropDownShown.set(false);
+    this.focusedIndex.set(-1);
+    this.updateInputAriaActiveDescendant();
+    if (this.overlayRef) {
+      this.overlayRef.detach();
+      this.overlayRef.dispose();
+      this.overlayRef = undefined;
+    }
+  }
+
+  private initializeEntriesDataSource(): void {
+    if (this.hasSearchEndpoint || !this._entriesList || this._entriesList.length === 0) {
+      return;
+    }
+
+    const observables: Observable<string>[] = [];
+
+    this._entriesList.forEach((entry: any | { key: number; value: Observable<any> }) => {
+      const value: number = entry[this.valueProperty()];
+      const display: string | Observable<any> = entry[this.displayProperty()];
+
+      if (display instanceof Observable) {
+        this.entriesDataSource.push({ value: value, display: 'Loading...' });
+
+        observables.push(
+          display.pipe(
+            take(1),
+            tap((v) => {
+              this.entriesDataSource.filter((x) => x.value === value)[0].display = v;
+              if (this.selectedValue() === value) {
+                this.displayControl.setValue(v);
+              }
+            }),
+          ),
+        );
+      } else {
+        this.entriesDataSource.push({ value, display });
+      }
+    });
+
+    // Subscribed only to run the requests; the emitted values are not needed here.
+    forkJoin(observables).pipe(take(1)).subscribe();
+  }
+
+  private initializeSearch(): void {
+    this.searchSubject
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((criteria: string | null) => {
+          this.lastCriteriaUsed = criteria;
+
+          if (!this.hasSearchEndpoint) {
+            if (this.entriesDataSource.length === 0) {
+              return of(null).pipe(take(1));
+            }
+            return of(
+              this.entriesDataSource.filter(
+                (entry: ICatalogEntry) => entry.display.toLowerCase().indexOf(criteria?.toLowerCase() ?? '') > -1,
+              ),
+            ).pipe(take(1));
+          }
+
+          this.updateMinimumCharactersMessageVisibility(criteria ?? '');
+          if (this.showMinimumCharactersMessage()) {
+            return of(null).pipe(take(1));
+          }
+
+          return this.catalogService
+            .search(this.searchEndpoint!, this.maxEntries(), criteria ?? '', this.filters)
+            .pipe(take(1));
+        }),
+      )
+      .subscribe({
+        next: (result: ICatalogResult | any[] | null | undefined) => {
+          this.isLoading.set(false);
+          this.displayedEntries.set([]);
+
+          if (Array.isArray(result) && result.length > 0) {
+            this.displayedEntries.set(result);
+          } else if (result?.entries && Array.isArray(result.entries)) {
+            const catalogResult: ICatalogResult = result as ICatalogResult;
+            if (!catalogResult) {
+              return;
+            }
+
+            this.displayedEntries.set(catalogResult.entries);
+
+            if (!this.isDataInitialized) {
+              // The shouldUseCriteria is only set from the initialization.
+              this.isDataInitialized = true;
+              this.shouldUseCriteria.set(catalogResult.shouldUseCriteria ?? false);
+              this.showMinimumCharactersMessage.set(this.searchable() && this.displayedEntries().length === 0);
+            }
+          }
+
+          // Try to filter out already loaded rows from the data grid dataset.
+          if (this.displayedEntries().length > 0 && this.dataGridDataset) {
+            this.displayedEntries.set(this.tryFilterFromDataset(this.displayedEntries()));
+          }
+
+          if (!this.showMinimumCharactersMessage() && this.displayedEntries().length === 0) {
+            this.showNoResultsMessage.set(true);
+          }
+        },
+        error: (_: any) => {
+          this.isLoading.set(false);
+          this.displayedEntries.set([]);
+          this.showFailureMessage.set(true);
+
+          // Set a new subscription to allow retrying the search later.
+          this.initializeSearch();
+        },
+      });
+
+    if (!this.isSubscriptionInitialized) {
+      this.isSubscriptionInitialized = true;
+      this.applySearchCriteria(null);
+    }
+  }
+
+  private openDropdownOverlay(): void {
+    // Defensive cleanup of any stale overlay before creating a new one.
+    if (this.overlayRef) {
+      this.overlayRef.detach();
+      this.overlayRef.dispose();
+      this.overlayRef = undefined;
+    }
+
+    const positionStrategy: FlexibleConnectedPositionStrategy = this.positionBuilder
+      .flexibleConnectedTo(this.inputElement()!)
+      .withPositions([
+        {
+          originX: 'start',
+          originY: 'bottom',
+          overlayX: 'start',
+          overlayY: 'top',
+        },
+        {
+          originX: 'start',
+          originY: 'top',
+          overlayX: 'start',
+          overlayY: 'bottom',
+        },
+      ]);
+
+    this.overlayRef = this.overlay.create({
+      positionStrategy,
+      hasBackdrop: false,
+      scrollStrategy: this.overlay.scrollStrategies.reposition(),
+    });
+
+    // Set overlay width to match input field
+    const inputRect: DOMRect = this.inputElement()!.nativeElement.getBoundingClientRect();
+    this.overlayRef.updateSize({ width: inputRect.width });
+
+    const portal: TemplatePortal = new TemplatePortal(this.dropdownTemplate()!, this.viewContainerRef);
+    this.overlayRef.attach(portal);
+    this.isDropDownShown.set(true);
+    this.focusedIndex.set(
+      this.selectedValue() != null
+        ? this.displayedEntries().findIndex((entry: ICatalogEntry) => entry.value === this.selectedValue())
+        : -1,
+    );
+    this.updateInputAriaActiveDescendant();
+
+    // Re-evaluate minimum characters message visibility when opening the dropdown,
+    // in case it was incorrectly reset by a programmatic value change.
+    if (this.shouldUseCriteria() && !this.isLoading()) {
+      this.updateMinimumCharactersMessageVisibility(this.displayControl?.value ?? '');
+    }
+
+    // Scroll the selected item into view after the overlay renders.
+    if (this.focusedIndex() >= 0) {
+      requestAnimationFrame(() => this.scrollFocusedItemIntoView());
+    }
+  }
+
+  private refreshSearch(reInitialize = false): void {
+    if (reInitialize) {
+      // Both are written together when a catalog first answers, so both have to go together.
+      // Leaving shouldUseCriteria behind let the previous catalog gate the new one: the
+      // minimum-length check short-circuited the very request that would have corrected it.
+      this.isDataInitialized = false;
+      this.shouldUseCriteria.set(false);
+    }
+
+    this.applySearchCriteria(this.lastCriteriaUsed);
+  }
+
+  private resetMessages(): void {
+    this.showFailureMessage.set(false);
+    this.showNoResultsMessage.set(false);
+    this.showMinimumCharactersMessage.set(false);
+  }
+
+  private resolveDisplay(value: any): string {
+    return this.entriesDataSource.filter((entry: ICatalogEntry) => entry.value === value)[0]?.display ?? '';
+  }
+
+  private syncDisplayFromCurrentValue(): void {
+    const currentValue: any = this.formControl?.value;
+    if (currentValue == null || !this.shouldRefreshDisplay(currentValue)) {
+      return;
+    }
+
+    this.selectedValue.set(currentValue);
+    if (!this.hasSearchEndpoint) {
+      this.displayControl?.setValue(this.resolveDisplay(currentValue), { emitEvent: false });
+    }
+  }
+
+  /**
+   * Decides whether the display control has to be written again.
+   *
+   * The value on its own is not enough. Resetting a form clears the display control and then
+   * patches the same value back, so an unchanged value can still leave the display empty. That
+   * only happens when the stored value equals the control's initial value, which is why it used
+   * to show up on the default entry alone.
+   */
+  private shouldRefreshDisplay(value: any): boolean {
+    if (this.selectedValue() !== value) {
+      return true;
+    }
+
+    if (this.hasSearchEndpoint) {
+      return false;
+    }
+
+    const display: string = this.resolveDisplay(value);
+    return display.length > 0 && this.displayControl?.value !== display;
+  }
+
+  private syncFormControlsEnabledDisabled(): void {
+    if (this.formControl.enabled !== this.displayControl.enabled) {
+      if (this.formControl.disabled) {
+        this.displayControl.disable({ emitEvent: false });
+      } else {
+        this.displayControl.enable({ emitEvent: false });
+      }
+    }
+  }
+
+  private tryFilterFromDataset(results: ICatalogEntry[]): ICatalogEntry[] {
+    if (
+      this.dataGridDataset &&
+      this.controlName() === this.dataGridDataset?.keyProperty &&
+      this.dataGridDataset.hasLoadedRows
+    ) {
+      // If the control name is matching the ID property of the data grid dataset, filter out the loaded rows to remove duplicated IDs.
+      const loadedIDs: any[] = this.dataGridDataset.loadedKeys!.map((key: string) =>
+        this.dataGridDataset.getRowID(key),
+      );
+      return results.filter((result: ICatalogEntry) => loadedIDs.indexOf(result.value) < 0);
+    }
+    return results;
+  }
+
+  private updateFilters(): void {
+    if (!this.filterDiffer || !this.filters) {
+      return;
+    }
+
+    const changes: KeyValueChanges<string, any> | null = this.filterDiffer.diff(this.filters);
+    if (changes) {
+      const reInitialize = true;
+      this.refreshSearch(reInitialize);
+    }
+  }
+
+  private updateMinimumCharactersMessageVisibility(criteria: string): void {
+    this.showMinimumCharactersMessage.set(
+      this.searchable() &&
+        this.shouldUseCriteria() &&
+        this.minimumLengthSearch() > 0 &&
+        (criteria?.length ?? 0) < this.minimumLengthSearch(),
+    );
+  }
+
+  private getNativeInput(): HTMLInputElement | null {
+    return this.inputElement()?.nativeElement?.querySelector('input') ?? null;
+  }
+
+  private scrollFocusedItemIntoView(): void {
+    if (!this.overlayRef || this.focusedIndex() < 0) {
+      return;
+    }
+    const optionId: string = this.getOptionId(this.focusedIndex());
+    const element: HTMLElement | null = this.overlayRef.overlayElement.querySelector('#' + optionId);
+    if (element) {
+      element.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  private setInputAriaAttributes(): void {
+    const input: HTMLInputElement | null = this.getNativeInput();
+    if (!input) {
+      return;
+    }
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', String(this.isDropDownShown()));
+    input.setAttribute('aria-haspopup', 'listbox');
+    input.setAttribute('aria-owns', this.listboxId);
+  }
+
+  private updateInputAriaActiveDescendant(): void {
+    const input: HTMLInputElement | null = this.getNativeInput();
+    if (!input) {
+      return;
+    }
+    input.setAttribute('aria-expanded', String(this.isDropDownShown()));
+    const descendantId: string | null = this.activeDescendantId;
+    if (descendantId) {
+      input.setAttribute('aria-activedescendant', descendantId);
+    } else {
+      input.removeAttribute('aria-activedescendant');
+    }
+  }
+  //#endregion
+}

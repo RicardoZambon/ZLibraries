@@ -1,0 +1,34 @@
+@reference '../../../styles/theme.css';
+
+/* @use 'tailwindcss'; */
+
+:host {
+  @apply flex grow relative overflow-hidden max-h-full h-full min-h-full;
+}
+
+.content {
+  @apply flex grow flex-col pt-3 pb-1 px-3 md:pr-[10.5rem] overflow-auto scroll-smooth;
+
+  &.no-scroll-spy {
+    @apply md:pr-3;
+  }
+}
+
+.scroll-spy {
+  @apply absolute top-3 right-3 w-36 select-none hidden md:flex flex-col;
+
+  a {
+    @apply cursor-pointer py-2 px-4 border-l-2 text-sm;
+    color: var(--color-content-secondary);
+    border-left-color: var(--color-line);
+
+    &.active {
+      color: var(--color-accent);
+      border-left-color: var(--color-accent);
+    }
+
+    &:active {
+      background-color: var(--state-selected);
+    }
+  }
+}

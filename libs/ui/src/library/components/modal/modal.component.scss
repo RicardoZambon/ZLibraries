@@ -1,0 +1,140 @@
+@reference '../../../styles/theme.css';
+
+/* @use 'tailwindcss'; */
+
+body.modal-active {
+  overflow-x: hidden;
+  overflow-y: visible !important;
+}
+
+:host {
+  @apply fixed w-full h-full top-0 left-0 z-50;
+
+  &:not(.show) {
+    @apply opacity-0 pointer-events-none delay-150 transition-opacity;
+
+    .modal-overlay {
+      @apply opacity-0 delay-150;
+    }
+
+    .modal-container {
+      &.top,
+      &.center {
+        @apply -translate-y-14;
+      }
+
+      &.bottom {
+        @apply translate-y-14;
+      }
+
+      &.left {
+        @apply -translate-x-14;
+      }
+
+      &.right {
+        @apply translate-x-14;
+      }
+
+      .modal-content {
+        @apply animate-[hidden_0s_ease-in-out_forwards];
+      }
+    }
+  }
+}
+
+.modal-overlay {
+  @apply fixed w-screen h-screen inset-0;
+  /* The scrim carries its own alpha now. It used to be solid black at 50% element opacity,
+     which is the same picture but cannot deepen for a dark theme, where a 50% veil over a
+     dark page no longer separates the dialog from what is behind it. The opacity transition
+     that sat here went with it: nothing ever changed the value, the overlay is added and
+     removed outright. */
+  background-color: var(--color-surface-scrim);
+}
+
+.modal-container {
+  @apply grid grid-cols-1 min-h-full h-full max-h-screen m-auto p-7 duration-300 transition-transform;
+
+  &.top {
+    @apply items-start;
+  }
+
+  &.bottom {
+    @apply items-end;
+  }
+
+  &.left {
+    @apply items-center mr-0;
+  }
+
+  &.right {
+    @apply items-center ml-0;
+  }
+
+  &.center {
+    @apply items-center;
+  }
+
+  $sizes: 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', 'full';
+
+  @each $size in $sizes {
+    &.size-#{$size} {
+      @apply #{'max-w-' + $size};
+    }
+  }
+
+  &.size-auto {
+    @apply container;
+  }
+
+  .modal-content {
+    @apply relative w-full border outline-0 bg-clip-padding;
+    border-color: var(--color-line);
+    border-radius: var(--radius-control);
+    background-color: var(--color-surface-solid);
+    @apply grid grid-rows-[min-content_1fr_min-content] max-h-full overflow-hidden;
+    box-shadow: var(--shadow-overlay);
+    @apply animate-[shown_0.3s_ease-in-out_forwards];
+
+    .modal-header {
+      @apply p-4 border-b;
+      border-color: var(--color-line);
+
+      .modal-close {
+        @apply absolute top-0 right-0 cursor-pointer p-2 m-2 opacity-60;
+      }
+    }
+
+    .modal-body {
+      @apply p-4 overflow-hidden;
+    }
+
+    .modal-footer {
+      @apply grid grid-flow-col auto-cols-min gap-1 justify-end whitespace-nowrap p-3 border-t;
+      border-color: var(--color-line);
+
+      > *,
+      ::ng-deep div[footer] > * {
+        @apply grid grid-flow-col auto-cols-min gap-1;
+      }
+    }
+  }
+}
+
+@keyframes hidden {
+  from {
+    display: flex;
+  }
+  to {
+    display: none;
+  }
+}
+
+@keyframes shown {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

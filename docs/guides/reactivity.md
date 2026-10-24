@@ -2,21 +2,32 @@
 
 ## The contract
 
-> Every value a library template reads is a `signal`, a `computed`, an `input()`/`model()`, a
+> Every value a template in this package reads is a `signal`, a `computed`, an `input()`/`model()`, a
 > `viewChild()`/`contentChildren()`, or a constant fixed for the component's lifetime.
 >
-> No library template reads a plain mutable field, a `get` backed by a service's mutable state, or
+> No template in this package reads a plain mutable field, a `get` backed by a service's mutable state, or
 > a value assigned inside `.subscribe()`.
 >
-> No library component declares `changeDetection`, and none calls `ChangeDetectorRef`.
+> No component in this package declares `Eager`, with one deliberate exception that ships to
+> nobody: the test harness's own self-test declares it, to prove that doing so makes no
+> difference, and disables the lint rule on that line. Declaring nothing is the house default --
+> in v22 that compiles to `OnPush` -- though a few still carry a redundant explicit `OnPush`.
+> None calls `ChangeDetectorRef`.
 >
-> **What this guarantees a consumer:** a component from these packages renders correctly under any
-> change-detection strategy the host application uses, and under `provideZonelessChangeDetection()`.
-> Our packages do not make the host application's choice of strategy part of their API.
+> `NgZone` survives in two components and three call sites -- `TabsComponent` once,
+> `DataGridComponent` twice -- purely to keep scroll and resize listeners out of change
+> detection. Under zoneless that call is a silent no-op and the listeners run normally, which
+> nothing depends on -- but a component that needed it to be correct would be broken, so never
+> write one.
+>
+> **What this guarantees a consumer:** a component from `@zambon-dev/ui` renders correctly under
+> any change-detection strategy the host application uses, and under
+> `provideZonelessChangeDetection()`. The package does not make the host application's choice of
+> strategy part of its API.
 >
 > **What stays the consumer's:** the state their own components own. If one of their components
-> assigns a field inside a `.subscribe()` and renders it in its own template, nothing in these
-> packages can know.
+> assigns a field inside a `.subscribe()` and renders it in its own template, nothing in this
+> package can know.
 
 Boundary rule: **Observables cross boundaries; signals hold state a template reads.** RxJS is not
 going anywhere — HTTP calls, and hot notifications with no current value, stay streams. Convert at
@@ -58,8 +69,8 @@ exactly this way. If a host binding is involved, a signal is the only mechanism 
    `@Input() set` → `input()` plus `computed`/`linkedSignal`, `@Output()` → `output()`,
    `@ViewChild`/`@ContentChildren` → `viewChild()`/`contentChildren()`.
 4. Delete `changeDetection: ChangeDetectionStrategy.Eager` and any `ChangeDetectorRef`.
-5. Delete the component's line from `STILL_EAGER` in that library's
-   `src/lib/change-detection-contract.spec.ts`.
+5. Delete the component's line from `STILL_EAGER` in that layer's
+   `src/<layer>/change-detection-contract.spec.ts`.
 6. Add a spec per asynchronous source the template depends on (below).
 
 **Rename anything you convert** — `loading` → `isLoading`, `visible` → `isVisible`. A signal that
@@ -74,7 +85,7 @@ view and descends in Global mode. "Nothing marked this view dirty" **cannot be e
 harness. The specs here were not merely weak; they were structurally incapable of catching the
 failure. Three layers now:
 
-**C — the contract spec.** `src/lib/change-detection-contract.spec.ts` in each library asserts, over
+**C — the contract spec.** `src/<layer>/change-detection-contract.spec.ts` asserts, per layer and over
 the public API, that exactly the components on a named list still declare `Eager`. It fails in both
 directions: a new `Eager` component, or a migrated one left on the list.
 
@@ -84,7 +95,7 @@ subscribe-driven component is under test by default. Assert after `await fixture
 **never** `fixture.detectChanges()`, which under zoneless sets `includeAllTestViews` and refreshes
 everything regardless. `fakeAsync`/`tick` are zone-based; use `whenStable()`.
 
-**A — the OnPush-ancestor harness**, exported as `@zambon-dev/library/testing`:
+**A — the OnPush-ancestor harness**, exported as `@zambon-dev/ui/testing`:
 
 ```ts
 const render = renderUnderOnPush(SidebarComponent);
@@ -109,7 +120,7 @@ Three rules make it an oracle rather than decoration:
 
 `render-under-on-push.spec.ts` proves the harness discriminates, including that a component
 declaring `Eager` stays just as stale as one declaring nothing. A clean Storybook console proves
-nothing — see the NG0100 notes in `libs/framework/CLAUDE.md`.
+nothing — see the NG0100 notes in `libs/ui/CLAUDE.md`.
 
 ## One bridge, deliberately
 
@@ -132,24 +143,44 @@ Do not "fix" these:
 
 ## Where this stands
 
-Done: all 20 view/button/filter base classes; `SidebarService`, `SidebarComponent`,
-`SidebarItemComponent`, `RibbonGroupComponent`, `RibbonGroupChild`, `BaseButton`,
-`TabsComponent`, `TabService` (via the bridge above), `ServicesHistoryFilterComponent`,
-`ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`, `MultiSelectComponent`
-and `MultiEditorComponent`.
+**The migration is finished, layer by layer.**
 
-Remaining: the lists in the three `change-detection-contract.spec.ts` files -- 21 in framework, 6
-in library, 9 in the shared public API, plus `LanguageSelectorComponent` and `LoginComponent`,
-which shared does not export and the contract spec therefore cannot reach.
+The **library** layer went first. Its services and datasets came before its components --
+`FormService`, `SidebarService`, `DataGridDataset`, `MultiSelectResultDataset` announce their own
+changes, which is what let the components above them stop watching.
 
-**Take the datasets next.** Every library component still on the list reads a dataset or a service
-directly from its template -- `resultDataset.displayedRows`, `dataGridDataset.columns`,
-`formService.loading`. Migrating those components first would only move the problem: the component
-would hold signals and still read mutable state that cannot notify it. `MultiSelectResultDataset`,
-`DataGridDataset`, `FormService` and `DataProviderService` come first, and the components that
-read them follow in the same slice.
+The **framework** layer followed, finishing with the ribbon buttons. `ViewBase.loading`,
+`LegacySubViewForm.viewMode` and `DataProviderService`'s entity id went onto signals behind their
+existing accessors, which made the buttons' templates correct without changing a single call site.
 
-A worked example of why: `MultiSelectResultGridComponent` looks safe, because removing an item
-flips a loading flag whose write happens to refresh the view. It is not -- `onItemRemoved` changes
-`displayedRows` with no flag anywhere near it, so the row stays on screen. A loading flag that
-refreshes the view as a side effect hides this class of bug rather than fixing it.
+The **shared** layer closed it out.
+
+All three `STILL_EAGER` lists are empty, and
+`@angular-eslint/prefer-on-push-component-change-detection` is an error for the whole package --
+one rule now, not one per package, since the three became `@zambon-dev/ui`.
+
+The rule itself is in the contract at the top of this guide, exception included. This section
+deliberately does not restate it: it used to, and the two copies drifted apart twice — the
+contract was corrected while the restatement here kept the old wording, then the reverse. A
+restatement is not a copy that happened to go stale; it is the surface that can.
+
+Worth knowing why the contract is worded so carefully. "Declares no strategy" is wrong, and was
+stated for a while. So is a flat "nothing declares `Eager`" written as a list of negatives, which
+leaves no room for the one case the repository documents on purpose.
+
+A consuming application chooses its own strategy, zoneless included, and the package renders
+correctly underneath it.
+
+Two components are not exported, so no contract spec can reach them:
+`LanguageSelectorComponent` and `LoginComponent`. The lint rule is what covers those.
+
+**The order that worked, and why.** Take a layer's services and datasets before the components
+that read them. Doing it the other way round moves the problem: the component holds signals and
+still reads mutable state that cannot notify it. `MultiSelectResultGridComponent` was the worked
+example -- it looked safe because removing an item flipped a loading flag whose write happened to
+refresh the view, while `onItemRemoved` changed the rows with no flag anywhere near it.
+
+**What costs the most time.** Not the components: the specs. The `Object.create(X.prototype)`
+pattern in `libs/ui/CLAUDE.md` runs no field initialiser, so every stubbed field has to
+become a stubbed signal and every assertion has to read it rather than compare the signal object.
+A `!` or a missing `()` there is silent. Budget for it, and retire that pattern where you can.

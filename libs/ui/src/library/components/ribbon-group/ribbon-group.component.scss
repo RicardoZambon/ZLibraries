@@ -1,0 +1,21 @@
+@reference '../../../styles/theme.css';
+
+/* @use 'tailwindcss'; */
+
+:host {
+  @apply pr-2 relative;
+
+  &:after {
+    @apply content-[''] absolute -right-1 top-1 bottom-1 w-[1px];
+    background-color: var(--color-line-strong);
+  }
+
+  .content {
+    @apply flex flex-row flex-nowrap;
+  }
+
+  .label {
+    @apply text-sm pt-[0.05rem] select-none text-center;
+    color: var(--color-content-secondary);
+  }
+}

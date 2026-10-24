@@ -1,0 +1,79 @@
+{
+  "name": "@zambon-dev/ui",
+  "version": "0.0.1",
+  "description": "Angular UI components, application framework and shared application layer for Zambon applications.",
+  "keywords": [
+    "angular",
+    "components",
+    "framework",
+    "shared",
+    "ui",
+    "zambon",
+    "zlibraries"
+  ],
+  "author": "Ricardo Zambon",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RicardoZambon/ZLibraries.git",
+    "directory": "libs/ui"
+  },
+  "bugs": {
+    "url": "https://github.com/RicardoZambon/ZLibraries/issues"
+  },
+  "homepage": "https://github.com/RicardoZambon/ZLibraries/tree/main/libs/ui#readme",
+  "peerDependencies": {
+    "@angular/cdk": "^22.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
+    "@angular/platform-browser": "^22.0.0",
+    "@angular/router": "^22.0.0",
+    "@auth0/angular-jwt": "^5.2.0",
+    "@microsoft/signalr": "^10.0.0",
+    "@ngx-translate/core": "^16.0.4",
+    "ngx-resize-observer": "^4.0.0",
+    "ngx-translate-multi-http-loader": "^19.0.2",
+    "rxjs": "^7.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": [
+    "**/*.scss"
+  ],
+  "exports": {
+    "./styles/common": {
+      "sass": "./styles/common.scss",
+      "style": "./styles/common.scss",
+      "default": "./styles/common.scss"
+    },
+    "./styles/common.scss": {
+      "sass": "./styles/common.scss",
+      "style": "./styles/common.scss",
+      "default": "./styles/common.scss"
+    },
+    "./styles/variables": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    },
+    "./styles/variables.scss": {
+      "sass": "./styles/variables.scss",
+      "style": "./styles/variables.scss",
+      "default": "./styles/variables.scss"
+    },
+    "./styles/theme": {
+      "style": "./styles/theme.css",
+      "default": "./styles/theme.css"
+    },
+    "./styles/theme.css": {
+      "style": "./styles/theme.css",
+      "default": "./styles/theme.css"
+    },
+    "./i18n/*": {
+      "default": "./i18n/*"
+    }
+  },
+  "style": "styles/common.scss"
+}

@@ -1,0 +1,37 @@
+import { Component, output, OutputEmitterRef } from '@angular/core';
+import { ButtonComponent } from '@zambon-dev/ui/library';
+import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageSelectorComponent } from '../../auth/components/language-selector/language-selector.component';
+import { BrandComponent } from './brand/brand.component';
+import { EnvironmentBadgeComponent } from './environment-badge/environment-badge.component';
+import { NotificationsComponent } from './notifications/notifications.component';
+import { ThemeSwitchComponent } from '../../theme/theme-switch.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+
+@Component({
+  selector: 'shared-top-bar',
+  templateUrl: './top-bar.component.html',
+  styleUrls: ['./top-bar.component.scss'],
+  imports: [
+    BrandComponent,
+    ButtonComponent,
+    EnvironmentBadgeComponent,
+    LanguageSelectorComponent,
+    NotificationsComponent,
+    ThemeSwitchComponent,
+    TranslatePipe,
+    UserProfileComponent,
+  ],
+})
+export class TopBarComponent {
+  //#region ViewChilds, Inputs, Outputs
+  /** Emitted when the logout button is clicked. */
+  public readonly logout: OutputEmitterRef<void> = output<void>();
+  //#endregion
+
+  //#region Event handlers
+  public onLogoutClick(): void {
+    this.logout.emit();
+  }
+  //#endregion
+}

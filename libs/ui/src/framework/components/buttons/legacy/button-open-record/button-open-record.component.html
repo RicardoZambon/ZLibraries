@@ -1,0 +1,9 @@
+@if (isVisible()) {
+  <lib-ribbon-button
+    [label]="'Button-Open-Record'"
+    [icon]="'fa-eye'"
+    [disabled]="disabled() || selectionCount() !== 1"
+    [loading]="loading()"
+    (action)="clicked()"
+  ></lib-ribbon-button>
+}

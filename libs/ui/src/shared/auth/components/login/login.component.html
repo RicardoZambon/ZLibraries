@@ -1,0 +1,84 @@
+<div class="login-card">
+  @if (logoUrl) {
+    <img class="login-logo" [src]="logoUrl" alt="" />
+  }
+
+  <h1 class="login-title">{{ 'Login-Title' | translate }}</h1>
+  @if (companyName) {
+    <p class="login-subtitle">{{ companyName }}</p>
+  }
+
+  <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    @if (formState().error) {
+      <p class="login-error" role="alert">
+        @if (formState().error === 'invalid') {
+          {{ 'Login-Errors-Invalid' | translate }}
+        } @else {
+          {{ 'Login-Errors-InternalServerError' | translate }}
+        }
+      </p>
+    }
+
+    <div class="login-field">
+      <label class="login-label" for="username">{{ 'Login-Username' | translate }}</label>
+      <div class="login-control" [class.invalid]="isInvalid('username')">
+        <i class="fa-solid fa-user fa-fw" aria-hidden="true"></i>
+        <input
+          #username
+          id="username"
+          type="text"
+          formControlName="username"
+          autocomplete="username"
+          [attr.aria-invalid]="isInvalid('username') ? 'true' : null"
+          [placeholder]="'Login-Username' | translate"
+        />
+      </div>
+      @if (isInvalid('username')) {
+        <span class="login-validation">{{ 'Login-Username-Required' | translate }}</span>
+      }
+    </div>
+
+    <div class="login-field">
+      <label class="login-label" for="password">{{ 'Login-Password' | translate }}</label>
+      <div class="login-control" [class.invalid]="isInvalid('password')">
+        <i class="fa-solid fa-key fa-fw" aria-hidden="true"></i>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+          [attr.aria-invalid]="isInvalid('password') ? 'true' : null"
+          [placeholder]="'Login-Password' | translate"
+        />
+      </div>
+      @if (isInvalid('password')) {
+        <span class="login-validation">{{ 'Login-Password-Required' | translate }}</span>
+      }
+    </div>
+
+    <div class="login-options">
+      <label class="login-remember">
+        <input id="rememberMe" type="checkbox" class="form-input" formControlName="rememberMe" />
+        <span>{{ 'Login-RememberMe' | translate }}</span>
+      </label>
+
+      <shared-language-selector title="Login-SelectLanguage"></shared-language-selector>
+    </div>
+
+    <lib-button
+      class="login-submit"
+      type="submit"
+      intent="primary"
+      icon="fa-solid fa-right-to-bracket"
+      [loading]="formState().loading"
+      [success]="formState().success"
+    >
+      {{ 'Login-SignIn' | translate }}
+    </lib-button>
+  </form>
+</div>
+
+<footer class="login-footer">
+  <span [innerHTML]="'Login-Copyright' | translate"></span>
+  <span>{{ 'Login-DesignBy' | translate }}</span>
+</footer>

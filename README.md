@@ -1,17 +1,24 @@
 # ZLibraries
 
-An Nx workspace holding three published Angular packages that layer on top of each other.
+An Nx workspace publishing one Angular package, [`@zambon-dev/ui`](libs/ui), which exposes three
+layers as entry points.
 
-| Package                                   | Role                                                                |
-| ----------------------------------------- | ------------------------------------------------------------------- |
-| [`@zambon-dev/library`](libs/library)     | Presentation layer — UI components, directives, pipes               |
-| [`@zambon-dev/framework`](libs/framework) | Application shell — tabbed navigation, view scaffolding, modals     |
-| [`@zambon-dev/shared`](libs/shared)       | Cross-cutting — authentication, layouts, history features, services |
+| Entry point                | Role                                                                |
+| -------------------------- | ------------------------------------------------------------------- |
+| `@zambon-dev/ui`           | Re-exports all three layers                                         |
+| `@zambon-dev/ui/library`   | Presentation — UI components, directives, pipes                     |
+| `@zambon-dev/ui/framework` | Application shell — tabbed navigation, view scaffolding, modals     |
+| `@zambon-dev/ui/shared`    | Cross-cutting — authentication, layouts, history features, services |
+| `@zambon-dev/ui/testing`   | Test harness for rendering under an OnPush ancestor                 |
 
-The dependency direction is strictly one-way: `shared` → `framework` → `library`. Nothing lower may import
-from something higher.
+The dependency direction is strictly one-way: `shared` → `framework` → `library`. Nothing lower
+may import from something higher, and `eslint.config.mjs` in the package enforces it.
 
-`apps/storybook-host` is a local harness for exercising the packages together; it is not published.
+These were three separate packages until 2026-10-24. They were released in lockstep anyway, while
+the `peerDependencies` ranges that held them together could only be checked after the release
+that invalidated them. [The migration guide](docs/guides/migrating-to-ui.md) covers the move.
+
+`apps/storybook-host` is a local harness for exercising the package; it is not published.
 
 ## Requirements
 
@@ -26,33 +33,27 @@ npm ci
 
 ## Common commands
 
-| Command                       | What it does                                         |
-| ----------------------------- | ---------------------------------------------------- |
-| `npm run build`               | Production build of every package into `dist/libs/*` |
-| `npm test`                    | Unit tests (Jest) for every project                  |
-| `npm run lint`                | ESLint across every project                          |
-| `npm run format`              | Rewrite files with Prettier                          |
-| `npm run format:check`        | Fail if anything is unformatted                      |
-| `npm run storybook:library`   | Storybook for `@zambon-dev/library`                  |
-| `npm run storybook:framework` | Storybook for `@zambon-dev/framework`                |
-| `npm run storybook:shared`    | Storybook for `@zambon-dev/shared`                   |
+| Command                | What it does                                        |
+| ---------------------- | --------------------------------------------------- |
+| `npm run build`        | Production build of the package into `dist/libs/ui` |
+| `npm test`             | Unit tests (Jest)                                   |
+| `npm run lint`         | ESLint                                              |
+| `npm run format`       | Rewrite files with Prettier                         |
+| `npm run format:check` | Fail if anything is unformatted                     |
+| `npm run storybook`    | Storybook on :4400                                  |
 
-Nx only rebuilds what changed. To scope a command to a single project:
+To scope a command, or to see what a change affects:
 
 ```bash
-npx nx test shared
-npx nx lint library
-```
-
-To see what a change actually affects:
-
-```bash
+npx nx test ui
 npx nx affected --target=build --base=main
 ```
 
 ## Documentation
 
-The three Storybooks are published from `main` to [https://ricardozambon.github.io/ZLibraries/](https://ricardozambon.github.io/ZLibraries/).
+The Storybook is published from `main` to
+[https://ricardozambon.github.io/ZLibraries/](https://ricardozambon.github.io/ZLibraries/). The
+three layers are its top-level sections.
 
 Guides for applications that consume these packages:
 
@@ -65,23 +66,24 @@ Guides for applications that consume these packages:
 
 ## Nx Cloud
 
-Remote caching is optional. To enable it, set `NX_CLOUD_ACCESS_TOKEN` in your environment — the token is
-deliberately **not** committed to `nx.json`. In CI it comes from the `NX_CLOUD_ACCESS_TOKEN` repository
-secret. Without it, Nx falls back to the local cache and everything still works.
+Remote caching is optional. To enable it, set `NX_CLOUD_ACCESS_TOKEN` in your environment — the
+token is deliberately **not** committed to `nx.json`. In CI it comes from the
+`NX_CLOUD_ACCESS_TOKEN` repository secret. Without it, Nx falls back to the local cache and
+everything still works.
 
 ## Making a change
 
 1. Branch from `main`.
 2. Make the change, with tests.
-3. Add an entry under `## [Unreleased]` in the `CHANGELOG.md` of every package you touched under `libs/*/src/`.
+3. Add an entry under `## [Unreleased]` in `libs/ui/CHANGELOG.md` if you touched `libs/ui/src/`.
    CI enforces this. Tooling-only PRs can carry the `no-changelog` label instead.
-4. Open a PR. `PR Validation` lints and tests affected projects, builds affected packages and Storybooks,
-   and dry-runs the release for each package.
+4. Open a PR. `PR Validation` lints and tests, builds the package and the Storybook, and dry-runs
+   the release.
 
 ### Commit messages
 
-Releases are driven by [semantic-release](https://semantic-release.gitbook.io/), so the commit type decides
-the version bump:
+Releases are driven by [semantic-release](https://semantic-release.gitbook.io/), so the commit
+type decides the version bump:
 
 | Type                                                               | Bump       |
 | ------------------------------------------------------------------ | ---------- |
@@ -94,16 +96,22 @@ Scoping a commit `no-release` suppresses a release regardless of type.
 
 ## Releasing
 
-Merging to `main` triggers `Release`, which versions and publishes each package independently, stamps the
-`[Unreleased]` changelog section with the resolved version, and opens an aggregate GitHub release.
+Merging to `main` triggers `Release`, which versions and publishes the package, stamps the
+`[Unreleased]` changelog section with the resolved version, and opens a GitHub release.
 
 `main` is the only release branch. Everything published from here targets Angular 22.
 
+### Retired packages
+
+`@zambon-dev/library`, `@zambon-dev/framework` and `@zambon-dev/shared` are deprecated on npm and
+superseded by `@zambon-dev/ui`. Their released versions stay installable, and their changelogs are
+kept under **Package history** in [the package changelog](libs/ui/CHANGELOG.md).
+
 ### Retired maintenance lines
 
-While `main` moved to Angular 22, three branches kept publishing for applications still on Angular 19,
-each under its own npm dist-tag. They are retired: every fix they carried also shipped on `main`, and
-their final state is kept in a tag rather than a branch.
+While `main` moved to Angular 22, three branches kept publishing for applications still on
+Angular 19, each under its own npm dist-tag. They are retired: every fix they carried also shipped
+on `main`, and their final state is kept in a tag rather than a branch.
 
 | Line           | Package                 | Last release | Tag                          |
 | -------------- | ----------------------- | ------------ | ---------------------------- |
@@ -111,8 +119,8 @@ their final state is kept in a tag rather than a branch.
 | former `1.6.x` | `@zambon-dev/library`   | 1.6.9        | `angular-19/library-1.6.x`   |
 | former `2.1.x` | `@zambon-dev/shared`    | 2.1.4        | `angular-19/shared-2.1.x`    |
 
-Those versions stay installable from npm; nothing further will be published on those lines. To work on
-one, check the tag out into a branch of its own.
+Those versions stay installable from npm; nothing further will be published on those lines. To
+work on one, check the tag out into a branch of its own.
 
 ## License
 

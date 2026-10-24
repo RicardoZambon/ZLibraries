@@ -1,0 +1,22 @@
+@let legacyForm = form();
+
+@if (isVisible() && (!legacyForm || legacyForm.viewMode !== 'edit')) {
+  <lib-ribbon-button
+    [disabled]="disabled() || (!!legacyForm && legacyForm.loading)"
+    [icon]="editIcon()"
+    [iconSize]="iconSize()"
+    [label]="editLabel()"
+    [loading]="loading()"
+    (action)="onEditAction()"
+  ></lib-ribbon-button>
+}
+@if (isVisible() && legacyForm && legacyForm.viewMode === 'edit' && !legacyForm.isNew) {
+  <lib-ribbon-button
+    [color]="cancelColor()"
+    [disabled]="disabled() || legacyForm.loading"
+    [icon]="cancelIcon()"
+    [label]="cancelLabel()"
+    [loading]="loading()"
+    (action)="onCancelAction()"
+  ></lib-ribbon-button>
+}
