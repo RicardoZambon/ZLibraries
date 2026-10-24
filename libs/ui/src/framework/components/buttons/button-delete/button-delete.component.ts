@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, forwardRef, inject, input, InputSignal, Signal, viewChild } from '@angular/core';
-import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/ui/library';
+import { ButtonComponent, DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/ui/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, take } from 'rxjs';
 import { ConfirmModalComponent } from '../../modals';
@@ -9,7 +9,7 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-delete',
   templateUrl: './button-delete.component.html',
-  imports: [ConfirmModalComponent, RibbonButtonComponent, TranslatePipe],
+  imports: [ButtonComponent, ConfirmModalComponent, RibbonButtonComponent, TranslatePipe],
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonDeleteComponent) }],
 })
 export class ButtonDeleteComponent extends BaseButton {

@@ -20,6 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is no click output: the element inside is a real `<button>`, so `(click)` on `<lib-button>`
   receives the bubbled event and `type="submit"` works inside a form with no wiring.
 
+- **At the root barrel the new button is `LibButtonComponent`.** Both layers now define a
+  `ButtonComponent` -- the library's `lib-button` and the framework's long-standing
+  `framework-button` -- so `@zambon-dev/ui` exports the framework one under the bare name it
+  already had and the library one under an alias. From the layer entry points
+  (`@zambon-dev/ui/library`, `@zambon-dev/ui/framework`) both are just `ButtonComponent`,
+  which is how they read in context and what the examples below use.
+
 - **A semantic token core.** 59 tokens that name a role -- a surface, a piece of content, a line, a
   state, a shape, a duration -- defined in `@zambon-dev/ui/styles/theme.css`. Each is also a
   Tailwind utility: `bg-surface-glass`, `text-content-secondary`, `rounded-surface`. The
