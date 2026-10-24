@@ -11,12 +11,19 @@
 // border-gray-300/90`. This screen occupies the slot a grid would, so matching it is what makes an
 // embedded report read as one of the application's own views instead of a hole in the layout.
 @mixin panel {
-  @apply border rounded-lg bg-white border-gray-300/90;
+  @apply border;
+  border-radius: var(--radius-nested);
+  background-color: var(--color-surface-solid);
+  border-color: var(--color-line);
 }
 
 .external-content-hint {
-  @apply flex-none rounded-lg border px-3 py-2 text-sm;
-  @apply bg-amber-100 text-amber-900 border-amber-300;
+  @apply flex-none border px-3 py-2;
+  border-radius: var(--radius-field);
+  font-size: var(--text-body);
+  background-color: color-mix(in srgb, var(--color-warning) 18%, transparent);
+  color: color-mix(in srgb, var(--color-warning) 70%, var(--color-content-primary));
+  border-color: color-mix(in srgb, var(--color-warning) 35%, transparent);
 }
 
 // The border and the rounding live on the container, not on the iframe: a border-radius set on an
@@ -33,7 +40,8 @@
 // Same spinner and sizing as lib-data-grid's own loading row.
 .external-content-loading {
   @apply absolute inset-0 z-10 flex items-center justify-center gap-2;
-  @apply bg-white text-gray-500;
+  background-color: var(--color-surface-solid);
+  color: var(--color-content-secondary);
 
   svg {
     @apply h-6 w-6 min-w-6 min-h-6 animate-spin;

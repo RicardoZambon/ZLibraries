@@ -13,15 +13,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A button component, `lib-button`.** One component with an `intent` -- `primary`, `secondary`,
+  `danger`, `ghost` -- in place of a class that named a colour. It carries the loading, success and
+  error states the old classes carried, and it blocks activation with the `disabled` attribute
+  rather than `pointer-events: none`, so the keyboard cannot fire an action the mouse cannot. There
+  is no click output: the element inside is a real `<button>`, so `(click)` on `<lib-button>`
+  receives the bubbled event and `type="submit"` works inside a form with no wiring.
+
+- **A semantic token core.** 59 tokens that name a role -- a surface, a piece of content, a line, a
+  state, a shape, a duration -- defined in `@zambon-dev/shared/styles/theme.css`. Each is also a
+  Tailwind utility: `bg-surface-glass`, `text-content-secondary`, `rounded-surface`. The
+  [design tokens guide](https://github.com/RicardoZambon/ZLibraries/blob/main/docs/guides/design-tokens.md)
+  lists them and explains what is safe to override.
+
 ### Changed
 
-### Deprecated
+- **Every component now draws from the tokens**, so a theme moves them all at once. The data grid,
+  the group containers, the modal, the multi-select, the catalog select, the ribbon and the form
+  controls had their colours, radii, shadows and durations written into their stylesheets; they now
+  name a role instead. Expect small shifts where a literal and its nearest token were not identical
+  -- borders settle on one grey, selection on one blue.
 
-### Removed
+- **`--sidebar-*` and `--tabs-*` derive from that core.** They are still the names you override and
+  they still compute the same values. They moved into `@layer tokens`, which means an override of
+  yours now wins whatever the import order -- previously it only won if your stylesheet came last.
+  Write the override without a layer.
 
-### Fixed
+- **Focus is shown on `:focus-visible` and is thinner.** Fields and buttons used `focus:ring-4` on
+  plain `:focus`, so a four-pixel halo appeared on every mouse click. The ring is now two pixels,
+  reads `--color-focus-ring`, and appears when focus is actually worth showing.
+
+- **Form labels are no longer uppercase, bold and letter-spaced.** They are a quiet caption at the
+  same size. This is the single change that most alters how a dense form reads; labels also get
+  narrower, so field columns gain a little width.
+
+- **Transitions read duration tokens**, which collapse to 1ms under `prefers-reduced-motion:
+reduce`. There is nothing to configure.
 
 ### ⚠ Breaking Changes / Migration
+
+- **`@zambon-dev/shared/styles/theme.css` is now required**, even if you only install this package.
+  Its tokens are where every component's colours come from; without the import they resolve to
+  nothing and components render transparent. Add it to your global stylesheet:
+
+  ```css
+  @import '@zambon-dev/shared/styles/theme.css';
+  ```
+
+- **The three packages move together.** This release majors all of them and their peer ranges
+  name each other, so upgrade them in one step:
+
+  ```bash
+  npm i @zambon-dev/library@latest @zambon-dev/framework@latest @zambon-dev/shared@latest
+  ```
 
 ## [4.0.0] - 2026-10-24
 

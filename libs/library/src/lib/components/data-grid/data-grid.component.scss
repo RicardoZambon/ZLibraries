@@ -6,7 +6,9 @@
   @apply flex flex-col overflow-hidden select-none;
 
   &:not(.no-borders) {
-    @apply border bg-white border-gray-300/90;
+    @apply border;
+    background-color: var(--color-surface-solid);
+    border-color: var(--color-line);
     /* Takes the container's corner where the container publishes one — inside the tab panel that
        is the radius which keeps the two parallel. 0.5rem everywhere else, which is what rounded-lg
        gave and what this was. */
@@ -34,7 +36,9 @@ lib-data-grid-row,
 }
 
 .header {
-  @apply font-bold bg-gray-200/40 border-b border-gray-300/90 overflow-hidden;
+  @apply font-bold border-b overflow-hidden;
+  background-color: var(--color-surface-inset);
+  border-color: var(--color-line);
 
   &.hide {
     @apply hidden;
@@ -70,25 +74,29 @@ lib-data-grid-row,
   }
 
   lib-data-grid-row {
-    @apply py-2 -mt-px border-y cursor-pointer border-slate-300/50;
+    @apply py-2 -mt-px border-y cursor-pointer;
+    border-color: var(--color-line);
 
     &:nth-child(even) {
-      @apply bg-slate-50/70;
+      background-color: var(--state-hover);
     }
 
     &:hover {
-      @apply bg-blue-200/20;
+      background-color: var(--state-selected);
     }
 
     &.focused {
-      @apply border-slate-400/60 z-[1];
+      @apply z-[1];
+      border-color: var(--color-line-strong);
     }
 
     &.selected {
-      @apply bg-blue-200/30 z-10 border-blue-300 relative;
+      @apply z-10 relative;
+      background-color: var(--state-selected);
+      border-color: var(--color-accent);
 
       &:hover {
-        @apply bg-blue-200/40;
+        background-color: var(--state-selected);
       }
     }
   }
@@ -96,7 +104,8 @@ lib-data-grid-row,
   .loading,
   .message {
     @apply flex items-center gap-2 whitespace-nowrap;
-    @apply h-10 border-b border-slate-300/50;
+    @apply h-10 border-b;
+    border-color: var(--color-line);
     @apply col-span-full;
 
     span {
@@ -107,11 +116,14 @@ lib-data-grid-row,
   .loading {
     svg {
       @apply h-6 w-6 min-w-6 min-h-6 animate-spin;
-      @apply transition-opacity duration-200 ease-in-out;
+      @apply transition-opacity;
+      transition-duration: var(--duration-short);
+      transition-timing-function: var(--ease-standard);
     }
   }
 }
 
 .buttons {
-  @apply flex p-1 border-t border-b border-gray-300/90;
+  @apply flex p-1 border-t border-b;
+  border-color: var(--color-line);
 }

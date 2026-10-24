@@ -1,7 +1,7 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TabViewService } from '@zambon-dev/framework';
-import { IListParameters, RibbonComponent } from '@zambon-dev/library';
+import { ButtonComponent, IListParameters, RibbonComponent } from '@zambon-dev/library';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
 import { OperationsHistoryModalComponent } from '../../features/operations-history/operations-history-modal/operations-history-modal.component';
@@ -73,7 +73,7 @@ class StorybookServicesHistoryService {
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [AsyncPipe, NgTemplateOutlet, RibbonComponent, ServicesHistoryViewComponent],
+  imports: [AsyncPipe, ButtonComponent, NgTemplateOutlet, RibbonComponent, ServicesHistoryViewComponent],
 })
 class StoryHistoryHostComponent {
   protected tabViewService: TabViewService = inject(TabViewService);
@@ -128,9 +128,9 @@ export const OperationDetailsModal: StoryObj<OperationsHistoryModalComponent> = 
     },
     template: `
       <div class="p-4">
-        <button type="button" class="btn blue-500" (click)="modal.toggleModal()">
+        <lib-button intent="primary" (click)="modal.toggleModal()">
           Open operation details
-        </button>
+        </lib-button>
 
         <shared-operations-history-modal
           #modal

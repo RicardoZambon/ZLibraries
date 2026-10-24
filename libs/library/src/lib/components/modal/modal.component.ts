@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { IModal } from '../../models';
 import { BaseComponent } from '../base.component';
+import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'lib-modal',
@@ -21,7 +22,7 @@ import { BaseComponent } from '../base.component';
     '[class.show]': 'isShown',
   },
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [],
+  imports: [ButtonComponent],
 })
 export class ModalComponent extends BaseComponent implements IModal, OnInit {
   //#region ViewChilds, Inputs, Outputs

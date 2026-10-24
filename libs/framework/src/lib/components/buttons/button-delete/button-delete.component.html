@@ -18,8 +18,8 @@
   [title]="modalTitle"
 >
   <div footer>
-    <button class="btn red-500" type="button" [class.loading]="modal.isLoading" (click)="onDelete()">
+    <lib-button intent="danger" [loading]="modal.isLoading" (click)="onDelete()">
       {{ modalConfirmButtonLabel | translate }}
-    </button>
+    </lib-button>
   </div>
 </framework-confirm-modal>

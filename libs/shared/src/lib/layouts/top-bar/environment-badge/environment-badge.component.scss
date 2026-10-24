@@ -2,41 +2,32 @@
 
 .env-badge {
   @apply inline-flex items-center gap-1.5 px-2.5 py-[0.325rem] rounded-full;
-  @apply text-sm font-semibold uppercase tracking-wide ring-1 ring-inset;
+  @apply uppercase tracking-wide ring-1 ring-inset;
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-emphasis);
+
+  background-color: color-mix(in srgb, var(--env-hue) 18%, transparent);
+  color: color-mix(in srgb, var(--env-hue) 70%, var(--color-content-primary));
+  --tw-ring-color: color-mix(in srgb, var(--env-hue) 35%, transparent);
 
   .env-dot {
     @apply w-1.5 h-1.5 rounded-full shrink-0;
+    background-color: var(--env-hue);
   }
 
   &.env-dev {
-    @apply bg-blue-50 text-blue-700 ring-blue-600/20;
-
-    .env-dot {
-      @apply bg-blue-500;
-    }
+    --env-hue: var(--color-blue-500);
   }
 
   &.env-neutral {
-    @apply bg-stone-100 text-stone-600 ring-stone-500/20;
-
-    .env-dot {
-      @apply bg-stone-500;
-    }
+    --env-hue: var(--color-stone-500);
   }
 
   &.env-qa {
-    @apply bg-amber-50 text-amber-700 ring-amber-600/20;
-
-    .env-dot {
-      @apply bg-amber-500;
-    }
+    --env-hue: var(--color-amber-500);
   }
 
   &.env-stg {
-    @apply bg-violet-50 text-violet-700 ring-violet-600/20;
-
-    .env-dot {
-      @apply bg-violet-500;
-    }
+    --env-hue: var(--color-violet-500);
   }
 }

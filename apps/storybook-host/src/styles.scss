@@ -1,3 +1,2 @@
-:root {
-  color-scheme: light;
-}
+/* Intentionally empty. `color-scheme` is declared by @zambon-dev/shared/styles/theme.css, which
+   sets it per theme -- pinning it here would have kept native controls light in the dark theme. */

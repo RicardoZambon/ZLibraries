@@ -68,8 +68,20 @@
   // pointing left to collapse and right to expand. High contrast against the blue rail.
   .sidebar-toggle {
     @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 cursor-pointer z-20;
-    @apply bg-white text-primary-600 shadow-md ring-1 ring-black/5 transition-colors;
-    @apply hover:bg-gray-100 hover:text-primary-700;
+    @apply shadow-md ring-1 transition-colors;
+    background-color: var(--color-surface-solid);
+    color: var(--color-accent);
+    --tw-ring-color: var(--color-line);
+
+    &:hover {
+      background-color: var(--color-surface-inset);
+      color: var(--color-accent-strong);
+    }
+
+    &:focus-visible {
+      @apply outline-hidden ring-2;
+      --tw-ring-color: var(--color-focus-ring);
+    }
     transform: translateX(40%);
 
     i {
@@ -113,7 +125,10 @@ nav {
 
   /* Firefox support */
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  /* The thumb rides on the brand rail, which is dark in both themes, so it is tinted with the
+     ink that reads on that surface rather than with black. Black on dark blue was always hard
+     to find; it would have been invisible once the theme went dark. */
+  scrollbar-color: color-mix(in srgb, var(--color-content-on-brand) 30%, transparent) transparent;
 
   /* WebKit browsers */
   &::-webkit-scrollbar {
@@ -126,17 +141,17 @@ nav {
   }
 
   &::-webkit-scrollbar-thumb {
-    @apply bg-black/20;
-    border-radius: 10px;
-    transition: background 0.2s ease;
+    background-color: color-mix(in srgb, var(--color-content-on-brand) 30%, transparent);
+    border-radius: var(--radius-control);
+    transition: background-color var(--duration-short) var(--ease-standard);
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    @apply bg-black/55;
+    background-color: color-mix(in srgb, var(--color-content-on-brand) 70%, transparent);
   }
 
   &:hover::-webkit-scrollbar-thumb {
-    @apply bg-black/45;
+    background-color: color-mix(in srgb, var(--color-content-on-brand) 55%, transparent);
   }
 
   @media screen and (max-width: 480px) {

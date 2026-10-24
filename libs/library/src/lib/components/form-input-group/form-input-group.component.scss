@@ -12,13 +12,19 @@
 
 label {
   @apply py-1 whitespace-nowrap;
-  @apply text-gray-700 text-xs font-bold text-right uppercase tracking-wide leading-6;
+  /* Was uppercase, bold and letter-spaced. That treatment shouts, and it is the single thing
+     that dated these forms most; a quiet caption reads faster at the same size. */
+  @apply text-right leading-6;
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-emphasis);
+  color: var(--color-content-secondary);
 }
 
 .field {
   .validations {
     @apply basis-full;
-    @apply text-red-600 text-sm;
+    @apply text-sm;
+    color: var(--color-danger);
 
     &.show {
       @apply mt-1;
@@ -33,7 +39,10 @@ label {
     @apply max-w-sm animate-pulse;
 
     * {
-      @apply h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-full;
+      /* The `dark:` here was the only one in the repo and keyed off the operating system, so
+         this skeleton went dark inside an otherwise light screen. The token handles it. */
+      @apply h-2.5 rounded-full w-full;
+      background-color: var(--color-surface-inset);
     }
   }
 }

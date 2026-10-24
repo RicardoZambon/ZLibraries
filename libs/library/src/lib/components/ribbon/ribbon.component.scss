@@ -27,8 +27,10 @@
 }
 
 :host {
-  @apply flex flex-row border rounded-lg p-1 relative;
-  @apply bg-gray-200/80 border-gray-300/90;
+  @apply flex flex-row border p-1 relative;
+  border-radius: var(--radius-control);
+  background-color: var(--color-surface-inset);
+  border-color: var(--color-line);
   @apply justify-between;
 
   div {

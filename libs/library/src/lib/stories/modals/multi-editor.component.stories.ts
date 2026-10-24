@@ -1,3 +1,4 @@
+import { ButtonComponent } from '../../components/button/button.component';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
@@ -41,7 +42,7 @@ const meta: Meta<MultiEditorComponent> = {
   component: MultiEditorComponent,
   decorators: [
     moduleMetadata({
-      imports: [CatalogSelectComponent, FormInputGroupComponent, ReactiveFormsModule],
+      imports: [ButtonComponent, CatalogSelectComponent, FormInputGroupComponent, ReactiveFormsModule],
       providers: [
         { provide: DataGridDataset, useClass: StorybookMultiEditorGridDataset },
         { provide: MultiEditorDataset, useClass: StorybookMultiEditorDataset },
@@ -71,9 +72,9 @@ export const Primary: Story = {
     },
     template: `
       <form [formGroup]="formGroup" class="p-4">
-        <button type="button" class="btn blue-500" (click)="editor.toggleModal()">
+        <lib-button intent="primary" (click)="editor.toggleModal()">
           Open editor
-        </button>
+        </lib-button>
 
         <lib-multi-editor
           #editor
@@ -130,9 +131,9 @@ export const PricingEditor: Story = {
     },
     template: `
       <form [formGroup]="formGroup" class="p-4">
-        <button type="button" class="btn blue-500" (click)="editor.toggleModal()">
+        <lib-button intent="primary" (click)="editor.toggleModal()">
           Open pricing editor
-        </button>
+        </lib-button>
 
         <lib-multi-editor
           #editor

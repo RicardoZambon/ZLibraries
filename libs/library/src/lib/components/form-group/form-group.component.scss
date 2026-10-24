@@ -20,6 +20,7 @@
   @apply grid auto-rows-auto grid-cols-[min-content_minmax(0,_1fr)] gap-1;
 
   &.has-title {
-    @apply pt-3 px-2 pb-2 border-t border-gray-300/90;
+    @apply pt-3 px-2 pb-2 border-t;
+    border-color: var(--color-line);
   }
 }

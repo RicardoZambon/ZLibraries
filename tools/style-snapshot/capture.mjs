@@ -173,9 +173,20 @@ const run = async () => {
   const index = JSON.parse(readFileSync(join(distDir, 'index.json'), 'utf8'));
   const ids = Object.keys(index.entries).sort();
 
+  // Light unless asked otherwise. The two themes are separate baselines and are never diffed
+  // against each other: flipping `color-scheme` changes how the browser paints native controls
+  // and scrollbars, so every form element in the run would light up.
+  const theme = process.env.STYLE_SNAPSHOT_THEME === 'dark' ? 'dark' : 'light';
+  const themeParam = `&globals=theme:${theme}`;
+
   const channel = process.env.STYLE_SNAPSHOT_CHANNEL;
   const browser = await chromium.launch(channel ? { channel } : {});
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+
+  // Set before any bundle runs, so the theme decorator sees it on the very first render.
+  await page.addInitScript((value) => {
+    window.__FORCED_THEME__ = value;
+  }, theme);
 
   // Animations make a snapshot non-deterministic; a spinner mid-rotation is not a regression.
   await page.addInitScript(() => {
@@ -188,7 +199,7 @@ const run = async () => {
 
   const snapshot = {};
   for (const id of ids) {
-    await page.goto(`http://localhost:${port}/iframe.html?id=${encodeURIComponent(id)}&viewMode=story`, {
+    await page.goto(`http://localhost:${port}/iframe.html?id=${encodeURIComponent(id)}&viewMode=story${themeParam}`, {
       waitUntil: 'networkidle',
     });
     await page.evaluate(() => document.fonts?.ready);

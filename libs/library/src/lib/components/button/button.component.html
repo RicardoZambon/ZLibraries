@@ -1,0 +1,23 @@
+<button
+  class="lib-button"
+  [class]="'intent-' + intent"
+  [class.is-loading]="loading"
+  [class.is-success]="success"
+  [class.is-error]="error"
+  [type]="type"
+  [disabled]="isBlocked"
+  [attr.aria-busy]="loading ? 'true' : null"
+  [attr.aria-label]="ariaLabel ?? null"
+>
+  @if (loading) {
+    <span class="lib-button-spinner" aria-hidden="true"></span>
+  } @else if (success) {
+    <i class="fa-solid fa-check fa-fw" aria-hidden="true"></i>
+  } @else if (error) {
+    <i class="fa-solid fa-times fa-fw" aria-hidden="true"></i>
+  } @else if (icon) {
+    <i class="fa-fw" [class]="icon" aria-hidden="true"></i>
+  }
+
+  <span class="lib-button-label"><ng-content></ng-content></span>
+</button>

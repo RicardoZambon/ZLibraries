@@ -11,12 +11,13 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs';
 import { BaseButton } from '../base-button';
+import { ButtonComponent } from '@zambon-dev/library';
 
 @Component({
   selector: 'framework-button-filters',
   templateUrl: './button-filters.component.html',
   styleUrls: ['./button-filters.component.scss'],
-  imports: [ModalComponent, RibbonButtonComponent, TranslatePipe],
+  imports: [ButtonComponent, ModalComponent, RibbonButtonComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [FormService, { provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonFiltersComponent) }],
 })

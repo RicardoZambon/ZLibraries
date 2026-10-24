@@ -31,8 +31,8 @@
   </div>
 
   <div footer>
-    <button class="btn blue-500" type="button" [class.loading]="modalProcessing" (click)="onSave()">
+    <lib-button intent="primary" [loading]="modalProcessing" (click)="onSave()">
       {{ 'Button-Modal-MultiSelect-Confirm' | translate }}
-    </button>
+    </lib-button>
   </div>
 </lib-modal>

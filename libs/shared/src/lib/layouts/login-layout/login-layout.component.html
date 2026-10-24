@@ -1,4 +1,6 @@
-<div class="background"></div>
+@if (backgroundUrl) {
+  <div class="background" [style.background-image]="'url(' + backgroundUrl + ')'"></div>
+}
 
 <div class="container">
   <router-outlet></router-outlet>

@@ -9,13 +9,14 @@ import { MultiEditorDataset } from '../../services/datasets/multi-editor.dataset
 import { DataGridComponent } from '../data-grid/data-grid.component';
 import { FormGroupComponent } from '../form-group/form-group.component';
 import { ModalComponent } from '../modal/modal.component';
+import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'lib-multi-editor',
   templateUrl: './multi-editor.component.html',
   styleUrls: ['./multi-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [DataGridComponent, ModalComponent, FormGroupComponent, TranslatePipe],
+  imports: [ButtonComponent, DataGridComponent, ModalComponent, FormGroupComponent, TranslatePipe],
 })
 export class MultiEditorComponent extends ModalComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
