@@ -105,15 +105,31 @@ export default [
     // was configured here before. Kept visible as warnings rather than switched off.
     files: ['**/*.ts'],
     rules: {
-      // Tracked work, not an oversight. docs/guides/reactivity.md explains the contract, and
-      // src/lib/change-detection-contract.spec.ts names the 11 components here that still
-      // declare Eager -- a ratchet that fails if the list grows or goes stale. Switch this to
-      // 'error' and delete this block once that list is empty.
+      // A warning for the framework and shared layers, which still have components that depend
+      // on being walked on every event: 21 and 9 of them, named in each layer's
+      // change-detection-contract.spec.ts. The library layer is finished and ratchets to 'error'
+      // below. Delete that block and make this one 'error' when the other two lists are empty.
       '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
       // The codebase mixes constructor injection and inject(). Converting the
       // remainder is a job for , which needs
       // Node 22+, not a hand edit of base classes their subclasses call super() on.
       '@angular-eslint/prefer-inject': 'warn',
+    },
+  },
+  {
+    // The library layer is finished: every component in it renders without being walked on every
+    // event, and src/library/change-detection-contract.spec.ts asserts that over the layer's
+    // public API with an empty list. An error here keeps it finished.
+    //
+    // Scoped to the layer rather than the package because the other two are not done. As three
+    // packages this was a per-package switch; one package makes the remaining work visible
+    // instead of hiding it behind a single flag.
+    //
+    // The harness's own self-test declares Eager to prove it changes nothing, and disables this
+    // rule on that line.
+    files: ['src/library/**/*.ts'],
+    rules: {
+      '@angular-eslint/prefer-on-push-component-change-detection': 'error',
     },
   },
   {

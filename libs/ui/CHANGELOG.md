@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
-- **The layers in this release are `library` 4.0.2, `framework` 5.0.2 and `shared` 6.0.1.**
+- **The layers in this release are `library` 4.0.3, `framework` 5.0.2 and `shared` 6.0.1.**
   Moving here from an earlier version of any of the three means taking that layer's remaining
   releases too; they are under **Package history** below. The one worth naming is
   `ModalComponent.isShown`, which became `isOpen` and is a `Signal<boolean>`: reading the
@@ -70,7 +70,28 @@ will be published on them.
 
 ### Library
 
-UI components, directives, pipes and the data-grid services. Published as `@zambon-dev/library` through 4.0.2.
+UI components, directives, pipes and the data-grid services. Published as `@zambon-dev/library` through 4.0.3.
+
+#### [4.0.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.3) - 2026-10-24
+
+##### Changed
+
+- **Every component in this package now renders under any change-detection strategy the host
+  application uses, including zoneless.** `CatalogSelectComponent` was the last one. Nothing here
+  depends on being walked on every event, and
+  `@angular-eslint/prefer-on-push-component-change-detection` is an error in this package rather
+  than a warning, so it stays that way.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`CatalogSelectComponent` exposes its inputs as signals.** Binding to it from a template is
+  unchanged -- `[label]="..."`, `[searchEndpoint]="..."`, `[filters]="..."` and the rest all
+  still work. Only code reading one off a component instance needs `()`. `controlName` and
+  `displayControlName` are required now, which they always were in practice.
+
+  `entriesList`, `filters` and `searchEndpoint` stay plain inputs. They are imperative
+  configuration that re-initialises the search, no template reads them, and making them signals
+  would have moved that side effect into an `effect()` for no gain.
 
 #### [4.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.2) - 2026-10-24
 

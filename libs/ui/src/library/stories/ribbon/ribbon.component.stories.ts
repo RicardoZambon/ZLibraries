@@ -8,7 +8,6 @@ import { RibbonGroupChild } from '../../models/ribbon-group-child';
 @Component({
   selector: 'storybook-ribbon-child',
   template: '<ng-content></ng-content>',
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => StorybookRibbonChildComponent) }],
 })
 class StorybookRibbonChildComponent extends RibbonGroupChild {

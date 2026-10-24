@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { of, Subject, throwError } from 'rxjs';
 import { CatalogSelectComponent } from './catalog-select.component';
@@ -85,31 +86,31 @@ describe('CatalogSelectComponent', () => {
     component.destroy$ = new Subject();
 
     // Inputs
-    component.controlName = 'testControl';
-    component.displayControlName = 'testDisplayControl';
-    component.minimumLengthSearch = opts.minimumLengthSearch ?? 3;
-    component.readOnly = opts.readOnly ?? false;
-    component.maxEntries = 100;
-    component.autofocus = false;
-    component.label = 'Test';
-    component.notes = '';
-    component.validations = {};
-    component.displayProperty = 'display';
-    component.valueProperty = 'value';
-    component.searchable = opts.searchable ?? true;
+    component.controlName = signal('testControl');
+    component.displayControlName = signal('testDisplayControl');
+    component.minimumLengthSearch = signal(opts.minimumLengthSearch ?? 3);
+    component.readOnly = signal(opts.readOnly ?? false);
+    component.maxEntries = signal(100);
+    component.autofocus = signal(false);
+    component.label = signal('Test');
+    component.notes = signal('');
+    component.validations = signal({});
+    component.displayProperty = signal('display');
+    component.valueProperty = signal('value');
+    component.searchable = signal(opts.searchable ?? true);
     component.searchEndpoint = opts.searchEndpoint;
 
     // Internal state
-    component.displayedEntries = [];
-    component.focusedIndex = -1;
-    component.isDropDownShown = false;
-    component.isFocused = false;
-    component.isLoading = false;
-    component.selectedValue = undefined;
-    component.shouldUseCriteria = false;
-    component.showFailureMessage = false;
-    component.showMinimumCharactersMessage = false;
-    component.showNoResultsMessage = false;
+    component.displayedEntries = signal([]);
+    component.focusedIndex = signal(-1);
+    component.isDropDownShown = signal(false);
+    component.isFocused = signal(false);
+    component.isLoading = signal(false);
+    component.selectedValue = signal(undefined);
+    component.shouldUseCriteria = signal(false);
+    component.showFailureMessage = signal(false);
+    component.showMinimumCharactersMessage = signal(false);
+    component.showNoResultsMessage = signal(false);
     component._entriesList = undefined;
     component._filters = {};
     component.entriesDataSource = [];
@@ -134,13 +135,13 @@ describe('CatalogSelectComponent', () => {
     (component as any).overlay = mockOverlay;
     (component as any).positionBuilder = mockPositionBuilder;
     (component as any).viewContainerRef = {};
-    (component as any).inputElement = {
+    (component as any).inputElement = signal({
       nativeElement: {
         getBoundingClientRect: jest.fn().mockReturnValue({ width: 200 }),
         querySelector: jest.fn().mockReturnValue(null),
       },
-    };
-    (component as any).dropdownTemplate = {};
+    });
+    (component as any).dropdownTemplate = signal({});
   }
 
   function initComponent(): void {
@@ -152,8 +153,8 @@ describe('CatalogSelectComponent', () => {
   }
 
   function closeDropdown(): void {
-    component.isDropDownShown = false;
-    component.focusedIndex = -1;
+    component.isDropDownShown = signal(false);
+    component.focusedIndex = signal(-1);
   }
 
   function keyDown(key: string): void {
@@ -217,7 +218,7 @@ describe('CatalogSelectComponent', () => {
       });
       initComponent();
 
-      expect(component.shouldUseCriteria).toBe(true);
+      expect(component.shouldUseCriteria()).toBe(true);
     });
 
     it('should set showMinimumCharactersMessage when shouldUseCriteria is true and entries are empty', () => {
@@ -227,7 +228,7 @@ describe('CatalogSelectComponent', () => {
       });
       initComponent();
 
-      expect(component.showMinimumCharactersMessage).toBe(true);
+      expect(component.showMinimumCharactersMessage()).toBe(true);
     });
 
     it('should set showMinimumCharactersMessage based on empty entries even when shouldUseCriteria is false', () => {
@@ -238,8 +239,8 @@ describe('CatalogSelectComponent', () => {
       initComponent();
 
       // The property is set based on empty entries; the template guards display with shouldUseCriteria.
-      expect(component.showMinimumCharactersMessage).toBe(true);
-      expect(component.shouldUseCriteria).toBe(false);
+      expect(component.showMinimumCharactersMessage()).toBe(true);
+      expect(component.shouldUseCriteria()).toBe(false);
     });
 
     it('should populate displayedEntries from API response', () => {
@@ -249,7 +250,7 @@ describe('CatalogSelectComponent', () => {
       });
       initComponent();
 
-      expect(component.displayedEntries).toEqual(sampleEntries);
+      expect(component.displayedEntries()).toEqual(sampleEntries);
     });
 
     it('should not set showNoResultsMessage when showMinimumCharactersMessage is already true', () => {
@@ -260,8 +261,8 @@ describe('CatalogSelectComponent', () => {
       initComponent();
 
       // showMinimumCharactersMessage is true (empty entries), which prevents showNoResultsMessage.
-      expect(component.showMinimumCharactersMessage).toBe(true);
-      expect(component.showNoResultsMessage).toBe(false);
+      expect(component.showMinimumCharactersMessage()).toBe(true);
+      expect(component.showNoResultsMessage()).toBe(false);
     });
 
     it('should set showNoResultsMessage when entries are empty and no other message is active', () => {
@@ -276,7 +277,7 @@ describe('CatalogSelectComponent', () => {
       // Trigger a new search (isDataInitialized is already true, so showMinimumCharactersMessage won't be set again)
       component.searchSubject.next('xyz');
 
-      expect(component.showNoResultsMessage).toBe(true);
+      expect(component.showNoResultsMessage()).toBe(true);
     });
 
     it('should only set shouldUseCriteria on first API response (isDataInitialized guard)', () => {
@@ -286,13 +287,13 @@ describe('CatalogSelectComponent', () => {
       });
       initComponent();
 
-      expect(component.shouldUseCriteria).toBe(false);
+      expect(component.shouldUseCriteria()).toBe(false);
 
       // Simulate a second API response with shouldUseCriteria: true
       mockCatalogService.search.mockReturnValue(of(createApiResult([], true)));
       component.searchSubject.next('abc');
 
-      expect(component.shouldUseCriteria).toBe(false);
+      expect(component.shouldUseCriteria()).toBe(false);
     });
 
     it('should restore form disabled state if it was disabled before init', () => {
@@ -324,17 +325,17 @@ describe('CatalogSelectComponent', () => {
       component.searchEndpoint = '/api/search';
 
       expect(mockCatalogService.search).toHaveBeenCalledTimes(1);
-      expect(component.displayedEntries).toHaveLength(sampleEntries.length);
+      expect(component.displayedEntries()).toHaveLength(sampleEntries.length);
     });
 
     it('should clear the stale no-results message when the endpoint arrives', () => {
       setupComponent({ searchEndpoint: '', apiResult: createApiResult(sampleEntries, false) });
       initComponent();
-      expect(component.showNoResultsMessage).toBe(true);
+      expect(component.showNoResultsMessage()).toBe(true);
 
       component.searchEndpoint = '/api/search';
 
-      expect(component.showNoResultsMessage).toBe(false);
+      expect(component.showNoResultsMessage()).toBe(false);
     });
 
     it('should not search again when the endpoint is set to the same value', () => {
@@ -352,12 +353,12 @@ describe('CatalogSelectComponent', () => {
       // needing criteria cannot be carried over.
       setupComponent({ searchEndpoint: '/api/first', apiResult: createApiResult([], true) });
       initComponent();
-      expect(component.shouldUseCriteria).toBe(true);
+      expect(component.shouldUseCriteria()).toBe(true);
 
       mockCatalogService.search.mockReturnValue(of(createApiResult(sampleEntries, false)));
       component.searchEndpoint = '/api/second';
 
-      expect(component.shouldUseCriteria).toBe(false);
+      expect(component.shouldUseCriteria()).toBe(false);
     });
   });
   //#endregion
@@ -377,13 +378,13 @@ describe('CatalogSelectComponent', () => {
     it('should pick up entries added since the field initialized', () => {
       setupComponent({ searchEndpoint: '/api/search', apiResult: createApiResult([], false) });
       initComponent();
-      expect(component.displayedEntries).toHaveLength(0);
+      expect(component.displayedEntries()).toHaveLength(0);
 
       mockCatalogService.search.mockReturnValue(of(createApiResult(sampleEntries, false)));
       component.refresh();
 
-      expect(component.displayedEntries).toHaveLength(sampleEntries.length);
-      expect(component.showNoResultsMessage).toBe(false);
+      expect(component.displayedEntries()).toHaveLength(sampleEntries.length);
+      expect(component.showNoResultsMessage()).toBe(false);
     });
 
     it('should re-read shouldUseCriteria', () => {
@@ -391,12 +392,12 @@ describe('CatalogSelectComponent', () => {
       // or shrunk below it.
       setupComponent({ searchEndpoint: '/api/search', apiResult: createApiResult([], true) });
       initComponent();
-      expect(component.shouldUseCriteria).toBe(true);
+      expect(component.shouldUseCriteria()).toBe(true);
 
       mockCatalogService.search.mockReturnValue(of(createApiResult(sampleEntries, false)));
       component.refresh();
 
-      expect(component.shouldUseCriteria).toBe(false);
+      expect(component.shouldUseCriteria()).toBe(false);
     });
   });
   //#endregion
@@ -412,8 +413,8 @@ describe('CatalogSelectComponent', () => {
 
       initComponent();
 
-      expect(component.shouldUseCriteria).toBe(true);
-      expect(component.showMinimumCharactersMessage).toBe(false);
+      expect(component.shouldUseCriteria()).toBe(true);
+      expect(component.showMinimumCharactersMessage()).toBe(false);
     });
 
     it('should search on a short criteria when not searchable', () => {
@@ -423,7 +424,7 @@ describe('CatalogSelectComponent', () => {
         apiResult: createApiResult(sampleEntries, false),
       });
       initComponent();
-      component.shouldUseCriteria = true;
+      component.shouldUseCriteria = signal(true);
       mockCatalogService.search.mockClear();
 
       component.applySearchCriteria('a');
@@ -438,13 +439,13 @@ describe('CatalogSelectComponent', () => {
         apiResult: createApiResult(sampleEntries, false),
       });
       initComponent();
-      component.shouldUseCriteria = true;
+      component.shouldUseCriteria = signal(true);
       mockCatalogService.search.mockClear();
 
       component.applySearchCriteria('a');
 
       expect(mockCatalogService.search).not.toHaveBeenCalled();
-      expect(component.showMinimumCharactersMessage).toBe(true);
+      expect(component.showMinimumCharactersMessage()).toBe(true);
     });
   });
   //#endregion
@@ -462,30 +463,30 @@ describe('CatalogSelectComponent', () => {
     it('should open dropdown on focus', () => {
       component.onContainerFocus();
 
-      expect(component.isDropDownShown).toBe(true);
-      expect(component.isFocused).toBe(true);
+      expect(component.isDropDownShown()).toBe(true);
+      expect(component.isFocused()).toBe(true);
     });
 
     it('should open dropdown on click', () => {
       component.onContainerClick();
 
-      expect(component.isDropDownShown).toBe(true);
+      expect(component.isDropDownShown()).toBe(true);
     });
 
     it('should not open dropdown on focus when readOnly', () => {
-      component.readOnly = true;
+      component.readOnly = signal(true);
 
       component.onContainerFocus();
 
-      expect(component.isDropDownShown).toBe(false);
+      expect(component.isDropDownShown()).toBe(false);
     });
 
     it('should allow opening dropdown on click when readOnly (viewing entries)', () => {
-      component.readOnly = true;
+      component.readOnly = signal(true);
 
       component.onContainerClick();
 
-      expect(component.isDropDownShown).toBe(true);
+      expect(component.isDropDownShown()).toBe(true);
     });
 
     it('should not open dropdown when form is disabled', () => {
@@ -493,7 +494,7 @@ describe('CatalogSelectComponent', () => {
 
       component.onContainerFocus();
 
-      expect(component.isDropDownShown).toBe(false);
+      expect(component.isDropDownShown()).toBe(false);
     });
 
     it('should not open dropdown when control is disabled', () => {
@@ -501,7 +502,7 @@ describe('CatalogSelectComponent', () => {
 
       component.onContainerFocus();
 
-      expect(component.isDropDownShown).toBe(false);
+      expect(component.isDropDownShown()).toBe(false);
     });
 
     it('should not re-open dropdown if already shown (click)', () => {
@@ -515,7 +516,7 @@ describe('CatalogSelectComponent', () => {
     it('should open dropdown on ArrowDown when closed', () => {
       keyDown('ArrowDown');
 
-      expect(component.isDropDownShown).toBe(true);
+      expect(component.isDropDownShown()).toBe(true);
     });
   });
   //#endregion
@@ -534,20 +535,20 @@ describe('CatalogSelectComponent', () => {
     it('should close dropdown on Escape', () => {
       keyDown('Escape');
 
-      expect(component.isDropDownShown).toBe(false);
+      expect(component.isDropDownShown()).toBe(false);
     });
 
     it('should close dropdown on Tab', () => {
       keyDown('Tab');
 
-      expect(component.isDropDownShown).toBe(false);
+      expect(component.isDropDownShown()).toBe(false);
     });
 
     it('should reset focusedIndex on close', () => {
-      component.focusedIndex = 2;
+      component.focusedIndex = signal(2);
       keyDown('Escape');
 
-      expect(component.focusedIndex).toBe(-1);
+      expect(component.focusedIndex()).toBe(-1);
     });
 
     it('should dispose overlay on close', () => {
@@ -584,38 +585,38 @@ describe('CatalogSelectComponent', () => {
 
     it('should move focusedIndex down on ArrowDown', () => {
       keyDown('ArrowDown');
-      expect(component.focusedIndex).toBe(0);
+      expect(component.focusedIndex()).toBe(0);
 
       keyDown('ArrowDown');
-      expect(component.focusedIndex).toBe(1);
+      expect(component.focusedIndex()).toBe(1);
     });
 
     it('should not exceed last entry on ArrowDown', () => {
-      component.focusedIndex = sampleEntries.length - 1;
+      component.focusedIndex = signal(sampleEntries.length - 1);
 
       keyDown('ArrowDown');
 
-      expect(component.focusedIndex).toBe(sampleEntries.length - 1);
+      expect(component.focusedIndex()).toBe(sampleEntries.length - 1);
     });
 
     it('should move focusedIndex up on ArrowUp', () => {
-      component.focusedIndex = 3;
+      component.focusedIndex = signal(3);
 
       keyDown('ArrowUp');
 
-      expect(component.focusedIndex).toBe(2);
+      expect(component.focusedIndex()).toBe(2);
     });
 
     it('should not go below 0 on ArrowUp', () => {
-      component.focusedIndex = 0;
+      component.focusedIndex = signal(0);
 
       keyDown('ArrowUp');
 
-      expect(component.focusedIndex).toBe(0);
+      expect(component.focusedIndex()).toBe(0);
     });
 
     it('should select focused item on Enter', () => {
-      component.focusedIndex = 2;
+      component.focusedIndex = signal(2);
 
       keyDown('Enter');
 
@@ -623,7 +624,7 @@ describe('CatalogSelectComponent', () => {
     });
 
     it('should not select on Enter when no item is focused', () => {
-      component.focusedIndex = -1;
+      component.focusedIndex = signal(-1);
 
       keyDown('Enter');
 
@@ -631,11 +632,11 @@ describe('CatalogSelectComponent', () => {
     });
 
     it('should close dropdown on Enter after selecting', () => {
-      component.focusedIndex = 0;
+      component.focusedIndex = signal(0);
 
       keyDown('Enter');
 
-      expect(component.isDropDownShown).toBe(false);
+      expect(component.isDropDownShown()).toBe(false);
     });
   });
   //#endregion
@@ -674,7 +675,7 @@ describe('CatalogSelectComponent', () => {
     it('should close dropdown after item click', () => {
       component.onDropDownItemClick(sampleEntries[0]);
 
-      expect(component.isDropDownShown).toBe(false);
+      expect(component.isDropDownShown()).toBe(false);
     });
   });
   //#endregion
@@ -703,7 +704,7 @@ describe('CatalogSelectComponent', () => {
       const event: any = { stopPropagation: jest.fn() };
       component.onClearClick(event);
 
-      expect(component.selectedValue).toBeNull();
+      expect(component.selectedValue()).toBeNull();
     });
 
     it('should stop event propagation on clear', () => {
@@ -718,7 +719,7 @@ describe('CatalogSelectComponent', () => {
     });
 
     it('should not show clear button when readOnly', () => {
-      component.readOnly = true;
+      component.readOnly = signal(true);
 
       expect(component.showClearButton).toBe(false);
     });
@@ -734,7 +735,7 @@ describe('CatalogSelectComponent', () => {
     // selectedValue. Keying the button off selectedValue left the field showing a value with no
     // way to remove it.
     it('should show clear button for a value patched in without an event', () => {
-      component.selectedValue = null;
+      component.selectedValue = signal(null);
       form.get('testControl')!.setValue(7, { emitEvent: false });
       form.get('testDisplayControl')!.setValue('Entry 7', { emitEvent: false });
 
@@ -761,13 +762,13 @@ describe('CatalogSelectComponent', () => {
       // Reopen dropdown
       openDropdown();
 
-      expect(component.focusedIndex).toBe(2);
+      expect(component.focusedIndex()).toBe(2);
     });
 
     it('should set focusedIndex to -1 when no entry is selected', () => {
       openDropdown();
 
-      expect(component.focusedIndex).toBe(-1);
+      expect(component.focusedIndex()).toBe(-1);
     });
 
     it('should move from selected item to next on ArrowDown', () => {
@@ -779,7 +780,7 @@ describe('CatalogSelectComponent', () => {
       openDropdown();
       keyDown('ArrowDown');
 
-      expect(component.focusedIndex).toBe(3);
+      expect(component.focusedIndex()).toBe(3);
     });
 
     it('should move from selected item to previous on ArrowUp', () => {
@@ -791,7 +792,7 @@ describe('CatalogSelectComponent', () => {
       openDropdown();
       keyDown('ArrowUp');
 
-      expect(component.focusedIndex).toBe(1);
+      expect(component.focusedIndex()).toBe(1);
     });
 
     it('should scroll selected item into view when dropdown opens', () => {
@@ -811,7 +812,7 @@ describe('CatalogSelectComponent', () => {
     it('should not scroll when no item is selected', () => {
       openDropdown();
 
-      expect(component.focusedIndex).toBe(-1);
+      expect(component.focusedIndex()).toBe(-1);
       expect(mockOverlayRef.overlayElement.querySelector).not.toHaveBeenCalled();
     });
   });
@@ -827,8 +828,8 @@ describe('CatalogSelectComponent', () => {
       });
       initComponent();
 
-      expect(component.shouldUseCriteria).toBe(true);
-      expect(component.showMinimumCharactersMessage).toBe(true);
+      expect(component.shouldUseCriteria()).toBe(true);
+      expect(component.showMinimumCharactersMessage()).toBe(true);
     });
 
     it('should re-evaluate minimum characters message when opening dropdown with shouldUseCriteria', () => {
@@ -839,11 +840,11 @@ describe('CatalogSelectComponent', () => {
       initComponent();
 
       // Simulate messages being incorrectly cleared
-      component.showMinimumCharactersMessage = false;
+      component.showMinimumCharactersMessage = signal(false);
 
       openDropdown();
 
-      expect(component.showMinimumCharactersMessage).toBe(true);
+      expect(component.showMinimumCharactersMessage()).toBe(true);
     });
 
     it('should not re-evaluate message when not shouldUseCriteria', () => {
@@ -853,11 +854,11 @@ describe('CatalogSelectComponent', () => {
       });
       initComponent();
 
-      component.showMinimumCharactersMessage = false;
+      component.showMinimumCharactersMessage = signal(false);
 
       openDropdown();
 
-      expect(component.showMinimumCharactersMessage).toBe(false);
+      expect(component.showMinimumCharactersMessage()).toBe(false);
     });
 
     it('should not show minimum characters message when criteria meets minimum length', () => {
@@ -873,7 +874,7 @@ describe('CatalogSelectComponent', () => {
 
       openDropdown();
 
-      expect(component.showMinimumCharactersMessage).toBe(false);
+      expect(component.showMinimumCharactersMessage()).toBe(false);
     });
 
     it('should not reset messages from tap when component is not focused', () => {
@@ -883,14 +884,14 @@ describe('CatalogSelectComponent', () => {
       });
       initComponent();
 
-      expect(component.showMinimumCharactersMessage).toBe(true);
+      expect(component.showMinimumCharactersMessage()).toBe(true);
 
       // Simulate programmatic display control value change (e.g., parent form patch)
       // while not focused — messages should not be reset
-      component.isFocused = false;
+      component.isFocused = signal(false);
       (form.get('testDisplayControl') as FormControl).setValue('patched');
 
-      expect(component.showMinimumCharactersMessage).toBe(true);
+      expect(component.showMinimumCharactersMessage()).toBe(true);
     });
   });
   //#endregion
@@ -916,11 +917,11 @@ describe('CatalogSelectComponent', () => {
       mockCatalogService.search.mockClear();
 
       // Trigger search with short criteria
-      component.shouldUseCriteria = true;
+      component.shouldUseCriteria = signal(true);
       component.searchSubject.next('ab');
 
       expect(mockCatalogService.search).not.toHaveBeenCalled();
-      expect(component.showMinimumCharactersMessage).toBe(true);
+      expect(component.showMinimumCharactersMessage()).toBe(true);
     });
 
     it('should call API when criteria meets minimum length', () => {
@@ -943,8 +944,8 @@ describe('CatalogSelectComponent', () => {
 
       initComponent();
 
-      expect(component.showFailureMessage).toBe(true);
-      expect(component.displayedEntries).toEqual([]);
+      expect(component.showFailureMessage()).toBe(true);
+      expect(component.displayedEntries()).toEqual([]);
     });
 
     it('should re-initialize search subscription after error to allow retry', () => {
@@ -957,8 +958,8 @@ describe('CatalogSelectComponent', () => {
       mockCatalogService.search.mockReturnValue(of(createApiResult(sampleEntries, false)));
       component.onDropDownErrorClick();
 
-      expect(component.displayedEntries).toEqual(sampleEntries);
-      expect(component.showFailureMessage).toBe(false);
+      expect(component.displayedEntries()).toEqual(sampleEntries);
+      expect(component.showFailureMessage()).toBe(false);
     });
   });
   //#endregion
@@ -1012,7 +1013,7 @@ describe('CatalogSelectComponent', () => {
 
       component.searchSubject.next('Entry 3');
 
-      expect(component.displayedEntries).toEqual([{ display: 'Entry 3', value: 3 }]);
+      expect(component.displayedEntries()).toEqual([{ display: 'Entry 3', value: 3 }]);
     });
 
     it('should show all entries when criteria is empty', () => {
@@ -1020,7 +1021,7 @@ describe('CatalogSelectComponent', () => {
       component._entriesList = sampleEntries;
       initComponent();
 
-      expect(component.displayedEntries).toEqual(sampleEntries);
+      expect(component.displayedEntries()).toEqual(sampleEntries);
     });
 
     it('should show no results message when filter matches nothing', () => {
@@ -1030,8 +1031,8 @@ describe('CatalogSelectComponent', () => {
 
       component.searchSubject.next('nonexistent');
 
-      expect(component.displayedEntries).toEqual([]);
-      expect(component.showNoResultsMessage).toBe(true);
+      expect(component.displayedEntries()).toEqual([]);
+      expect(component.showNoResultsMessage()).toBe(true);
     });
 
     it('should filter case-insensitively', () => {
@@ -1041,7 +1042,7 @@ describe('CatalogSelectComponent', () => {
 
       component.searchSubject.next('entry 2');
 
-      expect(component.displayedEntries).toEqual([{ display: 'Entry 2', value: 2 }]);
+      expect(component.displayedEntries()).toEqual([{ display: 'Entry 2', value: 2 }]);
     });
   });
   //#endregion
@@ -1059,21 +1060,21 @@ describe('CatalogSelectComponent', () => {
     it('should set isFocused on focus', () => {
       component.onContainerFocus();
 
-      expect(component.isFocused).toBe(true);
+      expect(component.isFocused()).toBe(true);
     });
 
     it('should unset isFocused on blur', () => {
       component.onContainerFocus();
       component.onContainerBlur();
 
-      expect(component.isFocused).toBe(false);
+      expect(component.isFocused()).toBe(false);
     });
 
     it('should open dropdown when gaining focus via Tab (not just click)', () => {
       // Simulate Tab focus — only fires focus, not click
       component.onContainerFocus();
 
-      expect(component.isDropDownShown).toBe(true);
+      expect(component.isDropDownShown()).toBe(true);
     });
   });
   //#endregion
@@ -1121,7 +1122,7 @@ describe('CatalogSelectComponent', () => {
       const event: any = {};
       component.bodyMouseUp(event);
 
-      expect(component.isDropDownShown).toBe(false);
+      expect(component.isDropDownShown()).toBe(false);
       expect(component.wasClickedOutside).toBe(false);
     });
   });
@@ -1138,13 +1139,13 @@ describe('CatalogSelectComponent', () => {
     });
 
     it('should return correct activeDescendantId when focused', () => {
-      component.focusedIndex = 2;
+      component.focusedIndex = signal(2);
 
       expect(component.activeDescendantId).toBe('catalog-select-0-option-2');
     });
 
     it('should return null activeDescendantId when no item is focused', () => {
-      component.focusedIndex = -1;
+      component.focusedIndex = signal(-1);
 
       expect(component.activeDescendantId).toBeNull();
     });
@@ -1172,7 +1173,7 @@ describe('CatalogSelectComponent', () => {
     it('should update selectedValue when formControl value changes', () => {
       form.get('testControl')!.setValue(3);
 
-      expect(component.selectedValue).toBe(3);
+      expect(component.selectedValue()).toBe(3);
     });
 
     it('should reset display control when formControl is set to null (API mode)', () => {
@@ -1203,7 +1204,7 @@ describe('CatalogSelectComponent', () => {
 
       initComponent();
 
-      expect(component.selectedValue).toBe(3);
+      expect(component.selectedValue()).toBe(3);
       expect(form.get('testDisplayControl')!.value).toBe('Entry 3');
     });
   });
@@ -1221,7 +1222,7 @@ describe('CatalogSelectComponent', () => {
 
       component.ngOnDestroy();
 
-      expect(component.isDropDownShown).toBe(false);
+      expect(component.isDropDownShown()).toBe(false);
       expect(mockOverlayRef.detach).toHaveBeenCalled();
       expect(mockOverlayRef.dispose).toHaveBeenCalled();
     });
