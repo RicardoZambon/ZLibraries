@@ -2,13 +2,15 @@
 
 ## The contract
 
-> Every value a library template reads is a `signal`, a `computed`, an `input()`/`model()`, a
+> Every value a template in this package reads is a `signal`, a `computed`, an `input()`/`model()`, a
 > `viewChild()`/`contentChildren()`, or a constant fixed for the component's lifetime.
 >
-> No library template reads a plain mutable field, a `get` backed by a service's mutable state, or
+> No template in this package reads a plain mutable field, a `get` backed by a service's mutable state, or
 > a value assigned inside `.subscribe()`.
 >
-> No library component declares `Eager`. Declaring nothing is the house default -- in v22 that
+> No component in this package declares `Eager`, with one deliberate exception -- the
+> harness's own self-test, which declares it to prove that declaring it changes nothing and
+> disables the lint rule on that line. Declaring nothing is the house default -- in v22 that
 > compiles to `OnPush` -- though a few still carry a redundant explicit `OnPush`, which changes
 > nothing. None calls `ChangeDetectorRef`.
 >
@@ -66,8 +68,8 @@ exactly this way. If a host binding is involved, a signal is the only mechanism 
    `@Input() set` → `input()` plus `computed`/`linkedSignal`, `@Output()` → `output()`,
    `@ViewChild`/`@ContentChildren` → `viewChild()`/`contentChildren()`.
 4. Delete `changeDetection: ChangeDetectionStrategy.Eager` and any `ChangeDetectorRef`.
-5. Delete the component's line from `STILL_EAGER` in that library's
-   `src/lib/change-detection-contract.spec.ts`.
+5. Delete the component's line from `STILL_EAGER` in that layer's
+   `src/<layer>/change-detection-contract.spec.ts`.
 6. Add a spec per asynchronous source the template depends on (below).
 
 **Rename anything you convert** — `loading` → `isLoading`, `visible` → `isVisible`. A signal that
@@ -82,7 +84,7 @@ view and descends in Global mode. "Nothing marked this view dirty" **cannot be e
 harness. The specs here were not merely weak; they were structurally incapable of catching the
 failure. Three layers now:
 
-**C — the contract spec.** `src/lib/change-detection-contract.spec.ts` in each library asserts, over
+**C — the contract spec.** `src/<layer>/change-detection-contract.spec.ts` asserts, per layer and over
 the public API, that exactly the components on a named list still declare `Eager`. It fails in both
 directions: a new `Eager` component, or a migrated one left on the list.
 
