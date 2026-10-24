@@ -116,4 +116,44 @@ export default [
       '@angular-eslint/prefer-inject': 'warn',
     },
   },
+  {
+    // The layer direction: shared may use framework and library, framework may use library,
+    // library may use neither. It held as three packages because npm could not express a cycle.
+    // In one project nothing enforces it -- @nx/enforce-module-boundaries works between projects,
+    // and these layers are folders now -- so it is spelled out here or it stops being true.
+    //
+    // Both spellings are listed on purpose. Blocking only the published subpath leaves
+    // '../../shared/services/x' open, which compiles and inverts the layering just as thoroughly.
+    files: ['src/library/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@zambon-dev/ui/framework', '@zambon-dev/ui/shared', '**/framework/**', '**/shared/**'],
+              message:
+                'The library layer is the bottom of the stack and may not import from the framework or shared layers.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/framework/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@zambon-dev/ui/shared', '**/shared/**'],
+              message: 'The framework layer may not import from the shared layer, only from the library layer.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
