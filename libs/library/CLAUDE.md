@@ -29,6 +29,37 @@ Do **not** set the version number or date — the release pipeline stamps `[Unre
 [Conventional Commits](https://www.conventionalcommits.org/) so `semantic-release` picks the
 correct bump (`fix`/`refactor` → patch, `feat` → minor, breaking → major).
 
+## Reactivity (required)
+
+Every value a template in this package reads is a `signal`, a `computed`, an `input()`/`model()`,
+a `viewChild()`/`contentChildren()`, a getter composed of those, or a constant fixed for the
+component's lifetime.
+
+No template here reads a mutable field, a getter over mutable service state, or a value assigned
+inside `.subscribe()`. No component here declares `changeDetection`, uses `ChangeDetectorRef`, or
+injects `NgZone`.
+
+**What that buys the consumer:** a component from `@zambon-dev/library` renders correctly under any
+change-detection strategy the host application chooses, and under
+`provideZonelessChangeDetection()`. Our strategy is not part of our API.
+
+Three things enforce it, and all three are green today:
+
+- `@angular-eslint/prefer-on-push-component-change-detection` is an **error** in `eslint.config.mjs`.
+- `src/lib/change-detection-contract.spec.ts` asserts over the public API that no exported component opts out.
+- The `*.renders-under-on-push.spec.ts` specs render a component beneath a clean `OnPush`
+  ancestor and drive it from a subject they control. Prove a new one **red** against the old
+  code before trusting it; one that passes either way is wired wrong.
+
+Observables still cross boundaries; signals hold the state a template reads. When a service
+mutates a collection in place, bridge it with a revision signal rather than rebuilding the
+service -- `BaseDataset` is the worked example here.
+
+Two traps the compiler does not catch: `@if (mySignal)` is always true, and `{{ mySignal | json }}`
+silently renders nothing. When you convert a member, grep its templates for the bare name.
+
+Full reasoning, with the runtime evidence: [docs/guides/reactivity.md](../../docs/guides/reactivity.md).
+
 ## Architecture Overview
 
 The library provides foundational UI building blocks consumed by `@framework` and application code. It has no dependency on `@framework` or `@shared`.

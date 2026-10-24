@@ -28,6 +28,37 @@ Do **not** set the version number or date — the release pipeline stamps `[Unre
 [Conventional Commits](https://www.conventionalcommits.org/) so `semantic-release` picks the
 correct bump (`fix`/`refactor` → patch, `feat` → minor, breaking → major).
 
+## Reactivity (required)
+
+Every value a template in this package reads is a `signal`, a `computed`, an `input()`/`model()`,
+a `viewChild()`/`contentChildren()`, a getter composed of those, or a constant fixed for the
+component's lifetime.
+
+No template here reads a mutable field, a getter over mutable service state, or a value assigned
+inside `.subscribe()`. No component here declares `changeDetection`, uses `ChangeDetectorRef`, or
+injects `NgZone`.
+
+**What that buys the consumer:** a component from `@zambon-dev/framework` renders correctly under any
+change-detection strategy the host application chooses, and under
+`provideZonelessChangeDetection()`. Our strategy is not part of our API.
+
+Three things enforce it, and all three are green today:
+
+- `@angular-eslint/prefer-on-push-component-change-detection` is an **error** in `eslint.config.mjs`.
+- `src/lib/change-detection-contract.spec.ts` asserts over the public API that no exported component opts out.
+- The `*.renders-under-on-push.spec.ts` specs render a component beneath a clean `OnPush`
+  ancestor and drive it from a subject they control. Prove a new one **red** against the old
+  code before trusting it; one that passes either way is wired wrong.
+
+Observables still cross boundaries; signals hold the state a template reads. When a service
+mutates a collection in place, bridge it with a revision signal rather than rebuilding the
+service -- `TabService` is the worked example.
+
+Two traps the compiler does not catch: `@if (mySignal)` is always true, and `{{ mySignal | json }}`
+silently renders nothing. When you convert a member, grep its templates for the bare name.
+
+Full reasoning, with the runtime evidence: [docs/guides/reactivity.md](../../docs/guides/reactivity.md).
+
 ## Architecture Overview
 
 The framework follows a layered architecture:
@@ -407,9 +438,17 @@ Used for components like `ButtonViewsComponent`, `ButtonSaveComponent`, `Catalog
 ```typescript
 component = Object.create(MyComponent.prototype);
 component.destroy$ = new Subject();
+// Object.create runs no field initialiser, so every signal the component would have built has
+// to be supplied by hand -- including the ones it inherits. ViewBase backs `loading` with
+// `loadingState`, and BaseButton has `disabled`, `loading`, `options` and `button`.
+component.loadingState = signal(false);
 // Set inputs, internal state, inject mock services via (component as any).serviceName = mock;
 component.ngOnInit();
 ```
+
+Assertions have to read the signal (`component.selectedViewId()`), not compare the object. A
+missing `()` is silent here, because the stub is typed `any`. Prefer a real TestBed spec for
+anything whose rendering matters; this pattern only tests logic.
 
 ### Pattern: Service Tests with HttpTestingController
 
