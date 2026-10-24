@@ -154,12 +154,13 @@ and `DataProviderService`'s entity id went onto signals behind their existing ac
 what made the buttons' own templates correct without changing a single call site.
 
 **`@zambon-dev/shared` is done, and with it the migration.** All three `STILL_EAGER` lists are
-empty and all three lint rules are errors. Nothing declares `Eager` -- not a component, not a
-base class, not a test host, not a story -- with one deliberate exception: the harness's own
-self-test, which declares it to prove it changes nothing and disables the rule on that line.
-A few components still carry a redundant explicit `OnPush`, which is what Angular 22 would have
-given them anyway. A consuming application chooses its own strategy, zoneless included, and
-these packages render correctly underneath it.
+empty and all three lint rules are errors. The contract at the top of this guide says what that
+means, including the one deliberate exception; it is not restated here, because this paragraph
+used to restate it and drifted out of step with it twice -- once in each direction. A
+restatement is not a copy that happened to go stale, it is the surface that can.
+
+What that bought: a consuming application chooses its own change-detection strategy, zoneless
+included, and these packages render correctly underneath it.
 
 Two components here are not exported, so the contract spec cannot reach them:
 `LanguageSelectorComponent` and `LoginComponent`. The lint rule is what covers those.
