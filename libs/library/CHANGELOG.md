@@ -28,6 +28,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`FormService` and the datasets announce their own changes.** A component reading
+  `formService.loading`, `formService.model`, `formService.isEditMode`, `formService.isValid`,
+  `dataGridDataset.selectedRowKeys`, `resultDataset.displayedRows` or a grid's loading state from
+  its template now re-renders when that state changes, whatever strategy the host application
+  uses. `columns` is deliberately left alone: a concrete dataset declares it once and never
+  changes it, so making it reactive would only have broken every subclass that declares it. **Nothing to do on your side** -- these were already accessors or
+  became accessors of the same shape, so every read and write keeps working. `isValid` also
+  mirrors the `FormGroup`'s status, which is not a signal and never notified one, so a control
+  bound to it no longer keeps its first answer.
+
+- **Seven more components render under any change-detection strategy**, continuing the work the last
+  major started: `ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`,
+  `MultiSelectComponent`, `MultiEditorComponent`, `FormInputGroupComponent` and
+  `MultiSelectResultGridComponent`. Their state is signals now, and none of them declares a
+  strategy. Four library components are still to go; they are named in
+  `change-detection-contract.spec.ts`.
+
 - **Every component now draws from the tokens**, so a theme moves them all at once. The data grid,
   the group containers, the modal, the multi-select, the catalog select, the ribbon and the form
   controls had their colours, radii, shadows and durations written into their stylesheets; they now
@@ -50,7 +67,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Transitions read duration tokens**, which collapse to 1ms under `prefers-reduced-motion:
 reduce`. There is nothing to configure.
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
 ### ⚠ Breaking Changes / Migration
+
+- **`ModalComponent.isShown` is now `isOpen`, and it is a `Signal<boolean>`.** The rename is
+  deliberate: a signal keeping the old name would leave `if (modal.isShown)` compiling and
+  permanently true. Replace `modal.isShown` with `modal.isOpen()`.
+
+- **`IModal` changed with it.** It declares `readonly isOpen: Signal<boolean>` instead of
+  `get isShown(): boolean`, and no longer declares `size` or `title` -- those are presentational
+  inputs each component declares for itself, and nothing drove a modal through them. If you
+  implement `IModal` by wrapping our modal, delegate with a signal view query:
+
+  ```ts
+  private readonly modal = viewChild(ModalComponent);
+  public readonly isOpen: Signal<boolean> = computed(() => this.modal()?.isOpen() ?? false);
+  ```
+
+  A `computed` reading a plain `@ViewChild` never re-runs when the query resolves, so the wrapper
+  would answer against an undefined child for ever.
+
+- **`ModalComponent`'s inputs are signals.** Reading one in your own template needs `()`:
+  `title()`, `size()`, `position()`, `dialog()`, `closeButtonText()`, `modalProcessing()`. Binding
+  to them from a template is unchanged. `closeButtonText` and `modalProcessing` are `model()`, so
+  code that sets them keeps working through `.set(...)`; the other four are `input()` and can only
+  be bound.
+
+- **`GroupAccordionComponent.label` is a required signal input**, and `maxHeight` is a signal.
+  `GroupScrollSpyComponent` exposes `titles`, `activeSection`, `sections` and `scrollSpy` as
+  signals. `MultiSelectComponent` and `MultiEditorComponent` expose their inputs as signals --
+  `itemTemplate()`, `formGroup()`, `addButtonLabel()`, `removeButtonLabel()`, `showAddButton()`
+  and `showDeleteButton()`.
+
+- **`FormInputGroupComponent` and `MultiSelectResultGridComponent` expose their inputs as signals
+  too.** Binding to them from a template is unchanged -- `[label]="..."`, `[type]="..."`,
+  `[validations]="..."` and the rest all still work. Only code reading one off a component
+  instance needs `()`. `controlName` is required now, which it always was in practice.
 
 - **`@zambon-dev/shared/styles/theme.css` is now required**, even if you only install this package.
   Its tokens are where every component's colours come from; without the import they resolve to
@@ -66,7 +123,6 @@ reduce`. There is nothing to configure.
   ```bash
   npm i @zambon-dev/library@latest @zambon-dev/framework@latest @zambon-dev/shared@latest
   ```
-
 ## [4.0.0] - 2026-10-24
 
 ### Added

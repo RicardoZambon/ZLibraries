@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Internal only: call sites moved with `@zambon-dev/library`'s modal API.** `ModalComponent.isShown`
+  became `isOpen()`, and the confirm and error modals delegate to it through a signal view query.
+  Nothing in this package's own API changed.
+
 - **The ribbon and its buttons draw from the design tokens.** Fill, border, radius and the
   success/warning/failure states named Tailwind colours; they now name a role, which is what lets
   them follow a theme. The dropdown menu picks up the shared overlay shadow and blur.
@@ -27,6 +31,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **The confirmation buttons render `lib-button`.** Their own API is unchanged apart from
   `ButtonConfirmComponent` below; what changed is that their modal footers no longer depend on the
   global `.btn` classes.
+
+### Deprecated
+
+### Removed
+
+### Fixed
 
 ### ⚠ Breaking Changes / Migration
 
@@ -53,7 +63,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ```bash
   npm i @zambon-dev/library@latest @zambon-dev/framework@latest @zambon-dev/shared@latest
   ```
-
 ## [5.0.0] - 2026-10-24
 
 ### Changed

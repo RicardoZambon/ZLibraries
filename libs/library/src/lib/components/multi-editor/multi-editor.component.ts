@@ -1,5 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, Input, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  InputSignal,
+  OnInit,
+  Signal,
+  signal,
+  viewChild,
+  WritableSignal,
+} from '@angular/core';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
@@ -15,27 +26,26 @@ import { ButtonComponent } from '../button/button.component';
   selector: 'lib-multi-editor',
   templateUrl: './multi-editor.component.html',
   styleUrls: ['./multi-editor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ButtonComponent, DataGridComponent, ModalComponent, FormGroupComponent, TranslatePipe],
 })
 export class MultiEditorComponent extends ModalComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ModalComponent) private modal!: ModalComponent;
+  private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
-  @Input() public addButtonLabel = 'Add row';
-  @Input() public formGroup!: FormGroup<any>;
-  @Input() public removeButtonLabel = 'Remove row';
-  @Input() public showAddButton = true;
-  @Input() public showDeleteButton = true;
+  public readonly addButtonLabel: InputSignal<string> = input('Add row');
+  public readonly formGroup: InputSignal<FormGroup<any>> = input.required<FormGroup<any>>();
+  public readonly removeButtonLabel: InputSignal<string> = input('Remove row');
+  public readonly showAddButton: InputSignal<boolean> = input(true);
+  public readonly showDeleteButton: InputSignal<boolean> = input(true);
   //#endregion
 
   //#region Variables
-  protected gridLoading = false;
+  protected readonly gridLoading: WritableSignal<boolean> = signal(false);
 
   private dataGridDataset: DataGridDataset = inject(DataGridDataset);
   private formService: FormService = inject(FormService);
   private multiEditorDataset: MultiEditorDataset = inject(MultiEditorDataset);
-  private selectedKey?: string;
+  private readonly selectedKey: WritableSignal<string | undefined> = signal(undefined);
   private selectedValue?: any;
   //#endregion
 
@@ -44,9 +54,7 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
     return this.formService.loading;
   }
 
-  protected get hasSelectedKey(): boolean {
-    return !!this.selectedKey;
-  }
+  protected readonly hasSelectedKey: Signal<boolean> = computed(() => !!this.selectedKey());
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -62,64 +70,66 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
     this.dataGridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.multiEditorDataset.clearChangedValues();
 
-      this.gridLoading = false;
-      this.selectedKey = undefined;
+      this.gridLoading.set(false);
+      this.selectedKey.set(undefined);
       this.selectedValue = undefined;
     });
 
     this.dataGridDataset.selectedRowsChanged.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      if (this.gridLoading || !this.dataGridDataset.hasLoadedRows || !this.dataGridDataset.hasSelectedRows) {
+      if (this.gridLoading() || !this.dataGridDataset.hasLoadedRows || !this.dataGridDataset.hasSelectedRows) {
         return;
       }
 
-      if (this.formGroup.disabled) {
-        this.formGroup.enable();
+      if (this.formGroup().disabled) {
+        this.formGroup().enable();
       }
 
       const selectedRowKey: string = this.dataGridDataset.selectedRowKeys[0];
       if (
-        !!this.selectedKey &&
-        this.formGroup.enabled &&
-        !this.formGroup.valid &&
-        this.selectedKey !== selectedRowKey
+        !!this.selectedKey() &&
+        this.formGroup().enabled &&
+        !this.formGroup().valid &&
+        this.selectedKey() !== selectedRowKey
       ) {
         // If the form is invalid, need to stay in the same selected row.
-        this.dataGridDataset.selectRow(this.selectedKey);
-        this.formGroup.markAllAsTouched();
+        this.dataGridDataset.selectRow(this.selectedKey()!);
+        this.formGroup().markAllAsTouched();
       } else {
-        this.selectedKey = selectedRowKey;
+        this.selectedKey.set(selectedRowKey);
         this.selectedValue = this.dataGridDataset.getRowData(selectedRowKey);
         this.formService.model = this.selectedValue;
 
-        this.formGroup.reset();
-        this.formGroup.patchValue(this.selectedValue);
+        this.formGroup().reset();
+        this.formGroup().patchValue(this.selectedValue);
       }
     });
 
-    this.formGroup.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((_: any) => {
-      if (this.selectedKey && this.formGroup.dirty) {
-        this.multiEditorDataset.updateValues(this.selectedKey, this.formGroup.getRawValue());
-      }
-    });
+    this.formGroup()
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((_: any) => {
+        if (this.selectedKey() && this.formGroup().dirty) {
+          this.multiEditorDataset.updateValues(this.selectedKey()!, this.formGroup().getRawValue());
+        }
+      });
 
     // Start with an empty form and, since there is no selected row, disable the form.
-    this.formGroup.disable({ emitEvent: false });
+    this.formGroup().disable({ emitEvent: false });
   }
   //#endregion
 
   //#region Event handlers
   protected onDeleteClick(): void {
-    if (!this.selectedKey) {
+    if (!this.selectedKey()) {
       return;
     }
 
-    this.multiEditorDataset.removeValue(this.selectedKey);
+    this.multiEditorDataset.removeValue(this.selectedKey()!);
 
-    this.selectedKey = undefined;
-    this.formGroup.reset({ emitEvent: false });
-    this.clearAllFormArrays(this.formGroup);
+    this.selectedKey.set(undefined);
+    this.formGroup().reset({ emitEvent: false });
+    this.clearAllFormArrays(this.formGroup());
 
-    this.formGroup.disable({ emitEvent: false });
+    this.formGroup().disable({ emitEvent: false });
   }
 
   protected onNewClick(): void {
@@ -154,25 +164,25 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
   }
 
   protected onSaveClick(): void {
-    if (this.selectedKey) {
-      this.formGroup.markAllAsTouched();
+    if (this.selectedKey()) {
+      this.formGroup().markAllAsTouched();
     }
 
-    if (!this.selectedKey || this.formGroup.valid) {
-      this.modalProcessing = true;
-      this.formGroup.disable();
+    if (!this.selectedKey() || this.formGroup().valid) {
+      this.modalProcessing.set(true);
+      this.formGroup().disable();
 
       this.multiEditorDataset
         .saveChanges()
         .pipe(take(1))
         .subscribe({
           next: (_: any) => {
-            this.modalProcessing = false;
+            this.modalProcessing.set(false);
             this.toggleModal();
           },
           error: (e: HttpErrorResponse) => {
-            this.modalProcessing = false;
-            this.formGroup.enable();
+            this.modalProcessing.set(false);
+            this.formGroup().enable();
 
             if (e.status === 400 && e.error.errors) {
               this.dataGridDataset.selectRowID(e.error.entityKey);
@@ -187,20 +197,20 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
 
   //#region Public methods
   public override closeModal(): void {
-    this.modal.closeModal();
+    this.modal()?.closeModal();
   }
 
   public override toggleModal(): void {
-    this.modal.toggleModal();
+    this.modal()?.toggleModal();
 
-    if (this.modal.isShown) {
-      this.gridLoading = true;
+    if (this.modal()?.isOpen()) {
+      this.gridLoading.set(true);
       this.dataGridDataset.refresh();
 
-      this.selectedKey = undefined;
-      this.formGroup.reset({ emitEvent: false });
-      this.clearAllFormArrays(this.formGroup);
-      this.formGroup.disable({ emitEvent: false });
+      this.selectedKey.set(undefined);
+      this.formGroup().reset({ emitEvent: false });
+      this.clearAllFormArrays(this.formGroup());
+      this.formGroup().disable({ emitEvent: false });
     }
   }
   //#endregion

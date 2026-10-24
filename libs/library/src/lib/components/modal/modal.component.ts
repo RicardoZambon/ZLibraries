@@ -1,15 +1,20 @@
 import {
   Component,
   ElementRef,
-  EventEmitter,
   HostListener,
   inject,
-  Input,
-  Output,
+  input,
+  InputSignal,
+  model,
+  ModelSignal,
   OnInit,
-  ChangeDetectionStrategy,
+  output,
+  OutputEmitterRef,
+  Signal,
+  signal,
+  WritableSignal,
 } from '@angular/core';
-import { IModal } from '../../models';
+import { IModal, ModalSize } from '../../models';
 import { BaseComponent } from '../base.component';
 import { ButtonComponent } from '../button/button.component';
 
@@ -19,34 +24,33 @@ import { ButtonComponent } from '../button/button.component';
   styleUrls: ['./modal.component.scss'],
   host: {
     title: '', // This is to ensure that the title input does not conflict with the native HTML title attribute.
-    '[class.show]': 'isShown',
+    '[class.show]': 'isOpen()',
   },
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ButtonComponent],
 })
 export class ModalComponent extends BaseComponent implements IModal, OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public closeButtonText = 'Close';
-  @Input() public dialog = true;
-  @Input() public modalProcessing = false;
-  @Input() public position: 'top' | 'left' | 'right' | 'bottom' | 'center' = 'center';
-  @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' =
-    'auto';
-  @Input() public title!: string;
+  public readonly closeButtonText: ModelSignal<string> = model('Close');
+  public readonly dialog: InputSignal<boolean> = input(true);
+  public readonly modalProcessing: ModelSignal<boolean> = model(false);
+  public readonly position: InputSignal<'top' | 'left' | 'right' | 'bottom' | 'center'> = input<
+    'top' | 'left' | 'right' | 'bottom' | 'center'
+  >('center');
+  public readonly size: InputSignal<ModalSize> = input<ModalSize>('auto');
+  public readonly title: InputSignal<string | undefined> = input<string>();
 
-  @Output() public closed: EventEmitter<void> = new EventEmitter<void>();
+  public readonly closed: OutputEmitterRef<void> = output<void>();
   //#endregion
 
   //#region Variables
-  private _show = false;
+  private readonly _isOpen: WritableSignal<boolean> = signal(false);
   private clickedOutside = false;
   private elementRef: ElementRef;
   //#endregion
 
   //#region Properties
-  public get isShown(): boolean {
-    return this._show;
-  }
+  /** Renamed from `isShown`, and a signal now -- IModal says why. */
+  public readonly isOpen: Signal<boolean> = this._isOpen.asReadonly();
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -90,7 +94,7 @@ export class ModalComponent extends BaseComponent implements IModal, OnInit {
 
   //#region Event handlers
   protected onCloseClick(): void {
-    if (!this.modalProcessing && this.isShown) {
+    if (!this.modalProcessing() && this.isOpen()) {
       this.closeModal();
     }
   }
@@ -116,27 +120,27 @@ export class ModalComponent extends BaseComponent implements IModal, OnInit {
 
   //#region Public methods
   public closeModal(): void {
-    if (this.isShown) {
+    if (this.isOpen()) {
       this.toggleModal();
     }
   }
 
   public toggleModal(): void {
-    const wasShown: boolean = this._show;
+    const wasOpen: boolean = this._isOpen();
 
     const body: HTMLBodyElement | null = document.querySelector('body');
     body?.classList.toggle('modal-active');
 
-    this._show = body?.classList.contains('modal-active') ?? false;
+    this._isOpen.set(body?.classList.contains('modal-active') ?? false);
 
-    if (this.isShown) {
+    if (this.isOpen()) {
       this.clickedOutside = false;
 
       const autofocus: any = this.elementRef.nativeElement.querySelector('[autofocus]');
       if (autofocus && !!autofocus.focus) {
         autofocus.focus();
       }
-    } else if (wasShown) {
+    } else if (wasOpen) {
       this.closed.emit();
     }
   }
@@ -148,11 +152,11 @@ export class ModalComponent extends BaseComponent implements IModal, OnInit {
   //#region Host listeners
   @HostListener('body:mousedown', ['$event'])
   protected bodyMouseDown(event: MouseEvent): void {
-    if (this.dialog && this.isShown) {
+    if (this.dialog() && this.isOpen()) {
       const target: HTMLElement = <HTMLElement>event.target;
 
       this.clickedOutside =
-        (!this.modalProcessing &&
+        (!this.modalProcessing() &&
           event.button === 0 &&
           target.closest('lib-modal') &&
           !target.closest('.modal-content')) ??
@@ -162,8 +166,8 @@ export class ModalComponent extends BaseComponent implements IModal, OnInit {
 
   @HostListener('body:mouseup', ['$event'])
   protected bodyMouseUp(event: MouseEvent): void {
-    if (this.dialog && this.isShown) {
-      if (this.clickedOutside && !this.modalProcessing) {
+    if (this.dialog() && this.isOpen()) {
+      if (this.clickedOutside && !this.modalProcessing()) {
         this.toggleModal();
       }
     }
@@ -177,7 +181,7 @@ export class ModalComponent extends BaseComponent implements IModal, OnInit {
     const isEscape: boolean =
       'key' in event ? event.key === 'Escape' || event.key === 'Esc' : (<KeyboardEvent>event).keyCode === 27;
 
-    if (!this.modalProcessing && this.isShown && isEscape && document.body.classList.contains('modal-active')) {
+    if (!this.modalProcessing() && this.isOpen() && isEscape && document.body.classList.contains('modal-active')) {
       this.toggleModal();
     }
   }

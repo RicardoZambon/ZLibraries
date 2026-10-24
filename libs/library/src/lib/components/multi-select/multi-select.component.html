@@ -1,10 +1,10 @@
 <lib-modal
-  [closeButtonText]="closeButtonText | translate"
-  [dialog]="dialog"
-  [modalProcessing]="modalProcessing"
-  [position]="position"
-  [size]="size"
-  [title]="title"
+  [closeButtonText]="closeButtonText() | translate"
+  [dialog]="dialog()"
+  [modalProcessing]="modalProcessing()"
+  [position]="position()"
+  [size]="size()"
+  [title]="title() ?? ''"
 >
   <div body class="body-content">
     <div class="search-grid">
@@ -14,24 +14,27 @@
           placeholder="Search..."
           type="text"
           [(ngModel)]="searchCriteria"
-          [disabled]="modalProcessing || isSearchGridLoading"
+          [disabled]="modalProcessing() || isSearchGridLoading()"
           (keydown.enter)="onSearch($event)"
         />
       </div>
 
-      <lib-data-grid [disabled]="modalProcessing || isSearchGridLoading || isResultGridLoading" [lazyLoadRows]="true">
+      <lib-data-grid
+        [disabled]="modalProcessing() || isSearchGridLoading() || isResultGridLoading()"
+        [lazyLoadRows]="true"
+      >
       </lib-data-grid>
     </div>
 
     <lib-multi-select-result-grid
-      [isDisabled]="modalProcessing || isSearchGridLoading || isResultGridLoading"
-      [template]="itemTemplate"
+      [isDisabled]="modalProcessing() || isSearchGridLoading() || isResultGridLoading()"
+      [template]="itemTemplate()!"
     >
     </lib-multi-select-result-grid>
   </div>
 
   <div footer>
-    <lib-button intent="primary" [loading]="modalProcessing" (click)="onSave()">
+    <lib-button intent="primary" [loading]="modalProcessing()" (click)="onSave()">
       {{ 'Button-Modal-MultiSelect-Confirm' | translate }}
     </lib-button>
   </div>
