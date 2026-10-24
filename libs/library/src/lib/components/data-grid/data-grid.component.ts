@@ -229,13 +229,20 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
       });
     }
 
-    this.viewport()?.renderedRangeStream.pipe(takeUntil(this.destroy$)).subscribe((listRange: ListRange) => {
-      const loadedRows: number = this.dataGridDataset.loadedRows?.length ?? 0;
-      if (this.hasLoadedRows && !this.loading() && listRange.end >= loadedRows && !this.dataGridDataset.loadedLastRow) {
-        this.loading.set(true);
-        this.dataGridDataset.loadRows();
-      }
-    });
+    this.viewport()
+      ?.renderedRangeStream.pipe(takeUntil(this.destroy$))
+      .subscribe((listRange: ListRange) => {
+        const loadedRows: number = this.dataGridDataset.loadedRows?.length ?? 0;
+        if (
+          this.hasLoadedRows &&
+          !this.loading() &&
+          listRange.end >= loadedRows &&
+          !this.dataGridDataset.loadedLastRow
+        ) {
+          this.loading.set(true);
+          this.dataGridDataset.loadRows();
+        }
+      });
 
     this.bodyResized$.pipe(debounceTime(150), takeUntil(this.destroy$)).subscribe(() => {
       // Leaving the document is a resize too. A detached grid has nothing to measure, and measuring

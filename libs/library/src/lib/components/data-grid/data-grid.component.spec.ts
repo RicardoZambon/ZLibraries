@@ -74,7 +74,6 @@ describe('DataGridComponent', () => {
       url: '/test-route',
     };
 
-
     mockNgZone = {
       runOutsideAngular: jest.fn((fn: () => void) => fn()),
     };
