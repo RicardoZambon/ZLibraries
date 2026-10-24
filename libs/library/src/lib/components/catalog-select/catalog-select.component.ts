@@ -396,7 +396,11 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
       case 'Enter':
         event.preventDefault();
-        if (this.isDropDownShown() && this.focusedIndex() >= 0 && this.focusedIndex() < this.displayedEntries().length) {
+        if (
+          this.isDropDownShown() &&
+          this.focusedIndex() >= 0 &&
+          this.focusedIndex() < this.displayedEntries().length
+        ) {
           this.onDropDownItemClick(this.displayedEntries()[this.focusedIndex()]);
         }
         break;
