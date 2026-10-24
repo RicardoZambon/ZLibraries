@@ -1,5 +1,5 @@
 import { Type, ɵgetComponentDef as getComponentDef } from '@angular/core';
-import * as publicApi from '../index';
+import * as publicApi from './index';
 
 /**
  * The migration ratchet for `@zambon-dev/ui/library`.

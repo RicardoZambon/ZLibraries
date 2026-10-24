@@ -21,6 +21,11 @@
       "glob": "**/*.css",
       "input": "src/styles",
       "output": "styles"
+    },
+    {
+      "glob": "**/*.json",
+      "input": "src/i18n/framework",
+      "output": "i18n/framework"
     }
   ],
   "lib": {
