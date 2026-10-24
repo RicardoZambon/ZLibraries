@@ -15,10 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Internal only: `ButtonFiltersComponent` reads `RibbonButtonComponent.loading` as a signal.**
-  The compiler caught the old form: in a condition, the signal object itself is always true.
-  Nothing in this package's own API changed.
-
 ### Deprecated
 
 ### Removed
@@ -26,6 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+## [5.0.2] - 2026-10-24
+
+### Changed
+
+- **Internal only: `ButtonFiltersComponent` reads `RibbonButtonComponent.loading` as a signal.**
+  The compiler caught the old form: in a condition, the signal object itself is always true.
+  Nothing in this package's own API changed.
 
 ## [5.0.1] - 2026-10-24
 
@@ -638,7 +642,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.2...HEAD
+[5.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.2
 [5.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.1
 [5.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.0
 [4.0.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.5
