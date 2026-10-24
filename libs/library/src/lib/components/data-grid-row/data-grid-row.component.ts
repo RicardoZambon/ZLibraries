@@ -1,7 +1,6 @@
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -10,6 +9,8 @@ import {
   Input,
   OnInit,
   Output,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxResizeObserverModule } from 'ngx-resize-observer';
@@ -48,16 +49,20 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
       this.dataGridDataset.setFocusedRow(this.rowKey);
 
       if (this.dataGridDataset.configs.multiSelect && (this.dataGridDataset.configs.selectOnClick ?? true)) {
-        this.selected = this.isRowDataSelected;
+        this.selected.set(this.isRowDataSelected);
       }
     }
   }
   //#endregion
 
   //#region Variables
-  protected changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  protected selected = false;
+
+  // A signal rather than a field: the grid announces a selection change from a subscription,
+  // and the checkbox below is bound to this. It used to be a plain field refreshed by calling
+  // detectChanges() on this component -- which renders, but renders because it was forced
+  // rather than because anything was notified. See docs/guides/reactivity.md.
+  protected readonly selected: WritableSignal<boolean> = signal(false);
 
   private _rowData!: any;
   private elementRef: ElementRef<HTMLElement> = inject(ElementRef);
@@ -91,14 +96,13 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.selected = this.isRowDataSelected;
+    this.selected.set(this.isRowDataSelected);
 
     this.dataGridDataset.selectedRowsChanged
       .pipe(takeUntil(this.destroy$))
       .subscribe((selectionChanges: { [id: string]: { rowData: any; selected: boolean } }) => {
         if (this.rowKey in selectionChanges) {
-          this.selected = selectionChanges[this.rowKey].selected;
-          this.changeDetectorRef.detectChanges();
+          this.selected.set(selectionChanges[this.rowKey].selected);
         }
       });
   }
@@ -142,9 +146,9 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
       return;
     }
 
-    this.selected = !this.selected;
+    this.selected.update((isSelected: boolean) => !isSelected);
 
-    if (this.selected) {
+    if (this.selected()) {
       this.dataGridDataset.selectRow(this.rowKey);
     } else {
       this.dataGridDataset.deselectRow(this.rowKey);
@@ -160,7 +164,7 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
 
   //#region Private methods
   private refreshSelection(): void {
-    this.selected = this.isRowDataSelected;
+    this.selected.set(this.isRowDataSelected);
   }
   //#endregion
 }

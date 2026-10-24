@@ -36,8 +36,18 @@ a `viewChild()`/`contentChildren()`, a getter composed of those, or a constant f
 component's lifetime.
 
 No template here reads a mutable field, a getter over mutable service state, or a value assigned
-inside `.subscribe()`. No component here declares `changeDetection`, uses `ChangeDetectorRef`, or
-injects `NgZone`.
+inside `.subscribe()`. No component here uses `ChangeDetectorRef`.
+
+`NgZone` appears twice, in `TabsComponent` and `DataGridComponent`, and only to keep scroll and
+resize listeners out of change detection with `runOutsideAngular`. That is a performance measure,
+not a way of reaching the screen. Note what it means under zoneless: `NgZone` resolves to
+`NoopNgZone` and `runOutsideAngular` becomes a silent no-op, so the listeners simply run normally.
+Nothing depends on them being outside a zone, which is why this is tolerable -- but never write a
+component that needs that call to behave correctly.
+
+No component declares `Eager`. Declaring nothing is the house default -- in v22 that compiles to
+`OnPush` -- and is what to write for a new one. A few components still carry a redundant explicit
+`OnPush`; it changes nothing, and both the lint rule and the contract spec pass either way.
 
 **What that buys the consumer:** a component from `@zambon-dev/library` renders correctly under any
 change-detection strategy the host application chooses, and under

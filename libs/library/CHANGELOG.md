@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **A grid row's checkbox follows the grid's selection by being told, not by forcing a pass.**
+  `DataGridRowComponent` held its selected state in a plain field and called
+  `ChangeDetectorRef.detectChanges()` on itself whenever the grid announced a change. That
+  rendered -- there is no behaviour change here -- but it rendered because the component forced
+  a pass rather than because anything was notified, which is the one thing this package's
+  components are not supposed to need. The state is a signal now and the `ChangeDetectorRef` is
+  gone; it was the last one in the package.
+
 ### Deprecated
 
 ### Removed
