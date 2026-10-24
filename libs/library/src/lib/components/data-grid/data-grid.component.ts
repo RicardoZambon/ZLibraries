@@ -145,7 +145,7 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
    * resize as well, from nothing to the panel, so the measurement still happens, on the way in.
    */
   private get isBodyAttached(): boolean {
-    return this.bodyElement()!?.nativeElement?.isConnected ?? false;
+    return this.bodyElement()?.nativeElement?.isConnected ?? false;
   }
   //#endregion
 
