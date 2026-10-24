@@ -28,6 +28,7 @@ class UnnotifiedOnPushComponent {
 @Component({
   selector: 'lib-unnotified-eager',
   template: '<span class="value">{{ value }}</span>',
+  // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection -- Eager is the point: the assertion is that declaring it changes nothing.
   changeDetection: ChangeDetectionStrategy.Eager,
 })
 class UnnotifiedEagerComponent {

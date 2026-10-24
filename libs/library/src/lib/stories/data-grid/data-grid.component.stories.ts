@@ -125,7 +125,6 @@ class TallRowsMultiSelectDataset extends DataGridDataset {
   selector: 'lib-tall-rows-multi-select-host',
   imports: [DataGridComponent],
   providers: [{ provide: DataGridDataset, useClass: TallRowsMultiSelectDataset }],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="p-4 max-w-5xl h-96">
       <lib-data-grid></lib-data-grid>

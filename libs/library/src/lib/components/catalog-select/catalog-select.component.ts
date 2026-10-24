@@ -7,16 +7,20 @@ import {
   ElementRef,
   HostListener,
   inject,
+  input,
   Input,
+  InputSignal,
   KeyValueChanges,
   KeyValueDiffer,
   KeyValueDiffers,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-  ViewContainerRef,
   OnDestroy,
-  ChangeDetectionStrategy,
+  OnInit,
+  Signal,
+  signal,
+  TemplateRef,
+  viewChild,
+  ViewContainerRef,
+  WritableSignal,
 } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -44,7 +48,6 @@ import { FormInputComponent } from '../form-input/form-input.component';
   selector: 'lib-catalog-select',
   templateUrl: './catalog-select.component.html',
   styleUrls: ['./catalog-select.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormInputComponent, FormInputGroupComponent, TranslatePipe],
 })
 export class CatalogSelectComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -52,14 +55,14 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   @HostListener('body:mousedown', ['$event'])
   protected bodyMouseDown(event: MouseEvent): void {
     const target: HTMLElement = <HTMLElement>event.target;
-    if (this.isDropDownShown && !target.closest('.catalog-container.show')) {
+    if (this.isDropDownShown() && !target.closest('.catalog-container.show')) {
       this.wasClickedOutside = (event.button === 0 && !target.closest('.dropdown-container')) ?? false;
     }
   }
 
   @HostListener('body:mouseup', ['$event'])
   protected bodyMouseUp(event: MouseEvent): void {
-    if (this.isDropDownShown && this.wasClickedOutside) {
+    if (this.isDropDownShown() && this.wasClickedOutside) {
       this.closeDropdownOverlay();
       this.wasClickedOutside = false;
     }
@@ -67,13 +70,17 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   //#endregion
 
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild('dropdownTemplate', { read: TemplateRef }) private dropdownTemplate!: TemplateRef<any>;
-  @ViewChild('input', { read: ElementRef }) private inputElement!: ElementRef<HTMLDivElement>;
+  private readonly dropdownTemplate: Signal<TemplateRef<any> | undefined> = viewChild('dropdownTemplate', {
+    read: TemplateRef,
+  });
+  private readonly inputElement: Signal<ElementRef<HTMLDivElement> | undefined> = viewChild('input', {
+    read: ElementRef,
+  });
 
-  @Input() public autofocus = false;
-  @Input() public controlName!: string;
-  @Input() public displayControlName!: string;
-  @Input() public displayProperty = 'display';
+  public readonly autofocus: InputSignal<boolean> = input(false);
+  public readonly controlName: InputSignal<string> = input.required<string>();
+  public readonly displayControlName: InputSignal<string> = input.required<string>();
+  public readonly displayProperty: InputSignal<string> = input('display');
   @Input() public set entriesList(
     value: any[] | { key: number; value: Observable<any> | string }[] | null | undefined,
   ) {
@@ -92,11 +99,11 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       this.updateFilters();
     }
   }
-  @Input() public label!: string;
-  @Input() public maxEntries = 100;
-  @Input() public minimumLengthSearch = 3;
-  @Input() public notes = '';
-  @Input() public readOnly = false;
+  public readonly label: InputSignal<string> = input('');
+  public readonly maxEntries: InputSignal<number> = input(100);
+  public readonly minimumLengthSearch: InputSignal<number> = input(3);
+  public readonly notes: InputSignal<string> = input('');
+  public readonly readOnly: InputSignal<boolean> = input(false);
   /**
    * Whether the field accepts typing to narrow the list.
    *
@@ -109,7 +116,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
    * It does not suit an endpoint that answers shouldUseCriteria: that endpoint returns nothing
    * until it is given criteria, and there would be no way left to type any.
    */
-  @Input() public searchable = true;
+  public readonly searchable: InputSignal<boolean> = input(true);
   @Input() public set searchEndpoint(value: string | undefined) {
     if (this._searchEndpoint === value) {
       return;
@@ -129,21 +136,25 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       this.refreshSearch(reInitialize);
     }
   }
-  @Input() public validations: { [id: string]: string } = {};
-  @Input() public valueProperty = 'value';
+  public readonly validations: InputSignal<{ [id: string]: string }> = input<{ [id: string]: string }>({});
+  public readonly valueProperty: InputSignal<string> = input('value');
   //#endregion
 
   //#region Variables
-  protected displayedEntries: ICatalogEntry[] = [];
-  protected focusedIndex = -1;
-  protected isDropDownShown = false;
-  protected isFocused = false;
-  protected isLoading = false;
-  protected selectedValue: any;
-  protected shouldUseCriteria = false;
-  protected showFailureMessage = false;
-  protected showMinimumCharactersMessage = false;
-  protected showNoResultsMessage = false;
+  // The three setter inputs below -- entriesList, filters and searchEndpoint -- stay decorator
+  // inputs on purpose. They are imperative configuration that re-initialises the search, no
+  // template reads them, and converting them would move that side effect into an effect() for
+  // no gain in what reaches the screen.
+  protected readonly displayedEntries: WritableSignal<ICatalogEntry[]> = signal<ICatalogEntry[]>([]);
+  protected readonly focusedIndex: WritableSignal<number> = signal(-1);
+  protected readonly isDropDownShown: WritableSignal<boolean> = signal(false);
+  protected readonly isFocused: WritableSignal<boolean> = signal(false);
+  protected readonly isLoading: WritableSignal<boolean> = signal(false);
+  protected readonly selectedValue: WritableSignal<any> = signal(undefined);
+  protected readonly shouldUseCriteria: WritableSignal<boolean> = signal(false);
+  protected readonly showFailureMessage: WritableSignal<boolean> = signal(false);
+  protected readonly showMinimumCharactersMessage: WritableSignal<boolean> = signal(false);
+  protected readonly showNoResultsMessage: WritableSignal<boolean> = signal(false);
 
   private static instanceCounter = 0;
   private _entriesList?: any[] | { key: number; value: Observable<any> | string }[] | null;
@@ -182,8 +193,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   }
 
   protected get activeDescendantId(): string | null {
-    if (this.focusedIndex >= 0 && this.focusedIndex < this.displayedEntries.length) {
-      return `catalog-select-${this.instanceId}-option-${this.focusedIndex}`;
+    if (this.focusedIndex() >= 0 && this.focusedIndex() < this.displayedEntries().length) {
+      return `catalog-select-${this.instanceId}-option-${this.focusedIndex()}`;
     }
     return null;
   }
@@ -197,11 +208,11 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   }
 
   protected get formControlName(): string {
-    return [...(this.formGroupName?.path ?? []), this.controlName].join('.');
+    return [...(this.formGroupName?.path ?? []), this.controlName()].join('.');
   }
 
   protected get formDisplayControlName(): string {
-    return [...(this.formGroupName?.path ?? []), this.displayControlName].join('.');
+    return [...(this.formGroupName?.path ?? []), this.displayControlName()].join('.');
   }
 
   protected get isInvalid(): boolean {
@@ -227,7 +238,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
    * showing a value with no way to remove it.
    */
   protected get showClearButton(): boolean {
-    return this.formControl?.value != null && !this.readOnly && (this.formControl?.enabled ?? false);
+    return this.formControl?.value != null && !this.readOnly() && (this.formControl?.enabled ?? false);
   }
 
   private get hasSearchEndpoint(): boolean {
@@ -269,10 +280,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       .pipe(
         takeUntil(this.destroy$),
         tap(() => {
-          if (!this.isFocused) {
+          if (!this.isFocused()) {
             return;
           }
-          this.isLoading = true;
+          this.isLoading.set(true);
           this.resetMessages();
         }),
         debounceTime(500),
@@ -280,8 +291,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
         pairwise(),
       )
       .subscribe(([previous, current]: string[]) => {
-        if (!this.isFocused || previous === current) {
-          this.isLoading = false;
+        if (!this.isFocused() || previous === current) {
+          this.isLoading.set(false);
           return;
         }
         this.applySearchCriteria(current);
@@ -299,7 +310,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
         return;
       }
 
-      this.selectedValue = value;
+      this.selectedValue.set(value);
       if (this.hasSearchEndpoint) {
         if (!value) {
           this.displayControl?.reset(null, { emitEvent: false });
@@ -317,12 +328,12 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
   //#region Event handlers
   protected onContainerBlur(): void {
-    this.isFocused = false;
+    this.isFocused.set(false);
   }
 
   protected onContainerClick(): void {
     if (
-      (!this.isDropDownShown || this.readOnly) &&
+      (!this.isDropDownShown() || this.readOnly()) &&
       (this.formGroup.form?.enabled ?? false) &&
       (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
     ) {
@@ -331,10 +342,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   }
 
   protected onContainerFocus(): void {
-    this.isFocused = true;
+    this.isFocused.set(true);
     if (
-      !this.isDropDownShown &&
-      !this.readOnly &&
+      !this.isDropDownShown() &&
+      !this.readOnly() &&
       (this.formGroup.form?.enabled ?? false) &&
       (this.formGroup.form?.get(this.formControlName)?.enabled ?? false)
     ) {
@@ -357,18 +368,18 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       this.displayControl.markAsTouched();
     }
 
-    this.selectedValue = null;
+    this.selectedValue.set(null);
   }
 
   protected onKeyDown(event: KeyboardEvent): void {
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
-        if (!this.isDropDownShown) {
+        if (!this.isDropDownShown()) {
           this.openDropdownOverlay();
         }
-        if (this.displayedEntries.length > 0) {
-          this.focusedIndex = Math.min(this.focusedIndex + 1, this.displayedEntries.length - 1);
+        if (this.displayedEntries().length > 0) {
+          this.focusedIndex.set(Math.min(this.focusedIndex() + 1, this.displayedEntries().length - 1));
           this.scrollFocusedItemIntoView();
         }
         this.updateInputAriaActiveDescendant();
@@ -376,8 +387,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
       case 'ArrowUp':
         event.preventDefault();
-        if (this.isDropDownShown && this.displayedEntries.length > 0) {
-          this.focusedIndex = Math.max(this.focusedIndex - 1, 0);
+        if (this.isDropDownShown() && this.displayedEntries().length > 0) {
+          this.focusedIndex.set(Math.max(this.focusedIndex() - 1, 0));
           this.scrollFocusedItemIntoView();
         }
         this.updateInputAriaActiveDescendant();
@@ -385,20 +396,20 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
       case 'Enter':
         event.preventDefault();
-        if (this.isDropDownShown && this.focusedIndex >= 0 && this.focusedIndex < this.displayedEntries.length) {
-          this.onDropDownItemClick(this.displayedEntries[this.focusedIndex]);
+        if (this.isDropDownShown() && this.focusedIndex() >= 0 && this.focusedIndex() < this.displayedEntries().length) {
+          this.onDropDownItemClick(this.displayedEntries()[this.focusedIndex()]);
         }
         break;
 
       case 'Escape':
-        if (this.isDropDownShown) {
+        if (this.isDropDownShown()) {
           event.preventDefault();
           this.closeDropdownOverlay();
         }
         break;
 
       case 'Tab':
-        if (this.isDropDownShown) {
+        if (this.isDropDownShown()) {
           this.closeDropdownOverlay();
         }
         break;
@@ -450,7 +461,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
 
   //#region Private methods
   private applySearchCriteria(criteria: string | null): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.resetMessages();
 
     this.searchSubject.next(criteria);
@@ -477,8 +488,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   }
 
   private closeDropdownOverlay(): void {
-    this.isDropDownShown = false;
-    this.focusedIndex = -1;
+    this.isDropDownShown.set(false);
+    this.focusedIndex.set(-1);
     this.updateInputAriaActiveDescendant();
     if (this.overlayRef) {
       this.overlayRef.detach();
@@ -495,8 +506,8 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     const observables: Observable<string>[] = [];
 
     this._entriesList.forEach((entry: any | { key: number; value: Observable<any> }) => {
-      const value: number = entry[this.valueProperty];
-      const display: string | Observable<any> = entry[this.displayProperty];
+      const value: number = entry[this.valueProperty()];
+      const display: string | Observable<any> = entry[this.displayProperty()];
 
       if (display instanceof Observable) {
         this.entriesDataSource.push({ value: value, display: 'Loading...' });
@@ -506,7 +517,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
             take(1),
             tap((v) => {
               this.entriesDataSource.filter((x) => x.value === value)[0].display = v;
-              if (this.selectedValue === value) {
+              if (this.selectedValue() === value) {
                 this.displayControl.setValue(v);
               }
             }),
@@ -540,51 +551,51 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
           }
 
           this.updateMinimumCharactersMessageVisibility(criteria ?? '');
-          if (this.showMinimumCharactersMessage) {
+          if (this.showMinimumCharactersMessage()) {
             return of(null).pipe(take(1));
           }
 
           return this.catalogService
-            .search(this.searchEndpoint!, this.maxEntries, criteria ?? '', this.filters)
+            .search(this.searchEndpoint!, this.maxEntries(), criteria ?? '', this.filters)
             .pipe(take(1));
         }),
       )
       .subscribe({
         next: (result: ICatalogResult | any[] | null | undefined) => {
-          this.isLoading = false;
-          this.displayedEntries = [];
+          this.isLoading.set(false);
+          this.displayedEntries.set([]);
 
           if (Array.isArray(result) && result.length > 0) {
-            this.displayedEntries = result;
+            this.displayedEntries.set(result);
           } else if (result?.entries && Array.isArray(result.entries)) {
             const catalogResult: ICatalogResult = result as ICatalogResult;
             if (!catalogResult) {
               return;
             }
 
-            this.displayedEntries = catalogResult.entries;
+            this.displayedEntries.set(catalogResult.entries);
 
             if (!this.isDataInitialized) {
               // The shouldUseCriteria is only set from the initialization.
               this.isDataInitialized = true;
-              this.shouldUseCriteria = catalogResult.shouldUseCriteria ?? false;
-              this.showMinimumCharactersMessage = this.searchable && this.displayedEntries.length === 0;
+              this.shouldUseCriteria.set(catalogResult.shouldUseCriteria ?? false);
+              this.showMinimumCharactersMessage.set(this.searchable() && this.displayedEntries().length === 0);
             }
           }
 
           // Try to filter out already loaded rows from the data grid dataset.
-          if (this.displayedEntries.length > 0 && this.dataGridDataset) {
-            this.displayedEntries = this.tryFilterFromDataset(this.displayedEntries);
+          if (this.displayedEntries().length > 0 && this.dataGridDataset) {
+            this.displayedEntries.set(this.tryFilterFromDataset(this.displayedEntries()));
           }
 
-          if (!this.showMinimumCharactersMessage && this.displayedEntries.length === 0) {
-            this.showNoResultsMessage = true;
+          if (!this.showMinimumCharactersMessage() && this.displayedEntries().length === 0) {
+            this.showNoResultsMessage.set(true);
           }
         },
         error: (_: any) => {
-          this.isLoading = false;
-          this.displayedEntries = [];
-          this.showFailureMessage = true;
+          this.isLoading.set(false);
+          this.displayedEntries.set([]);
+          this.showFailureMessage.set(true);
 
           // Set a new subscription to allow retrying the search later.
           this.initializeSearch();
@@ -606,7 +617,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     }
 
     const positionStrategy: FlexibleConnectedPositionStrategy = this.positionBuilder
-      .flexibleConnectedTo(this.inputElement)
+      .flexibleConnectedTo(this.inputElement()!)
       .withPositions([
         {
           originX: 'start',
@@ -629,26 +640,27 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     });
 
     // Set overlay width to match input field
-    const inputRect: DOMRect = this.inputElement.nativeElement.getBoundingClientRect();
+    const inputRect: DOMRect = this.inputElement()!.nativeElement.getBoundingClientRect();
     this.overlayRef.updateSize({ width: inputRect.width });
 
-    const portal: TemplatePortal = new TemplatePortal(this.dropdownTemplate, this.viewContainerRef);
+    const portal: TemplatePortal = new TemplatePortal(this.dropdownTemplate()!, this.viewContainerRef);
     this.overlayRef.attach(portal);
-    this.isDropDownShown = true;
-    this.focusedIndex =
-      this.selectedValue != null
-        ? this.displayedEntries.findIndex((entry: ICatalogEntry) => entry.value === this.selectedValue)
-        : -1;
+    this.isDropDownShown.set(true);
+    this.focusedIndex.set(
+      this.selectedValue() != null
+        ? this.displayedEntries().findIndex((entry: ICatalogEntry) => entry.value === this.selectedValue())
+        : -1,
+    );
     this.updateInputAriaActiveDescendant();
 
     // Re-evaluate minimum characters message visibility when opening the dropdown,
     // in case it was incorrectly reset by a programmatic value change.
-    if (this.shouldUseCriteria && !this.isLoading) {
+    if (this.shouldUseCriteria() && !this.isLoading()) {
       this.updateMinimumCharactersMessageVisibility(this.displayControl?.value ?? '');
     }
 
     // Scroll the selected item into view after the overlay renders.
-    if (this.focusedIndex >= 0) {
+    if (this.focusedIndex() >= 0) {
       requestAnimationFrame(() => this.scrollFocusedItemIntoView());
     }
   }
@@ -659,16 +671,16 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       // Leaving shouldUseCriteria behind let the previous catalog gate the new one: the
       // minimum-length check short-circuited the very request that would have corrected it.
       this.isDataInitialized = false;
-      this.shouldUseCriteria = false;
+      this.shouldUseCriteria.set(false);
     }
 
     this.applySearchCriteria(this.lastCriteriaUsed);
   }
 
   private resetMessages(): void {
-    this.showFailureMessage = false;
-    this.showNoResultsMessage = false;
-    this.showMinimumCharactersMessage = false;
+    this.showFailureMessage.set(false);
+    this.showNoResultsMessage.set(false);
+    this.showMinimumCharactersMessage.set(false);
   }
 
   private resolveDisplay(value: any): string {
@@ -681,7 +693,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       return;
     }
 
-    this.selectedValue = currentValue;
+    this.selectedValue.set(currentValue);
     if (!this.hasSearchEndpoint) {
       this.displayControl?.setValue(this.resolveDisplay(currentValue), { emitEvent: false });
     }
@@ -696,7 +708,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
    * to show up on the default entry alone.
    */
   private shouldRefreshDisplay(value: any): boolean {
-    if (this.selectedValue !== value) {
+    if (this.selectedValue() !== value) {
       return true;
     }
 
@@ -721,7 +733,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   private tryFilterFromDataset(results: ICatalogEntry[]): ICatalogEntry[] {
     if (
       this.dataGridDataset &&
-      this.controlName === this.dataGridDataset?.keyProperty &&
+      this.controlName() === this.dataGridDataset?.keyProperty &&
       this.dataGridDataset.hasLoadedRows
     ) {
       // If the control name is matching the ID property of the data grid dataset, filter out the loaded rows to remove duplicated IDs.
@@ -746,22 +758,23 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   }
 
   private updateMinimumCharactersMessageVisibility(criteria: string): void {
-    this.showMinimumCharactersMessage =
-      this.searchable &&
-      this.shouldUseCriteria &&
-      this.minimumLengthSearch > 0 &&
-      (criteria?.length ?? 0) < this.minimumLengthSearch;
+    this.showMinimumCharactersMessage.set(
+      this.searchable() &&
+        this.shouldUseCriteria() &&
+        this.minimumLengthSearch() > 0 &&
+        (criteria?.length ?? 0) < this.minimumLengthSearch(),
+    );
   }
 
   private getNativeInput(): HTMLInputElement | null {
-    return this.inputElement?.nativeElement?.querySelector('input') ?? null;
+    return this.inputElement()?.nativeElement?.querySelector('input') ?? null;
   }
 
   private scrollFocusedItemIntoView(): void {
-    if (!this.overlayRef || this.focusedIndex < 0) {
+    if (!this.overlayRef || this.focusedIndex() < 0) {
       return;
     }
-    const optionId: string = this.getOptionId(this.focusedIndex);
+    const optionId: string = this.getOptionId(this.focusedIndex());
     const element: HTMLElement | null = this.overlayRef.overlayElement.querySelector('#' + optionId);
     if (element) {
       element.scrollIntoView({ block: 'nearest' });
@@ -775,7 +788,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     }
     input.setAttribute('role', 'combobox');
     input.setAttribute('aria-autocomplete', 'list');
-    input.setAttribute('aria-expanded', String(this.isDropDownShown));
+    input.setAttribute('aria-expanded', String(this.isDropDownShown()));
     input.setAttribute('aria-haspopup', 'listbox');
     input.setAttribute('aria-owns', this.listboxId);
   }
@@ -785,7 +798,7 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     if (!input) {
       return;
     }
-    input.setAttribute('aria-expanded', String(this.isDropDownShown));
+    input.setAttribute('aria-expanded', String(this.isDropDownShown()));
     const descendantId: string | null = this.activeDescendantId;
     if (descendantId) {
       input.setAttribute('aria-activedescendant', descendantId);

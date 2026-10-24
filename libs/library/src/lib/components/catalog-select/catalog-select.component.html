@@ -1,22 +1,22 @@
 <lib-form-input-group
-  [controlName]="controlName"
-  [label]="label"
-  [notes]="notes"
+  [controlName]="controlName()"
+  [label]="label()"
+  [notes]="notes()"
   [template]="template"
-  [validations]="validations"
+  [validations]="validations()"
 >
 </lib-form-input-group>
 
 <ng-template #template>
-  <div class="catalog-container" [class.show]="isDropDownShown">
+  <div class="catalog-container" [class.show]="isDropDownShown()">
     <lib-form-input
       #input
-      [class.fixed-content]="readOnly && !shouldUseCriteria"
-      [autofocus]="autofocus"
-      [controlName]="displayControlName"
-      [displayReadOnlyAsDisabled]="readOnly"
+      [class.fixed-content]="readOnly() && !shouldUseCriteria()"
+      [autofocus]="autofocus()"
+      [controlName]="displayControlName()"
+      [displayReadOnlyAsDisabled]="readOnly()"
       [invalid]="isInvalid && isTouched"
-      [readOnly]="readOnly || !searchable"
+      [readOnly]="readOnly() || !searchable()"
       (blurred)="onContainerBlur()"
       (click)="onContainerClick()"
       (focused)="onContainerFocus()"
@@ -37,28 +37,28 @@
       <!-- Status rows are not options: role="presentation" keeps them out of the
       listbox's option set, and they carry no click handler. The dropdown already
       closes on Escape, on blur and on an outside click. -->
-      @if (isLoading) {
+      @if (isLoading()) {
         <li role="presentation" aria-live="polite">
           {{ 'CatalogSelect-Loading' | translate }}
         </li>
       }
-      @if (shouldUseCriteria && showMinimumCharactersMessage) {
+      @if (shouldUseCriteria() && showMinimumCharactersMessage()) {
         <li
           role="presentation"
           aria-live="polite"
-          title="{{ 'CatalogSelect-MinimumLengthSearch' | translate: { minimumLengthSearch: minimumLengthSearch } }}"
+          title="{{ 'CatalogSelect-MinimumLengthSearch' | translate: { minimumLengthSearch: minimumLengthSearch() } }}"
         >
-          {{ 'CatalogSelect-MinimumLengthSearch' | translate: { minimumLengthSearch: minimumLengthSearch } }}
+          {{ 'CatalogSelect-MinimumLengthSearch' | translate: { minimumLengthSearch: minimumLengthSearch() } }}
         </li>
       }
-      @if (showNoResultsMessage) {
+      @if (showNoResultsMessage()) {
         <li role="presentation" aria-live="polite" title="{{ 'CatalogSelect-NoResultsFound' | translate }}">
           {{ 'CatalogSelect-NoResultsFound' | translate }}
         </li>
       }
 
       <!-- Retrying is a real action, so it is a real button and reachable by keyboard. -->
-      @if (showFailureMessage) {
+      @if (showFailureMessage()) {
         <li class="error" role="presentation">
           <button
             class="retry"
@@ -76,14 +76,14 @@
       interaction lives on the input, which owns ArrowUp/ArrowDown/Enter/Escape and
       points at the active option through aria-activedescendant. Giving each option
       its own tabindex and key handlers would break that pattern. -->
-      @for (entry of displayedEntries; track entry; let i = $index) {
+      @for (entry of displayedEntries(); track entry; let i = $index) {
         <li
           class="dropdown-item"
           role="option"
           [attr.id]="getOptionId(i)"
-          [attr.aria-selected]="selectedValue === entry.value"
-          [class.focused]="focusedIndex === i"
-          [class.selected]="selectedValue === entry.value"
+          [attr.aria-selected]="selectedValue() === entry.value"
+          [class.focused]="focusedIndex() === i"
+          [class.selected]="selectedValue() === entry.value"
           (click)="onDropDownItemClick(entry)"
         >
           {{ entry.display }}

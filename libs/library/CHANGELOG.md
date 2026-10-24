@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Every component in this package now renders under any change-detection strategy the host
+  application uses, including zoneless.** `CatalogSelectComponent` was the last one. Nothing here
+  depends on being walked on every event, and
+  `@angular-eslint/prefer-on-push-component-change-detection` is an error in this package rather
+  than a warning, so it stays that way.
+
 ### Deprecated
 
 ### Removed
@@ -22,6 +28,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+- **`CatalogSelectComponent` exposes its inputs as signals.** Binding to it from a template is
+  unchanged -- `[label]="..."`, `[searchEndpoint]="..."`, `[filters]="..."` and the rest all
+  still work. Only code reading one off a component instance needs `()`. `controlName` and
+  `displayControlName` are required now, which they always were in practice.
+
+  `entriesList`, `filters` and `searchEndpoint` stay plain inputs. They are imperative
+  configuration that re-initialises the search, no template reads them, and making them signals
+  would have moved that side effect into an `effect()` for no gain.
 
 ## [4.0.1] - 2026-10-24
 
