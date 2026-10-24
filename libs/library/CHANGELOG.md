@@ -123,6 +123,7 @@ reduce`. There is nothing to configure.
   ```bash
   npm i @zambon-dev/library@latest @zambon-dev/framework@latest @zambon-dev/shared@latest
   ```
+
 ## [4.0.0] - 2026-10-24
 
 ### Added

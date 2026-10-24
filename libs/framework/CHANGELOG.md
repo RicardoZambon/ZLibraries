@@ -63,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ```bash
   npm i @zambon-dev/library@latest @zambon-dev/framework@latest @zambon-dev/shared@latest
   ```
+
 ## [5.0.0] - 2026-10-24
 
 ### Changed
