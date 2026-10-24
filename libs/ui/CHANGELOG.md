@@ -164,6 +164,10 @@ reduce`. There is nothing to configure.
   stylesheet came after ours. Write overrides without a layer. A static override holds in both
   themes; to vary one by theme, write it under `:root[data-theme='dark']`.
 
+## [1.0.0] - 2026-10-24
+
+### ⚠ Breaking Changes / Migration
+
 - **The layers in this release are `library` 4.0.5, `framework` 5.0.5 and `shared` 6.0.4.**
   Moving here from an earlier version of any of the three means taking that layer's remaining
   releases too; they are under **Package history** below. The one worth naming is
