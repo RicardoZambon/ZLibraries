@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [5.0.3] - 2026-10-24
+
+### Changed
+
 - **The breadcrumbs, the confirm modal and the error modal render under any change-detection
   strategy.** The breadcrumbs were the clearest case of a getter over state a service mutates
   elsewhere, and both modals are driven imperatively by a parent calling `showModal` from a
@@ -25,12 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   its active view in one. The `detectChanges()`/`markForCheck()` pair they used to need is gone,
   and with it the rule that the ribbon template could never be assigned after the first pass --
   a signal write there schedules another pass rather than throwing NG0100.
-
-### Deprecated
-
-### Removed
-
-### Fixed
 
 ### ⚠ Breaking Changes / Migration
 
@@ -667,7 +673,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.3...HEAD
+[5.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.3
 [5.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.2
 [5.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.1
 [5.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.0
