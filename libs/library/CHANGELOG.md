@@ -15,12 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **`DataProviderService` announces the entity it holds.** The identifier behind `entityID`
-  and `hasEntityID` is a signal now. It is read from templates -- `@zambon-dev/framework`'s New,
-  Edit and Views buttons all appear only once a record exists -- and the route resolving or a
-  save assigning an id told Angular nothing. Both accessors keep their shape, so no call site
-  changes.
-
 ### Deprecated
 
 ### Removed
@@ -28,6 +22,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+## [4.0.4] - 2026-10-24
+
+### Changed
+
+- **`DataProviderService` announces the entity it holds.** The identifier behind `entityID`
+  and `hasEntityID` is a signal now. It is read from templates -- `@zambon-dev/framework`'s New,
+  Edit and Views buttons all appear only once a record exists -- and the route resolving or a
+  save assigning an id told Angular nothing. Both accessors keep their shape, so no call site
+  changes.
 
 ## [4.0.3] - 2026-10-24
 
@@ -868,7 +872,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.4...HEAD
+[4.0.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.4
 [4.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.3
 [4.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.2
 [4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.1

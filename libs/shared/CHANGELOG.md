@@ -15,10 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Internal only: one spec follows `ViewBase`'s `loading` onto a signal.** `@zambon-dev/framework`
-  backs that flag with a signal now, and a spec here stubs the component with `Object.create`,
-  which runs no field initialiser. Nothing in this package's own API changed.
-
 ### Deprecated
 
 ### Removed
@@ -26,6 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+## [6.0.2] - 2026-10-24
+
+### Changed
+
+- **Internal only: one spec follows `ViewBase`'s `loading` onto a signal.** `@zambon-dev/framework`
+  backs that flag with a signal now, and a spec here stubs the component with `Object.create`,
+  which runs no field initialiser. Nothing in this package's own API changed.
 
 ## [6.0.1] - 2026-10-24
 
@@ -636,7 +640,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v6.0.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v6.0.2...HEAD
+[6.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.2
 [6.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.1
 [6.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.0
 [5.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v5.0.2

@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [5.0.4] - 2026-10-24
+
+### Changed
+
 - **Every component in this package now renders under any change-detection strategy the host
   application chooses, zoneless included.** The ribbon buttons were the last group still
   declaring `Eager`, and the one that depended on it most: a button answers to things that
@@ -29,10 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **The legacy form's `viewMode` notifies.** Same treatment, same accessors. It is what the
   legacy Edit and Save buttons render from.
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -734,7 +742,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.4...HEAD
+[5.0.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.4
 [5.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.3
 [5.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.2
 [5.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.1
