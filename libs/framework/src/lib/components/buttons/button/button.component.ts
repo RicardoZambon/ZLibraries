@@ -1,4 +1,4 @@
-import { Component, EventEmitter, forwardRef, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { BaseButton } from '../base-button';
 
@@ -6,16 +6,15 @@ import { BaseButton } from '../base-button';
   selector: 'framework-button',
   templateUrl: './button.component.html',
   imports: [RibbonButtonComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonComponent) }],
 })
 export class ButtonComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public color = 'text-primary-500';
-  @Input() public icon?: string;
-  @Input() public label = '';
+  public readonly color: InputSignal<string> = input('text-primary-500');
+  public readonly icon: InputSignal<string | undefined> = input<string>();
+  public readonly label: InputSignal<string> = input('');
 
-  @Output() public action: EventEmitter<void> = new EventEmitter();
+  public readonly action: OutputEmitterRef<void> = output<void>();
   //#endregion
 
   //#region Variables
@@ -29,7 +28,7 @@ export class ButtonComponent extends BaseButton {
 
   //#region Event handlers
   protected onButtonClicked(): void {
-    if (this.disabled || !this.isAccessLoaded() || !this.isVisible()) {
+    if (this.disabled() || !this.isAccessLoaded() || !this.isVisible()) {
       return;
     }
 

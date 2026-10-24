@@ -65,8 +65,11 @@ describe('ButtonViewsComponent — view switching logic', () => {
     // Create a minimal component-like object
     component = Object.create(ButtonViewsComponent.prototype);
     (component as any).authService = mockAuthService;
-    component.options = [];
-    component.disabled = false;
+    // Object.create skips field initialisers, so every signal the component would have built
+    // has to be supplied here.
+    component.options = signal([]);
+    component.disabled = signal(false);
+    (component as any).selectedViewId = signal(undefined);
     component.isVisible = signal(true);
     component.isAccessLoaded = signal(true);
     component.destroy$ = new Subject();
@@ -85,29 +88,29 @@ describe('ButtonViewsComponent — view switching logic', () => {
   describe('ngOnInit — options from route children', () => {
     it('should build options from detailsViewRoute children', () => {
       const route: any = createDetailsViewRoute('/contratacoes/1', defaultChildren());
-      component.detailsViewRoute = route;
+      component.detailsViewRoute = signal(route);
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/contratacoes/1');
 
       component.ngOnInit();
 
-      expect(component.options).toHaveLength(3);
-      expect(component.options[0].id).toBe('');
-      expect(component.options[0].label).toBe('Details');
-      expect(component.options[1].id).toBe('audit');
-      expect(component.options[1].label).toBe('Audit');
-      expect(component.options[2].id).toBe('history');
-      expect(component.options[2].label).toBe('History');
+      expect(component.options()).toHaveLength(3);
+      expect(component.options()[0].id).toBe('');
+      expect(component.options()[0].label).toBe('Details');
+      expect(component.options()[1].id).toBe('audit');
+      expect(component.options()[1].label).toBe('Audit');
+      expect(component.options()[2].id).toBe('history');
+      expect(component.options()[2].label).toBe('History');
     });
 
     it('should set icon on options when route data has icon', () => {
       const route: any = createDetailsViewRoute('/contratacoes/1', defaultChildren());
-      component.detailsViewRoute = route;
+      component.detailsViewRoute = signal(route);
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/contratacoes/1');
 
       component.ngOnInit();
 
-      expect(component.options[0].icon).toBe('fa-edit');
-      expect(component.options[1].icon).toBe('fa-history');
+      expect(component.options()[0].icon).toBe('fa-edit');
+      expect(component.options()[1].icon).toBe('fa-history');
     });
 
     it('should set allowedActions on options when route data has allowedActions', () => {
@@ -116,13 +119,13 @@ describe('ButtonViewsComponent — view switching logic', () => {
         { path: 'audit', data: { title: 'Audit', allowedActions: ['ReadAudit'] } },
       ];
       const route: any = createDetailsViewRoute('/contratacoes/1', children);
-      component.detailsViewRoute = route;
+      component.detailsViewRoute = signal(route);
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/contratacoes/1');
 
       component.ngOnInit();
 
-      expect(component.options[0].allowedActions).toBeUndefined();
-      expect(component.options[1].allowedActions).toEqual(['ReadAudit']);
+      expect(component.options()[0].allowedActions).toBeUndefined();
+      expect(component.options()[1].allowedActions).toEqual(['ReadAudit']);
     });
 
     it('should filter out routes with ignoreRoute flag', () => {
@@ -132,29 +135,29 @@ describe('ButtonViewsComponent — view switching logic', () => {
         { path: 'audit', data: { title: 'Audit' } },
       ];
       const route: any = createDetailsViewRoute('/contratacoes/1', children);
-      component.detailsViewRoute = route;
+      component.detailsViewRoute = signal(route);
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/contratacoes/1');
 
       component.ngOnInit();
 
-      expect(component.options).toHaveLength(2);
-      expect(component.options[0].label).toBe('Details');
-      expect(component.options[1].label).toBe('Audit');
+      expect(component.options()).toHaveLength(2);
+      expect(component.options()[0].label).toBe('Details');
+      expect(component.options()[1].label).toBe('Audit');
     });
 
     it('should not build options when detailsViewRoute is null', () => {
-      component.detailsViewRoute = null;
+      component.detailsViewRoute = signal(null);
 
       component.ngOnInit();
 
-      expect(component.options).toHaveLength(0);
+      expect(component.options()).toHaveLength(0);
     });
   });
 
   describe('onViewClicked — navigation', () => {
     beforeEach(() => {
       const route: any = createDetailsViewRoute('/contratacoes/1', defaultChildren());
-      component.detailsViewRoute = route;
+      component.detailsViewRoute = signal(route);
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/contratacoes/1');
 
       component.ngOnInit();
@@ -180,12 +183,12 @@ describe('ButtonViewsComponent — view switching logic', () => {
 
     it('should mark selected view as disabled and unmark previous', () => {
       component.onViewClicked('audit');
-      expect(component.options[1].isDisabled).toBe(true);
-      expect(component.options[0].isDisabled).toBe(false);
+      expect(component.options()[1].isDisabled).toBe(true);
+      expect(component.options()[0].isDisabled).toBe(false);
 
       component.onViewClicked('history');
-      expect(component.options[1].isDisabled).toBe(false);
-      expect(component.options[2].isDisabled).toBe(true);
+      expect(component.options()[1].isDisabled).toBe(false);
+      expect(component.options()[2].isDisabled).toBe(true);
     });
 
     it('should call setActiveView on TabViewService', () => {
@@ -197,30 +200,30 @@ describe('ButtonViewsComponent — view switching logic', () => {
 
   describe('hasOptions', () => {
     it('should return true when there are visible options without allowedActions', () => {
-      component.options = [{ id: '', isVisible: true, label: 'Details' }];
+      component.options = signal([{ id: '', isVisible: true, label: 'Details' }]);
 
       expect(component.hasOptions).toBe(true);
     });
 
     it('should return false when all options are not visible', () => {
-      component.options = [{ id: '', isVisible: false, label: 'Details' }];
+      component.options = signal([{ id: '', isVisible: false, label: 'Details' }]);
 
       expect(component.hasOptions).toBe(false);
     });
 
     it('should return true when option has allowedActions with access allowed', () => {
-      component.options = [
+      component.options = signal([
         { id: 'audit', isVisible: true, label: 'Audit', allowedActions: ['ReadAudit'], isAccessAllowed: true },
-      ];
+      ]);
 
       expect(component.hasOptions).toBe(true);
     });
 
     it('should return false when option has allowedActions with access denied', () => {
       mockAuthService.checkActionsAreAllowed.mockReturnValue(of([false]));
-      component.options = [
+      component.options = signal([
         { id: 'audit', isVisible: true, label: 'Audit', allowedActions: ['ReadAudit'], isAccessAllowed: false },
-      ];
+      ]);
 
       expect(component.hasOptions).toBe(false);
     });
@@ -230,7 +233,7 @@ describe('ButtonViewsComponent — view switching logic', () => {
     it('should update baseUrlPath when NavigationEnd fires after save redirect', () => {
       // 1. Initialize with /new URL (simulating creating a new entity)
       const route: any = createDetailsViewRoute('/configs/campos-filtros/new', defaultChildren());
-      component.detailsViewRoute = route;
+      component.detailsViewRoute = signal(route);
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/configs/campos-filtros/new');
 
       component.ngOnInit();
@@ -268,14 +271,14 @@ describe('ButtonViewsComponent — view switching logic', () => {
     // filtered. A list view never triggered it, because it is not a details route at all.
     it('should ignore a navigation that belongs to another details tab', () => {
       const route: any = createDetailsViewRoute('/integrations/adp-import/1', defaultChildren());
-      component.detailsViewRoute = route;
+      component.detailsViewRoute = signal(route);
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/integrations/adp-import/1');
 
       component.ngOnInit();
       component.onViewClicked('audit');
 
       expect((component as any).baseUrlPath).toBe('/integrations/adp-import/1');
-      expect((component as any).selectedViewId).toBe('audit');
+      expect((component as any).selectedViewId()).toBe('audit');
 
       // Another details tab is opened. Its snapshot is a different Route definition.
       const otherTabSnapshot: any = {
@@ -293,13 +296,13 @@ describe('ButtonViewsComponent — view switching logic', () => {
 
       // This tab keeps its own base and its own view.
       expect((component as any).baseUrlPath).toBe('/integrations/adp-import/1');
-      expect((component as any).selectedViewId).toBe('audit');
+      expect((component as any).selectedViewId()).toBe('audit');
     });
 
     it('should use updated baseUrlPath when switching views after save redirect', () => {
       // 1. Initialize with /new URL
       const route: any = createDetailsViewRoute('/configs/campos-filtros/new', defaultChildren());
-      component.detailsViewRoute = route;
+      component.detailsViewRoute = signal(route);
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/configs/campos-filtros/new');
 
       component.ngOnInit();
@@ -333,7 +336,7 @@ describe('ButtonViewsComponent — view switching logic', () => {
     it('should use updated baseUrlPath when switching to default view after save redirect', () => {
       // 1. Initialize with /new URL
       const route: any = createDetailsViewRoute('/configs/campos-filtros/new', defaultChildren());
-      component.detailsViewRoute = route;
+      component.detailsViewRoute = signal(route);
       jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/configs/campos-filtros/new');
 
       component.ngOnInit();

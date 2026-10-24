@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`DataProviderService` announces the entity it holds.** The identifier behind `entityID`
+  and `hasEntityID` is a signal now. It is read from templates -- `@zambon-dev/framework`'s New,
+  Edit and Views buttons all appear only once a record exists -- and the route resolving or a
+  save assigning an id told Angular nothing. Both accessors keep their shape, so no call site
+  changes.
+
 ### Deprecated
 
 ### Removed

@@ -1,4 +1,4 @@
-import { Component, forwardRef, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, input, InputSignal } from '@angular/core';
 import { RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { LegacySubViewForm, ModalBase } from '../../../../views';
 import { BaseButton } from '../../base-button';
@@ -7,7 +7,6 @@ import { BaseButton } from '../../base-button';
   selector: 'framework-button-edit-legacy',
   templateUrl: './button-edit.component.html',
   imports: [RibbonButtonComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonEditLegacyComponent) }],
 })
 /**
@@ -17,13 +16,13 @@ import { BaseButton } from '../../base-button';
  */
 export class ButtonEditLegacyComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public cancelColor = 'text-red-500';
-  @Input() public cancelIcon = 'fa-ban';
-  @Input() public cancelLabel = 'Button-Cancel-Edit';
-  @Input() public editIcon = 'fa-edit';
-  @Input() public editLabel = 'Button-Edit';
-  @Input() public form?: LegacySubViewForm;
-  @Input() public modal?: ModalBase;
+  public readonly cancelColor: InputSignal<string> = input('text-red-500');
+  public readonly cancelIcon: InputSignal<string> = input('fa-ban');
+  public readonly cancelLabel: InputSignal<string> = input('Button-Cancel-Edit');
+  public readonly editIcon: InputSignal<string> = input('fa-edit');
+  public readonly editLabel: InputSignal<string> = input('Button-Edit');
+  public readonly form: InputSignal<LegacySubViewForm | undefined> = input<LegacySubViewForm>();
+  public readonly modal: InputSignal<ModalBase | undefined> = input<ModalBase>();
   //#endregion
 
   //#region Variables
@@ -37,16 +36,15 @@ export class ButtonEditLegacyComponent extends BaseButton {
 
   //#region Event handlers
   protected onCancelAction(): void {
-    if (this.form) {
-      this.form.cancelEdit();
-    }
+    this.form()?.cancelEdit();
   }
 
   protected onEditAction(): void {
-    if (this.form) {
-      this.form.beginEdit();
-    } else if (this.modal) {
-      this.modal.toggle();
+    const form: LegacySubViewForm | undefined = this.form();
+    if (form) {
+      form.beginEdit();
+    } else {
+      this.modal()?.toggle();
     }
   }
   //#endregion

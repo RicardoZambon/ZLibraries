@@ -128,21 +128,23 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
     };
 
     component = Object.create(ButtonSaveComponent.prototype);
-    component.options = [
+    // Object.create skips field initialisers, so every signal the component would have built
+    // has to be supplied here.
+    component.options = signal([
       { id: 'save', label: 'Save', icon: 'fa-save' },
       { id: 'save-and-close', label: 'Save & Close', icon: 'fa-save' },
       { id: 'save-and-new', label: 'Save & New', icon: 'fa-save' },
-    ];
-    component.disabled = false;
+    ]);
+    component.disabled = signal(false);
     component.isVisible = signal(true);
     component.isAccessLoaded = signal(true);
-    component.button = mockButton;
+    component.button = signal(mockButton);
 
     (component as any).tabService = mockTabService;
     (component as any).router = mockRouter;
     (component as any).formService = mockFormService;
     (component as any).dataProviderService = mockDataProviderService;
-    (component as any).errorModal = mockErrorModal;
+    (component as any).errorModal = signal(mockErrorModal);
   });
 
   afterEach(() => {
@@ -365,10 +367,10 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
 
   describe('Constructor defaults', () => {
     it('should have three options: save, save-and-close, save-and-new', () => {
-      expect(component.options.length).toBe(3);
-      expect(component.options[0].id).toBe('save');
-      expect(component.options[1].id).toBe('save-and-close');
-      expect(component.options[2].id).toBe('save-and-new');
+      expect(component.options().length).toBe(3);
+      expect(component.options()[0].id).toBe('save');
+      expect(component.options()[1].id).toBe('save-and-close');
+      expect(component.options()[2].id).toBe('save-and-new');
     });
   });
 });

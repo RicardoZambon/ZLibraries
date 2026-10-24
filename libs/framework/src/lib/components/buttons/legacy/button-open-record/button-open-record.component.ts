@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, inject, input, InputSignal, OnInit, signal, WritableSignal } from '@angular/core';
 import { DataGridDataset, ITabView, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { Tab } from '../../../../models';
@@ -9,7 +9,6 @@ import { BaseButton } from '../../base-button';
   selector: 'framework-button-open-record-legacy',
   templateUrl: './button-open-record.component.html',
   imports: [RibbonButtonComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonOpenRecordLegacyComponent) }],
 })
 /**
@@ -19,14 +18,15 @@ import { BaseButton } from '../../base-button';
  */
 export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public endpoint = 'new';
-  @Input() public path!: string;
-  @Input() public tabView!: ITabView;
+  public readonly endpoint: InputSignal<string> = input('new');
+  public readonly path: InputSignal<string> = input('');
+  public readonly tabView: InputSignal<ITabView | undefined> = input<ITabView>();
   //#endregion
 
   //#region Variables
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  protected selectionCount = 0;
+  // A signal rather than a field: the grid announces a selection change from a subscription.
+  protected readonly selectionCount: WritableSignal<number> = signal(0);
 
   private tabService: TabService = inject(TabService);
   //#endregion
@@ -37,7 +37,7 @@ export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnIni
   //#region Constructor and Angular life cycle methods
   public ngOnInit(): void {
     this.dataGridDataset.selectedRowsChanged.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.selectionCount = this.dataGridDataset.selectedRowKeys.length;
+      this.selectionCount.set(this.dataGridDataset.selectedRowKeys.length);
     });
   }
   //#endregion
@@ -47,11 +47,11 @@ export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnIni
 
   //#region Public methods
   public clicked(): void {
-    if (this.dataGridDataset.hasSelectedRows && this.selectionCount === 1) {
+    if (this.dataGridDataset.hasSelectedRows && this.selectionCount() === 1) {
       const selectedKey: string = this.dataGridDataset.selectedRowKeys[0];
       const selectedID: any = this.dataGridDataset.getRowID(selectedKey);
 
-      this.tabService.navigateTo(new Tab({ url: `${this.path}/${selectedID}` }));
+      this.tabService.navigateTo(new Tab({ url: `${this.path()}/${selectedID}` }));
       // this.tabService.navigateTab(this.tabView, `${this.path}/${this.dataGridDataset.selectedRows[0]}`);
     }
   }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { Subject } from 'rxjs';
 
 // No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
@@ -13,15 +13,19 @@ export abstract class ViewBase implements OnDestroy {
   //#region Variables
   protected destroy$: Subject<boolean> = new Subject<boolean>();
 
-  private _loading = false;
+  // A signal rather than a field: a view's own template reads `loading` to show its spinner,
+  // and every assignment here happens inside a subscription. The accessors below keep their
+  // old shape, so a subclass reading or writing `this.loading` needs no change; a subclass
+  // template is better off reading `loadingState()` directly.
+  protected readonly loadingState: WritableSignal<boolean> = signal(false);
   //#endregion
 
   //#region Properties
   public get loading(): boolean {
-    return this._loading;
+    return this.loadingState();
   }
   public set loading(value: boolean) {
-    this._loading = value;
+    this.loadingState.set(value);
   }
   //#endregion
 

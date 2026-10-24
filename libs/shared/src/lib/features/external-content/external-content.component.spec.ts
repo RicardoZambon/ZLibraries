@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { TabService, TabViewService } from '@zambon-dev/framework';
@@ -40,6 +41,8 @@ describe(ExternalContentComponent.name, () => {
       isSlow: false,
       isUnavailable: false,
       label: '',
+      // Object.create skips field initialisers, and ViewBase backs `loading` with a signal.
+      loadingState: signal(false),
       resolvedUrl: '',
       sanitizer: { bypassSecurityTrustResourceUrl },
       tabService: { updateActiveTabRootTitle },

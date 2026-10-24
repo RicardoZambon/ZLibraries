@@ -28,20 +28,22 @@ describe('ButtonExportComponent', () => {
     };
 
     component = Object.create(ButtonExportComponent.prototype);
-    component.disabled = false;
+    // Object.create skips field initialisers, so every signal the component would have built
+    // has to be supplied here.
+    component.disabled = signal(false);
     component.isVisible = signal(true);
     component.isAccessLoaded = signal(true);
-    component.fileBaseName = 'report';
+    component.fileBaseName = signal('report');
     component.dataGridDataset = mockDataGridDataset;
     component.translateService = mockTranslateService;
-    component.button = mockButton;
-    component.options = [
+    component.button = signal(mockButton);
+    component.options = signal([
       { id: 'xlsx', label: 'Button-Export-Excel', icon: 'fa-file-excel' },
       { id: 'pdf', label: 'Button-Export-PDF', icon: 'fa-file-pdf' },
       { id: 'csv', label: 'Button-Export-CSV', icon: 'fa-file-csv' },
       { id: 'xml', label: 'Button-Export-XML', icon: 'fa-file-code' },
       { id: 'mhtml', label: 'Button-Export-MHTML', icon: 'fa-file-archive' },
-    ];
+    ]);
 
     Object.defineProperty(URL, 'createObjectURL', {
       configurable: true,
@@ -59,7 +61,7 @@ describe('ButtonExportComponent', () => {
   });
 
   it('should configure the expected export format options', () => {
-    expect(component.options.map((option: any) => option.id)).toEqual(['xlsx', 'pdf', 'csv', 'xml', 'mhtml']);
+    expect(component.options().map((option: any) => option.id)).toEqual(['xlsx', 'pdf', 'csv', 'xml', 'mhtml']);
   });
 
   it('should disable the button and return a translated tooltip when the row limit is exceeded', () => {

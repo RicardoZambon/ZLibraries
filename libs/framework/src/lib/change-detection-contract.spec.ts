@@ -16,25 +16,7 @@ import * as publicApi from '../index';
  * When this list is empty, turn `@angular-eslint/prefer-on-push-component-change-detection` from
  * 'warn' to 'error' in eslint.config.mjs and delete the allowance.
  */
-const STILL_EAGER: readonly string[] = [
-  'ButtonComponent',
-  'ButtonConfirmComponent',
-  'ButtonDeleteComponent',
-  'ButtonEditComponent',
-  'ButtonEditLegacyComponent',
-  'ButtonExportComponent',
-  'ButtonFiltersComponent',
-  'ButtonNewComponent',
-  'ButtonNewLegacyComponent',
-  'ButtonOpenRecordComponent',
-  'ButtonOpenRecordLegacyComponent',
-  'ButtonRefreshComponent',
-  'ButtonSaveComponent',
-  'ButtonSaveLegacyComponent',
-  'ButtonViewsComponent',
-  'ButtonViewsLegacyComponent',
-  'DefaultDetailsTabViewComponent',
-];
+const STILL_EAGER: readonly string[] = [];
 
 describe('change-detection contract', () => {
   const components: [string, Type<unknown>][] = Object.entries(publicApi)

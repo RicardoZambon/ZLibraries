@@ -34,9 +34,11 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     };
 
     component = Object.create(ButtonOpenRecordComponent.prototype);
-    component.elementPath = undefined;
-    component.rootPath = undefined;
-    component.disabled = false;
+    // Object.create skips field initialisers, so every signal the component would have built
+    // has to be supplied here.
+    component.elementPath = signal(undefined);
+    component.rootPath = signal(undefined);
+    component.disabled = signal(false);
     component.isVisible = signal(true);
     component.isAccessLoaded = signal(true);
     component.destroy$ = new Subject();
@@ -44,12 +46,12 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     (component as any).tabService = mockTabService;
     (component as any).router = mockRouter;
     (component as any).dataGridDataset = mockDataGridDataset;
-    (component as any).selectionCount = 0;
+    (component as any).selectionCount = signal(0);
   });
 
   describe('onButtonClicked', () => {
     it('should call navigateCurrentTab with entity URL and entityBaseUrl', () => {
-      (component as any).selectionCount = 1;
+      (component as any).selectionCount.set(1);
       mockDataGridDataset.selectedRowKeys = ['key-325'];
       mockDataGridDataset.getRowID.mockReturnValue(325);
 
@@ -62,10 +64,10 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     });
 
     it('should use rootPath when provided instead of router.url', () => {
-      (component as any).selectionCount = 1;
+      (component as any).selectionCount.set(1);
       mockDataGridDataset.selectedRowKeys = ['key-9'];
       mockDataGridDataset.getRowID.mockReturnValue(9);
-      component.rootPath = '/custom-path';
+      component.rootPath = signal('/custom-path');
 
       component.onButtonClicked();
 
@@ -75,10 +77,10 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     });
 
     it('should include elementPath in the URL when provided', () => {
-      (component as any).selectionCount = 1;
+      (component as any).selectionCount.set(1);
       mockDataGridDataset.selectedRowKeys = ['key-42'];
       mockDataGridDataset.getRowID.mockReturnValue(42);
-      component.elementPath = 'details';
+      component.elementPath = signal('details');
 
       component.onButtonClicked();
 
@@ -88,11 +90,11 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     });
 
     it('should include both rootPath and elementPath', () => {
-      (component as any).selectionCount = 1;
+      (component as any).selectionCount.set(1);
       mockDataGridDataset.selectedRowKeys = ['key-7'];
       mockDataGridDataset.getRowID.mockReturnValue(7);
-      component.rootPath = '/items';
-      component.elementPath = 'sub';
+      component.rootPath = signal('/items');
+      component.elementPath = signal('sub');
 
       component.onButtonClicked();
 
@@ -101,8 +103,8 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     });
 
     it('should NOT navigate when disabled', () => {
-      (component as any).selectionCount = 1;
-      component.disabled = true;
+      (component as any).selectionCount.set(1);
+      component.disabled = signal(true);
 
       component.onButtonClicked();
 
@@ -110,7 +112,7 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     });
 
     it('should NOT navigate when access is not loaded', () => {
-      (component as any).selectionCount = 1;
+      (component as any).selectionCount.set(1);
       component.isAccessLoaded = signal(false);
 
       component.onButtonClicked();
@@ -119,7 +121,7 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     });
 
     it('should NOT navigate when no record is selected (selectionCount = 0)', () => {
-      (component as any).selectionCount = 0;
+      (component as any).selectionCount.set(0);
 
       component.onButtonClicked();
 
@@ -127,7 +129,7 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     });
 
     it('should NOT navigate when multiple records are selected', () => {
-      (component as any).selectionCount = 2;
+      (component as any).selectionCount.set(2);
 
       component.onButtonClicked();
 
@@ -135,7 +137,7 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     });
 
     it('should NOT navigate when not visible', () => {
-      (component as any).selectionCount = 1;
+      (component as any).selectionCount.set(1);
       component.isVisible = signal(false);
 
       component.onButtonClicked();
@@ -146,17 +148,17 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
 
   describe('isSelectedOneRecord', () => {
     it('should return true when exactly one record is selected', () => {
-      (component as any).selectionCount = 1;
+      (component as any).selectionCount.set(1);
       expect(component.isSelectedOneRecord).toBe(true);
     });
 
     it('should return false when no records are selected', () => {
-      (component as any).selectionCount = 0;
+      (component as any).selectionCount.set(0);
       expect(component.isSelectedOneRecord).toBe(false);
     });
 
     it('should return false when multiple records are selected', () => {
-      (component as any).selectionCount = 3;
+      (component as any).selectionCount.set(3);
       expect(component.isSelectedOneRecord).toBe(false);
     });
   });
@@ -169,7 +171,7 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
       mockDataGridDataset.selectedRowKeys = ['key-1', 'key-2'];
       mockDataGridDataset.selectedRowsChanged.next({});
 
-      expect((component as any).selectionCount).toBe(2);
+      expect((component as any).selectionCount()).toBe(2);
     });
 
     it('should track selection changes over time', () => {
@@ -178,17 +180,17 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
       // Select one
       mockDataGridDataset.selectedRowKeys = ['key-1'];
       mockDataGridDataset.selectedRowsChanged.next({});
-      expect((component as any).selectionCount).toBe(1);
+      expect((component as any).selectionCount()).toBe(1);
 
       // Select two more
       mockDataGridDataset.selectedRowKeys = ['key-1', 'key-2', 'key-3'];
       mockDataGridDataset.selectedRowsChanged.next({});
-      expect((component as any).selectionCount).toBe(3);
+      expect((component as any).selectionCount()).toBe(3);
 
       // Deselect all
       mockDataGridDataset.selectedRowKeys = [];
       mockDataGridDataset.selectedRowsChanged.next({});
-      expect((component as any).selectionCount).toBe(0);
+      expect((component as any).selectionCount()).toBe(0);
     });
   });
 });
