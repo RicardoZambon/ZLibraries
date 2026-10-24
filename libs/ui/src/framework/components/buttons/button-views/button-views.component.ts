@@ -1,6 +1,11 @@
 import { Component, forwardRef, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRouteSnapshot, NavigationEnd, Route, Router, UrlSegment } from '@angular/router';
-import { DataProviderService, IRibbonButtonOption, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/ui/library';
+import {
+  DataProviderService,
+  IRibbonButtonOption,
+  RibbonButtonComponent,
+  RibbonGroupChild,
+} from '@zambon-dev/ui/library';
 import { filter, takeUntil } from 'rxjs';
 import { RouteHelper } from '../../../helpers';
 import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, ITab, Tab } from '../../../models';

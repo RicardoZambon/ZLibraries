@@ -53,6 +53,7 @@ The three sibling peer ranges exclude the versions already on npm, so `check-pee
 every new PR. Fix first — the rest of the work must not run over a red baseline.
 
 **Files:**
+
 - Modify: `libs/framework/package.json`, `libs/shared/package.json`
 
 - [ ] **Step 1: Run the checker to see it fail**
@@ -82,12 +83,14 @@ Build the five entry points with placeholder content, before any real code moves
 not hold, it surfaces here with the tree intact.
 
 **Files:**
+
 - Create: `libs/ui/{package.json,ng-package.json,project.json,tsconfig.json,tsconfig.lib.json,tsconfig.lib.prod.json,tsconfig.spec.json,jest.config.ts,eslint.config.mjs}`
 - Create: `libs/ui/src/index.ts`, `libs/ui/src/{library,framework,shared}/index.ts`
 - Create: `libs/ui/{library,framework,shared}/ng-package.json`
 - Modify: `tsconfig.base.json`
 
 **Interfaces:**
+
 - Produces: package name `@zambon-dev/ui`; subpaths `/library`, `/framework`, `/shared`, `/testing`.
   Project json copied from `libs/library/project.json` with paths retargeted and `prefix: "lib"`.
 
@@ -123,6 +126,7 @@ redefining the probes — this is Review Focus 1.
 ### Task 3: Move the library layer
 
 **Files:**
+
 - Move: `libs/library/src/lib/**` → `libs/ui/src/library/`, `libs/library/src/testing/**` →
   `libs/ui/src/testing/`, `libs/library/src/styles/variables.scss` → `libs/ui/src/styles/`
 - Create: `libs/ui/testing/ng-package.json`
@@ -160,6 +164,7 @@ Expected: PASS, with the library suite's own test count.
 ### Task 4: Move the framework layer
 
 **Files:**
+
 - Move: `libs/framework/src/lib/**` → `libs/ui/src/framework/`, `libs/framework/src/i18n/**` →
   `libs/ui/src/i18n/framework/`
 - Delete: `libs/framework/`
@@ -189,6 +194,7 @@ Expected: PASS.
 ### Task 5: Move the shared layer
 
 **Files:**
+
 - Move: `libs/shared/src/lib/**` → `libs/ui/src/shared/`, `libs/shared/src/i18n/**` →
   `libs/ui/src/i18n/shared/`, `libs/shared/src/styles/**` → `libs/ui/src/styles/`
 - Delete: `libs/shared/`, `libs/helper/` (empty)
@@ -223,6 +229,7 @@ Expected: PASS. Combined test count equals the three old suites' sum.
 The one guarantee the merge would otherwise drop.
 
 **Files:**
+
 - Modify: `libs/ui/eslint.config.mjs`
 
 - [ ] **Step 1: Add the two overrides**
@@ -250,6 +257,7 @@ Expected: PASS.
 ### Task 7: Unify release and CI
 
 **Files:**
+
 - Create: `libs/ui/release.config.cjs`
 - Modify: `.github/workflows/release.yml`, `.github/workflows/pr-validation.yml`,
   `tools/check-packaged-styles.mjs`
@@ -290,6 +298,7 @@ semantic-release dry run in `libs/ui` with validation mode on; expected: resolve
 ### Task 8: One Storybook
 
 **Files:**
+
 - Move: `libs/library/.storybook/**` → `libs/ui/.storybook/`
 - Modify: `libs/ui/project.json`, `.github/workflows/storybook.yml`, root `package.json` scripts
 
@@ -321,6 +330,7 @@ This is also the only gate that compiles the stories — Review Focus 4.
 ### Task 9: Documentation
 
 **Files:**
+
 - Create: `libs/ui/{CHANGELOG.md,README.md,CLAUDE.md}`, `docs/guides/migrating-to-ui.md`
 - Modify: root `README.md`
 - Delete: the three old `CHANGELOG.md`, `README.md`, `CLAUDE.md`
