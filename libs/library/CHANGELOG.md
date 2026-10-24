@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Five more components render under any change-detection strategy**, continuing the work the last
+  major started: `ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`,
+  `MultiSelectComponent` and `MultiEditorComponent`. Their state is signals now, and none of them
+  declares a strategy. Six library components are still to go; they are named in
+  `change-detection-contract.spec.ts`.
+
 ### Deprecated
 
 ### Removed
@@ -22,6 +28,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+- **`ModalComponent.isShown` is now `isOpen`, and it is a `Signal<boolean>`.** The rename is
+  deliberate: a signal keeping the old name would leave `if (modal.isShown)` compiling and
+  permanently true. Replace `modal.isShown` with `modal.isOpen()`.
+
+- **`IModal` changed with it.** It declares `readonly isOpen: Signal<boolean>` instead of
+  `get isShown(): boolean`, and no longer declares `size` or `title` -- those are presentational
+  inputs each component declares for itself, and nothing drove a modal through them. If you
+  implement `IModal` by wrapping our modal, delegate with a signal view query:
+
+  ```ts
+  private readonly modal = viewChild(ModalComponent);
+  public readonly isOpen: Signal<boolean> = computed(() => this.modal()?.isOpen() ?? false);
+  ```
+
+  A `computed` reading a plain `@ViewChild` never re-runs when the query resolves, so the wrapper
+  would answer against an undefined child for ever.
+
+- **`ModalComponent`'s inputs are signals.** Reading one in your own template needs `()`:
+  `title()`, `size()`, `position()`, `dialog()`, `closeButtonText()`, `modalProcessing()`. Binding
+  to them from a template is unchanged. `closeButtonText` and `modalProcessing` are `model()`, so
+  code that sets them keeps working through `.set(...)`; the other four are `input()` and can only
+  be bound.
+
+- **`GroupAccordionComponent.label` is a required signal input**, and `maxHeight` is a signal.
+  `GroupScrollSpyComponent` exposes `titles`, `activeSection`, `sections` and `scrollSpy` as
+  signals. `MultiSelectComponent` and `MultiEditorComponent` expose their inputs as signals --
+  `itemTemplate()`, `formGroup()`, `addButtonLabel()`, `removeButtonLabel()`, `showAddButton()`
+  and `showDeleteButton()`.
 
 ## [4.0.0] - 2026-10-24
 

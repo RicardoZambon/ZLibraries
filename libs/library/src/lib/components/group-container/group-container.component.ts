@@ -16,7 +16,7 @@ export class GroupContainerComponent {
   @ContentChildren(GroupAccordionComponent, { descendants: true }) sections!: QueryList<GroupAccordionComponent>;
 
   public get titles(): string[] {
-    return this.sections?.map((x) => x.label) ?? [];
+    return this.sections?.map((x) => x.label()) ?? [];
   }
 
   public activeSection = 0;

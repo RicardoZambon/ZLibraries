@@ -63,7 +63,7 @@ export abstract class ViewModal<TEntityModel> extends ModalBase implements OnIni
     this.formService.loading = true;
     this.dataForm.reset();
 
-    if (!this.modalComponent.isShown) {
+    if (!this.modalComponent.isOpen()) {
       this.entityIdSubject.next(entityID);
     } else {
       this.formService.resetForm();

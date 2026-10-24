@@ -2,12 +2,12 @@
   <h6
     role="button"
     tabindex="0"
-    [attr.aria-expanded]="!collapsed"
+    [attr.aria-expanded]="!collapsed()"
     (click)="onToggle()"
     (keydown.enter)="onToggle()"
     (keydown.space)="onToggle(); $event.preventDefault()"
   >
-    <i class="fas fa-chevron-down fa-sm"></i>{{ this.label }}
+    <i class="fas fa-chevron-down fa-sm"></i>{{ label() }}
   </h6>
 </div>
 
@@ -15,9 +15,9 @@
   #container
   class="content animate"
   [ngStyle]="
-    (maxHeight >= 0 && {
-      'height.px': maxHeight,
-      'max-height.px': maxHeight,
+    (maxHeight() >= 0 && {
+      'height.px': maxHeight(),
+      'max-height.px': maxHeight(),
     }) ||
     null
   "

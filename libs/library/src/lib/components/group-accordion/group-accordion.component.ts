@@ -1,30 +1,28 @@
 import { NgStyle } from '@angular/common';
-import { Component, ElementRef, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, input, InputSignal, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 
 @Component({
   selector: 'lib-group-accordion',
   templateUrl: './group-accordion.component.html',
   styleUrls: ['./group-accordion.component.scss'],
-  host: { '[class.collapsed]': 'collapsed' },
-  changeDetection: ChangeDetectionStrategy.Eager,
+  host: { '[class.collapsed]': 'collapsed()' },
   imports: [NgStyle],
 })
 export class GroupAccordionComponent {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild('container') private containerElementRef!: ElementRef<HTMLDivElement>;
+  private readonly containerElementRef: Signal<ElementRef<HTMLDivElement> | undefined> =
+    viewChild<ElementRef<HTMLDivElement>>('container');
 
-  @Input({ required: true }) label!: string;
+  public readonly label: InputSignal<string> = input.required<string>();
   //#endregion
 
   //#region Variables
-  private _maxHeight = -1;
-  protected collapsed = false;
+  private readonly _maxHeight: WritableSignal<number> = signal(-1);
+  protected readonly collapsed: WritableSignal<boolean> = signal(false);
   //#endregion
 
   //#region Properties
-  public get maxHeight(): number {
-    return this._maxHeight;
-  }
+  public readonly maxHeight: Signal<number> = this._maxHeight.asReadonly();
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -33,15 +31,15 @@ export class GroupAccordionComponent {
   //#region Event handlers
   protected onToggle(): void {
     // Before collapsing, we set the max height style for the closing effect.
-    if (!this.collapsed) {
+    if (!this.collapsed()) {
       this.setMaxHeight();
     }
 
     setTimeout(() => {
-      this.collapsed = !this.collapsed;
+      this.collapsed.update((collapsed: boolean) => !collapsed);
 
       // After expanding, we wait the transition to end and remove the max height.
-      if (!this.collapsed) {
+      if (!this.collapsed()) {
         this.clearMaxHeight();
       }
     });
@@ -54,11 +52,11 @@ export class GroupAccordionComponent {
   //#region Private methods
   private clearMaxHeight(): void {
     setTimeout(() => {
-      this._maxHeight = -1;
+      this._maxHeight.set(-1);
     }, 150);
   }
   private setMaxHeight(): void {
-    this._maxHeight = this.containerElementRef?.nativeElement?.offsetHeight ?? 0;
+    this._maxHeight.set(this.containerElementRef()?.nativeElement?.offsetHeight ?? 0);
   }
   //#endregion
 }
