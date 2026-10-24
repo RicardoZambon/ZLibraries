@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Internal only: `ButtonFiltersComponent` reads `RibbonButtonComponent.loading` as a signal.**
+  The compiler caught the old form: in a condition, the signal object itself is always true.
+  Nothing in this package's own API changed.
+
 ### Deprecated
 
 ### Removed

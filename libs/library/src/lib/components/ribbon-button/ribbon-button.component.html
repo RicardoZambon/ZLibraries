@@ -1,22 +1,22 @@
-<div #buttonContainer class="button-container" [attr.title]="tooltip || null">
+<div #buttonContainer class="button-container" [attr.title]="tooltip() || null">
   <a
     class="button"
     role="button"
     [attr.tabindex]="isButtonDisabled ? -1 : 0"
     [attr.aria-disabled]="isButtonDisabled"
     [class.disabled]="isButtonDisabled"
-    [class.success]="status === 'success'"
-    [class.warning]="status === 'warning'"
-    [class.failure]="status === 'failure'"
-    [class.small]="iconSize === 'small'"
+    [class.success]="status() === 'success'"
+    [class.warning]="status() === 'warning'"
+    [class.failure]="status() === 'failure'"
+    [class.small]="iconSize() === 'small'"
     (click)="onButtonClicked()"
     (keydown.enter)="onButtonClicked()"
     (keydown.space)="onButtonClicked(); $event.preventDefault()"
   >
-    <span class="icon" [class.loading]="loading">
-      <i class="fas fa-fw" [ngClass]="[buttonIcon, color]"></i>
+    <span class="icon" [class.loading]="loading()">
+      <i class="fas fa-fw" [ngClass]="[buttonIcon, color()]"></i>
 
-      <svg [ngClass]="[color]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <svg [ngClass]="[color()]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path
           class="opacity-75"
@@ -26,29 +26,29 @@
       </svg>
     </span>
 
-    <span class="label" [class.text-white]="status !== null">
-      {{ label | translate }}
+    <span class="label" [class.text-white]="status() !== null">
+      {{ label() | translate }}
     </span>
   </a>
 
-  @if (options.length > 0) {
+  @if (options().length > 0) {
     <a
       class="button-dropdown"
       role="button"
       [attr.tabindex]="isButtonDisabled ? -1 : 0"
       [attr.aria-disabled]="isButtonDisabled"
       aria-haspopup="menu"
-      [attr.aria-expanded]="showDropdown"
+      [attr.aria-expanded]="showDropdown()"
       [class.disabled]="isButtonDisabled"
-      [class.success]="status === 'success'"
-      [class.warning]="status === 'warning'"
-      [class.failure]="status === 'failure'"
-      [class.small]="iconSize === 'small'"
+      [class.success]="status() === 'success'"
+      [class.warning]="status() === 'warning'"
+      [class.failure]="status() === 'failure'"
+      [class.small]="iconSize() === 'small'"
       (click)="onShowHideDropdown()"
       (keydown.enter)="onShowHideDropdown()"
       (keydown.space)="onShowHideDropdown(); $event.preventDefault()"
     >
-      <i class="fas fa-chevron-down" [ngClass]="[color]"></i>
+      <i class="fas fa-chevron-down" [ngClass]="[color()]"></i>
     </a>
   }
 </div>
@@ -58,12 +58,12 @@
      what the styles key on now that the list is no longer inside this component's `.show` host. -->
 <ng-template #optionsDropdown>
   <ul class="options-dropdown open" role="menu">
-    @for (option of options; track option; let i = $index) {
+    @for (option of options(); track option; let i = $index) {
       <li
         role="menuitem"
         [attr.tabindex]="isOptionDisabled(option) || !isOptionVisible(option) ? -1 : 0"
         [attr.aria-disabled]="isOptionDisabled(option)"
-        [class.default-option]="i === defaultOption"
+        [class.default-option]="i === defaultOption()"
         [class.disabled]="isOptionDisabled(option)"
         [class.hidden]="!isOptionVisible(option)"
         (click)="onOptionClicked(option)"
@@ -71,7 +71,7 @@
         (keydown.space)="onOptionClicked(option); $event.preventDefault()"
       >
         @if (!!option.icon) {
-          <i class="fas fa-fw" [ngClass]="[option.icon, color]"></i>
+          <i class="fas fa-fw" [ngClass]="[option.icon, color()]"></i>
         }
         {{ option.label | translate }}
       </li>

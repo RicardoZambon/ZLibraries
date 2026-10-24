@@ -1,11 +1,11 @@
 @if (formGroupDirective.form?.enabled || isFormEditMode) {
-  @switch (type) {
+  @switch (type()) {
     @case ('textarea') {
       <textarea
-        [attr.maxLength]="maxLength ?? null"
-        [attr.rows]="rows"
-        [class.invalid]="invalid"
-        [formControlName]="controlName"
+        [attr.maxLength]="maxLength() ?? null"
+        [attr.rows]="rows()"
+        [class.invalid]="invalid()"
+        [formControlName]="controlName()"
         (blur)="onBlur()"
         (focus)="onFocus()"
         (input)="onInput()"
@@ -16,8 +16,8 @@
         <input
           class="switch"
           type="checkbox"
-          [class.invalid]="invalid"
-          [formControlName]="controlName"
+          [class.invalid]="invalid()"
+          [formControlName]="controlName()"
           (blur)="onBlur()"
           (focus)="onFocus()"
           (input)="onInput()"
@@ -28,9 +28,9 @@
           type="checkbox"
           [(ngModel)]="fixedValue"
           [attr.readonly]="true"
-          [class.invalid]="invalid"
-          [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
-          [disabled]="isDisabled"
+          [class.invalid]="invalid()"
+          [class.readonly-as-disabled]="displayReadOnlyAsDisabled()"
+          [disabled]="isDisabled()"
           [ngModelOptions]="{ standalone: true }"
           (blur)="onBlur()"
           (change)="onChange($event)"
@@ -43,14 +43,14 @@
     @default {
       @if (isFormControl) {
         <input
-          [attr.maxLength]="maxLength ?? null"
+          [attr.maxLength]="maxLength() ?? null"
           [attr.min]="minAttributeValue"
-          [attr.readonly]="readOnly ? true : null"
+          [attr.readonly]="readOnly() ? true : null"
           [attr.step]="stepAttributeValue"
-          [class.invalid]="invalid"
-          [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
-          [formControlName]="controlName"
-          [type]="type"
+          [class.invalid]="invalid()"
+          [class.readonly-as-disabled]="displayReadOnlyAsDisabled()"
+          [formControlName]="controlName()"
+          [type]="type()"
           (blur)="onBlur()"
           (focus)="onFocus()"
           (input)="onInput()"
@@ -58,19 +58,19 @@
       } @else {
         <input
           type="text"
-          [attr.maxLength]="maxLength ?? null"
+          [attr.maxLength]="maxLength() ?? null"
           [attr.min]="minAttributeValue"
           [attr.readonly]="true"
           [attr.step]="stepAttributeValue"
-          [class.invalid]="invalid"
-          [class.readonly-as-disabled]="displayReadOnlyAsDisabled"
-          [disabled]="isDisabled"
+          [class.invalid]="invalid()"
+          [class.readonly-as-disabled]="displayReadOnlyAsDisabled()"
+          [disabled]="isDisabled()"
           [ngModel]="
-            type === 'date' || type === 'datetime-local'
-              ? (fixedValue | date: format)
-              : type === 'number'
-                ? (fixedValue | number)
-                : fixedValue
+            type() === 'date' || type() === 'datetime-local'
+              ? (fixedValue() | date: format())
+              : type() === 'number'
+                ? (fixedValue() | number)
+                : fixedValue()
           "
           [ngModelOptions]="{ standalone: true }"
           (blur)="onBlur()"
@@ -82,12 +82,12 @@
     }
   }
 } @else {
-  @switch (type) {
+  @switch (type()) {
     @case ('checkbox') {
       <span class="value">
         <i
           [ngClass]="
-            (fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value)
+            (fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value)
               ? 'fa-solid fa-square-check'
               : 'fa-regular fa-square'
           "
@@ -96,22 +96,28 @@
     }
     @case ('date') {
       <span class="value">
-        {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | date: format }}
+        {{
+          fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | date: format()
+        }}
       </span>
     }
     @case ('datetime-local') {
       <span class="value">
-        {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | date: format }}
+        {{
+          fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | date: format()
+        }}
       </span>
     }
     @case ('number') {
       <span class="value">
-        {{ fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value | number: format }}
+        {{
+          fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | number: format()
+        }}
       </span>
     }
     @default {
       <span class="value text">{{
-        fixedValue ?? formGroupDirective.form.get(disabledControlName ?? controlName)?.value
+        fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value
       }}</span>
     }
   }

@@ -1,14 +1,14 @@
-@if (showButtons) {
+@if (showButtons()) {
   <div class="buttons">
     <ng-content select="[buttons]"></ng-content>
   </div>
 }
 
-<div class="header" [class.hide]="isHideColumns" [style.padding-right.px]="headerRightMargin">
+<div class="header" [class.hide]="isHideColumns" [style.padding-right.px]="headerRightMargin()">
   <!-- Translated by however far the body is scrolled sideways. The rows scroll inside the CDK
        viewport and the header sits outside it, so without this the headings simply stay put
        while the cells move away from them. -->
-  <div class="header-row" [style.transform]="headerScrollLeft ? 'translateX(-' + headerScrollLeft + 'px)' : null">
+  <div class="header-row" [style.transform]="headerScrollLeft() ? 'translateX(-' + headerScrollLeft() + 'px)' : null">
     @if (isShowMultiSelect) {
       <div
         class="header-cell selection"
@@ -45,7 +45,7 @@
     <lib-data-grid-row
       #row
       *cdkVirtualFor="let row of dataGridDataset.loadedRows; index as i; trackBy: trackByFn"
-      [disabled]="disabled"
+      [disabled]="disabled()"
       [isFirstRow]="isFirstVisibleRow(i)"
       [rowData]="row"
       [style.height.px]="configs.rowHeight"
@@ -53,7 +53,7 @@
     >
     </lib-data-grid-row>
 
-    @if (loading) {
+    @if (loading()) {
       <div class="loading" [style.height.px]="configs.rowHeight">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -68,22 +68,22 @@
         </span>
       </div>
     }
-    @if (!loading && !hasBeenLoaded && lazyLoadRows) {
+    @if (!loading() && !hasBeenLoaded && lazyLoadRows()) {
       <div class="message" [style.height.px]="configs.rowHeight">
         <span>
           {{ messageToDisplayWhenLazyLoad | translate }}
         </span>
       </div>
     }
-    @if (!loading && hasBeenLoaded && (!hasLoadedRows || hasFailed)) {
-      @if (!hasFailed && !hasLoadedRows && hasMessageToDisplayWhenEmpty && shouldDisplayMessageWhenEmpty) {
+    @if (!loading() && hasBeenLoaded && (!hasLoadedRows || hasFailed())) {
+      @if (!hasFailed() && !hasLoadedRows && hasMessageToDisplayWhenEmpty && shouldDisplayMessageWhenEmpty) {
         <div class="message" [style.height.px]="configs.rowHeight">
           <span>
             {{ messageToDisplayWhenEmpty | translate }}
           </span>
         </div>
       }
-      @if (hasFailed) {
+      @if (hasFailed()) {
         <div class="message" [style.height.px]="configs.rowHeight">
           <span>
             <i class="fas fa-exclamation-triangle mr-2 text-yellow-600"></i>{{ messageToDisplayWhenFailed | translate }}
