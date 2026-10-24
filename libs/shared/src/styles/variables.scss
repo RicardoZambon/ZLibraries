@@ -1,60 +1,86 @@
-:root {
-  /* Dimensions */
-  --sidebar-animation-duration: 600ms;
-  --sidebar-collapsed-width: 70px;
-  --sidebar-expanded-width: 220px;
-  --sidebar-icon-collapsed-margin: 10px;
-  --sidebar-item-height: 2.75rem;
-  --sidebar-logo-height: 50px;
-  --sidebar-picture-size: 50px;
+/*
+ * Component tokens -- the published contract.
+ *
+ * These names are API: applications override them, and the CHANGELOG documents them. So they stay.
+ * What changed is where their values come from. Each one now names a role in the semantic core
+ * (see shared/styles/theme.css) instead of repeating a literal, which is what lets a theme move
+ * them all at once. The component token is the contract; the core is the implementation.
+ *
+ * Wrapped in a cascade layer on purpose. Until now an application's override only won if its
+ * stylesheet was imported after this one -- same selector, same specificity, later wins. An
+ * unlayered declaration beats any layer whatever the order, so an override now wins either way.
+ * This can only make an override win more, never less. Override without a layer.
+ *
+ * A consequence worth knowing: a static override pins that token in both themes. To vary by theme,
+ * write `:root[data-theme='dark'] { --sidebar-bg: ... }` -- same specificity as ours, declared
+ * later, so it wins. Note that the dark block in theme.css touches core tokens only and never
+ * these, so a brand override stays yours in both themes without any work.
+ */
+@layer tokens {
+  :root {
+    /* Dimensions. Geometry of a component rather than design decisions, so they stay literal. */
+    --sidebar-collapsed-width: 70px;
+    --sidebar-expanded-width: 220px;
+    --sidebar-icon-collapsed-margin: 10px;
+    --sidebar-item-height: 2.75rem;
+    --sidebar-logo-height: 50px;
+    --sidebar-picture-size: 50px;
 
-  /* Surfaces & colors — translucent "glass" (brand-tinted) */
-  --sidebar-bg: color-mix(in srgb, var(--color-primary-600) 82%, transparent);
-  --sidebar-nav-bg: color-mix(in srgb, white 5%, transparent);
-  --sidebar-text: var(--color-gray-100);
-  --sidebar-text-muted: color-mix(in srgb, var(--color-gray-100) 60%, transparent);
-  --sidebar-item-hover-bg: color-mix(in srgb, white 12%, transparent);
-  --sidebar-item-selected-bg: color-mix(in srgb, white 22%, transparent);
-  --sidebar-item-selected-text: var(--color-white);
-  --sidebar-accent: var(--color-gray-100);
-  --sidebar-tree-line: color-mix(in srgb, white 80%, var(--color-primary-600));
+    /* Surfaces & colors -- translucent "glass" (brand-tinted) */
+    --sidebar-animation-duration: var(--duration-long);
+    --sidebar-bg: var(--color-surface-brand);
+    /* A single 5% rung with no pair in the core. Adding one for one use would be a worse trade,
+       and it reads correctly in both themes because the surface beneath it is dark in both. */
+    --sidebar-nav-bg: color-mix(in srgb, white 5%, transparent);
+    --sidebar-text: var(--color-content-on-brand);
+    --sidebar-text-muted: var(--color-content-on-brand-muted);
+    --sidebar-item-hover-bg: var(--state-hover-on-brand);
+    --sidebar-item-selected-bg: var(--state-selected-on-brand);
+    --sidebar-item-selected-text: var(--color-content-on-accent);
+    --sidebar-accent: var(--color-content-on-brand);
+    --sidebar-tree-line: var(--color-line-on-brand);
 
-  /* Glass */
-  --sidebar-blur: 16px;
-  --sidebar-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.45);
-  /* App background the glass sidebar floats over (tune to taste). */
-  --app-backdrop: linear-gradient(160deg, var(--color-gray-100) 0%, var(--color-gray-300) 100%);
+    /* Glass */
+    --sidebar-blur: var(--blur-glass);
+    --sidebar-shadow: var(--shadow-float-strong);
+    /* App background the glass sidebar floats over. A gradient, so it has no home in --color-*;
+       the dark theme restates it in theme.css. */
+    --app-backdrop: linear-gradient(160deg, var(--color-gray-100) 0%, var(--color-gray-300) 100%);
 
-  /* Radii (rounded restyle) */
-  --sidebar-radius: 1.25rem;
-  --sidebar-item-radius: 10px;
+    /* Radii (rounded restyle) */
+    --sidebar-radius: var(--radius-surface);
+    --sidebar-item-radius: var(--radius-control);
 
-  /* Tabs — a light glass card the views live in. The sidebar's glass is brand-tinted
-     and dark; this one is white-tinted, because the panel holds forms and grids that
-     need dark-on-light contrast. Same language (blur, radius, shadow), different hue. */
-  --tabs-item-bg: color-mix(in srgb, white 45%, transparent);
-  --tabs-item-hover-bg: color-mix(in srgb, white 70%, transparent);
-  --tabs-item-active-bg: color-mix(in srgb, white 88%, transparent);
-  --tabs-item-text: var(--color-gray-600);
-  --tabs-item-active-text: var(--color-gray-900);
-  --tabs-content-bg: color-mix(in srgb, white 88%, transparent);
-  --tabs-border: color-mix(in srgb, white 60%, transparent);
-  --tabs-close: var(--color-gray-400);
-  --tabs-close-hover-bg: color-mix(in srgb, var(--color-gray-900) 10%, transparent);
-  --tabs-close-hover: var(--color-gray-700);
+    /* Tabs -- a light glass card the views live in. The sidebar's glass is brand-tinted
+       and dark; this one is white-tinted, because the panel holds forms and grids that
+       need dark-on-light contrast. Same language (blur, radius, shadow), different hue.
 
-  /* Glass — softer than the sidebar's, which floats over the backdrop rather than content. */
-  --tabs-blur: 16px;
-  --tabs-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.25);
+       That the active tab and the panel now resolve to one token is the point: they are a single
+       surface, which is why no seam shows between them. */
+    --tabs-item-bg: var(--color-surface-glass-weak);
+    --tabs-item-hover-bg: var(--color-surface-glass);
+    --tabs-item-active-bg: var(--color-surface-glass-strong);
+    --tabs-item-text: var(--color-content-secondary);
+    --tabs-item-active-text: var(--color-content-primary);
+    --tabs-content-bg: var(--color-surface-glass-strong);
+    --tabs-border: var(--color-line-on-glass);
+    --tabs-close: var(--color-content-subtle);
+    --tabs-close-hover-bg: var(--state-pressed);
+    --tabs-close-hover: var(--color-gray-700);
 
-  /* Radii & dimensions */
-  --tabs-radius: 1.25rem;
-  --tabs-item-radius: 10px;
-  --tabs-height: 2.75rem;
-  --tabs-item-max-width: 14rem;
-  /* Tabs compress to this before the strip starts scrolling -- still wide enough for a few
-     characters plus the close button, so a compressed tab is identifiable rather than a stub. */
-  --tabs-item-min-width: 7rem;
-  --tabs-scroll-width: 1.75rem;
-  --tabs-fade-width: 1.5rem;
+    /* Glass -- softer than the sidebar's, which floats over the backdrop rather than content. */
+    --tabs-blur: var(--blur-glass);
+    --tabs-shadow: var(--shadow-float);
+
+    /* Radii & dimensions */
+    --tabs-radius: var(--radius-surface);
+    --tabs-item-radius: var(--radius-control);
+    --tabs-height: 2.75rem;
+    --tabs-item-max-width: 14rem;
+    /* Tabs compress to this before the strip starts scrolling -- still wide enough for a few
+       characters plus the close button, so a compressed tab is identifiable rather than a stub. */
+    --tabs-item-min-width: 7rem;
+    --tabs-scroll-width: 1.75rem;
+    --tabs-fade-width: 1.5rem;
+  }
 }

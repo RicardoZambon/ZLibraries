@@ -8,7 +8,9 @@
   }
 
   .brand-company {
-    @apply text-xs text-stone-500 truncate;
+    @apply truncate;
+    font-size: var(--text-caption);
+    color: var(--color-content-secondary);
   }
 
   .brand-logo {

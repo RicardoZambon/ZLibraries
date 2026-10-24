@@ -1,4 +1,5 @@
 {
+  "Login-Copyright": "&copy; All rights reserved.",
   "Login-DesignBy": "Design by Ricardo Zambon",
   "Login-Errors-InternalServerError": "Occurred some error with the server, please try again.",
   "Login-Errors-Invalid": "The username or password you entered is incorrect.",
@@ -7,6 +8,7 @@
   "Login-RememberMe": "Remember me",
   "Login-SelectLanguage": "Select language",
   "Login-SignIn": "Sign In",
+  "Login-Title": "Welcome back",
   "Login-Username-Required": "Please enter the username",
   "Login-Username": "Type your username",
 

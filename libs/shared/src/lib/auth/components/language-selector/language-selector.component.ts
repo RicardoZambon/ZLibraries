@@ -1,12 +1,13 @@
 import { Component, ElementRef, HostListener, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ButtonComponent } from '@zambon-dev/library';
 
 @Component({
   selector: 'shared-language-selector',
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [TranslatePipe],
+  imports: [ButtonComponent, TranslatePipe],
 })
 export class LanguageSelectorComponent {
   //#region ViewChilds, Inputs, Outputs

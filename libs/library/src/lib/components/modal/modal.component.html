@@ -26,9 +26,9 @@
     </div>
 
     <div class="modal-footer">
-      <button type="button" class="btn gray-300" [disabled]="modalProcessing()" (click)="onCloseClick()">
+      <lib-button intent="secondary" [disabled]="modalProcessing()" (click)="onCloseClick()">
         {{ closeButtonText() }}
-      </button>
+      </lib-button>
 
       <ng-content select="[footer]"></ng-content>
     </div>

@@ -2,6 +2,9 @@
   "TopBar-Notifications-Title": "Notifications",
   "TopBar-Notifications-Empty": "No notifications",
   "TopBar-Notifications-MarkAllRead": "Mark all as read",
+  "TopBar-Theme-Light": "Light theme",
+  "TopBar-Theme-Dark": "Dark theme",
+  "TopBar-Theme-System": "Theme follows the system",
 
   "": ""
 }

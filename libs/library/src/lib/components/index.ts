@@ -1,4 +1,5 @@
 export { BaseComponent } from './base.component';
+export { ButtonComponent, type ButtonIntent } from './button/button.component';
 export { CatalogSelectComponent } from './catalog-select/catalog-select.component';
 export { DataGridComponent } from './data-grid/data-grid.component';
 export { DataGridRowComponent } from './data-grid-row/data-grid-row.component';

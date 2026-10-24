@@ -14,26 +14,22 @@
     <div class="data">
       <div class="buttons">
         @if (showAddButton()) {
-          <button
-            class="btn gray-500"
-            type="button"
-            [class.disabled]="modalProcessing() || gridLoading() || formLoading || formGroup().invalid"
+          <lib-button
+            intent="secondary"
             [disabled]="modalProcessing() || gridLoading() || formLoading || formGroup().invalid"
             (click)="onNewClick()"
           >
             {{ addButtonLabel() }}
-          </button>
+          </lib-button>
         }
         @if (showDeleteButton() && hasSelectedKey()) {
-          <button
-            class="btn red-500"
-            type="button"
-            [class.disabled]="modalProcessing() || gridLoading() || formLoading"
+          <lib-button
+            intent="danger"
             [disabled]="modalProcessing() || gridLoading() || formLoading"
             (click)="onDeleteClick()"
           >
             {{ removeButtonLabel() }}
-          </button>
+          </lib-button>
         }
       </div>
 
@@ -44,14 +40,13 @@
   </div>
 
   <div footer>
-    <button
-      class="btn blue-500"
-      type="button"
-      [class.disabled]="gridLoading() || formLoading"
-      [class.loading]="modalProcessing()"
+    <lib-button
+      intent="primary"
+      [disabled]="gridLoading() || formLoading"
+      [loading]="modalProcessing()"
       (click)="onSaveClick()"
     >
       {{ 'Button-Modal-MultiEditor-Confirm' | translate }}
-    </button>
+    </lib-button>
   </div>
 </lib-modal>

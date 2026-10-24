@@ -4,7 +4,8 @@
 
 :host {
   @apply flex flex-col grow border relative overflow-hidden;
-  @apply bg-white/80 border-gray-300/90;
+  background-color: var(--color-surface-solid);
+  border-color: var(--color-line);
   /* Takes the container's corner where the container publishes one — inside the tab panel that is
      the radius which keeps the two parallel. 0.5rem everywhere else, which is what rounded-lg gave
      and what this was. */
@@ -12,10 +13,12 @@
 }
 
 .title {
-  @apply flex px-2 py-1 h-8 items-center border-b border-gray-300/90 text-ellipsis;
+  @apply flex px-2 py-1 h-8 items-center border-b text-ellipsis;
+  border-color: var(--color-line);
 
   i {
-    @apply text-slate-500 pr-2;
+    @apply pr-2;
+    color: var(--color-content-secondary);
   }
 
   h4 {

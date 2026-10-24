@@ -18,11 +18,13 @@ lib-data-grid {
   @apply flex grow px-3 overflow-hidden;
 
   .icon {
-    @apply flex items-center relative text-blue-500 mr-3;
+    @apply flex items-center relative mr-3;
+    color: var(--color-accent);
 
     &::before,
     &::after {
-      @apply content-[''] absolute bg-slate-300/50 w-2 h-2/4 left-2/4 -ml-1;
+      @apply content-[''] absolute w-2 h-2/4 left-2/4 -ml-1;
+      background-color: var(--color-line);
     }
 
     &::before {
@@ -49,7 +51,7 @@ lib-data-grid {
       @apply flex text-sm;
 
       i {
-        @apply text-slate-400;
+        color: var(--color-content-subtle);
       }
 
       .datetime {

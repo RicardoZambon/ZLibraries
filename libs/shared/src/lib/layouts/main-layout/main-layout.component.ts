@@ -14,13 +14,22 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { EXTERNAL_CONTENT_ROUTE_PATH } from '../../models';
 import { AuthenticationService, ExternalContentService, ExternalUrlResolverService } from '../../services';
 import { TopBarComponent } from '../top-bar';
+import { ButtonComponent } from '@zambon-dev/library';
 
 @Component({
   selector: 'shared-main-layout',
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [ModalComponent, RouterModule, SidebarComponent, TabsComponent, TopBarComponent, TranslatePipe],
+  imports: [
+    ButtonComponent,
+    ModalComponent,
+    RouterModule,
+    SidebarComponent,
+    TabsComponent,
+    TopBarComponent,
+    TranslatePipe,
+  ],
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {
   //#region ViewChilds, Inputs, Outputs

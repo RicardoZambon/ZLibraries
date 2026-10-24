@@ -7,7 +7,7 @@
 
   &:after {
     @apply content-[''] absolute -right-1 top-1 bottom-1 w-[1px];
-    @apply bg-gray-400/60;
+    background-color: var(--color-line-strong);
   }
 
   .content {
@@ -16,6 +16,6 @@
 
   .label {
     @apply text-sm pt-[0.05rem] select-none text-center;
-    @apply text-gray-500;
+    color: var(--color-content-secondary);
   }
 }

@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
+import { ButtonComponent } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageSelectorComponent } from '../../auth/components/language-selector/language-selector.component';
 import { BrandComponent } from './brand/brand.component';
 import { EnvironmentBadgeComponent } from './environment-badge/environment-badge.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { ThemeSwitchComponent } from '../../theme/theme-switch.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @Component({
@@ -13,9 +15,11 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     BrandComponent,
+    ButtonComponent,
     EnvironmentBadgeComponent,
     LanguageSelectorComponent,
     NotificationsComponent,
+    ThemeSwitchComponent,
     TranslatePipe,
     UserProfileComponent,
   ],

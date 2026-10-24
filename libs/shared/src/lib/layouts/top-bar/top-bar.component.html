@@ -8,17 +8,16 @@
     <shared-notifications></shared-notifications>
     <shared-language-selector [showFlag]="true"></shared-language-selector>
 
-    <!-- Theme switch slot (deferred — see 2026-07-23-top-bar-update-design.md) -->
+    <shared-theme-switch></shared-theme-switch>
 
     <shared-user-profile></shared-user-profile>
 
-    <button
-      class="btn gray-300 top-bar-logout"
-      type="button"
+    <lib-button
+      class="top-bar-logout"
+      intent="ghost"
+      icon="fa-solid fa-arrow-right-from-bracket"
+      [ariaLabel]="'Main-Logout' | translate"
       (click)="onLogoutClick()"
-      [attr.aria-label]="'Main-Logout' | translate"
-    >
-      <i class="fa-solid fa-arrow-right-from-bracket"></i>
-    </button>
+    ></lib-button>
   </div>
 </div>

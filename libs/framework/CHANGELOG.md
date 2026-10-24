@@ -13,7 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`AppConfig.loginLogoUrl` and `AppConfig.loginBackgroundUrl`.** The sign-in screen used to load
+  `/logo-login.png` and `/background.jpg` from fixed absolute paths that no application ships, so
+  in practice it rendered a broken image over no background. Both are optional: without a logo the
+  card simply has none, and without a background the app backdrop shows through.
+
 ### Changed
+
+- **The ribbon and its buttons draw from the design tokens.** Fill, border, radius and the
+  success/warning/failure states named Tailwind colours; they now name a role, which is what lets
+  them follow a theme. The dropdown menu picks up the shared overlay shadow and blur.
+
+- **The confirmation buttons render `lib-button`.** Their own API is unchanged apart from
+  `ButtonConfirmComponent` below; what changed is that their modal footers no longer depend on the
+  global `.btn` classes.
 
 ### Deprecated
 
@@ -22,6 +35,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+- **`ButtonConfirmComponent.modalConfirmButtonColor` is now `modalConfirmButtonIntent`.** It took a
+  Tailwind palette name, which said nothing about what the button was for and could not follow a
+  theme. Replace the colour with the intent it stood for:
+
+  | Before                                | After                                  |
+  | ------------------------------------- | -------------------------------------- |
+  | `modalConfirmButtonColor="red-500"`   | `modalConfirmButtonIntent="danger"`    |
+  | `modalConfirmButtonColor="blue-500"`  | `modalConfirmButtonIntent="primary"`   |
+  | `modalConfirmButtonColor="green-500"` | `modalConfirmButtonIntent="primary"`   |
+  | any grey                              | `modalConfirmButtonIntent="secondary"` |
+
+  The input now has a default of `danger`, so a confirmation that deletes something needs nothing
+  at all.
+
+- **`@zambon-dev/shared/styles/theme.css` is now required.** See the `@zambon-dev/library` entry;
+  the same applies here.
+
+- **The three packages move together.** This release majors all of them and their peer ranges
+  name each other, so upgrade them in one step:
+
+  ```bash
+  npm i @zambon-dev/library@latest @zambon-dev/framework@latest @zambon-dev/shared@latest
+  ```
 
 ## [5.0.1] - 2026-10-24
 
