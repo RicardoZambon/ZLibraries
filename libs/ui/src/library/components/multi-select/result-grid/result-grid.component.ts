@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnInit, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, input, InputSignal, OnInit, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs';
 import { MultiSelectResultDataset } from '../../../services/datasets/multi-select-result.dataset';
@@ -13,18 +13,17 @@ import { DataGridDataset } from '../../../services';
   host: {
     class: 'flex-grow',
   },
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CommonModule, TranslatePipe],
 })
 export class MultiSelectResultGridComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() isDisabled = false;
-  @Input() template!: TemplateRef<any>;
+  public readonly isDisabled: InputSignal<boolean> = input(false);
+  public readonly template: InputSignal<TemplateRef<any> | undefined> = input<TemplateRef<any>>();
   //#endregion
 
   //#region Variables
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  protected isLoading = true;
+  protected readonly isLoading: WritableSignal<boolean> = signal(true);
   protected resultDataset: MultiSelectResultDataset = inject(MultiSelectResultDataset);
   //#endregion
 
@@ -38,11 +37,11 @@ export class MultiSelectResultGridComponent extends BaseComponent implements OnI
 
   public ngOnInit(): void {
     this.resultDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.isLoading = true;
+      this.isLoading.set(true);
     });
 
     this.resultDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.isLoading = false;
+      this.isLoading.set(false);
     });
   }
   //#endregion
@@ -63,8 +62,8 @@ export class MultiSelectResultGridComponent extends BaseComponent implements OnI
     const currentScroll: number = event.target.scrollTop + event.target.clientHeight;
     const scrollHeight: number = event.target.scrollHeight - event.target.clientHeight;
 
-    if (currentScroll > scrollHeight && !this.isLoading && !this.resultDataset.loadedLastRow) {
-      this.isLoading = true;
+    if (currentScroll > scrollHeight && !this.isLoading() && !this.resultDataset.loadedLastRow) {
+      this.isLoading.set(true);
       this.resultDataset.loadRows();
     }
   }

@@ -1,6 +1,6 @@
 import { NgClass } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Input, Signal, viewChild } from '@angular/core';
 import { ControlContainer, FormGroup } from '@angular/forms';
 import { FormService, IModal, ModalComponent } from '@zambon-dev/ui/library';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -15,7 +15,7 @@ import { BackendFormValidationHelper } from '../../../helpers';
 })
 export class ConfirmModalComponent implements IModal {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ModalComponent) private modal!: ModalComponent;
+  private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
   @Input() public errorMessage = '';
   @Input() public message = '';
@@ -34,9 +34,12 @@ export class ConfirmModalComponent implements IModal {
   //#endregion
 
   //#region Properties
-  public get isShown(): boolean {
-    return this.modal.isShown;
-  }
+  /**
+   * Delegates to the inner modal. A signal view query, not @ViewChild: a computed reading a plain
+   * query would never re-run when the query resolves, so the wrapper would answer against an
+   * undefined child for ever.
+   */
+  public readonly isOpen: Signal<boolean> = computed(() => this.modal()?.isOpen() ?? false);
 
   protected get hasErrorMessage(): boolean {
     return !!this.errorMessage && this.errorMessage.length > 0;
@@ -70,7 +73,7 @@ export class ConfirmModalComponent implements IModal {
   }
 
   public closeModal(): void {
-    this.modal.closeModal();
+    this.modal()?.closeModal();
   }
 
   public finishLoading(closeModal?: boolean): void {
@@ -111,7 +114,7 @@ export class ConfirmModalComponent implements IModal {
     }
 
     this.clearErrorMessage();
-    this.modal.toggleModal();
+    this.modal()?.toggleModal();
   }
   //#endregion
 

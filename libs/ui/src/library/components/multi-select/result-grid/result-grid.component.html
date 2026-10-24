@@ -5,8 +5,8 @@
         <button
           class="remove"
           type="button"
-          [class.disabled]="isDisabled"
-          [disabled]="isDisabled"
+          [class.disabled]="isDisabled()"
+          [disabled]="isDisabled()"
           (click)="onItemRemoved(i)"
         >
           <i class="fas fa-times"></i>
@@ -14,12 +14,12 @@
       </div>
       <div class="cell">
         <div>
-          <ng-container *ngTemplateOutlet="template; context: { rowData: row }"> </ng-container>
+          <ng-container *ngTemplateOutlet="template()!; context: { rowData: row }"> </ng-container>
         </div>
       </div>
     </div>
   }
-  @if (isLoading) {
+  @if (isLoading()) {
     <div class="loading">
       <svg [ngClass]="''" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, of, Subject } from 'rxjs';
 import { IBatchUpdate } from '../../models/batch-update';
@@ -100,14 +101,17 @@ describe('MultiEditorComponent', () => {
     (component as any).dataGridDataset = grid;
     (component as any).multiEditorDataset = dataset;
     (component as any).formService = { loading: false };
-    (component as any).gridLoading = false;
+    (component as any).gridLoading = signal(false);
+    (component as any).selectedKey = signal(undefined);
 
-    component.formGroup = new FormGroup({
-      city: new FormControl<string | null>(null),
-      country: new FormControl<string | null>(null),
-      id: new FormControl<number | null>(null),
-      street: new FormControl<string | null>(null),
-    });
+    (component as any).formGroup = signal(
+      new FormGroup({
+        city: new FormControl<string | null>(null),
+        country: new FormControl<string | null>(null),
+        id: new FormControl<number | null>(null),
+        street: new FormControl<string | null>(null),
+      }),
+    );
 
     return dataset;
   }
@@ -169,8 +173,8 @@ describe('MultiEditorComponent', () => {
       grid.selectedRowKeys = ['key-1'];
       grid.selectedRowsChanged.next();
 
-      component.formGroup.markAsDirty();
-      component.formGroup.patchValue({ street: '42 Queen Street West' });
+      component.formGroup().markAsDirty();
+      component.formGroup().patchValue({ street: '42 Queen Street West' });
 
       const entities: any[] = lastBatch(dataset).entitiesToInsertOrUpdate;
       expect(entities).toHaveLength(1);

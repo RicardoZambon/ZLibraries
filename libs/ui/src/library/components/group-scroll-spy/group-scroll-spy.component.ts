@@ -1,4 +1,4 @@
-import { Component, ContentChildren, QueryList, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, contentChildren, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 import { ScrollSpyDirective } from '../../directives/scroll-spy.directive';
 import { GroupAccordionComponent } from '../group-accordion/group-accordion.component';
 
@@ -6,24 +6,26 @@ import { GroupAccordionComponent } from '../group-accordion/group-accordion.comp
   selector: 'lib-group-scroll-spy',
   templateUrl: './group-scroll-spy.component.html',
   styleUrls: ['./group-scroll-spy.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ScrollSpyDirective],
 })
 export class GroupScrollSpyComponent {
-  @ViewChild(ScrollSpyDirective) scrollSpy!: ScrollSpyDirective;
-  @ContentChildren(GroupAccordionComponent, { descendants: true }) sections!: QueryList<GroupAccordionComponent>;
+  public readonly scrollSpy: Signal<ScrollSpyDirective | undefined> = viewChild(ScrollSpyDirective);
+  public readonly sections: Signal<readonly GroupAccordionComponent[]> = contentChildren(GroupAccordionComponent, {
+    descendants: true,
+  });
 
-  public get titles(): string[] {
-    return this.sections?.map((x) => x.label) ?? [];
+  // Reads each section's own label signal, so a section renaming itself refreshes the strip too.
+  public readonly titles: Signal<string[]> = computed(() =>
+    this.sections().map((section: GroupAccordionComponent) => section.label()),
+  );
+
+  public readonly activeSection: WritableSignal<number> = signal(0);
+
+  public activeSectionChanged(index: number): void {
+    this.activeSection.set(index);
   }
 
-  public activeSection = 0;
-
-  activeSectionChanged(index: number): void {
-    this.activeSection = index;
-  }
-
-  scrollTo(section: number) {
-    this.scrollSpy.scrollTo(section);
+  public scrollTo(section: number): void {
+    this.scrollSpy()?.scrollTo(section);
   }
 }

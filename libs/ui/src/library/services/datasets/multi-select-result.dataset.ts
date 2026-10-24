@@ -10,8 +10,8 @@ export abstract class MultiSelectResultDataset extends GridDataset {
   //#endregion
 
   //#region Variables
-  public displayedIDs: any[] = [];
-  public displayedRows: any[] = [];
+  private _displayedIDs: any[] = [];
+  private _displayedRows: any[] = [];
 
   private _idsToAdd: any[] = [];
   private _idsToRemove: any[] = [];
@@ -19,11 +19,23 @@ export abstract class MultiSelectResultDataset extends GridDataset {
   //#endregion
 
   //#region Properties
+  public get displayedIDs(): any[] {
+    this.tracked();
+    return this._displayedIDs;
+  }
+
+  public get displayedRows(): any[] {
+    this.tracked();
+    return this._displayedRows;
+  }
+
   public get idsToAdd(): any[] {
+    this.tracked();
     return this._idsToAdd;
   }
 
   public get idsToRemove(): any[] {
+    this.tracked();
     return this._idsToRemove;
   }
   //#endregion
@@ -65,8 +77,10 @@ export abstract class MultiSelectResultDataset extends GridDataset {
     const index: number = this._idsToRemove.indexOf(idToAdd);
     if (index >= 0) {
       this._idsToRemove.splice(index, 1);
+      this.touched();
     } else if (!this.isExistingID(idToAdd) && this._idsToAdd.indexOf(idToAdd) < 0) {
       this._idsToAdd.push(idToAdd);
+      this.touched();
       this.addedRowData.push(rowData);
     }
     this.updateDisplayedRows();
@@ -77,9 +91,11 @@ export abstract class MultiSelectResultDataset extends GridDataset {
     const index: number = this._idsToAdd.indexOf(idToRemove);
     if (index >= 0) {
       this._idsToAdd.splice(index, 1);
+      this.touched();
       this.addedRowData.splice(index, 1);
     } else if (this.isExistingID(idToRemove) && this._idsToRemove.indexOf(idToRemove) < 0) {
       this._idsToRemove.push(idToRemove);
+      this.touched();
     }
     this.updateDisplayedRows();
   }
@@ -108,11 +124,15 @@ export abstract class MultiSelectResultDataset extends GridDataset {
       (key: string) => this.idsToRemove.indexOf(this.getRowID(key)) < 0,
     );
 
-    this.displayedIDs = loadedKeys.map((key: string) => this.getRowID(key));
-    this.displayedIDs.push(...this._idsToAdd);
+    this._displayedIDs = loadedKeys.map((key: string) => this.getRowID(key));
+    this.touched();
+    this._displayedIDs.push(...this._idsToAdd);
+    this.touched();
 
-    this.displayedRows = loadedKeys.map((key: string) => this.getRowData(key));
-    this.displayedRows.push(...this.addedRowData);
+    this._displayedRows = loadedKeys.map((key: string) => this.getRowData(key));
+    this.touched();
+    this._displayedRows.push(...this.addedRowData);
+    this.touched();
   }
   //#endregion
 

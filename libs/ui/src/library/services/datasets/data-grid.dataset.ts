@@ -15,12 +15,23 @@ export abstract class DataGridDataset extends GridDataset {
   //#endregion
 
   //#region Variables
-  public columns!: IGridColumn[];
   public override configs: DataGridConfigs;
-  public selectedRowKeys: string[] = [];
+
+  public columns!: IGridColumn[];
+
+  private _selectedRowKeys: string[] = [];
   //#endregion
 
   //#region Properties
+  public get selectedRowKeys(): string[] {
+    this.tracked();
+    return this._selectedRowKeys;
+  }
+  public set selectedRowKeys(value: string[]) {
+    this._selectedRowKeys = value;
+    this.touched();
+  }
+
   public get columnsSize(): string {
     const sizes: string[] = [];
 
@@ -152,7 +163,8 @@ export abstract class DataGridDataset extends GridDataset {
     }
 
     if (!this.isKeySelected(key)) {
-      this.selectedRowKeys.push(key);
+      this._selectedRowKeys.push(key);
+      this.touched();
       this.selectedRowsChanged.emit({
         [key]: {
           rowData: this.getRowData(key),
@@ -190,7 +202,8 @@ export abstract class DataGridDataset extends GridDataset {
     const keysNotSelected: string[] = keys.filter((key: string) => !this.isKeySelected(key));
 
     if (keysNotSelected.length > 0) {
-      this.selectedRowKeys.push(...keysNotSelected);
+      this._selectedRowKeys.push(...keysNotSelected);
+      this.touched();
       this.selectedRowsChanged.emit(
         keys.reduce((keys: { [id: string]: { rowData: any; selected: boolean } }, key: string) => {
           keys[key] = {
@@ -222,7 +235,8 @@ export abstract class DataGridDataset extends GridDataset {
   protected removeSelectedRow(key: string): void {
     const index: number = this.selectedRowKeys.indexOf(key);
     if (index >= 0) {
-      this.selectedRowKeys.splice(index, 1);
+      this._selectedRowKeys.splice(index, 1);
+      this.touched();
     }
   }
   //#endregion

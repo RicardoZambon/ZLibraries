@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, Signal, viewChild } from '@angular/core';
 import { ModalBase } from '@zambon-dev/ui/framework';
 import { ModalComponent } from '@zambon-dev/ui/library';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class OperationsHistoryModalComponent extends ModalBase {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ModalComponent) private modal!: ModalComponent;
+  private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
   @Input() public newValues?: string;
 
@@ -24,9 +24,8 @@ export class OperationsHistoryModalComponent extends ModalBase {
   //#endregion
 
   //#region Properties
-  public get isModalShown(): boolean {
-    return this.modal.isShown;
-  }
+  /** Delegates to the inner modal; a signal query, so it re-runs once that child resolves. */
+  public readonly isModalShown: Signal<boolean> = computed(() => this.modal()?.isOpen() ?? false);
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -37,7 +36,7 @@ export class OperationsHistoryModalComponent extends ModalBase {
 
   //#region Public methods
   public toggle(): void {
-    this.modal.toggleModal();
+    this.modal()?.toggleModal();
   }
   //#endregion
 

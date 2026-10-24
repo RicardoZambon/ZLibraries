@@ -23,6 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
+- **The layers in this release are `library` 4.0.1, `framework` 5.0.1 and `shared` 6.0.1.**
+  Moving here from an earlier version of any of the three means taking that layer's remaining
+  releases too; they are under **Package history** below. The one worth naming is
+  `ModalComponent.isShown`, which became `isOpen` and is a `Signal<boolean>`: reading the
+  signal object itself is valid TypeScript and always truthy, so the build will not catch a miss.
+  Grep for `isShown` and `isModalShown`.
+
 - **This package replaces `@zambon-dev/library`, `@zambon-dev/framework` and
   `@zambon-dev/shared`.** Install `@zambon-dev/ui` in place of all three and rewrite the
   imports:
@@ -63,7 +70,64 @@ will be published on them.
 
 ### Library
 
-UI components, directives, pipes and the data-grid services. Published as `@zambon-dev/library` through 4.0.0.
+UI components, directives, pipes and the data-grid services. Published as `@zambon-dev/library` through 4.0.1.
+
+#### [4.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.1) - 2026-10-24
+
+##### Changed
+
+- **`FormService` and the datasets announce their own changes.** A component reading
+  `formService.loading`, `formService.model`, `formService.isEditMode`, `formService.isValid`,
+  `dataGridDataset.selectedRowKeys`, `resultDataset.displayedRows` or a grid's loading state from
+  its template now re-renders when that state changes, whatever strategy the host application
+  uses. `columns` is deliberately left alone: a concrete dataset declares it once and never
+  changes it, so making it reactive would only have broken every subclass that declares it. **Nothing to do on your side** -- these were already accessors or
+  became accessors of the same shape, so every read and write keeps working. `isValid` also
+  mirrors the `FormGroup`'s status, which is not a signal and never notified one, so a control
+  bound to it no longer keeps its first answer.
+
+- **Seven more components render under any change-detection strategy**, continuing the work the last
+  major started: `ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`,
+  `MultiSelectComponent`, `MultiEditorComponent`, `FormInputGroupComponent` and
+  `MultiSelectResultGridComponent`. Their state is signals now, and none of them declares a
+  strategy. Four library components are still to go; they are named in
+  `change-detection-contract.spec.ts`.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`ModalComponent.isShown` is now `isOpen`, and it is a `Signal<boolean>`.** The rename is
+  deliberate: a signal keeping the old name would leave `if (modal.isShown)` compiling and
+  permanently true. Replace `modal.isShown` with `modal.isOpen()`.
+
+- **`IModal` changed with it.** It declares `readonly isOpen: Signal<boolean>` instead of
+  `get isShown(): boolean`, and no longer declares `size` or `title` -- those are presentational
+  inputs each component declares for itself, and nothing drove a modal through them. If you
+  implement `IModal` by wrapping our modal, delegate with a signal view query:
+
+  ```ts
+  private readonly modal = viewChild(ModalComponent);
+  public readonly isOpen: Signal<boolean> = computed(() => this.modal()?.isOpen() ?? false);
+  ```
+
+  A `computed` reading a plain `@ViewChild` never re-runs when the query resolves, so the wrapper
+  would answer against an undefined child for ever.
+
+- **`ModalComponent`'s inputs are signals.** Reading one in your own template needs `()`:
+  `title()`, `size()`, `position()`, `dialog()`, `closeButtonText()`, `modalProcessing()`. Binding
+  to them from a template is unchanged. `closeButtonText` and `modalProcessing` are `model()`, so
+  code that sets them keeps working through `.set(...)`; the other four are `input()` and can only
+  be bound.
+
+- **`GroupAccordionComponent.label` is a required signal input**, and `maxHeight` is a signal.
+  `GroupScrollSpyComponent` exposes `titles`, `activeSection`, `sections` and `scrollSpy` as
+  signals. `MultiSelectComponent` and `MultiEditorComponent` expose their inputs as signals --
+  `itemTemplate()`, `formGroup()`, `addButtonLabel()`, `removeButtonLabel()`, `showAddButton()`
+  and `showDeleteButton()`.
+
+- **`FormInputGroupComponent` and `MultiSelectResultGridComponent` expose their inputs as signals
+  too.** Binding to them from a template is unchanged -- `[label]="..."`, `[type]="..."`,
+  `[validations]="..."` and the rest all still work. Only code reading one off a component
+  instance needs `()`. `controlName` is required now, which it always was in practice.
 
 #### [4.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.0) - 2026-10-24
 
@@ -804,7 +868,22 @@ config options and the `getUserProfile()` method still exist but are no longer c
 
 ### Framework
 
-Tabbed navigation, view scaffolding, ribbon buttons and modals. Published as `@zambon-dev/framework` through 5.0.0.
+Tabbed navigation, view scaffolding, ribbon buttons and modals. Published as `@zambon-dev/framework` through 5.0.1.
+
+#### [5.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.1) - 2026-10-24
+
+##### Changed
+
+- **Internal only: call sites moved with `@zambon-dev/library`'s modal API.** `ModalComponent.isShown`
+  became `isOpen()`, and the confirm and error modals delegate to it through a signal view query.
+  Nothing in this package's own API changed.
+
+##### Fixed
+
+- **The peer range on its sibling packages now admits the majors they were released at.** The last
+  release published `@zambon-dev/library` 4.0.0, `@zambon-dev/framework` 5.0.0 and
+  `@zambon-dev/shared` 6.0.0, but the ranges here still asked for the previous majors, so an
+  application installing two of them together got `ERESOLVE`. Nothing else changed.
 
 #### [5.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.0) - 2026-10-24
 
@@ -1404,7 +1483,25 @@ None.
 
 ### Shared
 
-Authentication, layouts, audit-history features and cross-cutting services. Published as `@zambon-dev/shared` through 6.0.0.
+Authentication, layouts, audit-history features and cross-cutting services. Published as `@zambon-dev/shared` through 6.0.1.
+
+#### [6.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.1) - 2026-10-24
+
+##### Fixed
+
+- **The peer range on its sibling packages now admits the majors they were released at.** The last
+  release published `@zambon-dev/library` 4.0.0, `@zambon-dev/framework` 5.0.0 and
+  `@zambon-dev/shared` 6.0.0, but the ranges here still asked for the previous majors, so an
+  application installing two of them together got `ERESOLVE`. Nothing else changed.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`OperationsHistoryModalComponent.isModalShown` is a `Signal<boolean>`.** It followed
+  `@zambon-dev/library`'s `ModalComponent.isShown` becoming `isOpen`, and delegates through a
+  signal view query so it answers correctly once that child resolves. Read it as
+  `isModalShown()`. The compiler will not catch a miss here -- reading the signal object itself is
+  valid TypeScript and always truthy -- so grep for `isModalShown` rather than relying on the
+  build.
 
 #### [6.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.0) - 2026-10-24
 

@@ -1,5 +1,14 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  EventEmitter,
+  Input,
+  Output,
+  Signal,
+  viewChild,
+} from '@angular/core';
 import { ModalComponent } from '@zambon-dev/ui/library';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -12,7 +21,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class ErrorModalComponent {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ModalComponent) private modal!: ModalComponent;
+  private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
   @Input() public errorMessage = '';
   @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' =
@@ -27,9 +36,12 @@ export class ErrorModalComponent {
   //#endregion
 
   //#region Properties
-  public get isShown(): boolean {
-    return this.modal.isShown;
-  }
+  /**
+   * Delegates to the inner modal. A signal view query, not @ViewChild: a computed reading a plain
+   * query would never re-run when the query resolves, so the wrapper would answer against an
+   * undefined child for ever.
+   */
+  public readonly isOpen: Signal<boolean> = computed(() => this.modal()?.isOpen() ?? false);
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -40,7 +52,7 @@ export class ErrorModalComponent {
 
   //#region Public methods
   public closeModal(): void {
-    this.modal.closeModal();
+    this.modal()?.closeModal();
   }
 
   public showModal(error: string | HttpErrorResponse): void {
@@ -51,7 +63,7 @@ export class ErrorModalComponent {
       errorMessage = error.error;
     }
     this.errorMessage = errorMessage;
-    this.modal.toggleModal();
+    this.modal()?.toggleModal();
   }
   //#endregion
 

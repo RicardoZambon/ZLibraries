@@ -9,8 +9,8 @@ describe('MultiSelectResultDataset', () => {
     dataset._idsToAdd = [];
     dataset._idsToRemove = [];
     dataset.addedRowData = [];
-    dataset.displayedIDs = [];
-    dataset.displayedRows = [];
+    dataset._displayedIDs = [];
+    dataset._displayedRows = [];
     dataset._loadedKeys = saved.map((row) => row.key);
     dataset.getRowID = (key: string) => saved.find((row) => row.key === key)?.id;
     dataset.getRowData = (key: string) => saved.find((row) => row.key === key);

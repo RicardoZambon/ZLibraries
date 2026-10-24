@@ -57,7 +57,7 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
 
   //#region Event handlers
   public openModal(): void {
-    if (!this.modal.isModalShown) {
+    if (!this.modal.isModalShown()) {
       this.modal.toggle();
     }
   }

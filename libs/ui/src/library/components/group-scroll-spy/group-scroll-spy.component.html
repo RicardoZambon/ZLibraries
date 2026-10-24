@@ -1,11 +1,11 @@
 <div class="scroll-spy">
-  @for (title of titles; track title; let i = $index) {
+  @for (title of titles(); track title; let i = $index) {
     <a
       class="item"
-      [class.active]="i === activeSection"
+      [class.active]="i === activeSection()"
       role="button"
       tabindex="0"
-      [attr.aria-current]="i === activeSection"
+      [attr.aria-current]="i === activeSection()"
       (click)="scrollTo(i)"
       (keydown.enter)="scrollTo(i)"
       (keydown.space)="scrollTo(i); $event.preventDefault()"
@@ -17,7 +17,7 @@
 <div
   class="content"
   libScrollSpy
-  [class.no-scroll-spy]="titles.length === 0"
+  [class.no-scroll-spy]="titles().length === 0"
   [spiedTags]="['lib-group-accordion']"
   (activeSectionChange)="activeSectionChanged($event)"
 >

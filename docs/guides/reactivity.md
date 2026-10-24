@@ -134,8 +134,22 @@ Do not "fix" these:
 
 Done: all 20 view/button/filter base classes; `SidebarService`, `SidebarComponent`,
 `SidebarItemComponent`, `RibbonGroupComponent`, `RibbonGroupChild`, `BaseButton`,
-`TabsComponent`, `TabService` (via the bridge above) and `ServicesHistoryFilterComponent`.
+`TabsComponent`, `TabService` (via the bridge above), `ServicesHistoryFilterComponent`,
+`ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`, `MultiSelectComponent`
+and `MultiEditorComponent`.
 
-Remaining: the lists in the three `change-detection-contract.spec.ts` files — 21 in framework, 11 in
-library, 9 in the shared public API, plus `LanguageSelectorComponent` and `LoginComponent`, which
-shared does not export and the contract spec therefore cannot reach.
+Remaining: the lists in the three `change-detection-contract.spec.ts` files -- 21 in framework, 6
+in library, 9 in the shared public API, plus `LanguageSelectorComponent` and `LoginComponent`,
+which shared does not export and the contract spec therefore cannot reach.
+
+**Take the datasets next.** Every library component still on the list reads a dataset or a service
+directly from its template -- `resultDataset.displayedRows`, `dataGridDataset.columns`,
+`formService.loading`. Migrating those components first would only move the problem: the component
+would hold signals and still read mutable state that cannot notify it. `MultiSelectResultDataset`,
+`DataGridDataset`, `FormService` and `DataProviderService` come first, and the components that
+read them follow in the same slice.
+
+A worked example of why: `MultiSelectResultGridComponent` looks safe, because removing an item
+flips a loading flag whose write happens to refresh the view. It is not -- `onItemRemoved` changes
+`displayedRows` with no flag anywhere near it, so the row stays on screen. A loading flag that
+refreshes the view as a side effect hides this class of bug rather than fixing it.
