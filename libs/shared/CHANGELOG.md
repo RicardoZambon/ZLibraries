@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stays light. The [design tokens guide](https://github.com/RicardoZambon/ZLibraries/blob/main/docs/guides/design-tokens.md)
   has the snippet and explains why it cannot be an Angular service.
 
+- **`LoginLayoutComponent` projects content.** It rendered a `<router-outlet>` and nothing else,
+  so a sign-in screen placed inside the element was silently dropped. It now renders projected
+  content beside the outlet, which lets an application host a sign-in screen that is not reached
+  through the router.
+
 - **The two login translation keys that were missing.** `Login-Title` and `Login-Copyright` were
   used by the template and defined in neither language file, so the card's heading and its footer
   rendered the raw key. Both now exist in English and Portuguese, and `Login-SelectLanguage` --
