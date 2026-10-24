@@ -93,7 +93,9 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
     this.formService.fieldRefreshed
       .pipe(
         takeUntil(this.destroy$),
-        filter((field: { fieldName?: string; value?: any; loading?: boolean }) => field.fieldName === this.controlName()),
+        filter(
+          (field: { fieldName?: string; value?: any; loading?: boolean }) => field.fieldName === this.controlName(),
+        ),
       )
       .subscribe((field: { fieldName?: string; value?: any; loading?: boolean }) => {
         this.loadingField.set(field.loading ?? false);

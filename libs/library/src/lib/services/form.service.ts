@@ -117,9 +117,7 @@ export class FormService {
 
     this.formStatusSubscription?.unsubscribe();
     this.formStatus.set(form.status);
-    this.formStatusSubscription = form.statusChanges.subscribe((status: string) =>
-      this.formStatus.set(status),
-    );
+    this.formStatusSubscription = form.statusChanges.subscribe((status: string) => this.formStatus.set(status));
 
     if (this.currentMode() === 'view') {
       this.form.disable();

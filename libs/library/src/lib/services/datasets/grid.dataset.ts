@@ -197,7 +197,7 @@ export abstract class GridDataset extends BaseDataset {
 
           this.isLoading = false;
           this._hasBeenLoaded = true;
-    this.touched();
+          this.touched();
           this.loadFinished.emit(true);
         },
         error: (_: any) => {
@@ -230,9 +230,9 @@ export abstract class GridDataset extends BaseDataset {
       if (indexToRemove >= 0) {
         // Need to set again the array values to trigger the change detection.
         this._loadedKeys = this._loadedKeys!.filter((_, index) => index !== indexToRemove);
-    this.touched();
+        this.touched();
         this._loadedRows = this._loadedRows!.filter((_, index) => index !== indexToRemove);
-    this.touched();
+        this.touched();
       }
     });
   }

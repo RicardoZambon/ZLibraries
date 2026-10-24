@@ -25,10 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   mirrors the `FormGroup`'s status, which is not a signal and never notified one, so a control
   bound to it no longer keeps its first answer.
 
-- **Five more components render under any change-detection strategy**, continuing the work the last
+- **Seven more components render under any change-detection strategy**, continuing the work the last
   major started: `ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`,
-  `MultiSelectComponent` and `MultiEditorComponent`. Their state is signals now, and none of them
-  declares a strategy. Six library components are still to go; they are named in
+  `MultiSelectComponent`, `MultiEditorComponent`, `FormInputGroupComponent` and
+  `MultiSelectResultGridComponent`. Their state is signals now, and none of them declares a
+  strategy. Four library components are still to go; they are named in
   `change-detection-contract.spec.ts`.
 
 ### Deprecated
@@ -67,6 +68,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   signals. `MultiSelectComponent` and `MultiEditorComponent` expose their inputs as signals --
   `itemTemplate()`, `formGroup()`, `addButtonLabel()`, `removeButtonLabel()`, `showAddButton()`
   and `showDeleteButton()`.
+
+- **`FormInputGroupComponent` and `MultiSelectResultGridComponent` expose their inputs as signals
+  too.** Binding to them from a template is unchanged -- `[label]="..."`, `[type]="..."`,
+  `[validations]="..."` and the rest all still work. Only code reading one off a component
+  instance needs `()`. `controlName` is required now, which it always was in practice.
 
 ## [4.0.0] - 2026-10-24
 

@@ -77,10 +77,10 @@ export abstract class MultiSelectResultDataset extends GridDataset {
     const index: number = this._idsToRemove.indexOf(idToAdd);
     if (index >= 0) {
       this._idsToRemove.splice(index, 1);
-    this.touched();
+      this.touched();
     } else if (!this.isExistingID(idToAdd) && this._idsToAdd.indexOf(idToAdd) < 0) {
       this._idsToAdd.push(idToAdd);
-    this.touched();
+      this.touched();
       this.addedRowData.push(rowData);
     }
     this.updateDisplayedRows();
@@ -91,11 +91,11 @@ export abstract class MultiSelectResultDataset extends GridDataset {
     const index: number = this._idsToAdd.indexOf(idToRemove);
     if (index >= 0) {
       this._idsToAdd.splice(index, 1);
-    this.touched();
+      this.touched();
       this.addedRowData.splice(index, 1);
     } else if (this.isExistingID(idToRemove) && this._idsToRemove.indexOf(idToRemove) < 0) {
       this._idsToRemove.push(idToRemove);
-    this.touched();
+      this.touched();
     }
     this.updateDisplayedRows();
   }

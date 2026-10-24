@@ -164,7 +164,7 @@ export abstract class DataGridDataset extends GridDataset {
 
     if (!this.isKeySelected(key)) {
       this._selectedRowKeys.push(key);
-    this.touched();
+      this.touched();
       this.selectedRowsChanged.emit({
         [key]: {
           rowData: this.getRowData(key),
@@ -203,7 +203,7 @@ export abstract class DataGridDataset extends GridDataset {
 
     if (keysNotSelected.length > 0) {
       this._selectedRowKeys.push(...keysNotSelected);
-    this.touched();
+      this.touched();
       this.selectedRowsChanged.emit(
         keys.reduce((keys: { [id: string]: { rowData: any; selected: boolean } }, key: string) => {
           keys[key] = {
@@ -236,7 +236,7 @@ export abstract class DataGridDataset extends GridDataset {
     const index: number = this.selectedRowKeys.indexOf(key);
     if (index >= 0) {
       this._selectedRowKeys.splice(index, 1);
-    this.touched();
+      this.touched();
     }
   }
   //#endregion
