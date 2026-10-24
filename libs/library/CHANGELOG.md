@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [4.0.0] - 2026-10-24
+
+### Added
+
 - **A test harness that catches a component which silently stops rendering**, published as
   `@zambon-dev/library/testing`. `renderUnderOnPush(MyComponent)` renders a component beneath a
   clean OnPush ancestor -- which is what your application is -- and `render.tick()` runs a pass
@@ -21,12 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   express. Use it on your own components as you remove `ChangeDetectionStrategy.Eager` from them.
   It works under both a zone and a zoneless test environment, so you can adopt it without
   changing your test setup first.
-
-### Changed
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -752,7 +760,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v3.2.5...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.0...HEAD
+[4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.0
 [3.2.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.5
 [3.2.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.4
 [3.2.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.3

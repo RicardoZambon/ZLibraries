@@ -15,12 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **`FiltersBase` no longer declares a change-detection strategy**, for the same reason as the
-  framework's view bases: it was never inherited. Your filter components are unaffected.
-
 ### Deprecated
 
 ### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [6.0.0] - 2026-10-24
+
+### Changed
+
+- **`FiltersBase` no longer declares a change-detection strategy**, for the same reason as the
+  framework's view bases: it was never inherited. Your filter components are unaffected.
 
 ### Fixed
 
@@ -606,7 +614,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v5.0.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v6.0.0...HEAD
+[6.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.0
 [5.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v5.0.2
 [5.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v5.0.1
 [5.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v5.0.0

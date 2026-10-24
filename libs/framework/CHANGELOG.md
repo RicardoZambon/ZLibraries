@@ -15,15 +15,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [5.0.0] - 2026-10-24
+
+### Changed
+
 - **The view and button base classes no longer declare a change-detection strategy.** This is not
   a behaviour change: Angular has never inherited `changeDetection`, so the `Eager` these carried
   applied to the base class itself -- which is never instantiated -- and never to your subclasses.
   Your components have compiled to OnPush since you upgraded to Angular 22, whatever the base said.
   The declaration is gone because it described nothing.
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -611,7 +619,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v4.0.5...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.0...HEAD
+[5.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.0
 [4.0.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.5
 [4.0.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.4
 [4.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.3
