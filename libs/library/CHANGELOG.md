@@ -15,17 +15,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Every component in this package now renders under any change-detection strategy the host
-  application uses, including zoneless.** `CatalogSelectComponent` was the last one. Nothing here
-  depends on being walked on every event, and
-  `@angular-eslint/prefer-on-push-component-change-detection` is an error in this package rather
-  than a warning, so it stays that way.
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [4.0.3] - 2026-10-24
+
+### Changed
+
+- **Every component in this package now renders under any change-detection strategy the host
+  application uses, including zoneless.** `CatalogSelectComponent` was the last one. Nothing here
+  depends on being walked on every event, and
+  `@angular-eslint/prefer-on-push-component-change-detection` is an error in this package rather
+  than a warning, so it stays that way.
 
 ### ⚠ Breaking Changes / Migration
 
@@ -856,7 +862,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.3...HEAD
+[4.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.3
 [4.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.2
 [4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.1
 [4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.0
