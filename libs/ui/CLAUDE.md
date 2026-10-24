@@ -41,9 +41,17 @@ inside `.subscribe()`.
 declare an explicit `ChangeDetectionStrategy.OnPush`, which is the same behaviour Angular 22 gives
 a component that declares nothing, and which both the lint rule and the contract specs accept.
 
-Three places still reach for change detection directly, and they are the work that remains rather
-than an exception to the rule: `DataGridRowComponent` injects `ChangeDetectorRef`, and
-`TabsComponent` and `DataGridComponent` inject `NgZone`. Do not add a fourth.
+**`NgZone` appears three times, and all three are allowed.** `TabsComponent` and
+`DataGridComponent` use `runOutsideAngular` to keep scroll, wheel and resize listeners from
+triggering a pass on every event. That is the opposite of reaching for the screen — it avoids
+passes rather than forcing them — and nothing depends on it for correctness: the handlers write a
+signal or push a subject, so inside a zone they would behave identically and merely cost more.
+Which is also what makes them safe under `provideZonelessChangeDetection()`, where `NgZone`
+resolves to `NoopNgZone` and the call is a silent no-op. Never write one whose correctness
+depends on being outside a zone; under zoneless it would simply be broken.
+
+**One place does reach for a pass**, and it is debt rather than an exception: `DataGridRowComponent`
+injects `ChangeDetectorRef`. Do not add a second.
 
 **What that buys the consumer:** a component from `@zambon-dev/ui` renders correctly under any
 change-detection strategy the host application chooses, and under
