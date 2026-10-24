@@ -15,18 +15,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [6.0.3] - 2026-10-24
+
+### Changed
+
 - **Every component in this package now renders under any change-detection strategy the host
   application chooses, zoneless included.** This was the last package. The state each one shows
   is signals: the embedded-content screen, which decides everything after its menu lookup
   answers; the notifications panel and the language list, both closed from a window click that
   is no binding of theirs; the user profile, filled on init; the login form's error, spinner and
   success state; and the audit screens' selected service and operation.
-
-### Deprecated
-
-### Removed
-
-### Fixed
 
 ### ⚠ Breaking Changes / Migration
 
@@ -673,7 +679,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v6.0.2...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v6.0.3...HEAD
+[6.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.3
 [6.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.2
 [6.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.1
 [6.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.0
