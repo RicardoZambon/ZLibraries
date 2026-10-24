@@ -1,16 +1,6 @@
 import { NgClass } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import {
-  Component,
-  computed,
-  inject,
-  input,
-  InputSignal,
-  model,
-  ModelSignal,
-  Signal,
-  viewChild,
-} from '@angular/core';
+import { Component, computed, inject, input, InputSignal, model, ModelSignal, Signal, viewChild } from '@angular/core';
 import { ControlContainer, FormGroup } from '@angular/forms';
 import { FormService, IModal, ModalComponent, ModalSize } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
