@@ -37,7 +37,10 @@ component's lifetime.
 No template here reads a mutable field, a getter over mutable service state, or a value assigned
 inside `.subscribe()`.
 
-**No component declares `Eager`.** That is the rule, not "declares no strategy". Declare nothing
+**No component declares `Eager`, with one deliberate exception.** That is the rule, not "declares
+no strategy". The exception is the harness's own self-test, `UnnotifiedEagerComponent`, which
+declares `Eager` because that is what it exists to test — that declaring it changes nothing — and
+disables the lint rule on that line. Declare nothing
 in a new component: Angular 22 compiles that to `OnPush`, and it is the house default. Eight
 components still carry a redundant explicit `OnPush`; it changes nothing, and both the lint rule
 and the contract specs pass either way.

@@ -156,9 +156,15 @@ All three `STILL_EAGER` lists are empty, and
 `@angular-eslint/prefer-on-push-component-change-detection` is an error for the whole package --
 one rule now, not one per package, since the three became `@zambon-dev/ui`.
 
-Be precise about what holds: **no component declares `Eager`**. A few still carry a redundant
-explicit `OnPush`, which changes nothing and which both the lint rule and the contract specs
-accept. "Declares no strategy" would be the wrong rule to state, and it was stated for a while.
+Be precise about what holds: **no component declares `Eager`, with one deliberate exception**.
+That exception is the harness's own self-test, `UnnotifiedEagerComponent`, which declares `Eager`
+because that is what it exists to test, and disables the lint rule on that line. A few components
+still carry a redundant explicit `OnPush`, which changes nothing and which both the lint rule and
+the contract specs accept.
+
+"Declares no strategy" would be the wrong rule, and it was stated for a while. So would a flat
+"nothing declares `Eager`" written as a list of negatives — it leaves no room for the one case the
+repository documents on purpose.
 
 A consuming application chooses its own strategy, zoneless included, and the package renders
 correctly underneath it.
