@@ -16,11 +16,7 @@ import * as publicApi from '../index';
  * When this list is empty, turn `@angular-eslint/prefer-on-push-component-change-detection` from
  * 'warn' to 'error' in eslint.config.mjs and delete the allowance.
  */
-const STILL_EAGER: readonly string[] = [
-  'CatalogSelectComponent',
-  'DataGridComponent',
-  'FormInputComponent',
-];
+const STILL_EAGER: readonly string[] = ['CatalogSelectComponent', 'DataGridComponent', 'FormInputComponent'];
 
 describe('change-detection contract', () => {
   const components: [string, Type<unknown>][] = Object.entries(publicApi)
