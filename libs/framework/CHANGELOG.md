@@ -15,13 +15,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Internal only: call sites moved with `@zambon-dev/library`'s modal API.** `ModalComponent.isShown`
-  became `isOpen()`, and the confirm and error modals delegate to it through a signal view query.
-  Nothing in this package's own API changed.
-
 ### Deprecated
 
 ### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [5.0.1] - 2026-10-24
+
+### Changed
+
+- **Internal only: call sites moved with `@zambon-dev/library`'s modal API.** `ModalComponent.isShown`
+  became `isOpen()`, and the confirm and error modals delegate to it through a signal view query.
+  Nothing in this package's own API changed.
 
 ### Fixed
 
@@ -29,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   release published `@zambon-dev/library` 4.0.0, `@zambon-dev/framework` 5.0.0 and
   `@zambon-dev/shared` 6.0.0, but the ranges here still asked for the previous majors, so an
   application installing two of them together got `ERESOLVE`. Nothing else changed.
-
-### ⚠ Breaking Changes / Migration
 
 ## [5.0.0] - 2026-10-24
 
@@ -628,7 +634,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.1...HEAD
+[5.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.1
 [5.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.0
 [4.0.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.5
 [4.0.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.4
