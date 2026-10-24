@@ -57,12 +57,6 @@ jobs:
       - name: Check formatting
         run: npx nx format:check --base=$NX_BASE --head=$NX_HEAD
 
-      # Nothing else here can see a stale peer range: the workspace resolves siblings from dist,
-      # so every target is green with a range no consumer can satisfy. Reads the release tags,
-      # which the fetch-depth: 0 checkout above provides.
-      - name: Check inter-package peer ranges
-        run: node tools/check-peer-ranges.mjs
-
       - name: Lint affected projects
         run: npx nx affected --target=lint --base=$NX_BASE --head=$NX_HEAD
 
@@ -80,20 +74,8 @@ jobs:
       - name: Build affected Storybooks
         run: npx nx affected --target=build-storybook --base=$NX_BASE --head=$NX_HEAD --configuration=ci
 
-      - name: Semantic release dry run - library
-        working-directory: libs/library
-        env:
-          SEMANTIC_RELEASE_VALIDATION: 'true'
-        run: npx --no-install semantic-release --dry-run --no-ci -e semantic-release-monorepo
-
-      - name: Semantic release dry run - framework
-        working-directory: libs/framework
-        env:
-          SEMANTIC_RELEASE_VALIDATION: 'true'
-        run: npx --no-install semantic-release --dry-run --no-ci -e semantic-release-monorepo
-
-      - name: Semantic release dry run - shared
-        working-directory: libs/shared
+      - name: Semantic release dry run
+        working-directory: libs/ui
         env:
           SEMANTIC_RELEASE_VALIDATION: 'true'
         run: npx --no-install semantic-release --dry-run --no-ci -e semantic-release-monorepo
@@ -122,18 +104,9 @@ jobs:
 
           changed="$(git diff --name-only "$base"...HEAD)"
 
-          missing=()
-          for lib in library framework shared; do
-            if echo "$changed" | grep -q "^libs/$lib/src/"; then
-              if ! echo "$changed" | grep -q "^libs/$lib/CHANGELOG.md$"; then
-                missing+=("$lib")
-              fi
-            fi
-          done
-
-          if [ ${#missing[@]} -gt 0 ]; then
-            echo "::error::These packages changed but their CHANGELOG.md was not updated: ${missing[*]}"
-            echo "Add an entry under '## [Unreleased]' in libs/<package>/CHANGELOG.md."
+          if echo "$changed" | grep -q "^libs/ui/src/" && ! echo "$changed" | grep -q "^libs/ui/CHANGELOG.md$"; then
+            echo "::error::The package changed but its CHANGELOG.md was not updated."
+            echo "Add an entry under '## [Unreleased]' in libs/ui/CHANGELOG.md."
             echo "If this PR genuinely needs no changelog (tooling/CI only), add the 'no-changelog' label."
             exit 1
           fi

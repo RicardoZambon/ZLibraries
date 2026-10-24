@@ -1,0 +1,7 @@
+@reference '../../../../styles/theme.css';
+
+/* @use 'tailwindcss'; */
+
+:host {
+  @apply grid grid-flow-col auto-cols-auto;
+}

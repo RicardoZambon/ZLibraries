@@ -25,6 +25,45 @@ if (!existsSync(DIST)) {
   process.exit(0);
 }
 
+/**
+ * The component styles in a bundle, as the strings Angular injects at runtime.
+ *
+ * Only these are the subject. ng-packagr keeps source comments, and a comment that writes about
+ * `@apply` is prose, not a stylesheet -- scanning the whole file reports it and the check stops
+ * meaning anything. Walks each `styles: [` array to its closing bracket, tracking string literals,
+ * because CSS contains both brackets and quotes.
+ */
+function styleBlocks(text) {
+  const blocks = [];
+  const opener = /styles:\s*\[/g;
+  let match;
+
+  while ((match = opener.exec(text))) {
+    let depth = 1;
+    let quote = null;
+    let i = opener.lastIndex;
+
+    for (; i < text.length && depth > 0; i++) {
+      const c = text[i];
+
+      if (quote) {
+        if (c === '\\') i++;
+        else if (c === quote) quote = null;
+        continue;
+      }
+
+      if (c === '"' || c === "'" || c === '`') quote = c;
+      else if (c === '[') depth++;
+      else if (c === ']') depth--;
+    }
+
+    blocks.push(text.slice(opener.lastIndex, i - 1));
+    opener.lastIndex = i;
+  }
+
+  return blocks.join('\n');
+}
+
 let failed = false;
 
 for (const pkg of readdirSync(DIST, { withFileTypes: true }).filter((e) => e.isDirectory())) {
@@ -33,10 +72,10 @@ for (const pkg of readdirSync(DIST, { withFileTypes: true }).filter((e) => e.isD
 
   for (const file of readdirSync(fesm).filter((f) => f.endsWith('.mjs'))) {
     const path = join(fesm, file);
-    const text = readFileSync(path, 'utf8');
+    const styles = styleBlocks(readFileSync(path, 'utf8'));
 
     for (const token of FORBIDDEN) {
-      const count = text.split(token).length - 1;
+      const count = styles.split(token).length - 1;
       if (count > 0) {
         failed = true;
         console.error(`${path}: ${count} occurrence(s) of "${token.trim()}" survived packaging.`);

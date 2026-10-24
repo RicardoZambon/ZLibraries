@@ -1,0 +1,34 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/libs/ui",
+  "assets": [
+    {
+      "glob": "README.md",
+      "input": ".",
+      "output": "."
+    },
+    {
+      "glob": "CHANGELOG.md",
+      "input": ".",
+      "output": "."
+    },
+    {
+      "glob": "**/*.scss",
+      "input": "src/styles",
+      "output": "styles"
+    },
+    {
+      "glob": "**/*.css",
+      "input": "src/styles",
+      "output": "styles"
+    },
+    {
+      "glob": "**/*.json",
+      "input": "src/i18n",
+      "output": "i18n"
+    }
+  ],
+  "lib": {
+    "entryFile": "src/index.ts"
+  }
+}

@@ -8,10 +8,8 @@
     "lint": "nx run-many --target=lint --all",
     "format": "nx format:write",
     "format:check": "nx format:check",
-    "storybook:framework": "nx storybook framework",
-    "storybook:library": "nx storybook library",
-    "storybook:shared": "nx storybook shared",
-    "build-storybook": "nx run-many --target=build-storybook --projects=framework,library,shared --configuration=ci"
+    "build-storybook": "nx build-storybook ui --configuration=ci",
+    "storybook": "nx storybook ui"
   },
   "private": true,
   "dependencies": {

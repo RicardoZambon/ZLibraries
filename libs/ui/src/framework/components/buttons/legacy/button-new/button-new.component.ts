@@ -1,0 +1,47 @@
+import { Component, forwardRef, inject, input, InputSignal } from '@angular/core';
+import { ITabView, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/ui/library';
+import { Tab } from '../../../../models';
+import { TabService } from '../../../../services';
+import { BaseButton } from '../../base-button';
+
+@Component({
+  selector: 'framework-button-new-legacy',
+  templateUrl: './button-new.component.html',
+  imports: [RibbonButtonComponent],
+  providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonNewLegacyComponent) }],
+})
+/**
+ * @deprecated Use standalone {@link ButtonNewComponent} instead.
+ * Migrate by replacing this legacy component with the standalone equivalent
+ * and using inject() for dependency injection.
+ */
+export class ButtonNewLegacyComponent extends BaseButton {
+  //#region ViewChilds, Inputs, Outputs
+  public readonly endpoint: InputSignal<string> = input('new');
+  public readonly path: InputSignal<string> = input('');
+  public readonly tabView: InputSignal<ITabView | undefined> = input<ITabView>();
+  //#endregion
+
+  //#region Variables
+  private tabService: TabService = inject(TabService);
+  //#endregion
+
+  //#region Properties
+  //#endregion
+
+  //#region Constructor and Angular life cycle methods
+  //#endregion
+
+  //#region Event handlers
+  //#endregion
+
+  //#region Public methods
+  public clicked(): void {
+    this.tabService.navigateTo(new Tab({ url: `${this.path()}/${this.endpoint()}` }));
+    // this.tabService.navigateTab(this.tabView, `${this.path}/${this.endpoint}`);
+  }
+  //#endregion
+
+  //#region Private methods
+  //#endregion
+}

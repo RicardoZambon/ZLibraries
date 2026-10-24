@@ -1,0 +1,2325 @@
+# Changelog
+
+All notable changes to `@zambon-dev/ui` are documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+> **Upgrading?** Each release lists what changed and, under
+> **⚠ Breaking Changes / Migration**, the concrete steps required to move to that version.
+> When no migration is needed, that subsection is omitted.
+
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+- **The layers in this release are `library` 4.0.5, `framework` 5.0.5 and `shared` 6.0.4.**
+  Moving here from an earlier version of any of the three means taking that layer's remaining
+  releases too; they are under **Package history** below. The one worth naming is
+  `ModalComponent.isShown`, which became `isOpen` and is a `Signal<boolean>`: reading the
+  signal object itself is valid TypeScript and always truthy, so the build will not catch a miss.
+  Grep for `isShown` and `isModalShown`.
+
+- **This package replaces `@zambon-dev/library`, `@zambon-dev/framework` and
+  `@zambon-dev/shared`.** Install `@zambon-dev/ui` in place of all three and rewrite the
+  imports:
+
+  | Was                           | Now                        |
+  | ----------------------------- | -------------------------- |
+  | `@zambon-dev/library`         | `@zambon-dev/ui/library`   |
+  | `@zambon-dev/framework`       | `@zambon-dev/ui/framework` |
+  | `@zambon-dev/shared`          | `@zambon-dev/ui/shared`    |
+  | `@zambon-dev/library/testing` | `@zambon-dev/ui/testing`   |
+
+  `@zambon-dev/ui` also re-exports all three layers, so a single import works where the layer
+  does not matter. See [the migration guide](https://github.com/RicardoZambon/ZLibraries/blob/main/docs/guides/migrating-to-ui.md).
+
+- **Stylesheet subpaths name their file.** `@zambon-dev/library/styles` and
+  `@zambon-dev/shared/styles` both existed and resolved to different stylesheets, so the bare
+  subpath is gone: use `@zambon-dev/ui/styles/variables.scss`,
+  `@zambon-dev/ui/styles/common.scss` or `@zambon-dev/ui/styles/theme.css`.
+
+- **Translation assets moved under a per-layer folder**, to `@zambon-dev/ui/i18n/framework` and
+  `@zambon-dev/ui/i18n/shared`. Applications that spread `ZAMBON_FRAMEWORK_I18N_ASSET` or
+  `ZAMBON_SHARED_I18N_ASSET` into their build assets need no change — the constants carry the
+  new path. A hand-written asset entry does.
+
+- **The peer set is the union of the three packages'**, so `@angular/cdk`,
+  `@angular/platform-browser`, `@auth0/angular-jwt`, `@microsoft/signalr`,
+  `ngx-resize-observer` and `ngx-translate-multi-http-loader` are all required. Every
+  application consuming these packages already installs them.
+
+- **`AngularAssetPattern` is exported once**, from the library layer, rather than declared
+  separately by each i18n helper. Import it from `@zambon-dev/ui` or
+  `@zambon-dev/ui/library`; the framework and shared layers no longer export it.
+
+## Package history
+
+The three packages this one replaces. Their releases stay installable from npm; nothing further
+will be published on them.
+
+### Library
+
+UI components, directives, pipes and the data-grid services. Published as `@zambon-dev/library` through 4.0.5.
+
+#### [4.0.5](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.5) - 2026-10-24
+
+##### Changed
+
+- **A grid row's checkbox follows the grid's selection by being told, not by forcing a pass.**
+  `DataGridRowComponent` held its selected state in a plain field and called
+  `ChangeDetectorRef.detectChanges()` on itself whenever the grid announced a change. That
+  rendered -- there is no behaviour change here -- but it rendered because the component forced
+  a pass rather than because anything was notified, which is the one thing this package's
+  components are not supposed to need. The state is a signal now and the `ChangeDetectorRef` is
+  gone; it was the last one in the package.
+
+#### [4.0.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.4) - 2026-10-24
+
+##### Changed
+
+- **`DataProviderService` announces the entity it holds.** The identifier behind `entityID`
+  and `hasEntityID` is a signal now. It is read from templates -- `@zambon-dev/framework`'s New,
+  Edit and Views buttons all appear only once a record exists -- and the route resolving or a
+  save assigning an id told Angular nothing. Both accessors keep their shape, so no call site
+  changes.
+
+#### [4.0.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.3) - 2026-10-24
+
+##### Changed
+
+- **Every component in this package now renders under any change-detection strategy the host
+  application uses, including zoneless.** `CatalogSelectComponent` was the last one. Nothing here
+  depends on being walked on every event, and
+  `@angular-eslint/prefer-on-push-component-change-detection` is an error in this package rather
+  than a warning, so it stays that way.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`CatalogSelectComponent` exposes its inputs as signals.** Binding to it from a template is
+  unchanged -- `[label]="..."`, `[searchEndpoint]="..."`, `[filters]="..."` and the rest all
+  still work. Only code reading one off a component instance needs `()`. `controlName` and
+  `displayControlName` are required now, which they always were in practice.
+
+  `entriesList`, `filters` and `searchEndpoint` stay plain inputs. They are imperative
+  configuration that re-initialises the search, no template reads them, and making them signals
+  would have moved that side effect into an `effect()` for no gain.
+
+#### [4.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.2) - 2026-10-24
+
+- Maintenance release (no consumer-facing changes were documented).
+
+#### [4.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.1) - 2026-10-24
+
+##### Changed
+
+- **`FormService` and the datasets announce their own changes.** A component reading
+  `formService.loading`, `formService.model`, `formService.isEditMode`, `formService.isValid`,
+  `dataGridDataset.selectedRowKeys`, `resultDataset.displayedRows` or a grid's loading state from
+  its template now re-renders when that state changes, whatever strategy the host application
+  uses. `columns` is deliberately left alone: a concrete dataset declares it once and never
+  changes it, so making it reactive would only have broken every subclass that declares it.
+  **Nothing to do on your side** -- these were already accessors, or became accessors of the same
+  shape, so every read and write keeps working. `isValid` also
+  mirrors the `FormGroup`'s status, which is not a signal and never notified one, so a control
+  bound to it no longer keeps its first answer.
+
+- **`RibbonButtonComponent`, `FormInputComponent` and `DataGridComponent` render under any
+  change-detection strategy.** Their inputs are signals, and none of them depends on being walked
+  on every event any more. The grid also stops calling `ChangeDetectorRef.detectChanges()` and
+  stops re-entering the Angular zone to publish a measurement -- a signal write reaches the
+  screen on its own.
+
+- **Seven more components render under any change-detection strategy**, continuing the work the last
+  major started: `ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`,
+  `MultiSelectComponent`, `MultiEditorComponent`, `FormInputGroupComponent` and
+  `MultiSelectResultGridComponent`. Their state is signals now, and none of them declares a
+  strategy. Four library components are still to go; they are named in
+  `change-detection-contract.spec.ts`.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`ModalComponent.isShown` is now `isOpen`, and it is a `Signal<boolean>`.** The rename is
+  deliberate: a signal keeping the old name would leave `if (modal.isShown)` compiling and
+  permanently true. Replace `modal.isShown` with `modal.isOpen()`.
+
+- **`IModal` changed with it.** It declares `readonly isOpen: Signal<boolean>` instead of
+  `get isShown(): boolean`, and no longer declares `size` or `title` -- those are presentational
+  inputs each component declares for itself, and nothing drove a modal through them. If you
+  implement `IModal` by wrapping our modal, delegate with a signal view query:
+
+  ```ts
+  private readonly modal = viewChild(ModalComponent);
+  public readonly isOpen: Signal<boolean> = computed(() => this.modal()?.isOpen() ?? false);
+  ```
+
+  A `computed` reading a plain `@ViewChild` never re-runs when the query resolves, so the wrapper
+  would answer against an undefined child for ever.
+
+- **`ModalComponent`'s inputs are signals.** Reading one in your own template needs `()`:
+  `title()`, `size()`, `position()`, `dialog()`, `closeButtonText()`, `modalProcessing()`. Binding
+  to them from a template is unchanged. `closeButtonText` and `modalProcessing` are `model()`, so
+  code that sets them keeps working through `.set(...)`; the other four are `input()` and can only
+  be bound.
+
+- **`GroupAccordionComponent.label` is a required signal input**, and `maxHeight` is a signal.
+  `GroupScrollSpyComponent` exposes `titles`, `activeSection`, `sections` and `scrollSpy` as
+  signals. `MultiSelectComponent` and `MultiEditorComponent` expose their inputs as signals --
+  `itemTemplate()`, `formGroup()`, `addButtonLabel()`, `removeButtonLabel()`, `showAddButton()`
+  and `showDeleteButton()`.
+
+- **`RibbonButtonComponent`, `FormInputComponent` and `DataGridComponent` expose their inputs as
+  signals.** Binding to them from a template is unchanged. Only code reading one off an instance needs `()` --
+  `button.loading()` rather than `button.loading`.
+
+  Two are `model()` rather than `input()` because the components write them as well:
+  `RibbonButtonComponent.loading`, which `BaseButton` drives through `startLoading` and
+  `finishLoading`, and `FormInputComponent.fixedValue`, which is two-way bound through `ngModel`.
+  `FormInputComponent.format` is also a `model()`, since it defaults itself for date types when
+  the consumer supplies none.
+
+  `RibbonButtonComponent.action` is an `output()`, which has no no-argument overload, so emitting
+  "no option chosen" is now an explicit `emit(undefined)`.
+
+- **`FormInputGroupComponent` and `MultiSelectResultGridComponent` expose their inputs as signals
+  too.** Binding to them from a template is unchanged -- `[label]="..."`, `[type]="..."`,
+  `[validations]="..."` and the rest all still work. Only code reading one off a component
+  instance needs `()`. `controlName` is required now, which it always was in practice.
+
+#### [4.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.0) - 2026-10-24
+
+##### Added
+
+- **A test harness that catches a component which silently stops rendering**, published as
+  `@zambon-dev/library/testing`. `renderUnderOnPush(MyComponent)` renders a component beneath a
+  clean OnPush ancestor -- which is what your application is -- and `render.tick()` runs a pass
+  that such an ancestor can still short-circuit. A component that updates state without telling
+  Angular cannot update its DOM under it, which is the failure a plain `TestBed` fixture cannot
+  express. Use it on your own components as you remove `ChangeDetectionStrategy.Eager` from them.
+  It works under both a zone and a zoneless test environment, so you can adopt it without
+  changing your test setup first.
+
+##### Fixed
+
+- **The sidebar fills in on its own again.** In an application whose components use Angular 22's
+  default strategy -- which is now OnPush -- the sidebar rendered its loading spinner and only
+  filled in when the user next clicked something. Its menus arrived from HTTP, were assigned to a
+  field, and nothing told Angular to render. `SidebarService` and `SidebarComponent` now hold that
+  state in signals, so it reaches the screen whatever strategy your application uses.
+- **A sidebar item's selected state reaches its host element.** `[class.selected]` is a host
+  binding, which Angular evaluates during the _parent's_ pass, so the component's own
+  `detectChanges()` could never refresh it and writing it afterwards raised NG0100.
+- **A ribbon group hides and shows itself when its buttons' visibility resolves.** The group reads
+  its children's visibility from a host binding; nothing notified it when an asynchronous access
+  check flipped one.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`RibbonGroupChild.visible` is now `isVisible`, and it is a `Signal<boolean>`.** If you
+  implement `RibbonGroupChild` yourself -- a custom ribbon button -- replace the field:
+
+  ```ts
+  // before
+  public visible = true;
+  // after
+  public readonly isVisible: Signal<boolean> = computed(() => ...);   // or signal(true)
+  ```
+
+  A plain field cannot work here: the group reads it from a host binding, and nothing can notify
+  the group when a field changes.
+
+- **`RibbonGroupComponent.children` is a signal query**, `Signal<readonly RibbonGroupChild[]>`
+  instead of `QueryList`. Replace `children.length` with `children().length` and
+  `children.get(0)` with `children()[0]`.
+
+- **`SidebarService.isActive`, `isCollapsed` and `shouldActivate` are accessors over signals.**
+  Reading and writing them is unchanged. But if your own `SidebarService` subclass **redeclares**
+  any of them as a field -- `public override isActive = false;` -- delete that line. A field
+  shadows the accessor, and the sidebar stops reacting to it.
+
+#### [3.2.5](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.5) - 2026-10-22
+
+##### Fixed
+
+- **A list reopened from the menu no longer comes back empty.** Opening a record from a list that
+  had been scrolled, then reopening that list from the menu, showed the column headers over an empty
+  body. The tab reuses the list's cached view, as it should, but while that view sat detached the
+  grid kept measuring its CDK viewport: the body leaving the document is a resize, and a load that
+  finishes after the user has left is followed by a re-measure too. Measured detached, the viewport
+  worked out its range from a scroll offset of 0 and left its own change-detection flag stuck, so
+  once reattached it computed the right range but could not write the content offset out — the rows
+  were rendered, translated to the top, while the viewport showed where the user had scrolled to.
+  Whether something later rescued it was a matter of timing, which is why it came and went. A
+  detached grid now measures nothing; coming back is a resize as well, so it measures on the way in.
+
+#### [3.2.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.4) - 2026-10-22
+
+##### Fixed
+
+- **A submit button inside a modal no longer reloads the whole application.** Confirming a filter
+  applied it and then, about a second later, reloaded the page. The modal's content sits in a native
+  `<form>`, and a `type="submit"` button — `framework-button-filters`' Confirm, or any `<button>`
+  without a type — made the browser submit it: a GET to the current URL, leaving a bare `?` behind.
+  Nothing in the modal ever cancelled that; the consumer's `FormGroupDirective` did, by accident,
+  for as long as the submit bubbled through it. Since 3.2.1 moved the modal's host to `<body>` it no
+  longer does, so the form now prevents its own native submission. The event still bubbles.
+
+#### [3.2.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.3) - 2026-09-26
+
+##### Fixed
+
+- **A ribbon button's options are no longer cut off by whatever the button sits in.** The list was
+  absolutely positioned inside the button, which works only while nothing between it and the page
+  clips. `lib-data-grid` does: it is `overflow: hidden`, its buttons bar is its first child, and a
+  child list's grid is only a few rows tall -- so the export button's options opened downwards into
+  the grid and lost their lower part, measured at 129px of list against 65px of room. The list now
+  renders in a CDK overlay attached to the document, as `lib-catalog-select` already did, and the
+  overlay also flips it above the button when there is no room below. The ribbon no longer needs
+  its own rule to pin a right-hand button’s list to the right, since the overlay works that out.
+
+#### [3.2.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.2) - 2026-09-26
+
+##### Fixed
+
+- **Component styles are compiled again.** The Tailwind 4 migration left every component's own
+  stylesheet unprocessed in the published bundle, so its `@apply` rules reached the browser as an
+  at-rule the browser does not know and it dropped every rule that used one. In practice the
+  components rendered unstyled in any application installing 3.2.1. ng-packagr resolves its
+  PostCSS configuration from the library directory rather than from the workspace root, and the
+  migration added one only at the root. Nothing failed along the way: Storybook compiles from
+  source and never sees the packaged artifact, which is why `tools/check-packaged-styles.mjs` now
+  runs against that artifact in CI and again before every publish.
+
+#### [3.2.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.1) - 2026-09-26
+
+##### Fixed
+
+- **Dialogs no longer open underneath the navigation.** `lib-modal` is `fixed` at `z-index: 50`,
+  which should put it over everything, but z-index only ranks siblings inside one stacking context
+  and the tab panel these views render in is its own. Inside it the 50 counted for nothing against
+  the sidebar outside it, and the tab strip stayed visible and clickable behind the dialog.
+
+  The modal now moves its host to `<body>` on init, which is the one place with nothing above it.
+  This covers every dialog built on it: multi-editor, multi-select, the filter panels, the confirm
+  and error modals, and the operations-history detail.
+
+#### [3.2.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.0) - 2026-09-25
+
+##### Changed
+
+- **Tailwind CSS 4.** The component styles in this package are compiled against Tailwind 4 now.
+  They are expanded at build time, so nothing in the published bundle changed shape -- but the
+  application consuming it has to be on Tailwind 4 as well.
+
+#### [3.1.7](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.7) - 2026-09-25
+
+##### Fixed
+
+- **A menu with children no longer runs its label under the expand chevron.** The chevron and the
+  external-link glyph sit in an absolute slot at the row's right edge, outside the anchor's flow,
+  so nothing reserved room for them: "Fluxo de delegação" overlapped the chevron by 11px. The row
+  reserves the slot now and the anchor fills what is left, so a long label ellipsises before it.
+
+  Rows with one of those glyphs give up the fixed anchor width to do this, so their label reflows
+  while the rail collapses instead of sliding out of view. Only those rows, only during the
+  animation.
+
+- **`lib-data-grid` and `lib-group-container` follow their container's corner.** Both were a flat
+  `rounded-lg`, which inside the tab panel put an 8px corner 9px in from a 20px one — close enough
+  to look like a mistake rather than a choice. They read `var(--surface-radius, 0.5rem)` now: the
+  panel publishes the radius that keeps the two parallel, and everywhere else the 0.5rem default
+  is exactly what they had.
+
+#### [3.1.6](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.6) - 2026-09-25
+
+##### Fixed
+
+- **Icons drawn in CSS survive a FontAwesome major.** Four pseudo-elements set
+  `font-family: 'Font Awesome 6 Free'` literally: the sidebar item's expand/collapse chevron and
+  its external-link marker, and the checked-checkbox tick in `form-input` and in the published
+  `styles/components/input.scss`. FontAwesome 7 renames the family to `Font Awesome 7 Free` and,
+  unlike the FontAwesome 5 names, does not keep a 6 alias — so on an application that had moved to
+  v7 the family stopped resolving and every one of those glyphs rendered as a fallback box.
+
+  They now read `var(--fa-family-classic, 'Font Awesome 6 Free')`. FontAwesome 7 defines that
+  variable; 6 does not, so it takes the fallback. The same stylesheet is correct on both, and on
+  8 as well as long as FontAwesome keeps the variable.
+
+#### [3.1.5](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.5) - 2026-09-24
+
+##### Fixed
+
+- **Pressing Enter in the multi-select search no longer saves the changes.** The search box sits
+  inside the modal's form, so Enter submitted it and the confirmation ran alongside the search --
+  committing a selection the user was still building. Enter now searches and nothing else.
+
+- **The remove button in the multi-select panel works for an entry the search never showed.** It
+  removed by deselecting the row in the grid on the left, which knows nothing about a row it has
+  not loaded, so clicking the cross on an entry further down the list did nothing. The panel now
+  tells the dataset directly, and still deselects the grid row when there is one.
+
+- **Grid checkboxes are no longer drawn as disabled.** The disabled attribute was bound to the
+  boolean itself, and an attribute binding writes `disabled="false"` for false -- which disables a
+  control just as firmly as any other value. Every checkbox rendered faded and unusable, leaving
+  the row label as the only way to toggle a selection.
+
+- **A multi-select or multi-editor no longer adds a gap below the page.** Both render nothing but
+  a fixed-position modal, yet their host still counted as a child in the parent's layout, so a
+  flex column with a gap reserved a slot for it under the last visible element.
+
+**Requires Tailwind CSS 4**, and `@zambon-dev/shared` 5.x, which ships the theme. The migration
+steps are in the `@zambon-dev/shared` changelog for this release; there is nothing specific to
+this package to do beyond following them.
+
+#### [3.1.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.4) - 2026-09-23
+
+##### Fixed
+
+- **A `lib-catalog-select` with `searchable` off no longer looks disabled.** It was drawn on the
+  same grey as a disabled field, so nothing distinguished a picker you are meant to click from a
+  control that is not yours to touch.
+
+  Turning searching off makes the inner input read-only to the keyboard, and `lib-form-input`
+  paints a read-only input as disabled by default. That default is right for `readOnly`, which
+  means the value cannot be changed at all; it is wrong here, where only typing is withheld. The
+  disabled appearance is now tied to `readOnly` alone.
+
+#### [3.1.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.3) - 2026-09-23
+
+##### Added
+
+- **`lib-catalog-select` takes a `searchable` input.** A catalog of one or two entries is a picker,
+  not a search: the text box invites typing that only gets in the way, and the minimum-length rule
+  hides the very entries the user opened the field to choose from. Setting `[searchable]="false"`
+  leaves the input read-only to the keyboard while the dropdown still opens on click and the clear
+  button still works.
+
+  It differs from `readOnly`, which means the value cannot be changed at all and takes the clear
+  button away. It does not suit an endpoint that answers `shouldUseCriteria`: that endpoint
+  returns nothing until it is given criteria, and there would be no way left to type any.
+
+- **`lib-catalog-select` exposes `refresh()`.** The entries are fetched once, when the field
+  initialises, so a screen that changes the data behind the catalog -- granting a role, moving an
+  employee -- kept offering the list it read before the change. Calling `refresh()` re-reads the
+  catalog, including whether its endpoint now requires search criteria.
+
+##### Fixed
+
+- **`lib-catalog-select` no longer reports "no results" when its endpoint arrives after the field
+  does.** A screen that reads the endpoint off a model it loads over HTTP binds an empty string
+  first. The field initialised against that, showed _no results found_ on the first open, and only
+  filled in once the user typed something and cleared it again.
+
+  With no endpoint the component takes its static-list path, finds an empty list and latches the
+  message. `searchEndpoint` was a plain input, so nothing re-ran the search when the real value
+  landed -- unlike `entriesList` and `filters`, which have always refreshed on change. It is now a
+  setter and re-reads the catalog, treating a new endpoint as a new catalog rather than carrying
+  over what the previous one reported about needing search criteria.
+
+#### [3.1.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.2) - 2026-09-22
+
+##### Fixed
+
+- **Group headings in a narrow navigation panel no longer spill their label past the edge.** On a
+  window under 768px the panel opens at its collapsed width, but each group still printed its full
+  label -- clipped mid-word against a bar with no room for it -- where it should show the short
+  divider the collapsed panel uses.
+
+  The width that widens the panel is declared inside the `md` query, so below that breakpoint the
+  panel stays narrow whatever its expanded class says. The heading, though, was keyed off that
+  class rather than the width it actually got. It now follows the width, with the overlay still
+  excluded -- that one does widen the panel at any size.
+
+#### [3.1.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.1) - 2026-09-22
+
+##### Fixed
+
+- **`lib-catalog-select` now offers its clear button for a value it did not see arrive.** A field
+  restored from a saved filter showed the value and its label but no way to empty it, so the only
+  escape was to clear the whole filter and start again.
+
+  The button asked an internal field that is written when the component itself takes the value --
+  a pick in the dropdown, or the initial read in `ngOnInit`. A form patched after the component
+  has initialised, and patched without an event, reaches the form control and the display and
+  nothing else. The button now asks the form control, which is the value that actually counts.
+
+#### [3.1.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.1.0) - 2026-09-21
+
+##### Added
+
+- Added the --tabs-* design tokens to the published stylesheet. They style @zambon-dev/framework's
+  tab strip; they live here because this package owns the shared token layer, alongside --sidebar-*.
+
+#### [3.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.0.1) - 2026-09-21
+
+- Maintenance release (no consumer-facing changes were documented).
+
+#### [3.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.0.0) - 2026-09-21
+
+- Maintenance release (no consumer-facing changes were documented).
+
+#### [2.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v2.0.1) - 2026-09-21
+
+##### Changed
+
+- `RibbonComponent`, `FormGroupComponent` and `GroupContainerComponent` now use
+  `ChangeDetectionStrategy.OnPush`. They render from their inputs only, so behaviour is
+  unchanged, but consuming applications no longer check them on every change detection pass.
+
+#### [2.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v2.0.0) - 2026-09-21
+
+##### Changed
+
+- **Accessibility.** Every interactive element that previously responded only to a mouse is now
+  reachable and operable by keyboard. `RibbonButtonComponent` (button, dropdown toggle and each
+  option), `GroupAccordionComponent`, `GroupScrollSpyComponent`, `SidebarItemComponent` and the
+  `MultiSelectComponent` result grid gained focus, `Enter`/`Space` activation and the matching ARIA
+  roles and state. `CatalogSelectComponent` status rows are now `role="presentation"`; its retry
+  action is a real button.
+- `MultiEditorComponent` and the multi-select result grid render their actions as `<button>`
+  rather than `<a>`. They are styled identically but now honour `disabled` natively.
+
+> **The 1.6.x line is retired.** It carried the library for applications still on Angular 19 while
+> `main` moved to Angular 22, publishing under its own `1.6.x` dist-tag. Its branch is gone; the
+> final state is kept in the `angular-19/library-1.6.x` tag. Every fix recorded below also shipped
+> in a 3.x release, which requires Angular 22.
+
+#### [1.6.9](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.9) - 2026-09-24
+
+##### Fixed
+
+- **Pressing Enter in the multi-select search no longer saves the changes.** The search box sits
+  inside the modal's form, so Enter submitted it and the confirmation ran alongside the search --
+  committing a selection the user was still building. Enter now searches and nothing else.
+
+- **The remove button in the multi-select panel works for an entry the search never showed.** It
+  removed by deselecting the row in the grid on the left, which knows nothing about a row it has
+  not loaded, so clicking the cross on an entry further down the list did nothing. The panel now
+  tells the dataset directly, and still deselects the grid row when there is one.
+
+- **Grid checkboxes are no longer drawn as disabled.** The disabled attribute was bound to the
+  boolean itself, and an attribute binding writes `disabled="false"` for false -- which disables a
+  control just as firmly as any other value. Every checkbox rendered faded and unusable, leaving
+  the row label as the only way to toggle a selection.
+
+- **A multi-select or multi-editor no longer adds a gap below the page.** Both render nothing but
+  a fixed-position modal, yet their host still counted as a child in the parent's layout, so a
+  flex column with a gap reserved a slot for it under the last visible element.
+
+#### [1.6.8](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.8) - 2026-09-23
+
+##### Fixed
+
+- **A `lib-catalog-select` with `searchable` off no longer looks disabled.** It was drawn on the
+  same grey as a disabled field, so nothing distinguished a picker you are meant to click from a
+  control that is not yours to touch.
+
+  Turning searching off makes the inner input read-only to the keyboard, and `lib-form-input`
+  paints a read-only input as disabled by default. That default is right for `readOnly`, which
+  means the value cannot be changed at all; it is wrong here, where only typing is withheld. The
+  disabled appearance is now tied to `readOnly` alone.
+
+#### [1.6.7](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.7) - 2026-09-23
+
+##### Added
+
+- **`lib-catalog-select` takes a `searchable` input.** A catalog of one or two entries is a picker,
+  not a search: the text box invites typing that only gets in the way, and the minimum-length rule
+  hides the very entries the user opened the field to choose from. Setting `[searchable]="false"`
+  leaves the input read-only to the keyboard while the dropdown still opens on click and the clear
+  button still works.
+
+  It differs from `readOnly`, which means the value cannot be changed at all and takes the clear
+  button away. It does not suit an endpoint that answers `shouldUseCriteria`: that endpoint
+  returns nothing until it is given criteria, and there would be no way left to type any.
+
+- **`lib-catalog-select` exposes `refresh()`.** The entries are fetched once, when the field
+  initialises, so a screen that changes the data behind the catalog -- granting a role, moving an
+  employee -- kept offering the list it read before the change. Calling `refresh()` re-reads the
+  catalog, including whether its endpoint now requires search criteria.
+
+##### Fixed
+
+- **`lib-catalog-select` no longer reports "no results" when its endpoint arrives after the field
+  does.** A screen that reads the endpoint off a model it loads over HTTP binds an empty string
+  first. The field initialised against that, showed _no results found_ on the first open, and only
+  filled in once the user typed something and cleared it again.
+
+  With no endpoint the component takes its static-list path, finds an empty list and latches the
+  message. `searchEndpoint` was a plain input, so nothing re-ran the search when the real value
+  landed -- unlike `entriesList` and `filters`, which have always refreshed on change. It is now a
+  setter and re-reads the catalog, treating a new endpoint as a new catalog rather than carrying
+  over what the previous one reported about needing search criteria.
+
+#### [1.6.6](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.6) - 2026-09-22
+
+##### Fixed
+
+- **Group headings in a narrow navigation panel no longer spill their label past the edge.** On a
+  window under 768px the panel opens at its collapsed width, but each group still printed its full
+  label -- clipped mid-word against a bar with no room for it -- where it should show the short
+  divider the collapsed panel uses.
+
+  The width that widens the panel is declared inside the `md` query, so below that breakpoint the
+  panel stays narrow whatever its expanded class says. The heading, though, was keyed off that
+  class rather than the width it actually got. It now follows the width, with the overlay still
+  excluded -- that one does widen the panel at any size.
+
+#### [1.6.5](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.5) - 2026-09-22
+
+##### Fixed
+
+- **`lib-catalog-select` now offers its clear button for a value it did not see arrive.** A field
+  restored from a saved filter showed the value and its label but no way to empty it, so the only
+  escape was to clear the whole filter and start again.
+
+  The button asked an internal field that is written when the component itself takes the value --
+  a pick in the dropdown, or the initial read in `ngOnInit`. A form patched after the component
+  has initialised, and patched without an event, reaches the form control and the display and
+  nothing else. The button now asks the form control, which is the value that actually counts.
+
+#### [1.6.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.4) - 2026-09-21
+
+##### Fixed
+
+- **Host styles now apply.** Ten components declared their host block as `:host-context {` with no
+  argument. That is not a valid host selector, so every rule inside was silently dropped -- the
+  ribbon never became a flex row (its buttons stacked vertically), `lib-group-container` never got
+  its card background or border, and `lib-data-grid`, `lib-form-group`, `lib-group-accordion`,
+  `lib-group-scroll-spy`, `lib-catalog-select`, `lib-ribbon-group`, `lib-ribbon-button` and the
+  multi-select result grid all rendered unstyled at the host level. They are `:host {` now.
+
+- `CatalogSelectComponent` subscribed to its `forkJoin` with an empty handler; it now subscribes
+  without one. No behavioural change.
+
+#### [1.6.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.3) - 2026-09-20
+
+##### Fixed
+
+- Declared `ngx-resize-observer` and `rxjs` in `peerDependencies`. `DataGridRowComponent` imports
+  `ngx-resize-observer` at runtime, but the package was never declared, so installing
+  `@zambon-dev/library` on its own left the dependency unresolved.
+- Added a README to the published package.
+
+##### ⚠ Breaking Changes / Migration
+
+**Requires Angular 22.** Every `@angular/*` peer range moved from `^19.1.0` to `^22.0.0`, and
+the package is built and tested against Angular 22.1 with TypeScript 6.0.
+
+Upgrade your application to Angular 22 first — Angular does not support skipping majors, so go
+19 → 20 → 21 → 22 with `ng update`. Angular 22 also requires Node.js 22.22.3 or newer.
+
+- Requires `ngx-resize-observer` 4.x (the Angular 22 line); the peer range moved from `^3.0.0`.
+
+**`FormInputComponent` outputs renamed.** Four outputs were named after native DOM events. Because
+`<lib-form-input>` is a real element, `(change)` and `(input)` fired a consumer's handler twice --
+once from the native event bubbling out of the inner control, once from the component -- and
+`(blur)`/`(focus)` shadowed the native events. All four are typed `any`, so TypeScript could not
+catch the mismatch.
+
+Rename the bindings in your templates:
+
+| Before     | After            |
+| ---------- | ---------------- |
+| `(blur)`   | `(blurred)`      |
+| `(change)` | `(changed)`      |
+| `(focus)`  | `(focused)`      |
+| `(input)`  | `(inputChanged)` |
+
+`(fixedValueChanged)` is unchanged, but its payload type is now `string` instead of `any` --
+matching what it always emitted.
+
+If you were relying on the double-fire, expect one call per event now instead of two.
+
+#### [1.6.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.2) - 2026-09-20
+
+##### Fixed
+
+- **A `lib-data-grid` column with no room from the start no longer drags its heading out of line.**
+  1.6.1 removes the heading of a collapsed column, but only once that column had measured a real
+  width at some point. A column that never has any room does not, so it kept a heading over nothing
+  and pushed every column to its right along -- up to 263px on a fourteen-column screen, which is
+  the same drift 1.6.1 set out to remove.
+
+  Whether a zero is believable is now settled by the row rather than by what the column measured
+  before: if the row has a width the layout is live, so a column reporting zero really has
+  collapsed.
+
+- **`lib-data-grid` headings no longer stay behind after you revisit a tab.** Re-activating a
+  detached tab puts the grid back in the page with its horizontal scroll at the start again, and no
+  scroll event follows to say so, so the headings kept the offset they had when you left: on a grid
+  scrolled 300px every heading sat 300px away from its column. The header now reconciles with the
+  body whenever the grid is re-measured, which is what re-inserting it triggers.
+
+#### [1.6.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.1) - 2026-09-19
+
+##### Fixed
+
+- **`lib-data-grid` headings now sit over their own column.** On a grid with many columns each
+  heading drifted further from its cells than the last -- up to 263px on a fourteen-column screen --
+  and scrolling sideways separated them completely.
+
+  The body lays the columns out as a CSS grid inside the CDK viewport; the heading row is a flex
+  row outside it that copies each column's measured width. Four things pulled the two apart:
+
+  - The heading cells could **shrink**, so once the columns together were wider than the view every
+    heading was compressed a little and the error accumulated across the row.
+  - The heading row **did not follow the body sideways**. The rows scroll inside the viewport and
+    the headings simply stayed where they were.
+  - A column was **measured once and never again**, while the body keeps resizing its
+    `minmax(x, min-content)` columns as virtual scrolling brings different content into view.
+  - A column measured at **zero** -- a `1fr` column collapsed for want of room -- left its heading
+    with no width at all, so it kept its text width and shoved everything to its right along.
+
+  Headings are now fixed to the measured width, translate with the body's horizontal scroll, track
+  every resize, and a heading whose column has collapsed is removed rather than left taking a gap
+  the body does not have. Measured in a running application the drift is zero across every column,
+  at rest and scrolled.
+
+  A column that declares no `size` is laid out as `minmax(0, 1fr)`, which is free to collapse. If
+  one of yours does, its heading now goes with it rather than staying behind as a label over
+  nothing. Give such a column a real minimum -- `size: 'minmax(8rem, 1fr)'` -- to keep both on
+  screen.
+
+#### [1.6.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.6.0) - 2026-09-16
+
+##### Added
+
+- **`DisplayControls`**, which records the form controls that exist only to show a catalog
+  selection's label. `lib-catalog-select` works in pairs — `controlName` holds the identifier,
+  `displayControlName` holds the text — and it creates the second itself when a screen does not
+  declare one, so a form carries controls nobody wrote down. It now marks whichever control it
+  drives as its display, and `framework-button-filters` reads that mark to keep those out of what
+  it submits.
+
+  The mark is held in a `WeakSet` keyed by the control instance, not by its name: two forms may
+  each have an `employeeName`, and only the one a catalog select drives is a display control.
+  Nothing about an application changes — declaring the display control yourself still works, and
+  it is marked just the same.
+
+#### [1.5.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.5.0) - 2026-09-09
+
+##### Added
+
+- **`SidebarConfigs.shouldDeriveAreasFromRootMenus`** — derive region headers from the menu tree
+  instead of from `SidebarMenu.region`. Off by default, so nothing changes until you opt in.
+
+  With it on, a top-level menu that has children **and no URL** stops being a collapsible node and
+  becomes an area header, with its children rendered flat beneath it as top-level items — icons
+  included. A top-level menu that has its own URL stays an item, and a parent that carries a URL
+  stays collapsible, so only the menus that were already acting purely as groups change shape.
+
+  The point is where the grouping lives. `region` is a label repeated on every item that belongs to
+  a group, matched by exact string equality: a typo silently splits one area into two, and the
+  area has no row of its own to carry an order or a translation. Derived from the tree, the area
+  _is_ a menu row — it already has a translated label and an order — and nothing has to be
+  duplicated across its items.
+
+  The children of an area are fetched **eagerly**, at load, because they are rendered without a
+  click and the lazy load a collapsible parent relies on would never fire. That is one extra
+  request per area. `region` keeps working exactly as before for anyone who prefers it; the two
+  mechanisms are independent and the flag chooses between them.
+
+- **`SidebarService.loadChildrenFor(parentMenu)`** — loads a parent’s children and returns them as
+  an observable, for callers that need them before the user clicks. `loadChildren` is unchanged: it
+  is still the fire-and-forget variant that raises `childrenLoading` and `childrenFailed`, and it
+  now delegates to this one.
+
+##### ⚠ Breaking Changes / Migration
+
+None. `shouldDeriveAreasFromRootMenus` defaults to `false`, so a sidebar keeps grouping by
+`region` and keeps rendering top-level parents as collapsible nodes until you set it.
+
+#### [1.4.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.4.1) - 2026-09-08
+
+- Maintenance release (no consumer-facing changes were documented).
+
+#### [1.4.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.4.0) - 2026-09-08
+
+##### Added
+
+- **Sidebar menu items can now open an external destination instead of an internal route.**
+  `SidebarMenu` gained an optional `openMode` (`SidebarMenuOpenMode`): `Internal` (the default),
+  `ExternalNewTab`, or `ExternalEmbedded`. Read it through the exported
+  `toSidebarMenuOpenMode(menu.openMode)` helper rather than comparing the field directly — the
+  value is deserialized straight from your menu endpoint, so the helper accepts the mode as a
+  camelCase string, as a case-insensitive variant of it, or as the enum ordinal an ASP.NET Core
+  enum property serializes to. Anything unrecognized — an omitted field from a backend that
+  predates this feature, `null`, or a mode a newer version adds — degrades to `Internal`, so a
+  menu you have not touched behaves exactly as it does today.
+
+- **`SidebarService.menuExternalUrlSelected`** — a separate output carrying the items whose mode
+  is not `Internal`. They are deliberately **not** announced on `menuUrlSelected`, which keeps its
+  existing contract: the URL it carries is always an Angular route. Acting on external items needs
+  `@zambon-dev/shared` (which opens the browser tab or the embedded view), or your own subscription
+  to the new output. Until then an external item highlights and does nothing, rather than sending
+  `https://…` to the router.
+
+- **`SidebarConfigs.externalLinkText`** — the tooltip on items that open in a new browser tab.
+  Defaults to `Opens in a new browser tab` and, like `errorText` and `loadingText`, is rendered
+  as-is rather than through the translate pipe, so pass an already-localized string.
+
+##### Changed
+
+- **Selection now follows the open mode.** An item that opens in a new browser tab is treated as an
+  action rather than a destination: it takes no selection pill and, importantly, does not clear the
+  selection of the view the user is still looking at. Items that open embedded become real
+  application tabs and keep today’s selection behaviour exactly. A parent that also carries a URL
+  still expands, so it cannot become impossible to open.
+
+- **Items that open in a new browser tab show a trailing outbound glyph.** It sits in the same
+  absolutely-positioned slot as the parent chevron, so a long label still ellipsises inside the
+  anchor and the collapsed rail is unchanged, and it fades in with the sidebar like the other
+  affordances. Embedded items get no glyph — they stay inside the application. Items with no
+  `openMode`, or with `openMode: Internal`, render exactly as before.
+
+##### ⚠ Breaking Changes / Migration
+
+None. `openMode` is optional, so a backend that does not send it produces today’s behaviour, and
+`menuUrlSelected` is unchanged for internal items. If you subscribe to `menuUrlSelected` yourself
+and want external items too, add a subscription to `menuExternalUrlSelected`.
+
+#### [1.3.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.3.2) - 2026-07-30
+
+##### Added
+
+- **Storybook: `Data Grid/Data Grid ▸ Multi Select Tall Rows` story** — multi-selection over rows
+  taller than the default `rowHeight` (41.6px), the height a row needs once it shows a thumbnail.
+  Misalignment in the selection column is obvious at that height, so this is the story to check the
+  selection checkbox against. Development-only: stories are excluded from the package build.
+
+##### Changed
+
+- **`lib-ribbon` now hides itself when it contains no visible buttons.** A screen with no ribbon
+  actions — a dashboard, or any view that projects an empty `#ribbon` template — previously still
+  rendered the bar's border, background and padding around nothing, wasting vertical space at the top
+  of the page. This mirrors `lib-ribbon-group`, which already hid itself when none of its children
+  were visible. Ribbons with at least one visible group are unaffected. See
+  **⚠ Breaking Changes / Migration** below.
+
+##### Fixed
+
+- **`lib-data-grid`'s multi-selection checkbox is now vertically centred in the row.** The checkbox is
+  styled with `vertical-align: super`, which lifts it off the middle of its line box — roughly 6px at
+  the default font size. At the default `configs.rowHeight` (41.6px) the drift is easy to miss, but on
+  taller rows (say `rowHeight: 56` for a row showing a thumbnail) the checkbox visibly hugged the top
+  of the row while the text columns stayed centred. The selection cell now lays its checkbox out as a
+  flex item, so it is centred by the box model and `vertical-align` no longer applies to it. The cell
+  is also tagged with a `selection` class, mirroring the header's `header-cell selection`. Horizontal
+  placement is unchanged, and no consumer changes are required.
+- **Form inputs no longer render a stray bordered box when `type` is set as a static attribute.**
+  Angular keeps static attributes in the DOM even when a directive consumes them as an `@Input()`, so
+  `<lib-form-input-group type="checkbox">` left a `type="checkbox"` attribute on the host element —
+  where `@tailwindcss/forms`' tag-agnostic `[type="checkbox"]` base rules styled the host itself as a
+  checkbox (1px border, white fill, `height: 1rem`), drawing an empty-input box around the field row
+  and tinting its icon. `FormInputGroupComponent` and `FormInputComponent` now clear the attribute via
+  a host binding. This affects every value of `type` (`checkbox`, `date`, `number`, `password`, …);
+  both `type="checkbox"` and `[type]="'checkbox'"` now render identically, so existing call sites are
+  fixed with no changes required.
+- **`lib-multi-editor` no longer discards rows the user did not type into.** `MultiEditorDataset.newData()`
+  exists so implementations can pre-fill a new row, but `onNewClick` reached the form through
+  `reset()` + `patchValue()`, which leaves it pristine — and the change tracker only records a row
+  while `formGroup.dirty`. Pre-filled values were therefore shown in the grid and then dropped from
+  the save batch. The visible symptom was worse than lost defaults: adding several rows and editing
+  only the last one saved just that row, because `onSaveClick` validates the current selection only,
+  so the earlier rows silently vanished on refresh. `newData()`'s values are now registered when the
+  row is added.
+- **`lib-catalog-select` no longer renders an empty caption after a form reset.** `FormService.resetForm()`
+  clears every control and then patches the model back, so the component receives the value it already
+  held. It skipped refreshing the caption in that case, on the assumption that an unchanged value means
+  the caption is still on screen — but the reset had emptied the display control a moment earlier. The
+  field therefore rendered blank whenever the stored value equalled the control's initial value, which
+  is why it only ever showed on the entry the form defaults to: a `nonNullable` control declared as
+  `new FormControl(0)` bound to an enum whose first member is `0`, for instance. Values differing from
+  the initial one refreshed normally and always looked right, which made the fault read like a
+  translation or data problem rather than a reset one. The caption is now rewritten whenever it has
+  drifted from the selected entry, so the value alone no longer decides. Selects backed by a
+  `searchEndpoint` are unaffected, since their caption comes from the server-side selection rather than
+  `entriesList`. No consumer changes are required.
+
+##### ⚠ Breaking Changes / Migration
+
+`lib-multi-editor` now sends rows that `newData()` pre-filled but the user never edited. Nothing to do
+if your `newData()` returns an empty object (`{}`) — the common "blank row" convention — since a
+value-less row is still skipped and the posted batch is byte-for-byte what it was before. If your
+`newData()` _does_ return field values, those rows now reach `saveData()` where they were previously
+dropped, so a batch may contain entries it did not before; verify your backend rejects or defaults
+them as you expect.
+
+`lib-ribbon` now hides itself when it has neither a visible `lib-ribbon-group` nor any other
+projected content. No action needed if your ribbons use groups (the normal case). The rule is a
+global selector at specificity (0,1,2), so overriding it requires `!important`. Because the bar can
+now appear and disappear rather than merely resize, anything positioned relative to the ribbon may
+shift when a button's visibility resolves (e.g. as permissions arrive).
+
+#### [1.3.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.3.1) - 2026-07-28
+
+> There is no `1.3.0` on npm: the version number was taken by an early publish that was later
+> unpublished, and npm never allows a retired version number to be reused. The sidebar rework below
+> therefore shipped as `1.3.1`. Upgrade straight from `1.2.0` to `1.3.1`.
+
+##### Added
+
+- Semantic `--sidebar-*` design tokens covering the sidebar's surfaces, text, selection, glass, and
+  radii (`--sidebar-bg`, `--sidebar-nav-bg`, `--sidebar-text`, `--sidebar-text-muted`,
+  `--sidebar-item-hover-bg`, `--sidebar-item-selected-bg`, `--sidebar-blur`, `--sidebar-shadow`,
+  `--sidebar-tree-line`, `--sidebar-radius`, `--sidebar-item-radius`, …) so consumers can re-theme
+  the sidebar entirely via CSS custom properties.
+- **Menu regions**: an optional `SidebarMenu.region` label groups top-level items under an uppercase
+  group header (e.g. "MAIN"). Items without a `region` render ungrouped, so it stays
+  backward-compatible. When the rail is collapsed, each header cross-fades to a short separator line
+  so the groups remain visually distinct. The grouping type is exported as `SidebarRegion`.
+
+##### Changed
+
+- Selected menu items now render as a rounded **pill** highlight (inset when expanded) instead of the
+  previous 4px left accent bar.
+- The sidebar is now a **translucent, blurred "glass" panel** — rounded corners, a soft drop shadow,
+  and a semi-transparent brand surface — rather than a solid, square, edge-to-edge rail (all
+  token-driven via `--sidebar-bg`, `--sidebar-blur`, `--sidebar-shadow`, `--sidebar-radius`).
+- **Child (sub-menu) items** now render a rounded **tree-connector** line instead of a menu icon;
+  top-level items keep their icons.
+- Collapsing/expanding the rail is now **animated end to end**: the toggle chevron and the
+  expandable-parent caret rotate in the same direction, the selection pill inset and item icons ease
+  into place, and region headers cross-fade to their separators — all in sync with the rail width.
+
+##### ⚠ Breaking Changes / Migration
+
+The sidebar surface is now **translucent** ("glass"). If your app does not place a colored backdrop
+behind the sidebar, the rail will look faint over plain/neutral content — either add a
+colored/gradient backdrop behind it (see `@shared`'s `--app-backdrop` in `MainLayoutComponent`) or
+override `--sidebar-bg` (and the other `--sidebar-*` surface tokens) with opaque values to keep a
+solid rail.
+
+#### [1.2.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.2.0) - 2026-07-24
+
+##### Added
+
+- `SidebarComponent` now renders its own collapse/expand toggle: a light circular chevron "handle"
+  that straddles the sidebar's right edge (`angle-left` to collapse when expanded, `angle-right` to
+  expand when collapsed), matching the conventional rail-collapse affordance.
+- `SidebarComponent` now has a content-projection slot (`<ng-content>`) rendered as a footer at the
+  bottom of the sidebar — for extra elements after the menu (e.g. an app version). It is hidden when
+  the rail is collapsed and collapses entirely when nothing is projected.
+
+##### Changed
+
+- `SidebarComponent` no longer renders the logo or the user-profile header — it now shows only the
+  navigation toggle and menu. Application branding and user identity are expected to live in the top
+  bar (`shared-top-bar` in `@shared`).
+- Sidebar menu items now use an on-palette hover surface (a subtle light overlay) instead of the
+  previous off-palette `slate-700`.
+
+##### ⚠ Breaking Changes / Migration
+
+If you relied on the sidebar's logo (`SidebarConfigs.logoCollapsedPath` / `logoExpandedPath`) or its
+user profile (`SidebarService.getUserProfile()`), move that presentation to the top bar. Those
+config options and the `getUserProfile()` method still exist but are no longer consumed by
+`SidebarComponent`.
+
+#### [1.1.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v1.1.1) - 2026-06-17
+
+- Baseline release: the changelog starts being tracked from this version. Earlier history is
+  available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
+  `library-v*` tags.
+
+### Framework
+
+Tabbed navigation, view scaffolding, ribbon buttons and modals. Published as `@zambon-dev/framework` through 5.0.5.
+
+#### [5.0.5](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.5) - 2026-10-24
+
+- Maintenance release (no consumer-facing changes were documented).
+
+#### [5.0.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.4) - 2026-10-24
+
+##### Changed
+
+- **Every component in this package now renders under any change-detection strategy the host
+  application chooses, zoneless included.** The ribbon buttons were the last group still
+  declaring `Eager`, and the one that depended on it most: a button answers to things that
+  arrive after the first paint -- an access check resolving, a grid announcing a selection, a
+  load finishing -- and none of that reached the screen beneath a clean `OnPush` ancestor.
+  Their state is signals now, and `src/lib/change-detection-contract.spec.ts` asserts over the
+  public API that nothing in this package opts out again.
+
+- **A view's `loading` flag notifies.** `ViewBase` backs it with a signal behind the same
+  accessors, so a subclass reading or writing `this.loading` needs no change and its own
+  template finally reflects it.
+
+- **The legacy form's `viewMode` notifies.** Same treatment, same accessors. It is what the
+  legacy Edit and Save buttons render from.
+
+##### Fixed
+
+- **A button no longer asks twice whether its actions are allowed.** `allowedActions` fired the
+  check from its setter _and_ the constructor fired it again before any input had arrived, so
+  every button with an access list made two requests. It is one stream over the input now.
+
+- **A button with an access list is disabled until the answer arrives**, rather than clickable
+  and then hidden. This is what `RibbonButtonComponent` already does with a dropdown option
+  whose access has not come back.
+
+- **The confirm and delete buttons show their modal's spinner again.** Their footer button read
+  `modal.isLoading` through a template reference, which became a signal object in 5.0.3 -- and
+  an object is always truthy, so the spinner was permanently on.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`BaseButton`'s state is signals.** Binding to any of them from a template is unchanged.
+  Code that touches them is not:
+
+  | Before                       | After                      |
+  | ---------------------------- | -------------------------- |
+  | `this.disabled = true`       | `this.disabled.set(true)`  |
+  | `this.loading = true`        | `this.loading.set(true)`   |
+  | `this.options = [...]`       | `this.options.set([...])`  |
+  | `this.options.find(...)`     | `this.options().find(...)` |
+  | `this.allowedActions`        | `this.allowedActions()`    |
+  | `this.iconSize`              | `this.iconSize()`          |
+  | `this.button.startLoading()` | `this.startLoading()`      |
+
+  `startLoading()` and `finishLoading(status)` keep their signatures. `disabled`, `loading` and
+  `options` are `model()`, so a subclass can still drive them; the rest are `input()`.
+
+- **Every button component's own inputs are signals too**, and so are the view queries they
+  expose. The ones a host application is most likely to read directly:
+  `ButtonFiltersComponent.modal` is now a `Signal<ModalComponent | undefined>`, and
+  `ButtonViewsLegacyComponent.views` is an `input()`. A template reading one through a
+  reference -- `#btn` then `btn.disabled` -- needs `btn.disabled()`; without the call it reads
+  the signal object, which is always truthy.
+
+- **`ViewBase` has a new protected member, `loadingState`**, the signal behind `loading`. A
+  subclass that already declares something by that name has to rename it.
+
+- **`DefaultDetailsTabViewComponent`'s protected state is signals**: `containerIcon`,
+  `containerTitle` and `detailsViewRoute`. A subclass that reads one needs `()`; one that
+  assigns one needs `.set(...)`.
+
+- The New, Edit and Views buttons only appear once a record exists, which they read from
+  `DataProviderService`. That now announces its entity id, so install the `@zambon-dev/library`
+  released alongside this version rather than an older 4.x.
+
+#### [5.0.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.3) - 2026-10-24
+
+##### Changed
+
+- **The breadcrumbs, the confirm modal and the error modal render under any change-detection
+  strategy.** The breadcrumbs were the clearest case of a getter over state a service mutates
+  elsewhere, and both modals are driven imperatively by a parent calling `showModal` from a
+  subscription -- a message or a title landed with nothing marking the view dirty.
+
+- **The ribbon strip renders without the view forcing a change-detection pass.**
+  `DefaultTabViewComponent` holds the published template in a signal, and `TabViewService` holds
+  its active view in one. The `detectChanges()`/`markForCheck()` pair they used to need is gone,
+  and with it the rule that the ribbon template could never be assigned after the first pass --
+  a signal write there schedules another pass rather than throwing NG0100.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`ConfirmModalComponent` and `ErrorModalComponent` expose their inputs as signals.** Binding to
+  them from a template is unchanged. Code that sets one before showing the modal keeps working
+  through `.set(...)`, because the ones a parent drives -- `errorMessage`, `isLoading`, and the
+  error modal's `title` and `subtitle` -- are `model()`. Code that _reads_ one needs `()`:
+  `confirmModal.isLoading()` rather than `confirmModal.isLoading`.
+
+- **`DefaultTabViewComponent` no longer takes constructor arguments.** It injects `TabViewService`
+  itself and no longer injects `ChangeDetectorRef` at all. A subclass calling
+  `super(changeDetectorRef, tabViewService)` should call `super()`, or drop its constructor.
+
+- **`DefaultTabViewComponent.ribbonTemplate` is a `Signal<TemplateRef | undefined>`.** Read it as
+  `ribbonTemplate()`. `TabViewService.onUpdateRibbonTemplate` is unchanged, so anything
+  subscribing to it keeps working.
+
+#### [5.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.2) - 2026-10-24
+
+##### Changed
+
+- **Internal only: `ButtonFiltersComponent` reads `RibbonButtonComponent.loading` as a signal.**
+  The compiler caught the old form: in a condition, the signal object itself is always true.
+  Nothing in this package's own API changed.
+
+#### [5.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.1) - 2026-10-24
+
+##### Changed
+
+- **Internal only: call sites moved with `@zambon-dev/library`'s modal API.** `ModalComponent.isShown`
+  became `isOpen()`, and the confirm and error modals delegate to it through a signal view query.
+  Nothing in this package's own API changed.
+
+##### Fixed
+
+- **The peer range on its sibling packages now admits the majors they were released at.** The last
+  release published `@zambon-dev/library` 4.0.0, `@zambon-dev/framework` 5.0.0 and
+  `@zambon-dev/shared` 6.0.0, but the ranges here still asked for the previous majors, so an
+  application installing two of them together got `ERESOLVE`. Nothing else changed.
+
+#### [5.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.0) - 2026-10-24
+
+##### Changed
+
+- **The view and button base classes no longer declare a change-detection strategy.** This is not
+  a behaviour change: Angular has never inherited `changeDetection`, so the `Eager` these carried
+  applied to the base class itself -- which is never instantiated -- and never to your subclasses.
+  Your components have compiled to OnPush since you upgraded to Angular 22, whatever the base said.
+  The declaration is gone because it described nothing.
+
+##### Fixed
+
+- **Ribbon buttons appear once their access check resolves.** `BaseButton` resolved visibility
+  from an asynchronous `checkActionsAreAllowed` call and assigned a plain field, which told Angular
+  nothing. Under Angular 22's default strategy the button stayed hidden until something else forced
+  a render.
+- **The tab strip renders the tabs you open.** In an application whose root component uses
+  Angular 22's default strategy, opening anything from the menu changed the URL and left the tab
+  bar, the view, the ribbon and the breadcrumbs blank: `TabsComponent` reads the open tabs
+  through getters on `TabService`, which mutates its arrays in place, and nothing told the
+  component to render. `TabService` now announces its own changes, so the tabs, the titles that
+  resolve later, and the breadcrumbs all reach the screen. Found by running SecurityHub against
+  this package rather than by a test -- which is why one now guards it.
+
+- **The tab strip re-measures when it narrows.** Bringing the selected tab back into view hung off
+  `ngAfterViewChecked`, which only ever ran because zone.js produced a pass on every event. The
+  `ResizeObserver` -- which is how a browser actually reports a box changing -- now does the full
+  re-measure, and the post-render work uses `afterEveryRender`.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`BaseButton.visible` is now `isVisible`, and it is a signal.** Every component that extends
+  `BaseButton` is affected, in its template and its code:
+
+  | Replace               | With                    |
+  | --------------------- | ----------------------- |
+  | `@if (visible)`       | `@if (isVisible())`     |
+  | `this.visible`        | `this.isVisible()`      |
+  | `!isAccessLoaded`     | `!isAccessLoaded()`     |
+  | `this.isAccessLoaded` | `this.isAccessLoaded()` |
+
+  Both were renamed or re-typed deliberately, so a call site you miss is a compile error rather
+  than a button that quietly never appears. Before you start, turn on `strictTemplates` and
+  `"interpolatedSignalNotInvoked": "error"` under `angularCompilerOptions.extendedDiagnostics` in
+  your `tsconfig.json`, which makes `{{ someSignal }}` a build failure too.
+
+- **A component that delegates its visibility to an inner button needs a signal view query.** If
+  you implement `RibbonGroupChild` by wrapping a `framework-button` and forwarding its state,
+  a rename alone is not enough -- a `computed` reading a plain `@ViewChild` never re-runs when
+  the query resolves:
+
+  ```ts
+  // before
+  @ViewChild(ButtonComponent) private buttonComponent!: ButtonComponent;
+  public get visible(): boolean {
+    return this.buttonComponent?.visible ?? false;
+  }
+
+  // after
+  private readonly buttonComponent = viewChild(ButtonComponent);
+  public readonly isVisible: Signal<boolean> = computed(() => this.buttonComponent()?.isVisible() ?? false);
+  ```
+
+  Every other read of that query moves to `this.buttonComponent()?.…` as well.
+
+- **`TabsComponent` no longer injects `ChangeDetectorRef`.** Only relevant if you construct it
+  yourself; used through its selector, nothing changes.
+
+#### [4.0.5](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.5) - 2026-10-22
+
+##### Fixed
+
+- **Going back in one tab no longer drops a view another tab still has open.** Every open tab keeps
+  its views in the reuse cache — the one it shows or one in its history — and a view should leave
+  that cache only once no tab has its URL open. `navigateCurrentTabBack` cleared the handle of every
+  entry it removed regardless, so a record open in two tabs lost its cached view in the other one
+  too. It now checks first, as `closeTab` and `replaceCurrentTabSubView` already did.
+
+#### [4.0.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.4) - 2026-10-10
+
+##### Fixed
+
+- **A record’s non-form views can render their edit button again.** `framework-button-edit` asks
+  for `FormService` and `DataProviderService` together, and the details shell provided only the
+  second — so a child list routed as its own view (Aplicações → Visões → Business Places, Centros
+  de Custo) threw `NG0201: No provider found for FormService` before it rendered at all. The shell
+  provides one now; a form view’s own provider still shadows it, so forms are unchanged.
+
+- **The breadcrumbs no longer sit further from the ribbon than the ribbon does from its content.**
+  They carried `padding-bottom` _and_ `margin-bottom` around their rule, 8px + rule + 8px, against
+  the 8px below the ribbon. The tab panel spaces its children with a gap now, as the views do, and
+  the breadcrumbs carry neither — 9px, the gap plus the rule itself.
+
+#### [4.0.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.3) - 2026-10-02
+
+##### Fixed
+
+- **Closing a tab no longer sends the tab beside it back to its root.** The focused tab was
+  navigated to `activeTabs[i]`, which is each tab’s _root_ — the entry the strip takes its label
+  from — rather than the top of its history. A tab opened as a list and then drilled into a record
+  went back to the list, under the record’s own tab, until the tab was clicked again. Every other
+  navigation in the service already took the top of the stack; this one is now shared with
+  `activateTab` so the two cannot drift apart.
+
+- **The gap between the ribbon and a list is the one the view asks for.** `router-outlet` renders
+  nothing but is still a flex item, and a flex item of zero height takes a gap on each side, so a
+  list view showed 1rem where its host asked for 0.5rem — while a detail view, whose outlet is
+  nested inside `lib-group-container`, showed 0.5rem. The outlet is out of the flow now, which
+  leaves the spacing to the host rather than to what each view happens to contain.
+
+#### [4.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.2) - 2026-10-01
+
+##### Fixed
+
+- **Loading the package under Jest no longer throws
+  `Cannot access 'ButtonNewLegacyComponent' before initialization`.** `LegacyTabViewDetails`
+  queries its New button with `@ViewChild`, and the legacy buttons import the views barrel back,
+  so the class is defined before the button: in the published bundle the button sits further down
+  the file. An application build never noticed, because its linker moves the reference into a
+  function, but a JIT runtime reads it the moment the package is imported, so every spec that
+  imported anything from `@zambon-dev/framework` failed before running a test. The query is a
+  forward reference now. Nothing to change in applications, and specs excluded for this reason can
+  be put back.
+
+#### [4.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.1) - 2026-09-26
+
+##### Fixed
+
+- **The selected tab and the panel no longer have a seam between them.** The panel drew its rim
+  on all four sides, and along the top that rim met the selected tab’s fill rather than the
+  backdrop it was meant for: `--tabs-border` is 60% white against the tab’s 88%, so a _darker_
+  hairline ran exactly along the join and made the tab read as a separate, slightly lighter shape
+  sitting on the panel. The top edge belongs to the tabs, which carry no border, so the panel no
+  longer draws one there.
+
+#### [4.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.0) - 2026-09-26
+
+##### Fixed
+
+- **The filters button no longer waits for an event that has already happened.** It starts
+  disabled and learns otherwise from the grid's `loadFinished`, which is right only for a
+  button that exists before its grid first loads. A ribbon template is re-created whenever a
+  record's views are switched, so a button built then reached a grid that had finished loading
+  long ago and stayed unclickable until something made the grid load again. It now reads the
+  state from the dataset as well.
+
+#### [3.2.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.2) - 2026-09-26
+
+##### Fixed
+
+- **Component styles are compiled again.** The Tailwind 4 migration left every component's own
+  stylesheet unprocessed in the published bundle, so its `@apply` rules reached the browser as an
+  at-rule the browser does not know and it dropped every rule that used one. In practice the
+  components rendered unstyled in any application installing 3.2.1. ng-packagr resolves its
+  PostCSS configuration from the library directory rather than from the workspace root, and the
+  migration added one only at the root. Nothing failed along the way: Storybook compiles from
+  source and never sees the packaged artifact, which is why `tools/check-packaged-styles.mjs` now
+  runs against that artifact in CI and again before every publish.
+
+#### [3.2.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.1) - 2026-09-26
+
+##### Fixed
+
+- **Both tab scroll controls stay put while the strip overflows**, disabled at the end they point
+  at rather than removed. Rendering them per-direction meant the one being reached for disappeared
+  on arrival: the strip changed width under the pointer and the click landed on nothing, which is
+  what made the arrows look like they sometimes did nothing.
+
+- **The last tab no longer floats past the panel's rounded corner.** While a tab or a scroll
+  control holds the strip's right edge, the panel's top-right corner is square, because the card's
+  corner is up on the strip; rounding both left whatever sat at the edge standing over the sweep
+  where the panel had curved away. With the tabs short of the edge the corner is the panel's again
+  and stays round.
+
+#### [3.2.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.2.0) - 2026-09-25
+
+##### Changed
+
+- **Tailwind CSS 4.** The component styles in this package are compiled against Tailwind 4 now.
+  They are expanded at build time, so nothing in the published bundle changed shape -- but the
+  application consuming it has to be on Tailwind 4 as well.
+
+#### [3.1.5](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.5) - 2026-09-25
+
+##### Fixed
+
+- **The selected tab and the panel are the same colour again.** Both already named an 88% white,
+  but the panel lays its fill over a backdrop it has blurred and the tab laid the identical fill
+  over an unblurred one — two results from one token, and a visible seam between them. The tab
+  carries the same blur now.
+
+- **A tab reaching the right edge no longer sticks out past the panel's rounded corner.** The
+  strip spans the panel's full width, so once the tabs filled it the last one's square corner was
+  left standing over the point where the panel had already curved away. The strip carries the
+  panel's corner now, which clips whatever reaches it; the scroll chevron does the same when it
+  is the element at the edge.
+
+- **The tab panel publishes `--surface-radius`** for whatever sits directly inside it — the
+  container's radius minus its own padding and border, which is the value that keeps an inner box
+  looking parallel to it. `@zambon-dev/library`'s grid and group container read it.
+
+##### ⚠ Breaking Changes / Migration
+
+**Requires Tailwind CSS 4**, and `@zambon-dev/shared` 5.x, which ships the theme. The migration
+steps are in the `@zambon-dev/shared` changelog for this release; there is nothing specific to
+this package to do beyond following them.
+
+#### [3.1.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.4) - 2026-09-25
+
+##### Fixed
+
+- **The peer range on `@zambon-dev/library` now matches the version this package is built against.**
+  It still asked for `^2.0.0` after the library moved to 3.x, so installing `framework` and
+  `library` together at their current releases failed `npm install` with ERESOLVE. An application
+  could only get past it with `--legacy-peer-deps` or an override, both of which switch off the
+  peer checking that would have caught a genuine mismatch.
+
+#### [3.1.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.3) - 2026-09-24
+
+##### Fixed
+
+- **A confirm or error modal no longer adds a gap below the page.** Both render nothing but a
+  fixed-position modal, yet their host still counted as a child in the parent's layout, so a flex
+  column with a gap reserved a slot for it under the last visible element -- which is why a detail
+  view and some list views sat further from the bottom of the window than the rest.
+
+#### [3.1.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.2) - 2026-09-22
+
+##### Fixed
+
+- **A filtered view no longer loses its Filter and Clear filters state when another details tab is
+  opened.** The grid stayed filtered while the ribbon came back as though nothing were filtered, so
+  the only way out was to filter again. Opening a list view never did it -- which is what made the
+  behaviour look arbitrary.
+
+  Every details tab keeps its router subscription alive, including the ones the reuse strategy has
+  detached, and the lookup that finds the active details route reads the router, which names
+  whichever tab the navigation went to. A detached tab therefore adopted the incoming tab's base
+  path and switched itself to that tab's view, tearing its own ribbon down and building a fresh
+  one -- and the new buttons knew nothing of the filter still held by the grid. A list view is not
+  a details route, so the lookup found nothing and the tab was left alone.
+
+  A tab now answers only to navigations matching its own route definition, which still covers the
+  one navigation that legitimately changes its path: the redirect from `/new` to `/:id` after a
+  save.
+
+#### [3.1.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.1) - 2026-09-22
+
+##### Fixed
+
+- **Switching views in a details tab no longer moves the buttons to the wrong view.** Opening a
+  second view showed the first view's buttons instead of its own, and going back to the first view
+  left it with no buttons at all -- on the employee screen, Histórico showed the Detalhes ribbon and
+  Detalhes then showed an empty one.
+
+  1.4.1 taught a tab to claim a ribbon published before its view had been named, which is what a tab
+  opened straight at a non-default view needs. It claimed on every naming, though, and the empty id
+  is not a spare bucket: it is the default view's own id, since that view is the one whose URL
+  carries no sub-path. From the second switch onwards the template being claimed belonged to the
+  view being left. Only the first naming may claim it now.
+
+  Also released as 1.4.2 on the 1.4.x line, for applications still on Angular 19.
+
+#### [3.1.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.1.0) - 2026-09-21
+
+##### Added
+
+- **Tabs close on middle click**, and with `Delete` while a tab has focus.
+- **The tab strip scrolls.** It was `overflow: hidden`, so once the tabs were wider than the bar the
+  ones past the right edge could not be reached at all. Selecting a tab also scrolls it into view.
+- **Scroll controls at each end of the strip**, shown only while there is something to scroll to.
+- **A vertical mouse wheel over the strip scrolls it horizontally**, so a plain wheel mouse can
+  reach an off-screen tab without going to the controls. Trackpad and `Shift`+wheel gestures, which
+  already produce horizontal deltas, are left to the browser.
+
+##### Changed
+
+- **Tabs restyled to match the sidebar's glass**: a translucent, blurred, rounded panel, with the
+  active tab and the content sharing one fill so they read as a single card. Every colour, radius
+  and dimension comes from a `--tabs-*` custom property now, so the look can be retuned without
+  touching the component. Breadcrumbs follow the same tokens.
+
+  The glass is painted on a `::before` layer rather than on the panel itself. `backdrop-filter`
+  makes an element the containing block for its `position: fixed` descendants, and views render
+  hidden, viewport-width modal overlays inside the panel — filtering it directly pulled those into
+  its scroll width and produced a phantom horizontal scrollbar.
+
+- **The tablist is a single tab stop.** `Tab` reaches the selected tab and the arrow keys move
+  between tabs from there, with `Home`/`End` for the ends. Previously every tab was its own tab
+  stop and there was no arrow-key support.
+- **The panel is a real `tabpanel`**, with `aria-controls` on each tab and `aria-labelledby` on the
+  panel, so assistive technology can tell which panel a tab owns.
+- **Close buttons are named after their tab** — "Close Acme Industries" rather than six identical
+  "Close tab". `Tabs-CloseTab` takes a `title` parameter now; if you have overridden that key in
+  your own translations, add `{{title}}` to it.
+- **A tab keeps its width while its title loads.** The spinner sits beside the label instead of
+  replacing it, so the strip no longer reflows as each title resolves.
+- **Tabs compress before the strip scrolls**, down to `--tabs-item-min-width`, so a few more fit
+  before any of them goes off screen. Overflowing tabs fade out at the edges instead of being cut
+  off mid-tab.
+- **The selected tab is pulled back into view when the strip narrows**, not only when the selection
+  changes. Resizing the window or collapsing the sidebar used to be able to leave you looking at a
+  panel whose tab was nowhere on screen.
+- Breadcrumb separators are drawn in CSS rather than as a FontAwesome glyph codepoint, which was
+  tied to a specific FontAwesome major.
+
+#### [3.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.0.1) - 2026-09-21
+
+- Maintenance release (no consumer-facing changes were documented).
+
+#### [3.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v3.0.0) - 2026-09-21
+
+- Maintenance release (no consumer-facing changes were documented).
+
+#### [2.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v2.0.0) - 2026-09-21
+
+##### Changed
+
+- **Accessibility.** `TabsComponent` renders proper `tablist`/`tab` semantics with `aria-selected`,
+  its tabs are keyboard-activatable and the close control is a labelled `<button>`.
+  `TabBreadcrumbsComponent` entries are focusable and activate with `Enter`/`Space`.
+- Added the `Tabs-CloseTab` translation key (en, pt) for the tab close button's accessible name.
+
+> **The 1.4.x line is retired.** It carried the framework for applications still on Angular 19
+> while `main` moved to Angular 22, publishing under its own `1.4.x` dist-tag. Its branch is gone;
+> the final state is kept in the `angular-19/framework-1.4.x` tag. Every fix recorded below also
+> shipped in a 3.x or 4.x release, which requires Angular 22.
+
+#### [1.4.7](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.7) - 2026-10-01
+
+##### Fixed
+
+- **Loading the package under Jest no longer throws `Cannot access 'ButtonNewLegacyComponent'
+before initialization`.** `LegacyTabViewDetails` queries its New button with `@ViewChild`, and
+  the legacy buttons import the views barrel back, so the class is defined before the button: in
+  the published bundle the button sits further down the file. An application build never noticed,
+  because its linker moves the reference into a function, but a JIT runtime reads it the moment
+  the package is imported, so every spec that imported anything from `@zambon-dev/framework`
+  failed before running a test. The query is a forward reference now. Nothing to change in
+  applications, and specs excluded for this reason can be put back.
+
+#### [1.4.6](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.6) - 2026-09-24
+
+##### Fixed
+
+- **A confirm or error modal no longer adds a gap below the page.** Both render nothing but a
+  fixed-position modal, yet their host still counted as a child in the parent's layout, so a flex
+  column with a gap reserved a slot for it under the last visible element -- which is why a detail
+  view and some list views sat further from the bottom of the window than the rest.
+
+#### [1.4.5](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.5) - 2026-09-22
+
+##### Fixed
+
+- **A filtered view no longer loses its Filter and Clear filters state when another details tab is
+  opened.** The grid stayed filtered while the ribbon came back as though nothing were filtered, so
+  the only way out was to filter again. Opening a list view never did it -- which is what made the
+  behaviour look arbitrary.
+
+  Every details tab keeps its router subscription alive, including the ones the reuse strategy has
+  detached, and the lookup that finds the active details route reads the router, which names
+  whichever tab the navigation went to. A detached tab therefore adopted the incoming tab's base
+  path and switched itself to that tab's view, tearing its own ribbon down and building a fresh
+  one -- and the new buttons knew nothing of the filter still held by the grid. A list view is not
+  a details route, so the lookup found nothing and the tab was left alone.
+
+  A tab now answers only to navigations matching its own route definition, which still covers the
+  one navigation that legitimately changes its path: the redirect from `/new` to `/:id` after a
+  save.
+
+#### [1.4.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.4) - 2026-09-22
+
+##### Fixed
+
+- **Switching views in a details tab no longer moves the buttons to the wrong view.** Opening a
+  second view showed the first view's buttons instead of its own, and going back to the first view
+  left it with no buttons at all -- on the employee screen, Histórico showed the Detalhes ribbon and
+  Detalhes then showed an empty one.
+
+  1.4.1 taught a tab to claim a ribbon published before its view had been named, which is what a tab
+  opened straight at a non-default view needs. It claimed on every naming, though, and the empty id
+  is not a spare bucket: it is the default view's own id, since that view is the one whose URL
+  carries no sub-path. From the second switch onwards the template being claimed belonged to the
+  view being left. Only the first naming may claim it now.
+
+#### [1.4.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.3) - 2026-09-21
+
+##### Fixed
+
+- **Host styles now apply.** `DefaultTabViewComponent`, `DefaultDetailsTabViewComponent`,
+  `TabBreadcrumbsComponent` and `ButtonFiltersComponent` declared their host block as
+  `:host-context {` with no argument, so every rule inside was silently dropped. Visible effects:
+  no gap between the ribbon and the view below it, and breadcrumbs with neither their bottom rule
+  nor their spacing. They are `:host {` now.
+
+- `ButtonFiltersComponent.validateFormFunction` was typed `Function`, which accepted any
+  function-like value. It is now `() => void`, matching how it is actually invoked. Consumers
+  passing a function that takes arguments or returns a value will now see a type error.
+- Removed empty constructors from `ConfirmModalComponent` and `TabViewService`.
+
+- `DefaultDetailsTabViewComponent` imported `ButtonViewsComponent` through the `buttons` barrel,
+  which re-exports `./legacy`, whose buttons import the `views` barrel, which re-exports this
+  component. The cycle left one of the component's own imports undefined at evaluation time and
+  broke any attempt to instantiate it outside a fully booted application. It now imports the
+  button by its concrete path.
+
+#### [1.4.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.2) - 2026-09-20
+
+##### Fixed
+
+- Declared `rxjs` in `peerDependencies`; it is used throughout the package but was never declared.
+- Added a README to the published package.
+
+##### ⚠ Breaking Changes / Migration
+
+**Requires Angular 22.** Every `@angular/*` peer range moved from `^19.1.0` to `^22.0.0`, and
+the package is built and tested against Angular 22.1 with TypeScript 6.0.
+
+Upgrade your application to Angular 22 first — Angular does not support skipping majors, so go
+19 → 20 → 21 → 22 with `ng update`. Angular 22 also requires Node.js 22.22.3 or newer.
+
+**Requires `@zambon-dev/library` 2.x.** The peer range moved from `^1.6.0` to `^2.0.0`. See the
+library changelog for the `FormInputComponent` output renames; if your application binds those
+outputs directly, apply that migration too.
+
+#### [1.4.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.1) - 2026-09-19
+
+##### Fixed
+
+- **A details tab with child views no longer loses its ribbon after you visit another tab and come
+  back.** Every button of the child view disappeared -- filter, clear filters, refresh, export --
+  while the grid below carried on showing its filtered rows, and nothing brought them back short of
+  switching views.
+
+  A child view publishes its ribbon from `ngAfterViewInit`, and the router only names the active
+  view afterwards, so the first template of a tab was cached under an empty id. Looking it up later
+  under the real name missed and emptied the ribbon. It never recovered because a tab being
+  re-activated has its child **re-attached** rather than re-created, so `ngAfterViewInit` does not
+  run again and nothing publishes a second time.
+
+  A list screen was unaffected: it has no view switching, so the lookup never happened.
+
+#### [1.4.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.4.0) - 2026-09-16
+
+##### Changed
+
+- **`framework-button-filters` no longer submits the labels of catalog selections.** A filters
+  form reads its values straight off the form, so the display control `lib-catalog-select` adds
+  for its own use went to the backend beside the real filters — a request filtering by employee
+  carried `employeeName: "753 - ADEMILSON LOPES MAGALHAES"` next to `employeeID: 125`.
+
+  They were ignored, being filters no service declares, but the day one does filter by a name it
+  would receive the formatted label rather than the stored value and quietly match nothing.
+
+  The labels are still **kept** for the modal: reopening it patches them back into the form, and a
+  catalog select backed by a `searchEndpoint` cannot recover its text from the identifier alone —
+  it only resolves a display out of a local entries list. Dropping them from what is stored would
+  have left the field showing a selection with nothing written in it.
+
+##### ⚠ Breaking Changes / Migration
+
+- **Upgrade `@zambon-dev/library` together with this release.** The peer range moved from
+  `^1.0.0` to `^1.6.0`, because `framework-button-filters` now imports `DisplayControls` from it.
+  On an older library that export does not exist, and the filters button fails — at build time if
+  the bundler checks exports, otherwise the first time a filter is submitted. The old range would
+  have let npm resolve that combination without a word of warning.
+
+- **A backend no longer receives the label of a catalog selection.** If one of your services
+  filters by a key that a `lib-catalog-select` uses as its `displayControlName` — the `xxxName`
+  that comes paired with an `xxxID` — that filter now arrives empty and the query stops narrowing,
+  silently returning more rows than before rather than failing.
+
+  To check, take each filters form and, for every `lib-catalog-select` in it, note the
+  `displayControlName`. Then look for a `TryFilter` on that name in the service behind the list.
+  Any hit has to move to the identifier instead: the label was never the stored value — it is what
+  the catalog chose to display, so filtering by it was already matching on formatting.
+
+#### [1.3.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.3.1) - 2026-09-10
+
+##### Fixed
+
+- **Returning to an already-open tab no longer crashes with `Maximum call stack size exceeded`.**
+  It affected any screen whose route nests two empty-path levels — the shape every list screen uses:
+  `path: ''` with `DefaultTabViewComponent`, and a child `path: ''` with the list component.
+
+  `CustomReuseStrategy` keyed its detached-view cache on `route.component.name`, and a production
+  build renames every class: esbuild wraps each component as `X = (() => { class i { } return i; })()`,
+  so the name is one mangled letter that the whole chunk shares. An empty path contributes no URL
+  segment, so both levels also resolved to the same URL — which left the two cache keys identical.
+  Storing one handle overwrote the other, both route levels were then handed the same detached view,
+  and Angular blew the stack building a router state whose node was its own descendant.
+
+  The key is now built from the component's **identity** and the route's depth rather than its name.
+  Applications need to change nothing. Worth knowing when reading old reports of this crash: it only
+  ever reproduced in a minified build — `ng serve` keeps real class names — and only on the screens
+  whose chunk happened to mangle to the same letter as the framework's, so a rebuild could move the
+  symptom from one screen to another.
+
+#### [1.3.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.3.0) - 2026-07-30
+
+##### Added
+
+- `framework-button-export` now accepts a **`defaultOption` `@Input()`** — the index into `options`
+  exported when the main button itself is clicked, defaulting to `0` (Excel). This mirrors the input
+  `framework-button-save` already had; `-1` means "no default" and makes the button only toggle its
+  dropdown. See **Changed** below for the behaviour this changes by default.
+
+##### Changed
+
+- **`framework-button-export` now exports on a single click**, to Excel by default, instead of only
+  opening its format menu. `RibbonButtonComponent` treats a `defaultOption` of -1 as "no default" and
+  merely toggles the dropdown; Export never set one, so the common case took two clicks while
+  `framework-button-save` (which sets 0) took one. Export now sets 0 as well, through the new
+  `defaultOption` `@Input()`. The format menu is unchanged and still reachable from the button's
+  dropdown caret, so every format remains available.
+
+##### Fixed
+
+- **Routed list views now fill the available height automatically.** `DefaultTabViewComponent` gave its
+  routed child no layout and `lib-data-grid` has no `flex-grow` of its own, so a grid collapsed to its
+  `rowsToDisplay × rowHeight` minimum with empty space beneath it, and every consuming list component
+  had to repeat the same `:host { flex; flex-grow; overflow: hidden }` + `lib-data-grid { flex-grow }`
+  stylesheet to compensate. `TabViewList` now carries a `framework-view-list` host class — inherited by
+  every subclass — which `DefaultTabViewComponent` styles, so **consuming apps can delete those
+  per-component stylesheets**. Routed screens that do not extend `TabViewList` (forms, dashboards) are
+  unaffected.
+
+- `framework-default-tab-view` and `framework-default-details-tab-view` no longer log
+  `NG0100: ExpressionChangedAfterItHasBeenCheckedError` on every render in development mode.
+  Both views assigned a placeholder ribbon template from `ngAfterViewInit` — after Angular had
+  already checked the ribbon's `*ngTemplateOutlet` binding — which tripped the dev-mode change
+  detection check one to three times per load. The placeholder rendered no content, so it has
+  been removed and the outlet is now left empty until a view publishes its own `#ribbon`
+  template. The rendered output is unchanged, and ribbon buttons still appear immediately for
+  list and detail screens.
+
+##### ⚠ Breaking Changes / Migration
+
+None — nothing has to change for your app to compile against this release. Two behaviour changes to
+check, and one optional cleanup:
+
+- **Absolutely-positioned content inside a routed list view is now clipped.** The full-height layout
+  applied to `framework-view-list` includes `overflow: hidden`, so a popover, dropdown or tooltip that
+  a list screen renders with `position: absolute` inside its own host is now cut off at the host's
+  edges. Apps that had already written the equivalent `:host { overflow: hidden }` stylesheet by hand
+  are unaffected — the clipping was already in place there. Only list screens that had no such
+  stylesheet change. Fix by portaling the content out of the host (CDK Overlay, as `lib-catalog-select`
+  does) rather than relying on `position: absolute`.
+- If you relied on `framework-button-export`'s first click opening the format menu rather than
+  exporting, set `[defaultOption]="-1"` to restore that behaviour.
+- _Optional cleanup:_ components extending `TabViewList` can now delete their
+  `:host { display: flex; flex-grow: 1; overflow: hidden }` / `lib-data-grid { flex-grow: 1 }`
+  stylesheets — `DefaultTabViewComponent` styles the inherited `framework-view-list` host class.
+
+#### [1.2.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.1) - 2026-07-29
+
+##### Fixed
+
+- Lint configuration only: the library's ESLint selector rules now accept the `framework-` prefix
+  that every `@framework` component already uses. They previously still expected the Angular
+  scaffold's `lib` prefix, so the entire component surface reported
+  `@angular-eslint/component-selector` errors. No selector was renamed, and no published API or
+  runtime behavior changed — nothing to do on upgrade.
+
+##### ⚠ Breaking Changes / Migration
+
+None.
+
+#### [1.2.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.2.0) - 2026-07-24
+
+##### Added
+
+- `AppConfig` now accepts optional application metadata through a second `options` argument:
+  `appName`, `companyName`, `environment`, `logoUrl`, `version`, `notificationsEnabled`, and
+  `notificationsUrl`. These are consumed by the shared application shell (top bar + navigation).
+  Existing `new AppConfig(baseUrl)` calls continue to work unchanged (`notificationsEnabled`
+  defaults to `false`, other new fields to empty strings).
+
+##### ⚠ Breaking Changes / Migration
+
+None.
+
+#### [1.1.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.1.1) - 2026-06-20
+
+##### Fixed
+
+- `framework-button-export` now forwards its `iconSize` input to the underlying ribbon button,
+  so setting `iconSize` correctly resizes the export button's icon. Previously the input was
+  ignored and the icon always rendered at the default size.
+
+#### [1.1.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v1.1.0) - 2026-06-02
+
+- Baseline release: the changelog starts being tracked from this version. Earlier history is
+  available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
+  `framework-v*` tags.
+
+### Shared
+
+Authentication, layouts, audit-history features and cross-cutting services. Published as `@zambon-dev/shared` through 6.0.4.
+
+#### [6.0.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.4) - 2026-10-24
+
+- Maintenance release (no consumer-facing changes were documented).
+
+#### [6.0.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.3) - 2026-10-24
+
+##### Changed
+
+- **Every component in this package now renders under any change-detection strategy the host
+  application chooses, zoneless included.** This was the last package. The state each one shows
+  is signals: the embedded-content screen, which decides everything after its menu lookup
+  answers; the notifications panel and the language list, both closed from a window click that
+  is no binding of theirs; the user profile, filled on init; the login form's error, spinner and
+  success state; and the audit screens' selected service and operation.
+
+##### ⚠ Breaking Changes / Migration
+
+- **The state these components expose is signals.** Binding to an input from a template is
+  unchanged. Code that reads one needs `()`:
+
+  | Component                             | Members                                                                                                           |
+  | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+  | `ServicesHistoryViewComponent`        | `controllerName`, `entityID`, `usersCatalogEndpoint` -- `model()`, so setting one still works through `.set(...)` |
+  | `ServicesHistoryChildListComponent`   | `selectedServiceID`                                                                                               |
+  | `OperationsHistoryChildListComponent` | `selectedNewValues`, `selectedOldValues`                                                                          |
+  | `OperationsHistoryModalComponent`     | `newValues`, `oldValues`                                                                                          |
+  | `NotificationsComponent`              | `dropdown`                                                                                                        |
+  | `LanguageSelectorComponent`           | `dropdown`, `showFlag`, `title`                                                                                   |
+  | `LoginComponent`                      | `username`                                                                                                        |
+
+  A template reading one through a reference -- `#list` then `list.selectedServiceID` -- needs
+  the call; without it the signal object itself is read, and an object is always truthy.
+
+- **`ServicesHistoryViewComponent.controllerName` is no longer a required input.** It is a
+  `model()` defaulting to `''`, because the component also fills it from the route's
+  `controllerName` data -- where nothing binds it and `required` never applied. Routed usage is
+  unchanged; a template that binds it is unchanged; a template that forgot to is no longer a
+  compile error, so check yours.
+
+- **`TopBarComponent.logout` and `ServicesHistoryChildListComponent.filtersChanged` are
+  `output()` rather than `EventEmitter`.** Binding to them is unchanged; calling `.emit()` on
+  one from outside the component no longer compiles, which was never supported anyway.
+
+#### [6.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.2) - 2026-10-24
+
+##### Changed
+
+- **Internal only: one spec follows `ViewBase`'s `loading` onto a signal.** `@zambon-dev/framework`
+  backs that flag with a signal now, and a spec here stubs the component with `Object.create`,
+  which runs no field initialiser. Nothing in this package's own API changed.
+
+#### [6.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.1) - 2026-10-24
+
+##### Fixed
+
+- **The peer range on its sibling packages now admits the majors they were released at.** The last
+  release published `@zambon-dev/library` 4.0.0, `@zambon-dev/framework` 5.0.0 and
+  `@zambon-dev/shared` 6.0.0, but the ranges here still asked for the previous majors, so an
+  application installing two of them together got `ERESOLVE`. Nothing else changed.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`OperationsHistoryModalComponent.isModalShown` is a `Signal<boolean>`.** It followed
+  `@zambon-dev/library`'s `ModalComponent.isShown` becoming `isOpen`, and delegates through a
+  signal view query so it answers correctly once that child resolves. Read it as
+  `isModalShown()`. The compiler will not catch a miss here -- reading the signal object itself is
+  valid TypeScript and always truthy -- so grep for `isModalShown` rather than relying on the
+  build.
+
+#### [6.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.0) - 2026-10-24
+
+##### Changed
+
+- **`FiltersBase` no longer declares a change-detection strategy**, for the same reason as the
+  framework's view bases: it was never inherited. Your filter components are unaffected.
+
+##### Fixed
+
+- **The services-history author filter appears when its catalog is supplied.** The template read
+  the endpoint through a getter over a plain `@Input()`, which under Angular 22's default strategy
+  raised NG0100 rather than rendering.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`ServicesHistoryFilterComponent.usersCatalogEndpoint` is a signal input.** Binding it from a
+  template -- `[usersCatalogEndpoint]="endpoint"` -- is unchanged. Assigning it directly on a
+  component instance no longer works; use the binding, or `componentRef.setInput` in a test.
+
+#### [5.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v5.0.2) - 2026-09-30
+
+##### Changed
+
+- `UtcDatePipe.transform()` accepts `Date | string`. An API response holds the timestamp as a
+  string even where the model types it as `Date`; existing calls compile unchanged.
+
+##### Fixed
+
+- **`utcDate` no longer moves a timestamp to the previous day east of Greenwich.** It re-read the
+  UTC wall-clock time with hour arithmetic that kept the time of day but, at any positive UTC
+  offset, landed on the day before: `2026-06-15T14:30` showed as June 14 in Madrid (UTC+2). It
+  never showed on CI, which runs in UTC, nor west of Greenwich, where the arithmetic happens to
+  come out right. The pipe now shifts by the zone's offset.
+
+- **A timestamp that already declares its zone is no longer shifted a second time.** A string
+  ending in `Z` or `±hh:mm` is parsed as the right instant by `Date` itself, so the pipe now
+  returns it as is, and keeps working if an API starts sending the marker.
+
+- **A value that is not a date returns `null`**, the same as an empty one, instead of an invalid
+  `Date` that makes Angular's `date` pipe throw.
+
+#### [5.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v5.0.1) - 2026-09-26
+
+##### Fixed
+
+- **The operations list no longer keeps a service the services list has dropped.** Reloading the
+  services grid clears its selection but left the last chosen service behind, so the panel beside
+  it went on showing that service’s operations -- including after a filter that no longer lists
+  it. The selection is dropped with the reload now.
+
+- **The audit date range no longer depends on the server’s time zone.** The two bounds were sent
+  as instants with a trailing `Z`, and `DateTime.TryParse` reads that as an instant and answers
+  with the _machine’s_ local time for it -- so the same request meant different things on a server
+  in UTC and one in UTC-3, while the stored column is plain UTC either way. They are sent as the
+  UTC wall clock now, with no designator.
+
+- **The peer range on `@zambon-dev/framework` admits 4.x.** 5.0.0 shipped peering `^3.0.0`, hours
+  after framework reached 4.0.0, so installing the two together failed with ERESOLVE. Nothing in
+  this repository could see it -- the workspace resolves siblings from `dist`, so every build,
+  test and Storybook passes with a range no consumer can satisfy. `tools/check-peer-ranges.mjs`
+  now compares each range against the release tags, in PR validation.
+
+#### [5.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v5.0.0) - 2026-09-26
+
+##### Added
+
+- **Refresh and filters on the audit view.** `ServicesHistoryViewComponent` now contributes a
+  ribbon, with a refresh button and `ServicesHistoryFilterComponent`: the action as text
+  (matched with LIKE), the author, a date range, and whether to list only the operations on the
+  record being audited. The backend side is `AuditFilters` in ZWebAPI; the author filter needs a
+  catalog, which belongs to the application, so it appears only when the view's
+  `usersCatalogEndpoint` is supplied — through the route's data or bound directly.
+
+  The two picked dates are widened to whole local days and sent as UTC instants, because the
+  history stores UTC and the backend compares what it is given: sent as picked, "from the 5th to
+  the 5th" is one instant at midnight and matches nothing.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`ServicesHistoryChildListComponent` no longer provides its own `DataGridDataset`.**
+  `ServicesHistoryViewComponent` provides it instead, so that the ribbon's refresh and filter
+  buttons — which resolve the dataset from their own injector — reach the same instance the grid
+  reads. Nothing changes for the view, which is how this component is meant to be used. Rendering
+  the child list anywhere else now needs the dataset provided above it:
+
+  ```ts
+  providers: [{ provide: DataGridDataset, useClass: ServicesHistoryDataset }],
+  ```
+
+#### [4.2.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.2) - 2026-09-26
+
+##### Fixed
+
+- **Component styles are compiled again.** The Tailwind 4 migration left every component's own
+  stylesheet unprocessed in the published bundle, so its `@apply` rules reached the browser as an
+  at-rule the browser does not know and it dropped every rule that used one. In practice the
+  components rendered unstyled in any application installing 4.2.0 or 4.2.1. ng-packagr resolves its
+  PostCSS configuration from the library directory rather than from the workspace root, and the
+  migration added one only at the root. Nothing failed along the way: Storybook compiles from source
+  and never sees the packaged artifact, which is why `tools/check-packaged-styles.mjs` now runs
+  against that artifact in CI and again before every publish.
+
+#### [4.2.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.1) - 2026-09-26
+
+##### Fixed
+
+- **`styles/theme.css` is reachable from an application.** It shipped with the Tailwind 4 release
+  but was missing from the `exports` map, so the one supported way to use it —
+  `@reference '@zambon-dev/shared/styles/theme.css'` in a consumer stylesheet — failed the export
+  check and the build stopped. Found on the first application to migrate.
+
+#### [4.2.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.2.0) - 2026-09-25
+
+##### Changed
+
+- **Tailwind CSS 4.** The stylesheets these packages ship are built with Tailwind 4 now. Nothing
+  about the components changed; the framework underneath them did.
+
+#### [4.1.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.3) - 2026-09-25
+
+##### Fixed
+
+- **The tab panel's drop shadow is no longer sliced off.** The layout's `.content` was
+  `overflow-y-auto`, which made it a clipping box on both axes, and what it clipped was the
+  panel's shadow — 18px of shadow against the 8px it left below. It never needed to scroll:
+  `framework-tabs` is full height and the panel scrolls inside it, measured as
+  `scrollHeight === clientHeight` with the panel in place. Two nested scroll containers where one
+  will do.
+
+#### [4.1.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.2) - 2026-09-25
+
+##### Fixed
+
+- **Icons drawn in CSS survive a FontAwesome major.** Four pseudo-elements set
+  `font-family: 'Font Awesome 6 Free'` literally: the sidebar item's expand/collapse chevron and
+  its external-link marker, and the checked-checkbox tick in `form-input` and in the published
+  `styles/components/input.scss`. FontAwesome 7 renames the family to `Font Awesome 7 Free` and,
+  unlike the FontAwesome 5 names, does not keep a 6 alias — so on an application that had moved to
+  v7 the family stopped resolving and every one of those glyphs rendered as a fallback box.
+
+  They now read `var(--fa-family-classic, 'Font Awesome 6 Free')`. FontAwesome 7 defines that
+  variable; 6 does not, so it takes the fallback. The same stylesheet is correct on both, and on
+  8 as well as long as FontAwesome keeps the variable.
+
+#### [4.1.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.1) - 2026-09-25
+
+##### Fixed
+
+- **The peer ranges on `@zambon-dev/library` and `@zambon-dev/framework` now match the versions
+  this package is built against.** Both still asked for `^2.0.0` after those packages moved to 3.x,
+  so installing the three together at their current releases failed `npm install` with ERESOLVE. An
+  application could only get past it with `--legacy-peer-deps` or an override, both of which switch
+  off the peer checking that would have caught a genuine mismatch.
+
+**Requires Tailwind CSS 4.** An application on 3.x cannot consume this release: `common.scss`
+references a theme in v4 syntax, and the two versions do not understand each other's directives.
+
+Tailwind 4 has no JavaScript config — the theme is CSS custom properties — so the `primary` palette
+that consumers used to declare in their own `tailwind.config.js` now ships here, in
+`@zambon-dev/shared/styles/theme.css`. That file is the Tailwind entry point and the theme in one.
+
+In the application:
+
+1. Install `tailwindcss@^4` and `@tailwindcss/postcss@^4`, and remove `tailwind.config.js`. A
+   `.postcssrc.json` with `{"plugins": {"@tailwindcss/postcss": {}}}` replaces it.
+
+2. Load the theme **before** the shared stylesheet, and load it as CSS rather than through Sass.
+   Sass's `@use` of a plain CSS file drops the `@layer` blocks the theme relies on, silently:
+
+   ```jsonc
+   // angular.json / project.json, styles:
+   "node_modules/@zambon-dev/shared/styles/theme.css",
+   "node_modules/@zambon-dev/shared/styles/common.scss",
+   ```
+
+3. Any stylesheet of your own that uses `@apply` needs to say where its theme comes from:
+   `@reference '@zambon-dev/shared/styles/theme.css';`. In 3.x the PostCSS plugin carried the
+   config to every file; in 4 a file is on its own without this.
+
+4. If you kept a custom palette in `tailwind.config.js`, move it into a `@theme` block. Colours
+   become `--color-<name>-<shade>`.
+
+`theme.css` also restores two v3 defaults that Tailwind 4 dropped, because the components were
+built against them: the default border colour (`gray-200`, not `currentColor`) and the pointer
+cursor on buttons. Both are marked in the file. Taking either away is a visual decision, not a
+cleanup.
+
+**What was verified, and what was not.** `tools/style-snapshot` captures the computed styles of
+every element in all 43 stories and diffs two builds; the migration was driven by that diff rather
+than by reading release notes, and it caught three regressions nothing else reported — 615 elements
+whose borders turned black, 41 buttons that lost their pointer cursor, and a sidebar that rendered
+collapsed because `@screen md` is a v3 directive that 4 leaves as an unknown at-rule for the browser
+to drop.
+
+What remains is 138 differing values in 20 distinct changes, all triaged and none of them obviously
+wrong: `divide-*` moved its border from the top of one element to the bottom of the previous one,
+which is the documented v4 selector change; a handful of rings and shadows compose their transparent
+layers differently; and three elements are 8px shorter. **These want an eye on them before release.**
+Colour values across the board are the same colours in OKLCH, which is what v4's palette is.
+
+#### [4.1.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.1.0) - 2026-09-21
+
+##### Added
+
+- Added the `--tabs-*` design tokens to the published stylesheet, mirroring the set
+  `@zambon-dev/library` gained in 3.1.0. They style `@zambon-dev/framework`'s tab strip —
+  colours, radii, blur, the shadow, the minimum and maximum tab width, and the width of the
+  scroll controls and edge fades — and they sit alongside `--sidebar-*` in the same layer, so
+  the strip can be retuned without touching the component.
+
+  This release shipped them but originally recorded no entry; the note was added afterwards.
+
+#### [4.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.0.1) - 2026-09-21
+
+##### Fixed
+
+- **Host styles now apply.** The services-history view and both history child lists declared their
+  host block as `:host-context {` with no argument, so every rule inside was silently dropped.
+  They are `:host {` now.
+
+#### [4.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v4.0.0) - 2026-09-21
+
+- Maintenance release (no consumer-facing changes were documented).
+
+#### [3.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v3.0.1) - 2026-09-21
+
+##### Changed
+
+- `LoginLayoutComponent`, `HomeComponent`, `BrandComponent` and `EnvironmentBadgeComponent` now
+  use `ChangeDetectionStrategy.OnPush`. Behaviour is unchanged; they render from inputs or from
+  immutable application config.
+
+- **Accessibility.** The operations-history row opens its detail modal from the keyboard as well as
+  the mouse.
+
+#### [3.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v3.0.0) - 2026-09-21
+
+##### Changed
+
+- **Accessibility.** The operations-history row opens its detail modal from the keyboard as well as
+  the mouse.
+
+> **The 2.1.x line is retired.** It carried shared for applications still on Angular 19 while
+> `main` moved to Angular 22, publishing under its own `2.1.x` dist-tag. Its branch is gone; the
+> final state is kept in the `angular-19/shared-2.1.x` tag. Every fix recorded below also shipped
+> in a 5.x release, which requires Angular 22.
+
+#### [2.1.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.4) - 2026-09-30
+
+##### Changed
+
+- `UtcDatePipe.transform()` accepts `Date | string`. An API response holds the timestamp as a
+  string even where the model types it as `Date`; existing calls compile unchanged.
+
+##### Fixed
+
+- **`utcDate` no longer moves a timestamp to the previous day east of Greenwich.** It re-read the
+  UTC wall-clock time with hour arithmetic that kept the time of day but, at any positive UTC
+  offset, landed on the day before: `2026-06-15T14:30` showed as June 14 in Madrid (UTC+2). It
+  never showed on CI, which runs in UTC, nor west of Greenwich, where the arithmetic happens to
+  come out right. The pipe now shifts by the zone's offset.
+
+- **A timestamp that already declares its zone is no longer shifted a second time.** A string
+  ending in `Z` or `±hh:mm` is parsed as the right instant by `Date` itself, so the pipe now
+  returns it as is, and keeps working if an API starts sending the marker.
+
+- **A value that is not a date returns `null`**, the same as an empty one, instead of an invalid
+  `Date` that makes Angular's `date` pipe throw.
+
+#### [2.1.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.3) - 2026-09-21
+
+- Maintenance release (no consumer-facing changes were documented).
+
+#### [2.1.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.2) - 2026-09-20
+
+##### Fixed
+
+- Declared `rxjs` and `@angular/platform-browser` in `peerDependencies`. `DomSanitizer` is used by
+  `ExternalContentComponent` and `BypassHtmlSanitizerPipe`, but neither package was declared.
+- Added a README to the published package.
+
+##### ⚠ Breaking Changes / Migration
+
+**Requires Angular 22.** Every `@angular/*` peer range moved from `^19.1.0` to `^22.0.0`, and
+the package is built and tested against Angular 22.1 with TypeScript 6.0.
+
+Upgrade your application to Angular 22 first — Angular does not support skipping majors, so go
+19 → 20 → 21 → 22 with `ng update`. Angular 22 also requires Node.js 22.22.3 or newer.
+
+**Requires `@zambon-dev/library` 2.x and `@zambon-dev/framework` 2.x.** Both peer ranges moved to
+`^2.0.0`. See the library changelog for the `FormInputComponent` output renames.
+
+#### [2.1.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.1) - 2026-09-15
+
+##### Fixed
+
+- **An embedded destination served over `http` now says why it cannot be shown, instead of
+  rendering an empty frame.** A browser refuses to embed an `http://` frame inside an `https://`
+  page — an iframe is active mixed content, and the block is unconditional. Nothing on the page
+  can permit it: no attribute, no header, and not CSP, which only ever restricts further. The
+  frame was mounted anyway, the browser dropped it silently, and after the timeout the screen
+  offered the “still loading” hint, which pointed at the wrong cause.
+
+  Unlike a site refusing to be framed — which is genuinely unknowable from JavaScript — this one
+  is decidable up front, so `ExternalContentComponent` now compares the page’s protocol with the
+  destination’s and shows a message naming the real reason. **Open in a new browser tab keeps
+  working and is the way out:** a top-level navigation to `http://` is not mixed content. For a
+  destination that only speaks `http`, configure the menu item as _external, new tab_ rather than
+  _external, embedded_; to embed it, put it behind an `https` reverse proxy.
+
+  Two new keys, `ExternalContent-Insecure-Title` and `ExternalContent-Insecure-Message`, ship in
+  `en` and `pt`. An application that overrides this feature’s translations needs to add them.
+
+#### [2.1.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.1.0) - 2026-09-08
+
+##### Added
+
+- **External sidebar destinations are now opened, in either of two modes.** `MainLayoutComponent`
+  subscribes to `@zambon-dev/library`’s new `SidebarService.menuExternalUrlSelected`: an item whose
+  `openMode` is `ExternalNewTab` opens in a new browser tab (`noopener,noreferrer`), and one marked
+  `ExternalEmbedded` opens an application tab that displays the destination in a sandboxed iframe,
+  keeping the user inside the application. Internal routes are untouched.
+
+- **`ExternalUrlResolverService`** — substitutes the runtime placeholders in an external menu URL
+  and vets the result. The placeholder set is closed and case-sensitive: `{email}`, `{language}`,
+  `{userId}`, `{userName}`. Every substituted value is `encodeURIComponent`-ed, so a name containing
+  `&` cannot inject a query parameter — which also means one placeholder must occupy one whole path
+  segment or query-parameter value. A supported placeholder with no value becomes an empty string
+  (with a console warning); an unrecognized `{…}` is left exactly as configured, so a report URL
+  that legitimately contains braces, such as `?filter={"a":1}`, is not corrupted.
+
+  No authentication token is ever substituted, and the set is closed by construction rather than
+  reflected off the stored user info — `AuthenticationService` persists the whole sign-in response
+  under `userInfo`, tokens included, so a reflective implementation would let a URL configured as
+  `?t={token}` hand the JWT to a third party.
+
+  `{language}` and `{userName}` work today. `{userId}` and `{email}` resolve to an empty string
+  until your `Authentication/SignIn` and `Authentication/RefreshToken` responses include `userID`
+  and `email` (see `ICurrentUserInfo` below).
+
+- **`ExternalContentComponent` + `externalContentRoutes`** — the embedded view. Spread the routes
+  into `MainLayoutComponent`’s children:
+
+  ```ts
+  { path: '', component: MainLayoutComponent, canActivate: [AuthGuard], children: [
+    ...externalContentRoutes,
+    // your own features
+  ] }
+  ```
+
+  Register them even if you only plan to use `ExternalNewTab`: an embedded item configured without
+  them opens a tab that immediately bounces to the home route.
+
+  The view is an ordinary `TabViewBase` hosted by `DefaultTabViewComponent`, so its actions appear
+  in the application ribbon (a **Page** group with **Refresh** and **Open in a new browser tab**)
+  and look like every other screen’s — the shipped `externalContentRoutes` already wires that host
+  up, which is the other reason not to hand-write the routes. **Refresh** carries the same icon and
+  label as `framework-button-refresh`, because reloading a report is the same action as refreshing
+  a grid.
+
+  Refreshing genuinely tears the frame down and builds a new one — a cross-origin frame cannot be
+  navigated any other way — so the old render visibly goes away instead of sitting there while you
+  wonder whether anything happened. The button spins and the panel shows a loading overlay until
+  the destination reports `load`, or until the slow-frame delay elapses, so a destination that
+  never reports one cannot leave the controls stuck.
+
+  **Open in a new browser tab** is always available, because many sites refuse to be embedded
+  (`X-Frame-Options`, CSP `frame-ancestors`) and a browser gives JavaScript no reliable way to
+  detect that — if nothing has loaded after a few seconds the view also shows a hint saying so. An
+  `https` application cannot embed an `http` destination at all; the same button is the way out.
+
+  The tab URL is `/external-content/<menu id>` and never carries the destination, so no one can
+  hand-craft a link that makes your application frame an arbitrary site. Pressing F5 on an embedded
+  tab restores both the frame and the tab title from `sessionStorage`. Opening that URL in a _fresh_
+  browser tab can only work if your `SidebarService.getMenuFromUrl()` resolves
+  `/external-content/<id>`; otherwise the view says the content is unavailable and asks the user to
+  reopen it from the menu.
+
+- **`EXTERNAL_CONTENT_CONFIGS`** — `allowedOrigins` (default `[]`, meaning any `http`/`https`
+  origin) and `slowFrameHintDelay` (default 5000 ms). **Populate `allowedOrigins` in production.**
+  Embedded and new-tab destinations are already rejected unless they are absolute `http`/`https`
+  URLs, which stops a `javascript:` or `data:` URL in your menu table from executing in your users’
+  session; an origin allowlist narrows what is left from “any site on the internet” to your known
+  report hosts. The iframe is sandboxed with a fixed, non-configurable token list that withholds
+  `allow-top-navigation`, so a framed site cannot navigate your application away. Do not point an
+  embedded item at your own application’s origin — use an internal route for that.
+
+- **`ICurrentUserInfo.email`, `.userID`, `.username`** (all optional) — the values behind
+  `{email}`, `{userId}` and `{userName}`. `username` was already being persisted in the base64
+  `userInfo` entry and is now simply typed, so `{userName}` needs no backend change; `email` and
+  `userID` must be added to your sign-in and refresh responses.
+
+- **Translations** for the embedded view under `i18n/external-content/`, already included in
+  `ZAMBON_SHARED_I18N_RESOURCES`.
+
+##### Fixed
+
+- **A deep link whose URL the menu API cannot resolve no longer surfaces an unhandled error.**
+  `MainLayoutComponent` resolves a deep-linked tab’s title through `SidebarService.getMenuFromUrl()`
+  and had no error handler, so a 404 became an unhandled rejection in the console. The title is
+  best-effort and the failure is now swallowed — which matters more now that the embedded-content
+  route is a URL shape most menu endpoints do not know.
+
+##### ⚠ Breaking Changes / Migration
+
+- **Requires `@zambon-dev/library` 1.4.0 or later.** `SidebarMenuOpenMode`,
+  `toSidebarMenuOpenMode` and `SidebarService.menuExternalUrlSelected` ship in that release. The
+  declared peer range still allows older versions, so upgrade both packages together.
+- **To use external menu items, register `externalContentRoutes`** as children of
+  `MainLayoutComponent` (snippet above), and make your menu endpoint return `openMode`. The
+  resolver accepts it as the camelCase string (`"internal"`, `"externalNewTab"`,
+  `"externalEmbedded"`, matched case-insensitively) or as the enum ordinal (`0`, `1`, `2`), so a
+  plain ASP.NET Core enum property works with no converter.
+- **The embedded view needs both i18n bundles registered.** Its own strings ship in this package
+  (`ZAMBON_SHARED_I18N_RESOURCES`, under `assets/i18n/zambon-dev/shared/external-content/`), but the
+  ribbon reuses three keys owned by `@zambon-dev/framework` — `RibbonGroup-Page`, `Button-Refresh`
+  and `Loading` — so `ZAMBON_FRAMEWORK_I18N_RESOURCES` has to be registered too, or those render as
+  raw keys. Any application that already uses framework buttons registers it; if your
+  `TranslateLoader` hand-lists prefixes instead of spreading the two constants, add both.
+- Nothing else changes: applications with no `openMode` on any menu item behave exactly as before
+  and need no action.
+
+#### [2.0.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v2.0.0) - 2026-07-30
+
+##### Added
+
+- **Storybook: `Shared/App Showcase` story** — a full-height, navigable demo of the complete
+  application shell, backed by in-memory mock data. Clicking the sidebar entries (Dashboard,
+  General ▸ Customers/Units, Security ▸ Users) opens tabs that render working list-views and
+  detail-views through the real hosts (`DefaultTabViewComponent` /
+  `DefaultDetailsTabViewComponent`, `TabViewList` / `FormView`, and the `framework-button-*`
+  ribbon buttons). It covers:
+
+  - a branded top bar (logo, app name, subtitle, environment badge and a working notifications
+    bell) and a versioned sidebar footer;
+  - a mocked audit/history view, reachable from the detail views' Views button;
+  - `framework-button-filters` (via a `FiltersBase` component per entity) and
+    `framework-button-export` on every list: the mock dataset honours `IListParameters.filters`, so
+    filtering visibly narrows the grid, and exporting downloads a real CSV of the filtered rows;
+  - a **child list of addresses** on the Customers detail view, edited through `lib-multi-editor` —
+    `ChildList` and `MultiEditorModal` together, with the accordion gated on `hasEntityID` (a child
+    collection needs a persisted parent), the Edit button opening the multi-editor rather than
+    entering form edit mode, and add/remove/edit applied as one batch. The Customers grid's City
+    column is **derived** from the customer's first address, so editing an address is reflected in
+    the parent list and its filter with nothing to keep in sync;
+  - mocked request latency, so loading states are observable;
+  - full `en`/`pt` translation, so the language selector switches the entire showcase.
+
+  Development-only: it lives entirely in `app-showcase.stories.ts`, which is excluded from the
+  package build.
+
+##### Fixed
+
+- **Audit history models now match the JSON the audit endpoints actually return.**
+  `IServicesHistoryList` and `IOperationsHistoryList` declared an `ID` property, and
+  `IOperationsHistoryList` declared `entityId`. Neither key is ever sent. The audit endpoints
+  (`POST /{controller}/{entityID}/Audit` and `.../Audit/{serviceHistoryID}`) serialize under
+  ASP.NET Core's default camelCase policy, which lowercases only a _leading_ run of capitals — so the
+  backend's `ID` goes out as `id` and its `EntityID` goes out as `entityID`. Typing a row against
+  `.ID` or `.entityId` therefore compiled fine and read `undefined` at run time. See
+  **⚠ Breaking Changes / Migration** below.
+
+  This was also a latent trap for anything supplying its own audit rows: the grid resolves row
+  identity through `compareProperty`, which is `'id'`, so a row carrying only `ID` could never be
+  selected — clicking a service entry left the operations grid empty. Rows shaped like the real
+  payload work unchanged; `@shared`'s own runtime behaviour is not affected by this release.
+
+- **The top bar's notifications bell is no longer pushed off-centre by its unread badge.** The badge
+  is an absolutely-positioned overlay, so it adds no width — but it is still a DOM sibling after the
+  bell icon, which defeated the `.btn i:not(:last-child)` margin guard in the global button styles.
+  That left 8px of dead space to the icon's right and widened the button from 38px to 46px, but only
+  while an unread count was showing, so it came and went with the count. The margin is now cleared
+  for that button specifically; the shared guard, which is correct for icon-plus-label buttons, is
+  unchanged.
+
+- **Lint: `shared-` component/directive selector prefix is now accepted.**
+  `libs/shared/eslint.config.mjs` still carried the scaffolded `prefix: 'lib'`, so the library's own
+  `shared-`-prefixed components (`shared-main-layout`, `shared-login-layout`) failed
+  `@angular-eslint/component-selector`. Both selector rules now accept `['lib', 'shared']`.
+
+##### ⚠ Breaking Changes / Migration
+
+Two properties on the audit history models were renamed to the keys the backend actually sends. Both
+models are exported from the package root, so anything typed against the old names will now fail to
+compile. Nothing in `@shared` changes behaviour at run time — the fix is to the declared types.
+
+| Model                    | Before              | After               |
+| ------------------------ | ------------------- | ------------------- |
+| `IServicesHistoryList`   | `ID: number`        | `id: number`        |
+| `IOperationsHistoryList` | `ID: number`        | `id: number`        |
+| `IOperationsHistoryList` | `entityId?: number` | `entityID?: number` |
+
+To upgrade:
+
+1. Rename `.ID` to `.id` wherever you read or construct an `IServicesHistoryList` or
+   `IOperationsHistoryList`. If the compiler now reports the property as missing, that code was
+   reading `undefined` before — it never matched the payload.
+2. Rename `.entityId` to `.entityID` on `IOperationsHistoryList`. The capitals are deliberate and
+   match the backend's `EntityID`; do not "correct" them back.
+3. If you supply audit rows yourself — a test double, a Storybook mock, a hand-rolled
+   `ServicesHistoryService` / `OperationsHistoryService` — emit `id`, not `ID`. Rows keyed only on
+   `ID` were never selectable, so a service row's selection could not reach the operations grid.
+4. If you worked around that by overriding `compareProperty` to `'ID'` in a `ServicesHistoryDataset`
+   or `OperationsHistoryDataset` subclass, remove the override. The inherited `'id'` is now correct.
+
+#### [1.2.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v1.2.0) - 2026-07-28
+
+##### Added
+
+- A tokenized app backdrop — `--app-backdrop`, a subtle light-gray gradient — rendered behind the
+  whole layout shell so the sidebar's new translucent "glass" surface (from `@library`) reads against
+  a colored background.
+
+##### Changed
+
+- `MainLayoutComponent` now floats the sidebar in a padded region over the shared `--app-backdrop`
+  gradient (the shell background was a flat gray). This gives the `@library` glass sidebar a colored
+  surface to read against; the content area shares the same subtle backdrop.
+
+##### ⚠ Breaking Changes / Migration
+
+None. The `--app-backdrop` and floating sidebar region are applied automatically by
+`MainLayoutComponent`; no consumer action is required.
+
+#### [1.1.0](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v1.1.0) - 2026-07-24
+
+##### Added
+
+- New application top bar (`shared-top-bar`), rendered by `MainLayoutComponent`, composing the
+  brand (app name, company name, optional logo), an environment badge, notifications, the language
+  selector, and the user profile — alongside the existing sidebar-collapse and logout controls.
+- `NotificationsService` (root-provided) that streams notifications from a **SignalR hub**. It
+  exposes `getNotifications()`, `getUnreadCount()`, `markAsRead()`, `markAllAsRead()`, `start()`,
+  `stop()`, and an `isEnabled` flag. When enabled it connects (authenticated with the current JWT)
+  to `AppConfig.notificationsUrl` and listens for the server's `ReceiveNotifications` push. The top
+  bar drives it — apps do not call it directly.
+- The notifications feature is toggleable and configurable via `AppConfig.notificationsEnabled` and
+  `AppConfig.notificationsUrl`; when disabled (or no URL is set) the bell is not rendered.
+- Notifications show an icon, title, and description, and — when a `callToActionUrl` is present —
+  clicking navigates to it (internal routes via the Angular router, external URLs in a new tab).
+- Individually reusable top-bar components: `BrandComponent`, `EnvironmentBadgeComponent`,
+  `NotificationsComponent`, `UserProfileComponent`, and the composing `TopBarComponent`.
+- `top-bar` i18n bundle (`en`/`pt`) registered in `ZAMBON_SHARED_I18N_RESOURCES`.
+- New peer dependency `@microsoft/signalr` (^10.0.0), used by `NotificationsService`.
+- `LanguageSelectorComponent` gained a `showFlag` input; when `true` the toggle shows the current
+  language's flag on a light-gray button instead of the text label (used by the top bar; the login
+  page keeps the text label).
+- `MainLayoutComponent` projects the application version (`AppConfig.version`) into the sidebar's
+  footer slot, shown at the bottom of the navigation when set.
+
+##### Changed
+
+- `ICurrentUserInfo` gained optional `pictureUrl` and `position` fields, displayed in the top-bar
+  user profile. The avatar falls back to the user's initials when `pictureUrl` is absent, and the
+  position line is hidden when `position` is empty.
+- **`INotification` redefined** to `{ title, description, icon, callToActionUrl?, isRead }` (was
+  `{ id, title, message, read, createdAt }`) to match the SignalR hub contract.
+- The top bar no longer renders a sidebar-collapse button — the sidebar owns its own collapse/expand
+  toggle. The user profile now uses a light, on-palette surface (neutral chip + brand-colored avatar)
+  instead of the previous dark chip.
+- On small screens (< 768px) the top bar hides the brand text (app name + company; the logo remains)
+  and the entire user profile, for a compact layout.
+- `LanguageSelectorComponent` now renders language flags as self-contained inline SVGs (US for `en`,
+  Brazil for `pt`) instead of `/flags/*.png` background images, in both the flag toggle and the
+  dropdown. The selector no longer depends on app-provided flag assets; apps that supplied custom
+  `/flags/*.png` images will no longer see them in the language selector.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`INotification` shape changed** (see above). If you referenced the old fields (`id`, `message`,
+  `read`, `createdAt`), update to `title`, `description`, `icon`, `callToActionUrl`, `isRead`.
+- **Notifications now require `@microsoft/signalr`.** Install it in the consuming app
+  (`npm i @microsoft/signalr`) — it is a peer dependency.
+
+To populate the top bar, provide `appName`, `companyName`, `environment`, and optionally `logoUrl`
+via `AppConfig` options (requires `@zambon-dev/framework` with the new `AppConfig` options). The
+environment badge maps `DEV`/`QA`/`STG` to colors, renders any other non-empty value with a neutral
+style, and is hidden for `PROD` or when no environment is set.
+
+To enable notifications, set `notificationsEnabled: true` and `notificationsUrl` (the SignalR hub
+URL) in `AppConfig`, and implement a hub that pushes the notification list to clients via a
+`ReceiveNotifications` invocation (and optionally handles a `MarkAllAsRead` invoke). See
+`docs/guides/top-bar-configuration.md` for the full consuming-app guide. The user's
+`pictureUrl`/`position` are supplied by the auth response when available.
+
+#### [1.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v1.0.2) - 2026-05-02
+
+- Baseline release: the changelog starts being tracked from this version. Earlier history is
+  available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
+  `shared-v*` tags.

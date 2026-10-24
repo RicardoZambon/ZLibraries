@@ -1,6 +1,6 @@
 # Top Bar Configuration Guide (for consuming applications)
 
-This guide explains how an application that consumes `@zambon-dev/shared` (via `MainLayoutComponent`)
+This guide explains how an application that consumes `@zambon-dev/ui/shared` (via `MainLayoutComponent`)
 adopts the application top bar: brand, environment badge, notifications, language selector, and the
 user profile.
 
@@ -11,12 +11,12 @@ install `@microsoft/signalr` and expose a SignalR hub.
 ## 1. Upgrade packages
 
 ```bash
-npm i @zambon-dev/framework@latest @zambon-dev/shared@latest @zambon-dev/library@latest
+npm i @zambon-dev/ui@latest
 # Required only if you enable notifications (peer dependency):
 npm i @microsoft/signalr
 ```
 
-> The sidebar (`@zambon-dev/library`) no longer renders a logo or a user profile — branding and user
+> The sidebar (`@zambon-dev/ui/library`) no longer renders a logo or a user profile — branding and user
 > identity now live in the top bar. If you relied on the sidebar's `logoCollapsedPath` /
 > `logoExpandedPath` or `SidebarService.getUserProfile()`, move that presentation to the top bar.
 
@@ -26,7 +26,7 @@ Provide `AppConfig` with the new options where you bootstrap the app (usually in
 or a root `providers` array). All options are optional and backward-compatible.
 
 ```ts
-import { APP_CONFIG, AppConfig } from '@zambon-dev/framework';
+import { APP_CONFIG, AppConfig } from '@zambon-dev/ui/framework';
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
