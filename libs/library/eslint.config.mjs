@@ -98,11 +98,11 @@ export default [
     // was configured here before. Kept visible as warnings rather than switched off.
     files: ['**/*.ts'],
     rules: {
-      // Tracked work, not an oversight. docs/guides/reactivity.md explains the contract, and
-      // src/lib/change-detection-contract.spec.ts names the 11 components here that still
-      // declare Eager -- a ratchet that fails if the list grows or goes stale. Switch this to
-      // 'error' and delete this block once that list is empty.
-      '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
+      // An error here now: every component in this package renders without being walked on
+      // every event, and src/lib/change-detection-contract.spec.ts asserts that over the public
+      // API. The one deliberate exception is the harness's own self-test, which declares Eager
+      // to prove it changes nothing, and disables this rule on that line.
+      '@angular-eslint/prefer-on-push-component-change-detection': 'error',
       // The codebase mixes constructor injection and inject(). Converting the
       // remainder is a job for , which needs
       // Node 22+, not a hand edit of base classes their subclasses call super() on.

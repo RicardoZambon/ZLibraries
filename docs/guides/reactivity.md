@@ -132,24 +132,28 @@ Do not "fix" these:
 
 ## Where this stands
 
-Done: all 20 view/button/filter base classes; `SidebarService`, `SidebarComponent`,
-`SidebarItemComponent`, `RibbonGroupComponent`, `RibbonGroupChild`, `BaseButton`,
-`TabsComponent`, `TabService` (via the bridge above), `ServicesHistoryFilterComponent`,
-`ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`, `MultiSelectComponent`
-and `MultiEditorComponent`.
+**`@zambon-dev/library` is done.** Every component in it renders without being walked on every
+event, its `STILL_EAGER` list is empty, and
+`@angular-eslint/prefer-on-push-component-change-detection` is an error there. The services and
+datasets behind them -- `FormService`, `SidebarService`, `DataGridDataset`,
+`MultiSelectResultDataset` -- announce their own changes too.
 
-Remaining: the lists in the three `change-detection-contract.spec.ts` files -- 21 in framework, 6
-in library, 9 in the shared public API, plus `LanguageSelectorComponent` and `LoginComponent`,
-which shared does not export and the contract spec therefore cannot reach.
+Also done, in framework and shared: all 20 view, button and filter base classes, `TabsComponent`,
+`TabService` (via the bridge above), `RibbonGroupChild`, `BaseButton` and
+`ServicesHistoryFilterComponent`.
 
-**Take the datasets next.** Every library component still on the list reads a dataset or a service
-directly from its template -- `resultDataset.displayedRows`, `dataGridDataset.columns`,
-`formService.loading`. Migrating those components first would only move the problem: the component
-would hold signals and still read mutable state that cannot notify it. `MultiSelectResultDataset`,
-`DataGridDataset`, `FormService` and `DataProviderService` come first, and the components that
-read them follow in the same slice.
+Remaining: 21 components in framework and 9 in the shared public API, plus
+`LanguageSelectorComponent` and `LoginComponent`, which shared does not export and the contract
+spec therefore cannot reach. They are named in those two `change-detection-contract.spec.ts`
+files.
 
-A worked example of why: `MultiSelectResultGridComponent` looks safe, because removing an item
-flips a loading flag whose write happens to refresh the view. It is not -- `onItemRemoved` changes
-`displayedRows` with no flag anywhere near it, so the row stays on screen. A loading flag that
-refreshes the view as a side effect hides this class of bug rather than fixing it.
+**The order that worked, and why.** Take a package's services and datasets before the components
+that read them. Doing it the other way round moves the problem: the component holds signals and
+still reads mutable state that cannot notify it. `MultiSelectResultGridComponent` was the worked
+example -- it looked safe because removing an item flipped a loading flag whose write happened to
+refresh the view, while `onItemRemoved` changed the rows with no flag anywhere near it.
+
+**What costs the most time.** Not the components: the specs. The `Object.create(X.prototype)`
+pattern in `libs/framework/CLAUDE.md` runs no field initialiser, so every stubbed field has to
+become a stubbed signal and every assertion has to read it rather than compare the signal object.
+A `!` or a missing `()` there is silent. Budget for it, and retire that pattern where you can.
