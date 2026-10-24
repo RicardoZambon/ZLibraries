@@ -1,9 +1,7 @@
-<button
-  class="theme-switch"
-  type="button"
-  (click)="onClick()"
-  [attr.aria-label]="label() | translate"
+<lib-button
+  intent="ghost"
+  [icon]="icon()"
+  [ariaLabel]="label() | translate"
   [title]="label() | translate"
->
-  <i class="fa-solid" [class]="icon()" aria-hidden="true"></i>
-</button>
+  (click)="onClick()"
+></lib-button>

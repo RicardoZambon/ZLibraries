@@ -22,8 +22,8 @@
     /* The glass goes on a pseudo-element rather than on the bar itself. `backdrop-filter`
        makes its own element a stacking context, and the notifications panel is an absolutely
        positioned z-50 child that has to paint over the tab panel further down the grid --
-       from inside a stacking context it could not. The tab panel does this for the same
-       family of reason. The z-30 here is what lifts the whole bar over the content region.
+       from inside a stacking context it could not. The tab panel does the same thing, for a
+       reason in the same family. The z-30 here is what lifts the bar over the content region.
 
        No bottom border any more: in this language surfaces are separated by elevation, and a
        hairline under a floating card is the thing that made this bar look bolted on. */

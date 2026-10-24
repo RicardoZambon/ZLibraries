@@ -89,7 +89,13 @@ export class ThemeService {
     } catch {
       // Unreadable storage is the same as no stored choice.
     }
-    return 'light';
+
+    // Nothing stored: honour whatever is already on <html> rather than assuming light. That
+    // attribute is what the pre-paint snippet decided, and an application that hardcodes
+    // `data-theme="dark"` and never offers a switch means it -- this used to overwrite both
+    // the moment the first screen containing the switch rendered.
+    const existing = this.document.documentElement.getAttribute(THEME_ATTRIBUTE);
+    return existing === 'dark' || existing === 'light' ? existing : 'light';
   }
 
   private readSystemPrefersDark(): boolean {

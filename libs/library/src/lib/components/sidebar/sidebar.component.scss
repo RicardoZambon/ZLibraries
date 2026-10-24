@@ -72,6 +72,7 @@
     background-color: var(--color-surface-solid);
     color: var(--color-accent);
     --tw-ring-color: var(--color-line);
+    transform: translateX(40%);
 
     &:hover {
       background-color: var(--color-surface-inset);
@@ -82,7 +83,6 @@
       @apply outline-hidden ring-2;
       --tw-ring-color: var(--color-focus-ring);
     }
-    transform: translateX(40%);
 
     i {
       @apply text-sm;
