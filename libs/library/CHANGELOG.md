@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [4.0.1] - 2026-10-24
+
+### Changed
+
 - **`FormService` and the datasets announce their own changes.** A component reading
   `formService.loading`, `formService.model`, `formService.isEditMode`, `formService.isValid`,
   `dataGridDataset.selectedRowKeys`, `resultDataset.displayedRows` or a grid's loading state from
@@ -38,12 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `MultiSelectResultGridComponent`. Their state is signals now, and none of them declares a
   strategy. Four library components are still to go; they are named in
   `change-detection-contract.spec.ts`.
-
-### Deprecated
-
-### Removed
-
-### Fixed
 
 ### ⚠ Breaking Changes / Migration
 
@@ -831,7 +837,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.1...HEAD
+[4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.1
 [4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.0
 [3.2.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.5
 [3.2.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.4
