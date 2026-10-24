@@ -1,5 +1,5 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Component, inject, Injectable, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, Injectable, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ROUTES, Router, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -772,7 +772,6 @@ interface IDashboardCard {
 @Component({
   selector: 'shared-showcase-dashboard',
   imports: [TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <!-- Every screen publishes a ribbon template, even an empty one, so the ribbon bar is
          driven by the view rather than DefaultTabViewComponent's internal fallback. -->
@@ -832,7 +831,6 @@ class DashboardComponent extends TabViewBase {
 @Component({
   selector: 'shared-showcase-users-filter',
   imports: [ButtonFiltersComponent, FormGroupComponent, FormInputGroupComponent, ReactiveFormsModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <framework-button-filters modalSize="xl" modalTitle="Showcase-Users-Filters-Title" [formGroup]="filterForm">
       <lib-form-group>
@@ -859,7 +857,6 @@ class ShowcaseUsersFilterComponent extends FiltersBase {
 @Component({
   selector: 'shared-showcase-customers-filter',
   imports: [ButtonFiltersComponent, FormGroupComponent, FormInputGroupComponent, ReactiveFormsModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <framework-button-filters modalSize="xl" modalTitle="Showcase-Customers-Filters-Title" [formGroup]="filterForm">
       <lib-form-group>
@@ -886,7 +883,6 @@ class ShowcaseCustomersFilterComponent extends FiltersBase {
 @Component({
   selector: 'shared-showcase-units-filter',
   imports: [ButtonFiltersComponent, FormGroupComponent, FormInputGroupComponent, ReactiveFormsModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <framework-button-filters modalSize="xl" modalTitle="Showcase-Units-Filters-Title" [formGroup]="filterForm">
       <lib-form-group>
@@ -928,7 +924,6 @@ class ShowcaseUnitsFilterComponent extends FiltersBase {
     TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: UsersDataset }],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
@@ -969,7 +964,6 @@ class UsersListComponent extends TabViewList<IUsersList> {
     TranslatePipe,
   ],
   providers: [{ provide: FormService }],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
@@ -1043,7 +1037,6 @@ class UsersFormComponent extends FormView<IUsersDisplay> {
     TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: CustomersDataset }],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
@@ -1080,7 +1073,6 @@ class CustomersListComponent extends TabViewList<ICustomersList> {
     { provide: FormService },
     { provide: MultiEditorDataset, useClass: CustomerAddressesMultiEditorDataset },
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <lib-multi-editor
       size="5xl"
@@ -1149,7 +1141,6 @@ class CustomerAddressesMultiEditorModalComponent extends MultiEditorModal<ICusto
     <shared-showcase-customer-addresses-multi-editor #multiEditor (savedChanges)="onSavedChanges()">
     </shared-showcase-customer-addresses-multi-editor>
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [':host { grid-column: 1 / -1; }'],
 })
 class CustomerAddressesChildListComponent extends ChildList<ICustomersDisplay> {
@@ -1176,7 +1167,6 @@ class CustomerAddressesChildListComponent extends ChildList<ICustomersDisplay> {
     TranslatePipe,
   ],
   providers: [{ provide: FormService }],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-Entity' | translate">
@@ -1246,7 +1236,6 @@ class CustomersFormComponent extends FormView<ICustomersDisplay> {
     TranslatePipe,
   ],
   providers: [{ provide: DataGridDataset, useClass: UnitsDataset }],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template #ribbon>
       <lib-ribbon-group [label]="'RibbonGroup-General' | translate">
@@ -1363,7 +1352,6 @@ const authenticationServiceMock: Pick<AuthenticationService, 'getUserInfo' | 'is
 @Component({
   selector: 'shared-showcase-root',
   imports: [RouterModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<router-outlet></router-outlet>`,
 })
 class ShowcaseRootComponent implements OnInit {

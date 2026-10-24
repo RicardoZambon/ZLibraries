@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Every component in this package now renders under any change-detection strategy the host
+  application chooses, zoneless included.** This was the last package. The state each one shows
+  is signals: the embedded-content screen, which decides everything after its menu lookup
+  answers; the notifications panel and the language list, both closed from a window click that
+  is no binding of theirs; the user profile, filled on init; the login form's error, spinner and
+  success state; and the audit screens' selected service and operation.
+
 ### Deprecated
 
 ### Removed
@@ -22,6 +29,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+- **The state these components expose is signals.** Binding to an input from a template is
+  unchanged. Code that reads one needs `()`:
+
+  | Component                             | Members                                                                                                           |
+  | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+  | `ServicesHistoryViewComponent`        | `controllerName`, `entityID`, `usersCatalogEndpoint` -- `model()`, so setting one still works through `.set(...)` |
+  | `ServicesHistoryChildListComponent`   | `selectedServiceID`                                                                                               |
+  | `OperationsHistoryChildListComponent` | `selectedNewValues`, `selectedOldValues`                                                                          |
+  | `OperationsHistoryModalComponent`     | `newValues`, `oldValues`                                                                                          |
+  | `NotificationsComponent`              | `dropdown`                                                                                                        |
+  | `LanguageSelectorComponent`           | `dropdown`, `showFlag`, `title`                                                                                   |
+  | `LoginComponent`                      | `username`                                                                                                        |
+
+  A template reading one through a reference -- `#list` then `list.selectedServiceID` -- needs
+  the call; without it the signal object itself is read, and an object is always truthy.
+
+- **`ServicesHistoryViewComponent.controllerName` is no longer a required input.** It is a
+  `model()` defaulting to `''`, because the component also fills it from the route's
+  `controllerName` data -- where nothing binds it and `required` never applied. Routed usage is
+  unchanged; a template that binds it is unchanged; a template that forgot to is no longer a
+  compile error, so check yours.
+
+- **`TopBarComponent.logout` and `ServicesHistoryChildListComponent.filtersChanged` are
+  `output()` rather than `EventEmitter`.** Binding to them is unchanged; calling `.emit()` on
+  one from outside the component no longer compiles, which was never supported anyway.
 
 ## [6.0.2] - 2026-10-24
 

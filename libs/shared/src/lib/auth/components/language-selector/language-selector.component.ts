@@ -1,33 +1,59 @@
-import { Component, ElementRef, HostListener, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  InputSignal,
+  signal,
+  Signal,
+  viewChild,
+  WritableSignal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { LangChangeEvent, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'shared-language-selector',
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TranslatePipe],
 })
 export class LanguageSelectorComponent {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild('dropdown') public dropdown!: ElementRef<HTMLDivElement>;
+  public readonly dropdown: Signal<ElementRef<HTMLDivElement> | undefined> =
+    viewChild<ElementRef<HTMLDivElement>>('dropdown');
 
   /** When true, the toggle shows the current language's flag (light-gray button) instead of text. */
-  @Input() public showFlag = false;
+  public readonly showFlag: InputSignal<boolean> = input(false);
 
-  @Input() public title = 'LanguageSelector-Title';
+  public readonly title: InputSignal<string> = input('LanguageSelector-Title');
   //#endregion
 
   //#region Variables
   private translate: TranslateService = inject(TranslateService);
 
   protected languages: string[] = this.translate.getLangs();
-  protected showDropdown = false;
+
+  // A signal rather than a field: the list is also closed from a window click handler, which
+  // is not a binding on this view and so marks nothing.
+  protected readonly showDropdown: WritableSignal<boolean> = signal(false);
+
+  /**
+   * `TranslateService.currentLang` is a plain field. The flag on the toggle and the tick beside
+   * the chosen entry are read from it, and switching language changed neither until something
+   * else happened to refresh this view. Mirrored from the service's own event instead.
+   */
+  private readonly currentLang: Signal<string> = toSignal(
+    this.translate.onLangChange.pipe(map((event: LangChangeEvent) => event.lang)),
+    { initialValue: this.translate.currentLang },
+  );
   //#endregion
 
   //#region Properties
   public get selectedLanguage(): string {
-    return this.translate.currentLang;
+    return this.currentLang();
   }
   //#endregion
 
@@ -36,13 +62,13 @@ export class LanguageSelectorComponent {
 
   //#region Event handlers
   public onDropdownClick(): void {
-    this.showDropdown = !this.showDropdown;
+    this.showDropdown.update((isShown: boolean) => !isShown);
   }
 
   public onSelectLanguage(language: string): void {
     localStorage.setItem('language', language);
     this.translate.use(language);
-    this.showDropdown = false;
+    this.showDropdown.set(false);
   }
   //#endregion
 
@@ -52,15 +78,15 @@ export class LanguageSelectorComponent {
   //#region Private methods
   @HostListener('window:click', ['$event'])
   protected documentClick(event: MouseEvent): void {
-    if (this.showDropdown) {
+    if (this.showDropdown()) {
       let target: HTMLElement = <HTMLElement>event.target;
       while (target !== null && target.tagName?.toUpperCase() !== 'BODY') {
-        if (target === this.dropdown.nativeElement) {
+        if (target === this.dropdown()?.nativeElement) {
           return;
         }
         target = <HTMLElement>target.parentElement;
       }
-      this.showDropdown = false;
+      this.showDropdown.set(false);
     }
   }
   //#endregion

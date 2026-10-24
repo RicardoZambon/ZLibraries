@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, Input, signal, Signal, TemplateRef, viewChild, WritableSignal } from '@angular/core';
 import { ChildList } from '@zambon-dev/framework';
 import { DataGridComponent, DataGridDataset } from '@zambon-dev/library';
 import { OperationsHistoryDataset } from '../../../datasets';
@@ -10,13 +10,15 @@ import { OperationsHistoryModalComponent } from '../operations-history-modal/ope
   templateUrl: './operations-history-child-list.component.html',
   styleUrls: ['./operations-history-child-list.component.scss'],
   imports: [DataGridComponent, OperationsHistoryModalComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: DataGridDataset, useClass: OperationsHistoryDataset }],
 })
 export class OperationsHistoryChildListComponent extends ChildList<any> implements AfterViewInit {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(OperationsHistoryModalComponent) private modal!: OperationsHistoryModalComponent;
-  @ViewChild('operationTemplate') private operationTemplate!: TemplateRef<any>;
+  private readonly modal: Signal<OperationsHistoryModalComponent | undefined> = viewChild(
+    OperationsHistoryModalComponent,
+  );
+  private readonly operationTemplate: Signal<TemplateRef<any> | undefined> =
+    viewChild<TemplateRef<any>>('operationTemplate');
 
   @Input() public set controllerName(value: string) {
     (<OperationsHistoryDataset>this.dataGridDataset).controllerName = value;
@@ -42,8 +44,10 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
   //#endregion
 
   //#region Variables
-  public selectedNewValues: any | null = null;
-  public selectedOldValues: any | null = null;
+  // Signals: both are bound into the modal and are filled when a row is picked, which the grid
+  // reports through a callback rather than a binding on this view.
+  public readonly selectedNewValues: WritableSignal<any | null> = signal(null);
+  public readonly selectedOldValues: WritableSignal<any | null> = signal(null);
   //#endregion
 
   //#region Properties
@@ -51,14 +55,15 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
 
   //#region Constructor and Angular life cycle methods
   public ngAfterViewInit(): void {
-    this.dataGridDataset.columns[0].template = this.operationTemplate;
+    this.dataGridDataset.columns[0].template = this.operationTemplate();
   }
   //#endregion
 
   //#region Event handlers
   public openModal(): void {
-    if (!this.modal.isModalShown()) {
-      this.modal.toggle();
+    const modal: OperationsHistoryModalComponent | undefined = this.modal();
+    if (modal && !modal.isModalShown()) {
+      modal.toggle();
     }
   }
   //#endregion
@@ -71,8 +76,8 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
       const key: string = this.dataGridDataset.selectedRowKeys[0];
 
       const data: IOperationsHistoryList = this.dataGridDataset.getRowData(key);
-      this.selectedOldValues = JSON.parse(data.oldValues?.trim() ?? '');
-      this.selectedNewValues = JSON.parse(data.newValues?.trim() ?? '');
+      this.selectedOldValues.set(JSON.parse(data.oldValues?.trim() ?? ''));
+      this.selectedNewValues.set(JSON.parse(data.newValues?.trim() ?? ''));
     }
   }
   //#endregion

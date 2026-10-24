@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, Signal, viewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { APP_CONFIG, ITab, Tab, TabsComponent, TabService } from '@zambon-dev/framework';
 import {
@@ -19,12 +19,11 @@ import { TopBarComponent } from '../top-bar';
   selector: 'shared-main-layout',
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ModalComponent, RouterModule, SidebarComponent, TabsComponent, TopBarComponent, TranslatePipe],
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild('logoutModal') private logoutModal!: ModalComponent;
+  private readonly logoutModal: Signal<ModalComponent | undefined> = viewChild<ModalComponent>('logoutModal');
   //#endregion
 
   //#region Variables
@@ -89,7 +88,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   //#region Public methods
   public onLogoutClick(): void {
-    this.logoutModal.toggleModal();
+    this.logoutModal()?.toggleModal();
   }
 
   public onLogoutConfirm(): void {

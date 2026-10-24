@@ -1,5 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ElementRef, HostListener, inject, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  OnInit,
+  signal,
+  Signal,
+  viewChild,
+  WritableSignal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -10,12 +20,12 @@ import { NotificationsService } from '../../../services';
   selector: 'shared-notifications',
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [AsyncPipe, TranslatePipe],
 })
 export class NotificationsComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild('dropdown') public dropdown!: ElementRef<HTMLDivElement>;
+  public readonly dropdown: Signal<ElementRef<HTMLDivElement> | undefined> =
+    viewChild<ElementRef<HTMLDivElement>>('dropdown');
   //#endregion
 
   //#region Variables
@@ -23,7 +33,9 @@ export class NotificationsComponent implements OnInit {
   private router: Router = inject(Router);
 
   protected notifications$: Observable<INotification[]> = this.notificationsService.getNotifications();
-  protected showDropdown = false;
+  // A signal rather than a field: the panel is also closed from a window click handler, which
+  // is not a binding on this view and so marks nothing.
+  protected readonly showDropdown: WritableSignal<boolean> = signal(false);
   protected unreadCount$: Observable<number> = this.notificationsService.getUnreadCount();
   //#endregion
 
@@ -42,7 +54,7 @@ export class NotificationsComponent implements OnInit {
 
   //#region Event handlers
   public onDropdownClick(): void {
-    this.showDropdown = !this.showDropdown;
+    this.showDropdown.update((isShown: boolean) => !isShown);
   }
 
   public onMarkAllAsRead(): void {
@@ -51,7 +63,7 @@ export class NotificationsComponent implements OnInit {
 
   public onNotificationClick(notification: INotification): void {
     this.notificationsService.markAsRead(notification);
-    this.showDropdown = false;
+    this.showDropdown.set(false);
 
     const url: string | undefined = notification.callToActionUrl;
     if (!url) {
@@ -69,15 +81,15 @@ export class NotificationsComponent implements OnInit {
   //#region Private methods
   @HostListener('window:click', ['$event'])
   protected documentClick(event: MouseEvent): void {
-    if (this.showDropdown) {
+    if (this.showDropdown()) {
       let target: HTMLElement = <HTMLElement>event.target;
       while (target !== null && target.tagName?.toUpperCase() !== 'BODY') {
-        if (target === this.dropdown.nativeElement) {
+        if (target === this.dropdown()?.nativeElement) {
           return;
         }
         target = <HTMLElement>target.parentElement;
       }
-      this.showDropdown = false;
+      this.showDropdown.set(false);
     }
   }
   //#endregion
