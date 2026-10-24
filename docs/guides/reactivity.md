@@ -12,10 +12,11 @@
 > compiles to `OnPush` -- though a few still carry a redundant explicit `OnPush`, which changes
 > nothing. None calls `ChangeDetectorRef`.
 >
-> `NgZone` survives in two components, `TabsComponent` and `DataGridComponent`, purely to keep
-> scroll and resize listeners out of change detection. Under zoneless that call is a silent
-> no-op and the listeners run normally, which nothing depends on -- but a component that needed
-> it to be correct would be broken, so never write one.
+> `NgZone` survives in two components and three call sites -- `TabsComponent` once,
+> `DataGridComponent` twice -- purely to keep scroll and resize listeners out of change
+> detection. Under zoneless that call is a silent no-op and the listeners run normally, which
+> nothing depends on -- but a component that needed it to be correct would be broken, so never
+> write one.
 >
 > **What this guarantees a consumer:** a component from these packages renders correctly under any
 > change-detection strategy the host application uses, and under `provideZonelessChangeDetection()`.
@@ -151,10 +152,12 @@ and `DataProviderService`'s entity id went onto signals behind their existing ac
 what made the buttons' own templates correct without changing a single call site.
 
 **`@zambon-dev/shared` is done, and with it the migration.** All three `STILL_EAGER` lists are
-empty, all three lint rules are errors, and nothing in these packages declares a
-change-detection strategy any more -- not a component, not a base class, not a test host, not a
-story. A consuming application chooses its own strategy, zoneless included, and these packages
-render correctly underneath it.
+empty and all three lint rules are errors. Nothing declares `Eager` -- not a component, not a
+base class, not a test host, not a story -- with one deliberate exception: the harness's own
+self-test, which declares it to prove it changes nothing and disables the rule on that line.
+A few components still carry a redundant explicit `OnPush`, which is what Angular 22 would have
+given them anyway. A consuming application chooses its own strategy, zoneless included, and
+these packages render correctly underneath it.
 
 Two components here are not exported, so the contract spec cannot reach them:
 `LanguageSelectorComponent` and `LoginComponent`. The lint rule is what covers those.
