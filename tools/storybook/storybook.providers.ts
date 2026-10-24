@@ -15,6 +15,20 @@ import {
 import { AuthenticationService } from '@zambon-dev/ui/shared';
 import { provideTranslateService, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
+import frameworkEn from '../../libs/ui/src/i18n/framework/en.json';
+import frameworkPt from '../../libs/ui/src/i18n/framework/pt.json';
+import sharedExternalContentEn from '../../libs/ui/src/i18n/shared/external-content/en.json';
+import sharedExternalContentPt from '../../libs/ui/src/i18n/shared/external-content/pt.json';
+import sharedLanguageSelectorEn from '../../libs/ui/src/i18n/shared/language-selector/en.json';
+import sharedLanguageSelectorPt from '../../libs/ui/src/i18n/shared/language-selector/pt.json';
+import sharedLoginEn from '../../libs/ui/src/i18n/shared/login/en.json';
+import sharedLoginPt from '../../libs/ui/src/i18n/shared/login/pt.json';
+import sharedOperationsHistoryEn from '../../libs/ui/src/i18n/shared/operations-history/en.json';
+import sharedOperationsHistoryPt from '../../libs/ui/src/i18n/shared/operations-history/pt.json';
+import sharedServicesHistoryEn from '../../libs/ui/src/i18n/shared/services-history/en.json';
+import sharedServicesHistoryPt from '../../libs/ui/src/i18n/shared/services-history/pt.json';
+import sharedTopBarEn from '../../libs/ui/src/i18n/shared/top-bar/en.json';
+import sharedTopBarPt from '../../libs/ui/src/i18n/shared/top-bar/pt.json';
 
 // Real translations for the keys used across the stories, so the `translate` pipe resolves
 // keys to text instead of echoing the key. Keys not listed here fall back to the key itself.
@@ -323,9 +337,37 @@ const storybookTranslations: Record<string, Record<string, string>> = {
   },
 };
 
+/*
+ * The packages' own translation files, imported from source so they cannot drift from what
+ * ships, and merged over the map above so they win wherever both define a key. Before this the
+ * loader knew only the hand-written copy, which is why the sign-in screen rendered raw keys --
+ * its namespace had never been copied in. Entries above that repeat a shipped key are now
+ * redundant rather than wrong; a new namespace needs an import and a line in the lists below.
+ */
+const packageTranslations: Record<string, Array<Record<string, string>>> = {
+  en: [
+    frameworkEn,
+    sharedExternalContentEn,
+    sharedLanguageSelectorEn,
+    sharedLoginEn,
+    sharedOperationsHistoryEn,
+    sharedServicesHistoryEn,
+    sharedTopBarEn,
+  ],
+  pt: [
+    frameworkPt,
+    sharedExternalContentPt,
+    sharedLanguageSelectorPt,
+    sharedLoginPt,
+    sharedOperationsHistoryPt,
+    sharedServicesHistoryPt,
+    sharedTopBarPt,
+  ],
+};
+
 class StorybookTranslateLoader implements TranslateLoader {
   public getTranslation(lang: string): Observable<Record<string, string>> {
-    return of(storybookTranslations[lang] ?? {});
+    return of(Object.assign({}, storybookTranslations[lang] ?? {}, ...(packageTranslations[lang] ?? [])));
   }
 }
 

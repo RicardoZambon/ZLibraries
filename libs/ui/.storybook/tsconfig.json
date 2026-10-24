@@ -2,11 +2,13 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
     "moduleResolution": "bundler",
     "ignoreDeprecations": "6.0"
   },
   "exclude": ["../**/*.spec.ts"],
   "include": [
+    "../src/i18n/**/*.json",
     "../src/**/*.stories.ts",
     "../src/**/*.stories.js",
     "../src/**/*.stories.jsx",
