@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal } from '@angular/core';
 
 /** What the button is for, which is what decides how loud it looks. */
 export type ButtonIntent = 'primary' | 'secondary' | 'danger' | 'ghost';
@@ -29,33 +29,31 @@ export type ButtonIntent = 'primary' | 'secondary' | 'danger' | 'ghost';
 export class ButtonComponent {
   //#region Inputs
   /** What the button is for. Governs fill and text colour. */
-  @Input() public intent: ButtonIntent = 'secondary';
+  public readonly intent: InputSignal<ButtonIntent> = input<ButtonIntent>('secondary');
 
   /** Native button type. `submit` works because the rendered button is inside the host's form. */
-  @Input() public type: 'button' | 'submit' | 'reset' = 'button';
+  public readonly type: InputSignal<'button' | 'submit' | 'reset'> = input<'button' | 'submit' | 'reset'>('button');
 
-  @Input() public disabled = false;
+  public readonly disabled: InputSignal<boolean> = input(false);
 
   /** Shows a spinner, announces `aria-busy` and blocks activation -- by the keyboard too. */
-  @Input() public loading = false;
+  public readonly loading: InputSignal<boolean> = input(false);
 
   /** Transient confirmation. Blocks activation so the action cannot be fired twice. */
-  @Input() public success = false;
+  public readonly success: InputSignal<boolean> = input(false);
 
   /** Transient failure. Leaves the button usable so the action can be retried. */
-  @Input() public error = false;
+  public readonly error: InputSignal<boolean> = input(false);
 
   /** Font Awesome classes for a leading icon, e.g. `fa-solid fa-floppy-disk`. */
-  @Input() public icon?: string;
+  public readonly icon: InputSignal<string | undefined> = input<string>();
 
   /** Required when the button has an icon and no text. */
-  @Input() public ariaLabel?: string;
+  public readonly ariaLabel: InputSignal<string | undefined> = input<string>();
   //#endregion
 
   //#region Properties
   /** Loading and success both stand for "this action is settled"; error is retryable. */
-  protected get isBlocked(): boolean {
-    return this.disabled || this.loading || this.success;
-  }
+  protected readonly isBlocked: Signal<boolean> = computed(() => this.disabled() || this.loading() || this.success());
   //#endregion
 }
