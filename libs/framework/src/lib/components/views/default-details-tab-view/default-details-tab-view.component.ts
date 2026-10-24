@@ -1,14 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import {
-  ChangeDetectorRef,
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterModule } from '@angular/router';
 import {
   DataProviderService,
@@ -89,12 +81,6 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor() {
-    const changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
-    const tabViewService: TabViewService = inject(TabViewService);
-    super(changeDetectorRef, tabViewService);
-  }
-
   public override ngOnInit(): void {
     super.ngOnInit();
 
@@ -138,12 +124,12 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
         this.hasLoadError = true;
 
         if (error.status === 404) {
-          this.errorModal.title = 'Modal-NotFound-Title';
-          this.errorModal.subtitle = '';
+          this.errorModal.title.set('Modal-NotFound-Title');
+          this.errorModal.subtitle.set('');
           this.errorModal.showModal('Modal-NotFound-Message');
         } else {
-          this.errorModal.title = 'Modal-Failed-Title';
-          this.errorModal.subtitle = 'Modal-Failed-Administrator';
+          this.errorModal.title.set('Modal-Failed-Title');
+          this.errorModal.subtitle.set('Modal-Failed-Administrator');
           this.errorModal.showModal(error);
         }
       });

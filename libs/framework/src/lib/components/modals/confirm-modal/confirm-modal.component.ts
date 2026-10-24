@@ -1,8 +1,8 @@
 import { NgClass } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, Input, Signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, InputSignal, model, ModelSignal, Signal, viewChild } from '@angular/core';
 import { ControlContainer, FormGroup } from '@angular/forms';
-import { FormService, IModal, ModalComponent } from '@zambon-dev/library';
+import { FormService, IModal, ModalComponent, ModalSize } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BackendFormValidationHelper } from '../../../helpers';
 
@@ -10,25 +10,26 @@ import { BackendFormValidationHelper } from '../../../helpers';
   selector: 'framework-confirm-modal',
   templateUrl: './confirm-modal.component.html',
   styleUrls: ['./confirm-modal.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ModalComponent, NgClass, TranslatePipe],
 })
 export class ConfirmModalComponent implements IModal {
   //#region ViewChilds, Inputs, Outputs
   private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
-  @Input() public errorMessage = '';
-  @Input() public message = '';
-  @Input() public messageIcon = 'fa-regular fa-circle-question';
-  @Input() public messageIconColor = 'text-cyan-500';
-  @Input() public showMessageIcon = true;
-  @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' =
-    'xl';
-  @Input() public title!: string;
+  // Models rather than inputs: this component writes both while confirming, from callbacks a
+  // parent owns. As plain fields they landed with nothing marking this view dirty.
+  public readonly errorMessage: ModelSignal<string> = model('');
+  public readonly isLoading: ModelSignal<boolean> = model(false);
+
+  public readonly message: InputSignal<string> = input('');
+  public readonly messageIcon: InputSignal<string> = input('fa-regular fa-circle-question');
+  public readonly messageIconColor: InputSignal<string> = input('text-cyan-500');
+  public readonly showMessageIcon: InputSignal<boolean> = input(true);
+  public readonly size: InputSignal<ModalSize> = input<ModalSize>('xl');
+  public readonly title: InputSignal<string> = input('');
   //#endregion
 
   //#region Variables
-  public isLoading = false;
 
   protected formService: FormService | undefined = inject(FormService, { optional: true }) ?? undefined;
   //#endregion
@@ -42,11 +43,11 @@ export class ConfirmModalComponent implements IModal {
   public readonly isOpen: Signal<boolean> = computed(() => this.modal()?.isOpen() ?? false);
 
   protected get hasErrorMessage(): boolean {
-    return !!this.errorMessage && this.errorMessage.length > 0;
+    return !!this.errorMessage() && this.errorMessage().length > 0;
   }
 
   protected get hasMessage(): boolean {
-    return !!this.message && this.message.length > 0;
+    return !!this.message() && this.message().length > 0;
   }
 
   private controlContainer: ControlContainer | null = inject(ControlContainer, { optional: true });
@@ -65,11 +66,11 @@ export class ConfirmModalComponent implements IModal {
   //#region Public methods
   public beginLoading(): void {
     this.clearErrorMessage();
-    this.isLoading = true;
+    this.isLoading.set(true);
   }
 
   public clearErrorMessage(): void {
-    this.errorMessage = '';
+    this.errorMessage.set('');
   }
 
   public closeModal(): void {
@@ -77,7 +78,7 @@ export class ConfirmModalComponent implements IModal {
   }
 
   public finishLoading(closeModal?: boolean): void {
-    this.isLoading = false;
+    this.isLoading.set(false);
 
     if (this.formGroup && this.formGroup.disabled) {
       this.formGroup.enable();
@@ -95,9 +96,9 @@ export class ConfirmModalComponent implements IModal {
       BackendFormValidationHelper.validateAllFormFields(httpErrorResponse, this.formGroup);
     } else {
       if (typeof httpErrorResponse.error === 'string') {
-        this.errorMessage = httpErrorResponse.error;
+        this.errorMessage.set(httpErrorResponse.error);
       } else {
-        this.errorMessage = 'Modal-Failed-DefaultMessage';
+        this.errorMessage.set('Modal-Failed-DefaultMessage');
       }
     }
   }

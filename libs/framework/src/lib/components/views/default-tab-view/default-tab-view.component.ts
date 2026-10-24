@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { RibbonComponent } from '@zambon-dev/library';
 import { Subject, takeUntil } from 'rxjs';
@@ -10,7 +10,6 @@ import { TabViewService } from '../../../services';
   templateUrl: './default-tab-view.component.html',
   styleUrls: ['./default-tab-view.component.scss'],
   imports: [NgTemplateOutlet, RibbonComponent, RouterModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: TabViewService }],
 })
 export class DefaultTabViewComponent implements OnDestroy, OnInit {
@@ -19,7 +18,7 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
 
   //#region Variables
   protected destroy$: Subject<boolean> = new Subject<boolean>();
-  protected ribbonTemplate?: TemplateRef<any>;
+  protected readonly ribbonTemplate: WritableSignal<TemplateRef<any> | undefined> = signal(undefined);
 
   private hasNamedAView = false;
   private ribbonViewTemplate: { [viewId: string]: TemplateRef<any> | undefined } = {};
@@ -29,10 +28,7 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor(
-    protected changeDetectorRef: ChangeDetectorRef,
-    protected tabViewService: TabViewService,
-  ) {}
+  protected tabViewService: TabViewService = inject(TabViewService);
 
   public ngOnDestroy(): void {
     this.destroy$.next(true);
@@ -96,23 +92,17 @@ export class DefaultTabViewComponent implements OnDestroy, OnInit {
     delete this.ribbonViewTemplate[''];
   }
 
+  /**
+   * One signal write, where there used to be a detectChanges()/markForCheck() pair.
+   *
+   * Those existed to render a real template at once while deferring a clear, so switching views
+   * did not tear an already rendered ribbon down for a frame before the incoming view pushed its
+   * own. A signal gets both for free: writes coalesce into the next pass, so a clear followed by
+   * a set moments later is one render, not two. The NG0100 hazard goes with it -- a signal write
+   * after the outlet has been checked schedules another pass instead of throwing.
+   */
   private updateRibbonTemplate(template: TemplateRef<any> | undefined): void {
-    this.ribbonTemplate = template;
-
-    if (template) {
-      // Real template from a child view — render immediately so buttons appear
-      // without waiting for the next change detection cycle (user interaction).
-      this.changeDetectorRef.detectChanges();
-    } else {
-      // No template for this view — defer clearing the ribbon to avoid tearing down
-      // an already rendered one for a frame while switching views (the incoming view
-      // pushes its real template moments later in the same initialization cycle).
-      //
-      // Never assign the ribbon template from a lifecycle hook that runs after the first
-      // change detection pass (e.g. ngAfterViewInit): the outlet below has already been
-      // checked by then, so mutating it there trips NG0100 in dev mode.
-      this.changeDetectorRef.markForCheck();
-    }
+    this.ribbonTemplate.set(template);
   }
   //#endregion
 }

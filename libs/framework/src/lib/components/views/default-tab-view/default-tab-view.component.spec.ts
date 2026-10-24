@@ -113,21 +113,27 @@ describe(DefaultTabViewComponent.name, () => {
     expect(ribbon.textContent?.trim()).toBe('');
   });
 
-  it('should render a ribbon template published by a view immediately', () => {
+  it('renders a ribbon a view publishes, without the consumer forcing a pass', async () => {
     const fixture: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
 
     const tabView = fixture.debugElement.query(By.directive(DefaultTabViewComponent));
     const tabViewService: TabViewService = tabView.injector.get(TabViewService);
 
-    // No further fixture.detectChanges() — the ribbon must be rendered by the time the call
-    // returns, so buttons appear without waiting for the next change detection cycle.
+    // Nothing here marks the view dirty by hand: the signal write is the whole notification.
     tabViewService.updateRibbonTemplate(fixture.componentInstance.ribbonTemplate);
+    await fixture.whenStable();
 
     expect(tabView.nativeElement.querySelector('.ribbon-button')).toBeTruthy();
   });
 
-  it('should keep the rendered ribbon until the next change detection when a view publishes no ribbon', () => {
+  /**
+   * Switching views clears the ribbon and the incoming view publishes its own moments later, in
+   * the same turn. This used to need a deferred clear so the strip was not torn down for a frame
+   * in between. Signal writes coalesce into one pass, so the property to assert is the one the
+   * user sees: the ribbon never goes away.
+   */
+  it('does not tear the ribbon down when a view switch clears and republishes in the same turn', async () => {
     const fixture: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
 
@@ -135,13 +141,28 @@ describe(DefaultTabViewComponent.name, () => {
     const tabViewService: TabViewService = tabView.injector.get(TabViewService);
 
     tabViewService.updateRibbonTemplate(fixture.componentInstance.ribbonTemplate);
-    tabViewService.updateRibbonTemplate(undefined);
-
-    // Clearing is deferred so switching views does not tear the ribbon down for a frame
-    // before the incoming view publishes its own template.
+    await fixture.whenStable();
     expect(tabView.nativeElement.querySelector('.ribbon-button')).toBeTruthy();
 
+    tabViewService.updateRibbonTemplate(undefined);
+    tabViewService.updateRibbonTemplate(fixture.componentInstance.ribbonTemplate);
+    await fixture.whenStable();
+
+    expect(tabView.nativeElement.querySelector('.ribbon-button')).toBeTruthy();
+  });
+
+  it('clears the ribbon for a view that publishes none', async () => {
+    const fixture: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
+
+    const tabView = fixture.debugElement.query(By.directive(DefaultTabViewComponent));
+    const tabViewService: TabViewService = tabView.injector.get(TabViewService);
+
+    tabViewService.updateRibbonTemplate(fixture.componentInstance.ribbonTemplate);
+    await fixture.whenStable();
+
+    tabViewService.updateRibbonTemplate(undefined);
+    await fixture.whenStable();
 
     expect(tabView.nativeElement.querySelector('.ribbon-button')).toBeFalsy();
   });
