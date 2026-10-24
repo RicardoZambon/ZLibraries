@@ -14,10 +14,11 @@
 > compiles to `OnPush` -- though a few still carry a redundant explicit `OnPush`, which changes
 > nothing. None calls `ChangeDetectorRef`.
 >
-> `NgZone` survives in two components, `TabsComponent` and `DataGridComponent`, purely to keep
-> scroll and resize listeners out of change detection. Under zoneless that call is a silent
-> no-op and the listeners run normally, which nothing depends on -- but a component that needed
-> it to be correct would be broken, so never write one.
+> `NgZone` survives in two components and three call sites -- `TabsComponent` once,
+> `DataGridComponent` twice -- purely to keep scroll and resize listeners out of change
+> detection. Under zoneless that call is a silent no-op and the listeners run normally, which
+> nothing depends on -- but a component that needed it to be correct would be broken, so never
+> write one.
 >
 > **What this guarantees a consumer:** a component from `@zambon-dev/ui` renders correctly under
 > any change-detection strategy the host application uses, and under
@@ -174,7 +175,7 @@ correctly underneath it.
 Two components are not exported, so no contract spec can reach them:
 `LanguageSelectorComponent` and `LoginComponent`. The lint rule is what covers those.
 
-**The order that worked, and why.** Take a package's services and datasets before the components
+**The order that worked, and why.** Take a layer's services and datasets before the components
 that read them. Doing it the other way round moves the problem: the component holds signals and
 still reads mutable state that cannot notify it. `MultiSelectResultGridComponent` was the worked
 example -- it looked safe because removing an item flipped a loading flag whose write happened to
