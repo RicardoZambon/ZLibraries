@@ -1,19 +1,19 @@
-@if (showLabel) {
-  <label [attr.for]="controlName"> {{ label | translate }}: </label>
+@if (showLabel()) {
+  <label [attr.for]="controlName()"> {{ label() | translate }}: </label>
 }
 
-<div class="field" [class.col-span-2]="!showLabel" [ngStyle]="{ 'align-content': alignContent }">
-  @if (loadingField || (formService.loading && formService.model === null)) {
+<div class="field" [class.col-span-2]="!showLabel()" [ngStyle]="{ 'align-content': alignContent() }">
+  @if (loadingField() || (formService.loading && formService.model === null)) {
     <div class="loading">
       <div></div>
     </div>
   } @else {
-    <ng-container *ngTemplateOutlet="template ? template : defaultTemplate"> </ng-container>
+    <ng-container *ngTemplateOutlet="template() ?? defaultTemplate"> </ng-container>
     @if (formControl?.touched) {
       <div class="validations" [class.show]="formControl?.invalid">
         @for (error of $safeNavigationMigration(formControl?.errors) | keyvalue; track error) {
           @if (hasValidation(error.key)) {
-            <span>{{ validations[error.key] | translate }}</span>
+            <span>{{ validations()[error.key] | translate }}</span>
           }
           <ng-template #defaultValidationError>{{ error.key }}</ng-template>
         }
@@ -22,23 +22,23 @@
     <ng-template #defaultTemplate>
       <lib-form-input
         #formInput
-        [autofocus]="autofocus"
-        [controlName]="controlName"
-        [fixedValue]="fixedValue"
-        [format]="format"
-        [isDisabled]="isDisabled"
-        [isFullHeight]="isFullHeight"
-        [min]="min"
-        [maxLength]="maxLength"
-        [readOnly]="readOnly"
-        [rows]="rows"
-        [step]="step"
-        [type]="type"
+        [autofocus]="autofocus()"
+        [controlName]="controlName()"
+        [fixedValue]="fixedValue()"
+        [format]="format()"
+        [isDisabled]="isDisabled()"
+        [isFullHeight]="isFullHeight()"
+        [min]="min()"
+        [maxLength]="maxLength()"
+        [readOnly]="readOnly()"
+        [rows]="rows()!"
+        [step]="step()"
+        [type]="type()"
       >
       </lib-form-input>
     </ng-template>
     @if (hasNotes) {
-      <span class="text-sm italic"> *{{ notes | translate }} </span>
+      <span class="text-sm italic"> *{{ notes() | translate }} </span>
     }
   }
 </div>

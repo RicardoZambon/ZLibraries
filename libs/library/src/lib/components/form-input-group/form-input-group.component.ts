@@ -1,5 +1,5 @@
 import { KeyValuePipe, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { Component, inject, Input, OnInit, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, input, InputSignal, OnInit, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, takeUntil } from 'rxjs';
@@ -12,9 +12,8 @@ import { FormInputComponent } from '../form-input/form-input.component';
   templateUrl: './form-input-group.component.html',
   styleUrls: ['./form-input-group.component.scss'],
   imports: [FormInputComponent, KeyValuePipe, NgStyle, NgTemplateOutlet, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
-    '[class.full-height]': 'isFullHeight',
+    '[class.full-height]': 'isFullHeight()',
     // Angular keeps static attributes in the DOM even when a directive consumes them as an
     // @Input(), so `type="checkbox"` would linger on this host element — where
     // @tailwindcss/forms' tag-agnostic `[type="checkbox"]` base rules style the host itself as
@@ -25,24 +24,24 @@ import { FormInputComponent } from '../form-input/form-input.component';
 })
 export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public autofocus = false;
-  @Input() public alignContent: 'center' | 'end' | 'start' = 'center';
-  @Input() public controlName!: string;
-  @Input() public fixedValue?: any;
-  @Input() public format?: string;
-  @Input() public label!: string;
-  @Input() public isDisabled = true;
-  @Input() public isFullHeight = false;
-  @Input() public maxLength?: number;
-  @Input() public min?: number;
-  @Input() public notes = '';
-  @Input() public readOnly = false;
-  @Input() public rows!: number;
-  @Input() public showLabel = true;
-  @Input() public step = 1;
-  @Input() public template!: TemplateRef<any>;
-  @Input() public type = 'text';
-  @Input() public validations: { [id: string]: string } = {};
+  public readonly autofocus: InputSignal<boolean> = input(false);
+  public readonly alignContent: InputSignal<'center' | 'end' | 'start'> = input<'center' | 'end' | 'start'>('center');
+  public readonly controlName: InputSignal<string> = input.required<string>();
+  public readonly fixedValue: InputSignal<any> = input<any>();
+  public readonly format: InputSignal<string | undefined> = input<string>();
+  public readonly label: InputSignal<string> = input('');
+  public readonly isDisabled: InputSignal<boolean> = input(true);
+  public readonly isFullHeight: InputSignal<boolean> = input(false);
+  public readonly maxLength: InputSignal<number | undefined> = input<number>();
+  public readonly min: InputSignal<number | undefined> = input<number>();
+  public readonly notes: InputSignal<string> = input('');
+  public readonly readOnly: InputSignal<boolean> = input(false);
+  public readonly rows: InputSignal<number | undefined> = input<number>();
+  public readonly showLabel: InputSignal<boolean> = input(true);
+  public readonly step: InputSignal<number> = input(1);
+  public readonly template: InputSignal<TemplateRef<any> | undefined> = input<TemplateRef<any>>();
+  public readonly type: InputSignal<string> = input('text');
+  public readonly validations: InputSignal<{ [id: string]: string }> = input<{ [id: string]: string }>({});
   //#endregion
 
   //#region Host listeners
@@ -52,12 +51,12 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   protected readonly formGroupDirective: FormGroupDirective = inject(FormGroupDirective);
   protected readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
   protected formService: FormService = inject(FormService);
-  protected loadingField = false;
+  protected readonly loadingField: WritableSignal<boolean> = signal(false);
   //#endregion
 
   //#region Properties
   protected get formControl(): FormControl<any> | null {
-    return this.controlName ? <FormControl>this.formGroup.get(this.controlName) : null;
+    return this.controlName() ? <FormControl>this.formGroup.get(this.controlName()) : null;
   }
 
   protected get formGroup(): FormGroup {
@@ -69,7 +68,7 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   }
 
   protected get hasNotes(): boolean {
-    return !!this.notes && this.notes.length > 0;
+    return !!this.notes() && this.notes().length > 0;
   }
 
   protected get parentGroups(): string[] {
@@ -84,20 +83,20 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
 
   public ngOnInit(): void {
     this.formControl?.statusChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.loadingField = false;
+      this.loadingField.set(false);
     });
 
     this.formControl?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.loadingField = false;
+      this.loadingField.set(false);
     });
 
     this.formService.fieldRefreshed
       .pipe(
         takeUntil(this.destroy$),
-        filter((field: { fieldName?: string; value?: any; loading?: boolean }) => field.fieldName === this.controlName),
+        filter((field: { fieldName?: string; value?: any; loading?: boolean }) => field.fieldName === this.controlName()),
       )
       .subscribe((field: { fieldName?: string; value?: any; loading?: boolean }) => {
-        this.loadingField = field.loading ?? false;
+        this.loadingField.set(field.loading ?? false);
       });
   }
   //#endregion
@@ -107,7 +106,7 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
 
   //#region Public methods
   protected hasValidation(errorKey: string): boolean {
-    return Object.keys(this.validations).indexOf(errorKey) >= 0;
+    return Object.keys(this.validations()).indexOf(errorKey) >= 0;
   }
   //#endregion
 
