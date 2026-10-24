@@ -34,7 +34,7 @@ export const LoginBranded: Story = {
       providers: [
         {
           provide: APP_CONFIG,
-          useValue: new AppConfig('', { companyName: 'Zilia Technologies', loginLogoUrl: LOGO }),
+          useValue: new AppConfig('', { companyName: 'Zambon LTDA', loginLogoUrl: LOGO }),
         },
       ],
     }),
