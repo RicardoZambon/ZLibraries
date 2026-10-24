@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`FormService` and the datasets announce their own changes.** A component reading
+  `formService.loading`, `formService.model`, `formService.isEditMode`, `formService.isValid`,
+  `dataGridDataset.selectedRowKeys`, `resultDataset.displayedRows` or a grid's loading state from
+  its template now re-renders when that state changes, whatever strategy the host application
+  uses. `columns` is deliberately left alone: a concrete dataset declares it once and never
+  changes it, so making it reactive would only have broken every subclass that declares it. **Nothing to do on your side** -- these were already accessors or
+  became accessors of the same shape, so every read and write keeps working. `isValid` also
+  mirrors the `FormGroup`'s status, which is not a signal and never notified one, so a control
+  bound to it no longer keeps its first answer.
+
 - **Five more components render under any change-detection strategy**, continuing the work the last
   major started: `ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`,
   `MultiSelectComponent` and `MultiEditorComponent`. Their state is signals now, and none of them

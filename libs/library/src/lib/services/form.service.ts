@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Injectable, signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 @Injectable()
 export class FormService {
@@ -11,11 +11,22 @@ export class FormService {
   //#endregion
 
   //#region Variables
-  private _loading = false;
-  private _model: any | null = null;
-  private currentMode: 'edit' | 'view' = 'view';
+  // Signals rather than fields: these are read from templates through the accessors below, and a
+  // plain assignment told Angular nothing. The accessors keep their old shape, so nothing that
+  // reads or writes them has to change.
+  private readonly _loading: WritableSignal<boolean> = signal(false);
+  private readonly _model: WritableSignal<any | null> = signal(null);
+  private readonly currentMode: WritableSignal<'edit' | 'view'> = signal('view');
+
+  // A FormGroup's validity is not a signal and never notifies one, so its status is mirrored here
+  // and `isValid` reads this. Without it a save button bound to isValid keeps its first answer.
+  private readonly formStatus: WritableSignal<string | undefined> = signal(undefined);
+
   private editCanceled$: Subject<void> = new Subject<void>();
   private form?: FormGroup;
+  // Held rather than tied to a DestroyRef: this service is also built directly in specs, outside
+  // any injection context, and re-initialising with another form has to drop the old subscription.
+  private formStatusSubscription?: Subscription;
   private initialValue?: any;
   //#endregion
 
@@ -25,20 +36,21 @@ export class FormService {
   }
 
   public get isEditMode(): boolean {
-    return this.currentMode === 'edit';
+    return this.currentMode() === 'edit';
   }
 
   public get isValid(): boolean {
+    this.formStatus();
     return this.form?.valid ?? false;
   }
 
   public get loading(): boolean {
-    return this._loading;
+    return this._loading();
   }
 
   public set loading(value: boolean) {
-    if (this._loading !== value) {
-      this._loading = value;
+    if (this._loading() !== value) {
+      this._loading.set(value);
       if (value) {
         this.form?.disable();
       } else if (this.isEditMode) {
@@ -48,12 +60,12 @@ export class FormService {
   }
 
   public get model(): any | null {
-    return this._model;
+    return this._model();
   }
 
   public set model(value: any | null) {
-    if (this._model !== value) {
-      this._model = value;
+    if (this._model() !== value) {
+      this._model.set(value);
       this.modelRefreshed.emit(value);
     }
   }
@@ -67,7 +79,7 @@ export class FormService {
 
   //#region Public methods
   public beginEdit(): void {
-    this.currentMode = 'edit';
+    this.currentMode.set('edit');
     this.form?.enable();
   }
 
@@ -79,7 +91,7 @@ export class FormService {
   }
 
   public cancelEdit(): void {
-    this.currentMode = 'view';
+    this.currentMode.set('view');
     this.form?.disable();
     this.resetForm();
     this.editCanceled$.next();
@@ -103,7 +115,13 @@ export class FormService {
     this.form = form;
     this.initialValue = form.getRawValue();
 
-    if (this.currentMode === 'view') {
+    this.formStatusSubscription?.unsubscribe();
+    this.formStatus.set(form.status);
+    this.formStatusSubscription = form.statusChanges.subscribe((status: string) =>
+      this.formStatus.set(status),
+    );
+
+    if (this.currentMode() === 'view') {
       this.form.disable();
     }
   }

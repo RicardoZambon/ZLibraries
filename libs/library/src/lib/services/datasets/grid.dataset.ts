@@ -15,11 +15,11 @@ export abstract class GridDataset extends BaseDataset {
   //#region Variables
   public configs: GridConfigs;
   public filtersChanged: EventEmitter<{ [key: string]: string }> = new EventEmitter<{ [key: string]: string }>();
-  public isLoading = false;
-  public loadedLastRow = false;
+  private _isLoading = false;
+  private _loadedLastRow = false;
+  private _totalRows?: number;
   public loadFinished: EventEmitter<boolean> = new EventEmitter<boolean>();
   public loadStarted: EventEmitter<void> = new EventEmitter<void>();
-  public totalRows?: number;
 
   protected compareProperty = 'id';
   protected configsProvider: GridConfigsProvider;
@@ -33,15 +33,45 @@ export abstract class GridDataset extends BaseDataset {
   //#endregion
 
   //#region Properties
+  public get isLoading(): boolean {
+    this.tracked();
+    return this._isLoading;
+  }
+  public set isLoading(value: boolean) {
+    this._isLoading = value;
+    this.touched();
+  }
+
+  public get loadedLastRow(): boolean {
+    this.tracked();
+    return this._loadedLastRow;
+  }
+  public set loadedLastRow(value: boolean) {
+    this._loadedLastRow = value;
+    this.touched();
+  }
+
+  public get totalRows(): number | undefined {
+    this.tracked();
+    return this._totalRows;
+  }
+  public set totalRows(value: number | undefined) {
+    this._totalRows = value;
+    this.touched();
+  }
+
   public get filters(): { [key: string]: string } | undefined {
+    this.tracked();
     return this.queryFilters;
   }
 
   public get hasBeenLoaded(): boolean {
+    this.tracked();
     return this._hasBeenLoaded;
   }
 
   public get hasLoadedRows(): boolean {
+    this.tracked();
     return !!this._loadedRows && this._loadedRows.length > 0;
   }
 
@@ -50,10 +80,12 @@ export abstract class GridDataset extends BaseDataset {
   }
 
   public get loadedKeys(): string[] | undefined {
+    this.tracked();
     return this._loadedKeys;
   }
 
   public get loadedRows(): any[] | undefined {
+    this.tracked();
     return this._loadedRows;
   }
 
@@ -88,11 +120,13 @@ export abstract class GridDataset extends BaseDataset {
 
   /** The key of the currently focused row, or null. Read by DataGridRowComponent's host binding. */
   public get focusedRowKey(): string | null {
+    this.tracked();
     return this.focusedRow;
   }
 
   public clearFocusedRow(): void {
     this.focusedRow = null;
+    this.touched();
   }
 
   public getRowData(key: string): any | null {
@@ -163,6 +197,7 @@ export abstract class GridDataset extends BaseDataset {
 
           this.isLoading = false;
           this._hasBeenLoaded = true;
+    this.touched();
           this.loadFinished.emit(true);
         },
         error: (_: any) => {
@@ -195,7 +230,9 @@ export abstract class GridDataset extends BaseDataset {
       if (indexToRemove >= 0) {
         // Need to set again the array values to trigger the change detection.
         this._loadedKeys = this._loadedKeys!.filter((_, index) => index !== indexToRemove);
+    this.touched();
         this._loadedRows = this._loadedRows!.filter((_, index) => index !== indexToRemove);
+    this.touched();
       }
     });
   }
@@ -208,6 +245,7 @@ export abstract class GridDataset extends BaseDataset {
 
   public setFocusedRow(key: string): void {
     this.focusedRow = key;
+    this.touched();
   }
 
   public updateRow(key: string, newRowData: any): void {
@@ -231,8 +269,11 @@ export abstract class GridDataset extends BaseDataset {
   //#region Private methods
   protected clearLoadedRows(): void {
     this._hasBeenLoaded = false;
+    this.touched();
     this._loadedRows = undefined;
+    this.touched();
     this._loadedKeys = undefined;
+    this.touched();
     this.recordBlock = 0;
     this.loadedLastRow = false;
     this.totalRows = undefined;
@@ -245,7 +286,9 @@ export abstract class GridDataset extends BaseDataset {
     });
 
     this._loadedRows = [...(this._loadedRows ?? []), ...rows];
+    this.touched();
     this._loadedKeys = [...(this._loadedKeys ?? []), ...rows.map((row: any) => row[KEY_FIELD])];
+    this.touched();
 
     this.recordBlock += rows.length;
     if (rows.length < this.configsProvider.configs.recordBlockSize) {
