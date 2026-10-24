@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
+## [6.0.4] - 2026-10-24
+
+- Maintenance release (no consumer-facing changes were documented).
+
 ## [6.0.3] - 2026-10-24
 
 ### Changed
@@ -679,7 +683,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v6.0.3...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/shared-v6.0.4...HEAD
+[6.0.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.4
 [6.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.3
 [6.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.2
 [6.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.1

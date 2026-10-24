@@ -15,14 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **A grid row's checkbox follows the grid's selection by being told, not by forcing a pass.**
-  `DataGridRowComponent` held its selected state in a plain field and called
-  `ChangeDetectorRef.detectChanges()` on itself whenever the grid announced a change. That
-  rendered -- there is no behaviour change here -- but it rendered because the component forced
-  a pass rather than because anything was notified, which is the one thing this package's
-  components are not supposed to need. The state is a signal now and the `ChangeDetectorRef` is
-  gone; it was the last one in the package.
-
 ### Deprecated
 
 ### Removed
@@ -30,6 +22,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+## [4.0.5] - 2026-10-24
+
+### Changed
+
+- **A grid row's checkbox follows the grid's selection by being told, not by forcing a pass.**
+  `DataGridRowComponent` held its selected state in a plain field and called
+  `ChangeDetectorRef.detectChanges()` on itself whenever the grid announced a change. That
+  rendered -- there is no behaviour change here -- but it rendered because the component forced
+  a pass rather than because anything was notified, which is the one thing this package's
+  components are not supposed to need. The state is a signal now and the `ChangeDetectorRef` is
+  gone; it was the last one in the package.
 
 ## [4.0.4] - 2026-10-24
 
@@ -880,7 +884,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.4...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.5...HEAD
+[4.0.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.5
 [4.0.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.4
 [4.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.3
 [4.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.2

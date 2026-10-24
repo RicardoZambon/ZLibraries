@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
+## [5.0.5] - 2026-10-24
+
+- Maintenance release (no consumer-facing changes were documented).
+
 ## [5.0.4] - 2026-10-24
 
 ### Changed
@@ -742,7 +746,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.4...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.5...HEAD
+[5.0.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.5
 [5.0.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.4
 [5.0.3]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.3
 [5.0.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.2
