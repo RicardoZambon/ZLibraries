@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Internal only: one spec follows `ViewBase`'s `loading` onto a signal.** `@zambon-dev/framework`
+  backs that flag with a signal now, and a spec here stubs the component with `Object.create`,
+  which runs no field initialiser. Nothing in this package's own API changed.
+
 ### Deprecated
 
 ### Removed
