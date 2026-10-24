@@ -1,18 +1,19 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { ICurrentUserInfo } from '../../../models';
 import { AuthenticationService } from '../../../services';
 
 @Component({
   selector: 'shared-user-profile',
   templateUrl: './user-profile.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./user-profile.component.scss'],
 })
 export class UserProfileComponent implements OnInit {
   //#region Variables
   private authenticationService: AuthenticationService = inject(AuthenticationService);
 
-  protected user: ICurrentUserInfo | null = null;
+  // A signal rather than a field: the top bar renders the name and the avatar, and this is
+  // only filled in ngOnInit -- after the first pass has already been and gone.
+  protected readonly user: WritableSignal<ICurrentUserInfo | null> = signal(null);
   //#endregion
 
   //#region Properties
@@ -32,21 +33,21 @@ export class UserProfileComponent implements OnInit {
   }
 
   protected get name(): string {
-    return this.user?.name ?? '';
+    return this.user()?.name ?? '';
   }
 
   protected get pictureUrl(): string | undefined {
-    return this.user?.pictureUrl;
+    return this.user()?.pictureUrl;
   }
 
   protected get position(): string {
-    return this.user?.position ?? '';
+    return this.user()?.position ?? '';
   }
   //#endregion
 
   //#region Constructor and Angular life cycle methods
   public ngOnInit(): void {
-    this.user = this.authenticationService.getUserInfo();
+    this.user.set(this.authenticationService.getUserInfo());
   }
   //#endregion
 }

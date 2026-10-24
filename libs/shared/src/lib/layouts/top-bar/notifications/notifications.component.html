@@ -12,7 +12,7 @@
       }
     </button>
 
-    @if (showDropdown) {
+    @if (showDropdown()) {
       <div class="notifications-panel">
         @let items = (notifications$ | async) ?? [];
 

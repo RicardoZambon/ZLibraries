@@ -9,13 +9,13 @@
     <h3 class="title">{{ 'Login-Title' | translate }}</h3>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="validations" [class.hidden]="!formState.error">
-        @if (formState.error === 'invalid') {
+      <div class="validations" [class.hidden]="!formState().error">
+        @if (formState().error === 'invalid') {
           <div>
             {{ 'Login-Errors-Invalid' | translate }}
           </div>
         }
-        @if (formState.error === 'internalServerError') {
+        @if (formState().error === 'internalServerError') {
           <div>
             {{ 'Login-Errors-InternalServerError' | translate }}
           </div>
@@ -80,11 +80,11 @@
         <button
           type="submit"
           class="btn"
-          [class.loading]="formState.loading && !formState.success && !formState.error"
-          [class.error]="formState.error"
-          [class.success]="formState.success"
+          [class.loading]="formState().loading && !formState().success && !formState().error"
+          [class.error]="formState().error"
+          [class.success]="formState().success"
         >
-          @if (!formState.loading) {
+          @if (!formState().loading) {
             <i class="fas fa-sign-in-alt fa-fw"></i>
           }
           {{ 'Login-SignIn' | translate }}

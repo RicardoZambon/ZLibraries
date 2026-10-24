@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { INotification } from '../../../models';
 import { NotificationsComponent } from './notifications.component';
 
@@ -16,7 +17,7 @@ describe(NotificationsComponent.name, () => {
     navigateByUrl = jest.fn();
     (component as any).notificationsService = { markAsRead, markAllAsRead, start, isEnabled: true };
     (component as any).router = { navigateByUrl };
-    (component as any).showDropdown = false;
+    (component as any).showDropdown = signal(false);
   });
 
   it('starts the notifications service on init', () => {
@@ -30,9 +31,9 @@ describe(NotificationsComponent.name, () => {
 
   it('toggles the dropdown open and closed', () => {
     component.onDropdownClick();
-    expect((component as any).showDropdown).toBe(true);
+    expect((component as any).showDropdown()).toBe(true);
     component.onDropdownClick();
-    expect((component as any).showDropdown).toBe(false);
+    expect((component as any).showDropdown()).toBe(false);
   });
 
   it('marks a notification as read and navigates internally on click', () => {
@@ -48,7 +49,7 @@ describe(NotificationsComponent.name, () => {
 
     expect(markAsRead).toHaveBeenCalledWith(item);
     expect(navigateByUrl).toHaveBeenCalledWith('/records/1');
-    expect((component as any).showDropdown).toBe(false);
+    expect((component as any).showDropdown()).toBe(false);
   });
 
   it('does not navigate when the notification has no call to action', () => {

@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, Input, Signal, viewChild } from '@angular/core';
+import { Component, computed, input, InputSignal, Signal, viewChild } from '@angular/core';
 import { ModalBase } from '@zambon-dev/framework';
 import { ModalComponent } from '@zambon-dev/library';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -8,16 +8,15 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'shared-operations-history-modal',
   templateUrl: './operations-history-modal.component.html',
   styleUrls: ['./operations-history-modal.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [JsonPipe, ModalComponent, TranslatePipe],
 })
 export class OperationsHistoryModalComponent extends ModalBase {
   //#region ViewChilds, Inputs, Outputs
   private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
-  @Input() public newValues?: string;
+  public readonly newValues: InputSignal<string | undefined> = input<string>();
 
-  @Input() public oldValues?: string;
+  public readonly oldValues: InputSignal<string | undefined> = input<string>();
   //#endregion
 
   //#region Variables
