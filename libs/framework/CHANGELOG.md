@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The ribbon strip renders without the view forcing a change-detection pass.**
+  `DefaultTabViewComponent` holds the published template in a signal, and `TabViewService` holds
+  its active view in one. The `detectChanges()`/`markForCheck()` pair they used to need is gone,
+  and with it the rule that the ribbon template could never be assigned after the first pass --
+  a signal write there schedules another pass rather than throwing NG0100.
+
 ### Deprecated
 
 ### Removed
@@ -22,6 +28,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+- **`DefaultTabViewComponent` no longer takes constructor arguments.** It injects `TabViewService`
+  itself and no longer injects `ChangeDetectorRef` at all. A subclass calling
+  `super(changeDetectorRef, tabViewService)` should call `super()`, or drop its constructor.
+
+- **`DefaultTabViewComponent.ribbonTemplate` is a `Signal<TemplateRef | undefined>`.** Read it as
+  `ribbonTemplate()`. `TabViewService.onUpdateRibbonTemplate` is unchanged, so anything
+  subscribing to it keeps working.
 
 ## [5.0.2] - 2026-10-24
 

@@ -1,14 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import {
-  ChangeDetectorRef,
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterModule } from '@angular/router';
 import {
   DataProviderService,
@@ -89,12 +81,6 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
   //#endregion
 
   //#region Constructor and Angular life cycle methods
-  constructor() {
-    const changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
-    const tabViewService: TabViewService = inject(TabViewService);
-    super(changeDetectorRef, tabViewService);
-  }
-
   public override ngOnInit(): void {
     super.ngOnInit();
 
