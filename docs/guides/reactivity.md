@@ -8,9 +8,11 @@
 > No library template reads a plain mutable field, a `get` backed by a service's mutable state, or
 > a value assigned inside `.subscribe()`.
 >
-> No library component declares `Eager`. Declaring nothing is the house default -- in v22 that
-> compiles to `OnPush` -- though a few still carry a redundant explicit `OnPush`, which changes
-> nothing. None calls `ChangeDetectorRef`.
+> No library component declares `Eager`, with one deliberate exception that ships to nobody: the
+> test harness's own self-test declares it, to prove that doing so makes no difference, and
+> disables the lint rule on that line. Declaring nothing is the house default -- in v22 that
+> compiles to `OnPush` -- though a few components still carry a redundant explicit `OnPush`.
+> None calls `ChangeDetectorRef`.
 >
 > `NgZone` survives in two components and three call sites -- `TabsComponent` once,
 > `DataGridComponent` twice -- purely to keep scroll and resize listeners out of change

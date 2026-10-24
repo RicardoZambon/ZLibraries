@@ -45,9 +45,12 @@ zoneless: `NgZone` resolves to `NoopNgZone` and `runOutsideAngular` becomes a si
 the listeners simply run normally. Nothing depends on them being outside a zone, which is why
 this is tolerable -- but never write a component that needs that call to behave correctly.
 
-No component declares `Eager`. Declaring nothing is the house default -- in v22 that compiles to
-`OnPush` -- and is what to write for a new one. A few components still carry a redundant explicit
-`OnPush`; it changes nothing, and both the lint rule and the contract spec pass either way.
+No component declares `Eager`, with one deliberate exception that ships to nobody: the harness's
+own self-test in `src/testing/` declares it to prove that doing so makes no difference, and
+disables the lint rule on that line. Declaring nothing is the house default -- in v22 that
+compiles to `OnPush` -- and is what to write for a new component. A few still carry a redundant
+explicit `OnPush`; it changes nothing, and both the lint rule and the contract spec pass either
+way.
 
 **What that buys the consumer:** a component from `@zambon-dev/library` renders correctly under any
 change-detection strategy the host application chooses, and under
