@@ -26,8 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   mirrors the `FormGroup`'s status, which is not a signal and never notified one, so a control
   bound to it no longer keeps its first answer.
 
-- **`RibbonButtonComponent` and `FormInputComponent` render under any change-detection strategy.**
-  Their inputs are signals, and neither depends on being walked on every event any more.
+- **`RibbonButtonComponent`, `FormInputComponent` and `DataGridComponent` render under any
+  change-detection strategy.** Their inputs are signals, and none of them depends on being walked
+  on every event any more. The grid also stops calling `ChangeDetectorRef.detectChanges()` and
+  stops re-entering the Angular zone to publish a measurement -- a signal write reaches the
+  screen on its own.
 
 - **Seven more components render under any change-detection strategy**, continuing the work the last
   major started: `ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`,
@@ -73,8 +76,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `itemTemplate()`, `formGroup()`, `addButtonLabel()`, `removeButtonLabel()`, `showAddButton()`
   and `showDeleteButton()`.
 
-- **`RibbonButtonComponent` and `FormInputComponent` expose their inputs as signals.** Binding to
-  them from a template is unchanged. Only code reading one off an instance needs `()` --
+- **`RibbonButtonComponent`, `FormInputComponent` and `DataGridComponent` expose their inputs as
+  signals.** Binding to them from a template is unchanged. Only code reading one off an instance needs `()` --
   `button.loading()` rather than `button.loading`.
 
   Two are `model()` rather than `input()` because the components write them as well:

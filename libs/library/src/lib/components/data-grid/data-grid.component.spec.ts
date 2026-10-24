@@ -1,4 +1,4 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, signal } from '@angular/core';
 import { NavigationEnd, NavigationStart } from '@angular/router';
 import { Subject } from 'rxjs';
 import { DataGridComponent } from './data-grid.component';
@@ -29,7 +29,6 @@ describe('DataGridComponent', () => {
     events: Subject<any>;
     url: string;
   };
-  let mockChangeDetectorRef: { detectChanges: jest.Mock };
   let mockNgZone: { runOutsideAngular: jest.Mock };
   let mockBodyElement: { nativeElement: { clientWidth: number; isConnected: boolean } };
 
@@ -75,7 +74,6 @@ describe('DataGridComponent', () => {
       url: '/test-route',
     };
 
-    mockChangeDetectorRef = { detectChanges: jest.fn() };
 
     mockNgZone = {
       runOutsideAngular: jest.fn((fn: () => void) => fn()),
@@ -93,30 +91,31 @@ describe('DataGridComponent', () => {
     // BaseComponent
     component.destroy$ = new Subject<boolean>();
 
-    // Inputs
-    component.disabled = false;
-    component.lazyLoadRows = opts.lazyLoadRows ?? false;
-    component.showButtons = false;
+    // Inputs and state are signals, and Object.create() runs no field initialiser, so each one
+    // has to exist before anything reads or writes it.
+    component.disabled = signal(false);
+    component.lazyLoadRows = signal(opts.lazyLoadRows ?? false);
+    component.showButtons = signal(false);
+    component.hasFailed = signal(false);
+    component.headerRightMargin = signal(0);
+    component.headerScrollLeft = signal(0);
+    component.loading = signal(false);
 
     // Variables
     component.bodyResizeObserver = undefined;
     component.bodyResized$ = new Subject<void>();
-    component.changeDetectorRef = mockChangeDetectorRef;
     component.dataGridDataset = mockDataGridDataset;
     component.ngZone = mockNgZone;
     component.router = mockRouter;
 
     component.gridRoute = '';
-    component.hasFailed = false;
-    component.headerRightMargin = 0;
     component.isGridCurrentUrl = false;
     component.lastPosition = 0;
-    component.loading = false;
     component.selectionColRealSize = undefined;
 
     // ViewChilds
-    component.bodyElement = mockBodyElement;
-    component.viewport = mockViewport;
+    component.bodyElement = signal(mockBodyElement);
+    component.viewport = signal(mockViewport);
   }
 
   beforeEach(() => {
@@ -148,7 +147,7 @@ describe('DataGridComponent', () => {
 
       component.ngOnInit();
 
-      expect(component.loading).toBe(true);
+      expect(component.loading()).toBe(true);
       expect(mockDataGridDataset.loadRows).toHaveBeenCalled();
     });
 
@@ -166,7 +165,7 @@ describe('DataGridComponent', () => {
 
       component.ngOnInit();
 
-      expect(component.loading).toBe(true);
+      expect(component.loading()).toBe(true);
     });
 
     it('should not set loading when loadedRows already exist', () => {
@@ -174,7 +173,7 @@ describe('DataGridComponent', () => {
 
       component.ngOnInit();
 
-      expect(component.loading).toBe(false);
+      expect(component.loading()).toBe(false);
     });
   });
   //#endregion
@@ -189,29 +188,29 @@ describe('DataGridComponent', () => {
     it('should set loading to true on loadStarted', () => {
       mockDataGridDataset.loadStarted.emit();
 
-      expect(component.loading).toBe(true);
+      expect(component.loading()).toBe(true);
     });
 
     it('should set loading to false on loadFinished', () => {
-      component.loading = true;
+      component.loading.set(true);
 
       mockDataGridDataset.loadFinished.emit(true);
 
-      expect(component.loading).toBe(false);
+      expect(component.loading()).toBe(false);
     });
 
     it('should set hasFailed to true on loadFinished with failure', () => {
       mockDataGridDataset.loadFinished.emit(false);
 
-      expect(component.hasFailed).toBe(true);
+      expect(component.hasFailed()).toBe(true);
     });
 
     it('should set hasFailed to false on loadFinished with success', () => {
-      component.hasFailed = true;
+      component.hasFailed.set(true);
 
       mockDataGridDataset.loadFinished.emit(true);
 
-      expect(component.hasFailed).toBe(false);
+      expect(component.hasFailed()).toBe(false);
     });
 
     it('should call checkViewportSize after loadFinished', () => {
@@ -247,7 +246,7 @@ describe('DataGridComponent', () => {
       mockDataGridDataset.loadFinished.emit(true);
       jest.advanceTimersByTime(100);
 
-      expect(component.headerRightMargin).toBe(20);
+      expect(component.headerRightMargin()).toBe(20);
 
       jest.useRealTimers();
     });
@@ -266,12 +265,12 @@ describe('DataGridComponent', () => {
     it('should load more rows when rendered range reaches loaded rows count', () => {
       mockViewport.renderedRangeStream.next({ start: 0, end: 2 });
 
-      expect(component.loading).toBe(true);
+      expect(component.loading()).toBe(true);
       expect(mockDataGridDataset.loadRows).toHaveBeenCalled();
     });
 
     it('should not load more rows when already loading', () => {
-      component.loading = true;
+      component.loading.set(true);
 
       mockViewport.renderedRangeStream.next({ start: 0, end: 2 });
 
@@ -330,7 +329,7 @@ describe('DataGridComponent', () => {
       resizeObserverCallback!();
       jest.advanceTimersByTime(150);
 
-      expect(component.headerRightMargin).toBe(20);
+      expect(component.headerRightMargin()).toBe(20);
 
       jest.useRealTimers();
     });
@@ -338,23 +337,24 @@ describe('DataGridComponent', () => {
     it('should not update headerRightMargin when viewport width is 0', () => {
       jest.useFakeTimers();
       mockViewport.measureViewportSize.mockReturnValue(0);
-      component.headerRightMargin = 10;
+      component.headerRightMargin.set(10);
 
       resizeObserverCallback!();
       jest.advanceTimersByTime(150);
 
-      expect(component.headerRightMargin).toBe(10);
+      expect(component.headerRightMargin()).toBe(10);
 
       jest.useRealTimers();
     });
 
-    it('should call detectChanges on resize', () => {
+    it('publishes the measured margin as a signal, which is what reaches the screen', () => {
       jest.useFakeTimers();
+      component.headerRightMargin.set(0);
 
       resizeObserverCallback!();
       jest.advanceTimersByTime(150);
 
-      expect(mockChangeDetectorRef.detectChanges).toHaveBeenCalled();
+      expect(component.headerRightMargin()).toBe(20);
 
       jest.useRealTimers();
     });
@@ -393,7 +393,8 @@ describe('DataGridComponent', () => {
       jest.advanceTimersByTime(150);
 
       expect(mockViewport.checkViewportSize).not.toHaveBeenCalled();
-      expect(mockChangeDetectorRef.detectChanges).not.toHaveBeenCalled();
+      // Nothing was measured, so nothing was published either.
+      expect(component.headerRightMargin()).toBe(0);
 
       jest.useRealTimers();
     });
@@ -483,7 +484,8 @@ describe('DataGridComponent', () => {
     });
 
     it('should return false for isFirstVisibleRow when no viewport range', () => {
-      component.viewport = undefined;
+      // The query resolves to nothing: a signal answering undefined, not an absent signal.
+      component.viewport = signal(undefined);
 
       expect(component.isFirstVisibleRow(0)).toBe(false);
     });

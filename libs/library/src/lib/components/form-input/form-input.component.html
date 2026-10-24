@@ -96,17 +96,23 @@
     }
     @case ('date') {
       <span class="value">
-        {{ fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | date: format() }}
+        {{
+          fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | date: format()
+        }}
       </span>
     }
     @case ('datetime-local') {
       <span class="value">
-        {{ fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | date: format() }}
+        {{
+          fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | date: format()
+        }}
       </span>
     }
     @case ('number') {
       <span class="value">
-        {{ fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | number: format() }}
+        {{
+          fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | number: format()
+        }}
       </span>
     }
     @default {

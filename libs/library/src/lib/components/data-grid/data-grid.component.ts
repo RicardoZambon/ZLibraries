@@ -3,16 +3,18 @@ import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrollin
 import { NgStyle } from '@angular/common';
 import {
   AfterViewInit,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   inject,
-  Input,
+  input,
+  InputSignal,
   NgZone,
-  OnInit,
-  ViewChild,
   OnDestroy,
-  ChangeDetectionStrategy,
+  OnInit,
+  Signal,
+  signal,
+  viewChild,
+  WritableSignal,
 } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -28,28 +30,27 @@ import { DataGridRowComponent } from '../data-grid-row/data-grid-row.component';
   templateUrl: './data-grid.component.html',
   styleUrls: ['./data-grid.component.scss'],
   host: {
-    '[class.no-borders]': 'showButtons',
+    '[class.no-borders]': 'showButtons()',
   },
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [DataGridRowComponent, NgStyle, ScrollingModule, TranslatePipe],
 })
 export class DataGridComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild('body') private bodyElement!: ElementRef<HTMLDivElement>;
-  @ViewChild(CdkVirtualScrollViewport) private viewport?: CdkVirtualScrollViewport;
+  private readonly bodyElement: Signal<ElementRef<HTMLDivElement> | undefined> =
+    viewChild<ElementRef<HTMLDivElement>>('body');
+  private readonly viewport: Signal<CdkVirtualScrollViewport | undefined> = viewChild(CdkVirtualScrollViewport);
 
-  @Input() public disabled = false;
-  @Input() public lazyLoadRows = false;
-  @Input() public showButtons = false;
+  public readonly disabled: InputSignal<boolean> = input(false);
+  public readonly lazyLoadRows: InputSignal<boolean> = input(false);
+  public readonly showButtons: InputSignal<boolean> = input(false);
   //#endregion
 
   //#region Variables
-  protected changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
-  protected hasFailed = false;
-  protected headerRightMargin = 0;
-  protected headerScrollLeft = 0;
-  protected loading = false;
+  protected readonly hasFailed: WritableSignal<boolean> = signal(false);
+  protected readonly headerRightMargin: WritableSignal<number> = signal(0);
+  protected readonly headerScrollLeft: WritableSignal<number> = signal(0);
+  protected readonly loading: WritableSignal<boolean> = signal(false);
 
   private bodyResized$: Subject<void> = new Subject<void>();
   private bodyResizeObserver?: ResizeObserver;
@@ -144,7 +145,7 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
    * resize as well, from nothing to the panel, so the measurement still happens, on the way in.
    */
   private get isBodyAttached(): boolean {
-    return this.bodyElement?.nativeElement?.isConnected ?? false;
+    return this.bodyElement()!?.nativeElement?.isConnected ?? false;
   }
   //#endregion
 
@@ -164,48 +165,46 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
       )
       .subscribe((event: NavigationStart | NavigationEnd) => {
         if (event instanceof NavigationStart && this.isGridCurrentUrl) {
-          this.lastPosition = this.viewport?.measureScrollOffset() ?? 0;
+          this.lastPosition = this.viewport()?.measureScrollOffset() ?? 0;
           this.isGridCurrentUrl = false;
         } else if (event instanceof NavigationEnd && event.url === this.gridRoute) {
-          this.viewport?.scrollTo({ top: this.lastPosition });
-          this.viewport?.checkViewportSize();
+          this.viewport()?.scrollTo({ top: this.lastPosition });
+          this.viewport()?.checkViewportSize();
           this.isGridCurrentUrl = true;
         }
       });
 
     this.dataGridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.loading = true;
+      this.loading.set(true);
     });
 
     this.dataGridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe((isSuccess: boolean) => {
-      this.loading = false;
-      this.hasFailed = !isSuccess;
+      this.loading.set(false);
+      this.hasFailed.set(!isSuccess);
 
       setTimeout(() => {
-        const viewportWidth: number = this.viewport?.measureViewportSize('horizontal') ?? 0;
+        const viewportWidth: number = this.viewport()?.measureViewportSize('horizontal') ?? 0;
         if (viewportWidth > 0) {
-          this.headerRightMargin = this.bodyElement.nativeElement.clientWidth - viewportWidth;
+          this.headerRightMargin.set(this.bodyElement()!.nativeElement.clientWidth - viewportWidth);
         }
       }, 100);
-
-      this.changeDetectorRef.detectChanges();
 
       // A load can finish after the user has left the list -- a record opened while the next page
       // was still coming in -- and a detached grid must not be measured. See isBodyAttached.
       setTimeout(() => {
         if (this.isBodyAttached) {
-          this.viewport?.checkViewportSize();
+          this.viewport()?.checkViewportSize();
         }
       });
     });
 
-    if (!this.lazyLoadRows) {
+    if (!this.lazyLoadRows()) {
       if (!this.dataGridDataset.loadedRows) {
-        this.loading = true;
+        this.loading.set(true);
       }
       this.dataGridDataset.loadRows();
     } else if (this.dataGridDataset.isLoading) {
-      this.loading = true;
+      this.loading.set(true);
     }
   }
 
@@ -213,7 +212,7 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
     // The rows scroll sideways inside the CDK viewport while the header sits outside it, so the
     // header has to be moved by hand or the headings stay behind as the cells travel. Read outside
     // Angular and written back inside it, because this fires for every frame of a scroll.
-    const viewportElement: HTMLElement | undefined = this.viewport?.elementRef?.nativeElement;
+    const viewportElement: HTMLElement | undefined = this.viewport()?.elementRef?.nativeElement;
 
     if (viewportElement) {
       this.ngZone.runOutsideAngular(() => {
@@ -221,22 +220,19 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
           .pipe(takeUntil(this.destroy$))
           .subscribe(() => {
             const scrollLeft: number = viewportElement.scrollLeft;
-            if (this.headerScrollLeft === scrollLeft) {
+            if (this.headerScrollLeft() === scrollLeft) {
               return;
             }
 
-            this.ngZone.run(() => {
-              this.headerScrollLeft = scrollLeft;
-              this.changeDetectorRef.detectChanges();
-            });
+            this.headerScrollLeft.set(scrollLeft);
           });
       });
     }
 
-    this.viewport?.renderedRangeStream.pipe(takeUntil(this.destroy$)).subscribe((listRange: ListRange) => {
+    this.viewport()?.renderedRangeStream.pipe(takeUntil(this.destroy$)).subscribe((listRange: ListRange) => {
       const loadedRows: number = this.dataGridDataset.loadedRows?.length ?? 0;
-      if (this.hasLoadedRows && !this.loading && listRange.end >= loadedRows && !this.dataGridDataset.loadedLastRow) {
-        this.loading = true;
+      if (this.hasLoadedRows && !this.loading() && listRange.end >= loadedRows && !this.dataGridDataset.loadedLastRow) {
+        this.loading.set(true);
         this.dataGridDataset.loadRows();
       }
     });
@@ -248,20 +244,19 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
         return;
       }
 
-      const viewportWidth: number = this.viewport?.measureViewportSize('horizontal') ?? 0;
+      const viewportWidth: number = this.viewport()?.measureViewportSize('horizontal') ?? 0;
       if (viewportWidth > 0) {
-        this.headerRightMargin = this.bodyElement.nativeElement.clientWidth - viewportWidth;
+        this.headerRightMargin.set(this.bodyElement()!.nativeElement.clientWidth - viewportWidth);
       }
-      this.viewport?.checkViewportSize();
+      this.viewport()?.checkViewportSize();
       this.syncHeaderScroll();
-      this.changeDetectorRef.detectChanges();
     });
 
     this.ngZone.runOutsideAngular(() => {
       this.bodyResizeObserver = new ResizeObserver(() => {
         this.bodyResized$.next();
       });
-      this.bodyResizeObserver.observe(this.bodyElement.nativeElement);
+      this.bodyResizeObserver.observe(this.bodyElement()!.nativeElement);
     });
   }
 
@@ -281,7 +276,7 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
 
   //#region Public methods
   protected isFirstVisibleRow(rowIndex: number): boolean {
-    const renderedRange: ListRange | undefined = this.viewport?.getRenderedRange();
+    const renderedRange: ListRange | undefined = this.viewport()?.getRenderedRange();
     if (renderedRange) {
       return rowIndex === renderedRange.start;
     }
@@ -294,10 +289,10 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
     // Re-inserting the viewport into the DOM -- which is what re-activating a detached tab does --
     // puts its scroll position back to zero without firing a scroll event, so nothing tells the
     // header to come back with it and the headings sit at an offset the body no longer has.
-    const scrollLeft: number = this.viewport?.elementRef?.nativeElement?.scrollLeft ?? 0;
+    const scrollLeft: number = this.viewport()?.elementRef?.nativeElement?.scrollLeft ?? 0;
 
-    if (this.headerScrollLeft !== scrollLeft) {
-      this.headerScrollLeft = scrollLeft;
+    if (this.headerScrollLeft() !== scrollLeft) {
+      this.headerScrollLeft.set(scrollLeft);
     }
   }
 
