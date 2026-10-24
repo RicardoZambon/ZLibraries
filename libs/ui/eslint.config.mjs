@@ -13,6 +13,7 @@ export default [
           ignoredFiles: [
             '{projectRoot}/eslint.config.{js,cjs,mjs}',
             '{projectRoot}/jest.config.ts',
+            '{projectRoot}/jest.time-zone-environment.cjs',
             '{projectRoot}/.storybook/**/*',
             '{projectRoot}/src/test-setup.ts',
             '{projectRoot}/src/**/*.spec.ts',
@@ -32,24 +33,30 @@ export default [
   ...nx.configs['flat/angular'],
   ...nx.configs['flat/angular-template'],
   {
-    files: ['**/*.ts'],
+    // Each layer keeps the selector prefix it published under. One package does not
+    // mean one prefix: a consumer still reads <lib-*> and knows which layer it came from.
+    files: ['src/library/**/*.ts'],
     rules: {
-      '@angular-eslint/directive-selector': [
-        'error',
-        {
-          type: 'attribute',
-          prefix: 'lib',
-          style: 'camelCase',
-        },
-      ],
-      '@angular-eslint/component-selector': [
-        'error',
-        {
-          type: 'element',
-          prefix: 'lib',
-          style: 'kebab-case',
-        },
-      ],
+      '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'lib', style: 'camelCase' }],
+      '@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'lib', style: 'kebab-case' }],
+    },
+  },
+  {
+    // Each layer keeps the selector prefix it published under. One package does not
+    // mean one prefix: a consumer still reads <framework-*> and knows which layer it came from.
+    files: ['src/framework/**/*.ts'],
+    rules: {
+      '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'framework', style: 'camelCase' }],
+      '@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'framework', style: 'kebab-case' }],
+    },
+  },
+  {
+    // Each layer keeps the selector prefix it published under. One package does not
+    // mean one prefix: a consumer still reads <shared-*> and knows which layer it came from.
+    files: ['src/shared/**/*.ts'],
+    rules: {
+      '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'shared', style: 'camelCase' }],
+      '@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'shared', style: 'kebab-case' }],
     },
   },
   {

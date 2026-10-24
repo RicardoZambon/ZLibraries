@@ -3,7 +3,7 @@ import { APP_INITIALIZER, EnvironmentProviders, Provider } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { APP_CONFIG, AppConfig, AuthService } from '@zambon-dev/framework';
+import { APP_CONFIG, AppConfig, AuthService } from '@zambon-dev/ui/framework';
 import {
   DataGridConfigsProvider,
   DataGridDataset,
@@ -11,8 +11,8 @@ import {
   FormService,
   GridConfigsProvider,
   MultiSelectResultDataset,
-} from '@zambon-dev/library';
-import { AuthenticationService } from '@zambon-dev/shared';
+} from '@zambon-dev/ui/library';
+import { AuthenticationService } from '@zambon-dev/ui/shared';
 import { provideTranslateService, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 
@@ -47,7 +47,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Button-Save-And-Close': 'Save & Close',
     'Button-Save-And-New': 'Save & New',
     'Button-Views': 'Views',
-    // Export and Filters — copied verbatim from the framework's shipped i18n (libs/framework/src/i18n/en.json).
+    // Export and Filters — copied verbatim from the framework's shipped i18n (libs/ui/src/i18n/framework/en.json).
     'Button-Export': 'Export',
     'Button-Export-Excel': 'Excel',
     'Button-Export-PDF': 'PDF',
@@ -82,7 +82,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Button-Views-Details': 'Details',
     'Button-Views-History': 'History',
     'OperationsHistory-Modal-Title': 'Operation details',
-    // Audit filters — copied verbatim from the shipped i18n (libs/shared/src/i18n/services-history/en.json).
+    // Audit filters — copied verbatim from the shipped i18n (libs/ui/src/i18n/shared/services-history/en.json).
     'ServicesHistory-Field-ChangedBy': 'Employee',
     'ServicesHistory-Field-ChangedOnFrom': 'From',
     'ServicesHistory-Field-ChangedOnTo': 'To',
@@ -94,7 +94,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'ServicesHistory-FormGroup-Operations': 'Operations',
     'ServicesHistory-FormGroup-Period': 'Period',
     'ServicesHistory-FormGroup-Service': 'Action',
-    // Embedded external content — copied verbatim from the shipped i18n (libs/shared/src/i18n/external-content/en.json).
+    // Embedded external content — copied verbatim from the shipped i18n (libs/ui/src/i18n/shared/external-content/en.json).
     'ExternalContent-Blocked-Title': 'Cannot be displayed',
     'ExternalContent-Blocked-Message':
       'This menu item points to an address that is not allowed. Ask an administrator to review it.',
@@ -197,7 +197,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Button-Save-And-Close': 'Salvar e Fechar',
     'Button-Save-And-New': 'Salvar e Novo',
     'Button-Views': 'Visões',
-    // Export and Filters — copied verbatim from the framework's shipped i18n (libs/framework/src/i18n/pt.json).
+    // Export and Filters — copied verbatim from the framework's shipped i18n (libs/ui/src/i18n/framework/pt.json).
     'Button-Export': 'Exportar',
     'Button-Export-Excel': 'Excel',
     'Button-Export-PDF': 'PDF',
@@ -233,7 +233,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'Button-Views-Details': 'Detalhes',
     'Button-Views-History': 'Histórico',
     'OperationsHistory-Modal-Title': 'Detalhes da operação',
-    // Audit filters — copied verbatim from the shipped i18n (libs/shared/src/i18n/services-history/pt.json).
+    // Audit filters — copied verbatim from the shipped i18n (libs/ui/src/i18n/shared/services-history/pt.json).
     'ServicesHistory-Field-ChangedBy': 'Funcionário',
     'ServicesHistory-Field-ChangedOnFrom': 'De',
     'ServicesHistory-Field-ChangedOnTo': 'Até',
@@ -245,7 +245,7 @@ const storybookTranslations: Record<string, Record<string, string>> = {
     'ServicesHistory-FormGroup-Operations': 'Operações',
     'ServicesHistory-FormGroup-Period': 'Período',
     'ServicesHistory-FormGroup-Service': 'Ação',
-    // Embedded external content — copied verbatim from the shipped i18n (libs/shared/src/i18n/external-content/pt.json).
+    // Embedded external content — copied verbatim from the shipped i18n (libs/ui/src/i18n/shared/external-content/pt.json).
     'ExternalContent-Blocked-Title': 'Não é possível exibir',
     'ExternalContent-Blocked-Message':
       'Este item de menu aponta para um endereço não permitido. Peça a um administrador para revisá-lo.',

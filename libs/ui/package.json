@@ -43,6 +43,16 @@
     "**/*.scss"
   ],
   "exports": {
+    "./styles/common": {
+      "sass": "./styles/common.scss",
+      "style": "./styles/common.scss",
+      "default": "./styles/common.scss"
+    },
+    "./styles/common.scss": {
+      "sass": "./styles/common.scss",
+      "style": "./styles/common.scss",
+      "default": "./styles/common.scss"
+    },
     "./styles/variables": {
       "sass": "./styles/variables.scss",
       "style": "./styles/variables.scss",
@@ -52,6 +62,18 @@
       "sass": "./styles/variables.scss",
       "style": "./styles/variables.scss",
       "default": "./styles/variables.scss"
+    },
+    "./styles/theme": {
+      "style": "./styles/theme.css",
+      "default": "./styles/theme.css"
+    },
+    "./styles/theme.css": {
+      "style": "./styles/theme.css",
+      "default": "./styles/theme.css"
+    },
+    "./i18n/*": {
+      "default": "./i18n/*"
     }
-  }
+  },
+  "style": "styles/common.scss"
 }

@@ -18,12 +18,8 @@
       "@zambon-dev/ui": ["libs/ui/src/index.ts"],
       "@zambon-dev/ui/framework": ["libs/ui/src/framework/index.ts"],
       "@zambon-dev/ui/library": ["libs/ui/src/library/index.ts"],
-      "@zambon-dev/ui/testing": ["libs/ui/src/testing/index.ts"],
       "@zambon-dev/ui/shared": ["libs/ui/src/shared/index.ts"],
-      "@zambon-dev/framework": ["libs/framework/src/index.ts"],
-      "@zambon-dev/library": ["libs/library/src/index.ts"],
-      "@zambon-dev/library/testing": ["libs/library/src/testing/index.ts"],
-      "@zambon-dev/shared": ["libs/shared/src/index.ts"]
+      "@zambon-dev/ui/testing": ["libs/ui/src/testing/index.ts"]
     },
     "strict": false,
     "noUncheckedSideEffectImports": false,

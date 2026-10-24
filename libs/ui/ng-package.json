@@ -24,8 +24,8 @@
     },
     {
       "glob": "**/*.json",
-      "input": "src/i18n/framework",
-      "output": "i18n/framework"
+      "input": "src/i18n",
+      "output": "i18n"
     }
   ],
   "lib": {
