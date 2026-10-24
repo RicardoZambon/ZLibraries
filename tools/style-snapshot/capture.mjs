@@ -115,7 +115,58 @@ const PROPS = [
   'pointer-events',
   'animation-name',
   'animation-iteration-count',
+  /* Motion is a token family of its own, and these three are how it is observed. Without them a
+     mistyped duration reads as a clean diff: the element still animates, just instantly. Adding
+     them invalidates earlier snapshots, so it has to happen before a baseline, never after. */
+  'transition-property',
+  'transition-duration',
+  'transition-timing-function',
 ];
+
+/*
+ * Wait until the page stops moving, rather than for a fixed time.
+ *
+ * Disabling animations is not enough. A story keeps doing asynchronous work after the network
+ * goes quiet -- the data grid debounces a ResizeObserver for 150ms and then recalculates its
+ * viewport, a ribbon button's access check resolves and drops it to 60% opacity, a web font
+ * arrives and reflows everything by a fraction of a pixel. A fixed 350ms landed in the middle of
+ * that: two runs against one build of the shared Storybook disagreed on 122 of 1331 elements,
+ * which is more than enough noise to bury the change you are looking for.
+ *
+ * The fingerprint is deliberately cheap, and different from what gets captured: box size and
+ * opacity are what the late work moves, and reading them is one pass over the tree.
+ */
+const settle = async (page, { interval = 120, stableRounds = 3, timeout = 8000 } = {}) => {
+  const fingerprint = () =>
+    page.evaluate(() => {
+      const root = document.querySelector('#storybook-root') ?? document.body;
+      const parts = [];
+      const walk = (el) => {
+        const box = el.getBoundingClientRect();
+        parts.push(`${box.width}:${box.height}:${getComputedStyle(el).opacity}`);
+        [...el.children].forEach(walk);
+      };
+      [...root.children].forEach(walk);
+      return parts.join('|');
+    });
+
+  let previous = await fingerprint();
+  let stable = 0;
+  const deadline = Date.now() + timeout;
+
+  while (Date.now() < deadline) {
+    await page.waitForTimeout(interval);
+    const current = await fingerprint();
+    if (current === previous) {
+      if (++stable >= stableRounds) return;
+    } else {
+      stable = 0;
+      previous = current;
+    }
+  }
+  // Falling out of the loop is not fatal: a story that never settles is still captured, and the
+  // diff is where that shows up.
+};
 
 const run = async () => {
   await new Promise((r) => server.listen(port, r));
@@ -140,7 +191,8 @@ const run = async () => {
     await page.goto(`http://localhost:${port}/iframe.html?id=${encodeURIComponent(id)}&viewMode=story`, {
       waitUntil: 'networkidle',
     });
-    await page.waitForTimeout(350);
+    await page.evaluate(() => document.fonts?.ready);
+    await settle(page);
 
     snapshot[id] = await page.evaluate((props) => {
       const root = document.querySelector('#storybook-root') ?? document.body;
