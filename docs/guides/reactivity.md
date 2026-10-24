@@ -84,7 +84,7 @@ subscribe-driven component is under test by default. Assert after `await fixture
 **never** `fixture.detectChanges()`, which under zoneless sets `includeAllTestViews` and refreshes
 everything regardless. `fakeAsync`/`tick` are zone-based; use `whenStable()`.
 
-**A — the OnPush-ancestor harness**, exported as `@zambon-dev/library/testing`:
+**A — the OnPush-ancestor harness**, exported as `@zambon-dev/ui/testing`:
 
 ```ts
 const render = renderUnderOnPush(SidebarComponent);
@@ -109,7 +109,7 @@ Three rules make it an oracle rather than decoration:
 
 `render-under-on-push.spec.ts` proves the harness discriminates, including that a component
 declaring `Eager` stays just as stale as one declaring nothing. A clean Storybook console proves
-nothing — see the NG0100 notes in `libs/framework/CLAUDE.md`.
+nothing — see the NG0100 notes in `libs/ui/CLAUDE.md`.
 
 ## One bridge, deliberately
 

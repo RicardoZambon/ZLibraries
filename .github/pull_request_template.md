@@ -8,18 +8,18 @@
 
 <!-- What changed and why. -->
 
-## Affected packages
+## Affected layers
 
-<!-- Tick every package this PR changes. -->
+<!-- Tick every layer this PR changes. They ship as one package, on one version. -->
 
-- [ ] `@zambon-dev/library`
-- [ ] `@zambon-dev/framework`
-- [ ] `@zambon-dev/shared`
+- [ ] `@zambon-dev/ui/library`
+- [ ] `@zambon-dev/ui/framework`
+- [ ] `@zambon-dev/ui/shared`
 - [ ] None (tooling / docs / CI only)
 
 ## Changelog
 
-- [ ] I updated the `## [Unreleased]` section of the `CHANGELOG.md` for **every** affected package above.
+- [ ] I updated the `## [Unreleased]` section of `libs/ui/CHANGELOG.md`.
 - [ ] Entries are written for the **consumer** (what changed / what's new).
 - [ ] Breaking changes, if any, include concrete **migration steps** under `⚠ Breaking Changes / Migration`.
 

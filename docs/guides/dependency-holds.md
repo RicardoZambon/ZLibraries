@@ -49,7 +49,7 @@ sidebar rendering collapsed because `@screen md` is a v3 directive that v4 leave
 at-rule for the browser to drop. None of the three failed a build.
 
 What the migration involved, beyond the version: the JS config is gone and the theme lives in
-`libs/shared/src/styles/theme.css`, which is also the Tailwind entry point and is now published;
+`libs/ui/src/styles/theme.css`, which is also the Tailwind entry point and is now published;
 47 renamed utilities and 7 `@apply … !important` sites converted; 26 `theme()` calls rewritten to
 `var(--color-*)`; and `@reference` added to the 39 component stylesheets that use `@apply`, because
 v4 does not carry the config to every file the way the v3 PostCSS plugin did.
