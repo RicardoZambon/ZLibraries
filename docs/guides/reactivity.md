@@ -8,11 +8,11 @@
 > No template in this package reads a plain mutable field, a `get` backed by a service's mutable state, or
 > a value assigned inside `.subscribe()`.
 >
-> No component in this package declares `Eager`, with one deliberate exception -- the
-> harness's own self-test, which declares it to prove that declaring it changes nothing and
-> disables the lint rule on that line. Declaring nothing is the house default -- in v22 that
-> compiles to `OnPush` -- though a few still carry a redundant explicit `OnPush`, which changes
-> nothing. None calls `ChangeDetectorRef`.
+> No component in this package declares `Eager`, with one deliberate exception that ships to
+> nobody: the test harness's own self-test declares it, to prove that doing so makes no
+> difference, and disables the lint rule on that line. Declaring nothing is the house default --
+> in v22 that compiles to `OnPush` -- though a few still carry a redundant explicit `OnPush`.
+> None calls `ChangeDetectorRef`.
 >
 > `NgZone` survives in two components and three call sites -- `TabsComponent` once,
 > `DataGridComponent` twice -- purely to keep scroll and resize listeners out of change
@@ -159,15 +159,13 @@ All three `STILL_EAGER` lists are empty, and
 `@angular-eslint/prefer-on-push-component-change-detection` is an error for the whole package --
 one rule now, not one per package, since the three became `@zambon-dev/ui`.
 
-Be precise about what holds: **no component declares `Eager`, with one deliberate exception**.
-That exception is the harness's own self-test, `UnnotifiedEagerComponent`, which declares `Eager`
-because that is what it exists to test, and disables the lint rule on that line. A few components
-still carry a redundant explicit `OnPush`, which changes nothing and which both the lint rule and
-the contract specs accept.
+The rule itself is in the contract at the top of this guide, exception included. This section
+deliberately does not restate it: it used to, and the two copies drifted apart twice — the
+contract was corrected while the restatement here kept the old wording, then the reverse.
 
-"Declares no strategy" would be the wrong rule, and it was stated for a while. So would a flat
-"nothing declares `Eager`" written as a list of negatives — it leaves no room for the one case the
-repository documents on purpose.
+Worth knowing why the contract is worded so carefully. "Declares no strategy" is wrong, and was
+stated for a while. So is a flat "nothing declares `Eager`" written as a list of negatives, which
+leaves no room for the one case the repository documents on purpose.
 
 A consuming application chooses its own strategy, zoneless included, and the package renders
 correctly underneath it.
