@@ -5,22 +5,22 @@
 // Usage:
 //   node scripts/stamp-changelog.mjs <lib> <version> [--source] [--dist]
 //
-//   <lib>      one of: library | framework | shared
+//   <lib>      the package directory under libs/ (currently: ui)
 //   <version>  e.g. 1.2.0 (no leading "v")
 //   --source   write back to libs/<lib>/CHANGELOG.md (committed to the repo)
 //   --dist     write to dist/libs/<lib>/CHANGELOG.md (shipped in the npm package)
 //   (no flag)  writes both
 //
-// The release pipeline runs `--dist` inside each package job (so the published
-// package shows the resolved version) and `--source` once in the aggregate job
-// (so the single commit back to main carries every stamped changelog).
+// The release pipeline runs `--dist` from semantic-release's prepare step (so the
+// published package shows the resolved version) and `--source` afterwards, so the
+// commit pushed back to main carries the stamped changelog.
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO_URL = 'https://github.com/RicardoZambon/ZLibraries';
-const KNOWN_LIBS = new Set(['library', 'framework', 'shared']);
+const KNOWN_LIBS = new Set(['ui']);
 
 const EMPTY_UNRELEASED = [
   '## [Unreleased]',
