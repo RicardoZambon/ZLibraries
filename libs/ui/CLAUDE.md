@@ -37,21 +37,23 @@ component's lifetime.
 No template here reads a mutable field, a getter over mutable service state, or a value assigned
 inside `.subscribe()`.
 
-**No component declares `Eager`.** That is the rule, not "declares no strategy": eight components
-declare an explicit `ChangeDetectionStrategy.OnPush`, which is the same behaviour Angular 22 gives
-a component that declares nothing, and which both the lint rule and the contract specs accept.
+**No component declares `Eager`.** That is the rule, not "declares no strategy". Declare nothing
+in a new component: Angular 22 compiles that to `OnPush`, and it is the house default. Eight
+components still carry a redundant explicit `OnPush`; it changes nothing, and both the lint rule
+and the contract specs pass either way.
 
-**`NgZone` appears three times, and all three are allowed.** `TabsComponent` and
-`DataGridComponent` use `runOutsideAngular` to keep scroll, wheel and resize listeners from
-triggering a pass on every event. That is the opposite of reaching for the screen — it avoids
-passes rather than forcing them — and nothing depends on it for correctness: the handlers write a
-signal or push a subject, so inside a zone they would behave identically and merely cost more.
-Which is also what makes them safe under `provideZonelessChangeDetection()`, where `NgZone`
-resolves to `NoopNgZone` and the call is a silent no-op. Never write one whose correctness
-depends on being outside a zone; under zoneless it would simply be broken.
+**Nothing forces a change-detection pass.** No component injects `ChangeDetectorRef`; the last one
+was retired from `DataGridRowComponent`. Do not reintroduce it.
 
-**One place does reach for a pass**, and it is debt rather than an exception: `DataGridRowComponent`
-injects `ChangeDetectorRef`. Do not add a second.
+**`NgZone` is allowed for one thing.** Two components use it — `TabsComponent` once and
+`DataGridComponent` twice — always `runOutsideAngular`, always around scroll, wheel or resize
+listeners, to keep high-frequency events from triggering a pass. That is the opposite of reaching
+for the screen: it avoids passes rather than forcing them, and nothing depends on it for
+correctness, because the handlers write a signal or push a subject. Inside a zone they would
+behave identically and merely cost more. Which is also why they are safe under
+`provideZonelessChangeDetection()`, where `NgZone` resolves to `NoopNgZone` and the call is a
+silent no-op. Never write a component whose correctness depends on that call; under zoneless it
+would simply be broken.
 
 **What that buys the consumer:** a component from `@zambon-dev/ui` renders correctly under any
 change-detection strategy the host application chooses, and under

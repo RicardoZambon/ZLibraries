@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
-- **The layers in this release are `library` 4.0.4, `framework` 5.0.4 and `shared` 6.0.3.**
+- **The layers in this release are `library` 4.0.5, `framework` 5.0.5 and `shared` 6.0.4.**
   Moving here from an earlier version of any of the three means taking that layer's remaining
   releases too; they are under **Package history** below. The one worth naming is
   `ModalComponent.isShown`, which became `isOpen` and is a `Signal<boolean>`: reading the
@@ -70,7 +70,19 @@ will be published on them.
 
 ### Library
 
-UI components, directives, pipes and the data-grid services. Published as `@zambon-dev/library` through 4.0.4.
+UI components, directives, pipes and the data-grid services. Published as `@zambon-dev/library` through 4.0.5.
+
+#### [4.0.5](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.5) - 2026-10-24
+
+##### Changed
+
+- **A grid row's checkbox follows the grid's selection by being told, not by forcing a pass.**
+  `DataGridRowComponent` held its selected state in a plain field and called
+  `ChangeDetectorRef.detectChanges()` on itself whenever the grid announced a change. That
+  rendered -- there is no behaviour change here -- but it rendered because the component forced
+  a pass rather than because anything was notified, which is the one thing this package's
+  components are not supposed to need. The state is a signal now and the `ChangeDetectorRef` is
+  gone; it was the last one in the package.
 
 #### [4.0.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.4) - 2026-10-24
 
@@ -923,7 +935,11 @@ config options and the `getUserProfile()` method still exist but are no longer c
 
 ### Framework
 
-Tabbed navigation, view scaffolding, ribbon buttons and modals. Published as `@zambon-dev/framework` through 5.0.4.
+Tabbed navigation, view scaffolding, ribbon buttons and modals. Published as `@zambon-dev/framework` through 5.0.5.
+
+#### [5.0.5](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.5) - 2026-10-24
+
+- Maintenance release (no consumer-facing changes were documented).
 
 #### [5.0.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.4) - 2026-10-24
 
@@ -1646,7 +1662,11 @@ None.
 
 ### Shared
 
-Authentication, layouts, audit-history features and cross-cutting services. Published as `@zambon-dev/shared` through 6.0.3.
+Authentication, layouts, audit-history features and cross-cutting services. Published as `@zambon-dev/shared` through 6.0.4.
+
+#### [6.0.4](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.4) - 2026-10-24
+
+- Maintenance release (no consumer-facing changes were documented).
 
 #### [6.0.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/shared-v6.0.3) - 2026-10-24
 
