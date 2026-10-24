@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal, Signal, viewChild, WritableSignal } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterModule } from '@angular/router';
 import {
   DataProviderService,
@@ -39,7 +39,6 @@ function dataProviderFactory(route: ActivatedRoute): DataProviderService<any> {
     RouterModule,
     TranslatePipe,
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     { provide: TabViewService },
     { provide: DataProviderService, useFactory: dataProviderFactory, deps: [ActivatedRoute] },
@@ -58,14 +57,18 @@ function dataProviderFactory(route: ActivatedRoute): DataProviderService<any> {
 })
 export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent implements OnDestroy, OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ErrorModalComponent) private errorModal!: ErrorModalComponent;
+  private readonly errorModal: Signal<ErrorModalComponent | undefined> = viewChild(ErrorModalComponent);
   //#endregion
 
   //#region Variables
-  protected containerIcon?: string;
-  protected containerTitle?: string;
+  // Signals rather than fields: the record's title arrives from the data provider's stream,
+  // and the route it is read from is recomputed in that same subscription. Both are rendered
+  // here -- the container heading and the views button -- with nothing else marking this view.
+  protected readonly containerIcon: WritableSignal<string | undefined> = signal(undefined);
+  protected readonly containerTitle: WritableSignal<string | undefined> = signal(undefined);
+  protected readonly detailsViewRoute: WritableSignal<ActivatedRouteSnapshot | null> = signal(null);
+
   protected dataProviderClassName?: any;
-  protected detailsViewRoute: ActivatedRouteSnapshot | null = null;
 
   private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
   private hasEntityID: boolean | null = null;
@@ -84,9 +87,8 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
   public override ngOnInit(): void {
     super.ngOnInit();
 
-    this.detailsViewRoute = RouteHelper.getRouteWithComponent(
-      this.router.routerState.root.snapshot,
-      DefaultDetailsTabViewComponent,
+    this.detailsViewRoute.set(
+      RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent),
     );
     this.hasEntityID = this.dataProviderService?.hasEntityID ?? null;
 
@@ -94,25 +96,25 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
       ?.getModel$()
       .pipe(takeUntil(this.destroy$))
       .subscribe((model: any) => {
-        if (this.hasEntityID !== this.dataProviderService!.hasEntityID || !this.detailsViewRoute) {
+        if (this.hasEntityID !== this.dataProviderService!.hasEntityID || !this.detailsViewRoute()) {
           // If the entity ID changes, we need update the detailsViewRoute to get the correct route URL later.
           this.hasEntityID = this.dataProviderService!.hasEntityID;
-          this.detailsViewRoute = RouteHelper.getRouteWithComponent(
-            this.router.routerState.root.snapshot,
-            DefaultDetailsTabViewComponent,
+          this.detailsViewRoute.set(
+            RouteHelper.getRouteWithComponent(this.router.routerState.root.snapshot, DefaultDetailsTabViewComponent),
           );
         }
 
-        if (this.detailsViewRoute) {
-          let title: string = this.detailsViewRoute.data['defaultTitle'];
+        const detailsViewRoute: ActivatedRouteSnapshot | null = this.detailsViewRoute();
+        if (detailsViewRoute) {
+          let title: string = detailsViewRoute.data['defaultTitle'];
           if (this.dataProviderService!.hasEntityID) {
             title = this.dataProviderService!.getTitle(model);
           }
 
-          this.containerIcon = '';
-          this.containerTitle = title;
+          this.containerIcon.set('');
+          this.containerTitle.set(title);
 
-          const url: string = RouteHelper.getRouteURL(this.detailsViewRoute);
+          const url: string = RouteHelper.getRouteURL(detailsViewRoute);
           this.tabService.updateTabTitle(url, title);
         }
       });
@@ -124,13 +126,13 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
         this.hasLoadError = true;
 
         if (error.status === 404) {
-          this.errorModal.title.set('Modal-NotFound-Title');
-          this.errorModal.subtitle.set('');
-          this.errorModal.showModal('Modal-NotFound-Message');
+          this.errorModal()?.title.set('Modal-NotFound-Title');
+          this.errorModal()?.subtitle.set('');
+          this.errorModal()?.showModal('Modal-NotFound-Message');
         } else {
-          this.errorModal.title.set('Modal-Failed-Title');
-          this.errorModal.subtitle.set('Modal-Failed-Administrator');
-          this.errorModal.showModal(error);
+          this.errorModal()?.title.set('Modal-Failed-Title');
+          this.errorModal()?.subtitle.set('Modal-Failed-Administrator');
+          this.errorModal()?.showModal(error);
         }
       });
   }

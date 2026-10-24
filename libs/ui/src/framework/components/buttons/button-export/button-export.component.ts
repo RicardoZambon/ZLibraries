@@ -1,5 +1,5 @@
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Component, forwardRef, inject, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, inject, input, InputSignal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DataGridDataset, IListParameters, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/ui/library';
 import { take } from 'rxjs';
@@ -13,7 +13,6 @@ export const MaxExportRows = 50000;
   selector: 'framework-button-export',
   templateUrl: './button-export.component.html',
   imports: [RibbonButtonComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonExportComponent) }],
 })
 export class ButtonExportComponent extends BaseButton {
@@ -24,8 +23,8 @@ export class ButtonExportComponent extends BaseButton {
    * Export needing two clicks for the common case while Save (which sets 0) needed one. Set -1 to
    * restore the dropdown-only behaviour.
    */
-  @Input() public defaultOption = 0;
-  @Input() public fileBaseName = 'export';
+  public readonly defaultOption: InputSignal<number> = input(0);
+  public readonly fileBaseName: InputSignal<string> = input('export');
   //#endregion
 
   //#region Variables
@@ -55,13 +54,13 @@ export class ButtonExportComponent extends BaseButton {
   constructor() {
     super();
 
-    this.options = [
+    this.options.set([
       { id: 'xlsx', label: 'Button-Export-Excel', icon: 'fa-file-excel' },
       { id: 'pdf', label: 'Button-Export-PDF', icon: 'fa-file-pdf' },
       { id: 'csv', label: 'Button-Export-CSV', icon: 'fa-file-csv' },
       { id: 'xml', label: 'Button-Export-XML', icon: 'fa-file-code' },
       { id: 'mhtml', label: 'Button-Export-MHTML', icon: 'fa-file-archive' },
-    ];
+    ]);
   }
   //#endregion
 
@@ -104,7 +103,7 @@ export class ButtonExportComponent extends BaseButton {
 
     const contentDisposition: string = response.headers.get('Content-Disposition') ?? '';
     const match: RegExpExecArray | null = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(contentDisposition);
-    const fileName: string = match ? decodeURIComponent(match[1]) : this.fileBaseName;
+    const fileName: string = match ? decodeURIComponent(match[1]) : this.fileBaseName();
 
     const url: string = URL.createObjectURL(response.body);
     const anchor: HTMLAnchorElement = document.createElement('a');

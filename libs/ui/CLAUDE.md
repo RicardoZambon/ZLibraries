@@ -26,11 +26,11 @@ per-layer ESLint overrides. One package does not mean one prefix.
 imports `./index`, not `../index`; the latter is the root and carries all three layers.
 
 **The OnPush ratchet is per layer.** `prefer-on-push-component-change-detection` is an **error**
-under `src/library/`, whose migration is finished, and a warning elsewhere: the framework and
-shared layers still have components that depend on being walked on every event, listed in their
-own `change-detection-contract.spec.ts`. A new component in the library layer that declares a
-strategy fails lint. Make the rule an error for everything, and delete the layer-scoped block,
-once those two lists are empty.
+under `src/library/` and `src/framework/`, whose migrations are finished, and a warning under
+`src/shared/`, which still has components that depend on being walked on every event — they are
+listed in its own `change-detection-contract.spec.ts`. A new component in a finished layer that
+declares a strategy fails lint. Make the rule an error for everything, and delete the
+layer-scoped block, once the shared list is empty too.
 
 ## Commands
 

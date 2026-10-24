@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, inject, input, InputSignal, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRouteSnapshot, NavigationEnd, Route, Router, UrlSegment } from '@angular/router';
 import {
   DataProviderService,
@@ -16,12 +16,13 @@ import { BaseButton } from '../base-button';
   selector: 'framework-button-views',
   templateUrl: './button-views.component.html',
   imports: [RibbonButtonComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonViewsComponent) }],
 })
 export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public detailsViewRoute: ActivatedRouteSnapshot | null = null;
+  public readonly detailsViewRoute: InputSignal<ActivatedRouteSnapshot | null> = input<ActivatedRouteSnapshot | null>(
+    null,
+  );
   //#endregion
 
   //#region Variables
@@ -29,14 +30,16 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
   private isInternalNavigation = false;
   private router: Router = inject(Router);
-  private selectedViewId?: string;
+  // A signal rather than a field: switching views changes which option the dropdown marks as the
+  // current one, and the switch arrives from a router event.
+  private readonly selectedViewId: WritableSignal<string | undefined> = signal(undefined);
   private tabService: TabService = inject(TabService);
   private tabViewService: TabViewService = inject(TabViewService);
   //#endregion
 
   //#region Properties
   protected get hasOptions(): boolean {
-    return this.options.some(
+    return this.options().some(
       (option: IRibbonButtonOption) =>
         (option.isVisible ?? true) &&
         (option.allowedActions === undefined ||
@@ -51,11 +54,11 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   }
 
   protected get selectedView(): IRibbonButtonOption | undefined {
-    return this.options.find((option: IRibbonButtonOption) => option.id === this.selectedViewId);
+    return this.options().find((option: IRibbonButtonOption) => option.id === this.selectedViewId());
   }
 
   private get defaultViewId(): string {
-    return this.options[0].id ?? '';
+    return this.options()[0].id ?? '';
   }
 
   private get selectedViewUrl(): string {
@@ -73,9 +76,10 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#region Constructor and Angular life cycle methods
 
   public ngOnInit(): void {
-    if (this.detailsViewRoute) {
-      this.options =
-        this.detailsViewRoute.routeConfig?.children
+    const detailsViewRoute: ActivatedRouteSnapshot | null = this.detailsViewRoute();
+    if (detailsViewRoute) {
+      this.options.set(
+        detailsViewRoute.routeConfig?.children
           ?.filter((route: Route) => !!route.data && route.data['ignoreRoute'] !== true)
           ?.map((route: Route) => {
             const data: { [key: string | symbol]: any } = route.data ?? {};
@@ -98,13 +102,14 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
             }
 
             return option;
-          }) ?? [];
+          }) ?? [],
+      );
 
-      const url: string = RouteHelper.getRouteURL(this.detailsViewRoute);
+      const url: string = RouteHelper.getRouteURL(detailsViewRoute);
       this.baseUrlPath = url;
 
       const option: string =
-        this.detailsViewRoute.children[0]?.url?.map((segment: UrlSegment) => segment.path)?.join('/') ?? '';
+        detailsViewRoute.children[0]?.url?.map((segment: UrlSegment) => segment.path)?.join('/') ?? '';
       if (option === this.defaultViewId) {
         // We just need to check if the current option is the default, otherwise the router.events will handle the option selection.
         this.changeSelectedView(this.defaultViewId);
@@ -117,7 +122,7 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
         takeUntil(this.destroy$),
       )
       .subscribe((event: NavigationEnd) => {
-        if (this.detailsViewRoute) {
+        if (this.detailsViewRoute()) {
           // Use the current router state to get the up-to-date URL, since the stored
           // detailsViewRoute snapshot is immutable and becomes stale after save redirects
           // (e.g., /new → /:id).
@@ -135,14 +140,14 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
           // its Clear filters button while the grid stayed filtered. Comparing the route
           // definition rather than the URL keeps the one navigation that legitimately changes
           // this tab's path: the redirect from /new to /:id after a save.
-          if (currentRoute && currentRoute.routeConfig === this.detailsViewRoute.routeConfig) {
+          if (currentRoute && currentRoute.routeConfig === this.detailsViewRoute()!.routeConfig) {
             const url: string = RouteHelper.getRouteURL(currentRoute);
             this.baseUrlPath = url;
 
             const activeViewId: string = this.getActiveOption(event.url);
 
             if (!this.isInternalNavigation) {
-              if (this.selectedViewId !== activeViewId) {
+              if (this.selectedViewId() !== activeViewId) {
                 this.changeSelectedView(activeViewId);
               }
             } else {
@@ -176,23 +181,27 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#endregion
 
   //#region Private methods
+  /**
+   * Marks the chosen view as the current one, which is how the dropdown greys its own entry out.
+   *
+   * The options are rebuilt rather than edited in place: the ribbon button takes the list as an
+   * input, so a field changed inside it is a change nothing can see.
+   */
   private changeSelectedView(viewId: string | undefined): void {
-    if (this.selectedView) {
-      this.selectedView.isDisabled = false;
-    }
-
-    this.selectedViewId = viewId;
+    this.selectedViewId.set(viewId);
     this.tabViewService.setActiveView(viewId ?? '');
 
-    if (this.selectedView) {
-      this.selectedView.isDisabled = true;
-    }
+    this.options.update((options: IRibbonButtonOption[]) =>
+      options.map((option: IRibbonButtonOption) =>
+        option.isDisabled === (option.id === viewId) ? option : { ...option, isDisabled: option.id === viewId },
+      ),
+    );
   }
 
   private getActiveOption(url: string): string {
     const option: string = url.replace(this.baseUrlPath ?? '', '').substring(1);
 
-    if (this.options.some((o: IRibbonButtonOption) => o.id === option)) {
+    if (this.options().some((o: IRibbonButtonOption) => o.id === option)) {
       return option;
     }
 

@@ -1,12 +1,13 @@
-import { Component, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TabViewService } from '../../../services';
 import { DefaultTabViewComponent } from './default-tab-view.component';
 
+// Declares no strategy, so it compiles to OnPush: the host is never walked again after its
+// first pass, which is the state a consuming application leaves this component in.
 @Component({
   imports: [DefaultTabViewComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <framework-default-tab-view></framework-default-tab-view>
 

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, forwardRef, inject, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, inject, input, InputSignal, Signal, viewChild } from '@angular/core';
 import { FormService, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/ui/library';
 import { take } from 'rxjs';
 import { BackendFormValidationHelper } from '../../../../helpers';
@@ -12,7 +12,6 @@ import { BaseButton } from '../../base-button';
   selector: 'framework-button-save-legacy',
   templateUrl: './button-save.component.html',
   imports: [ErrorModalComponent, RibbonButtonComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonSaveLegacyComponent) }],
 })
 /**
@@ -22,11 +21,11 @@ import { BaseButton } from '../../base-button';
  */
 export class ButtonSaveLegacyComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ErrorModalComponent) private errorModal!: ErrorModalComponent;
+  private readonly errorModal: Signal<ErrorModalComponent | undefined> = viewChild(ErrorModalComponent);
 
-  @Input() public defaultOption = 0;
-  @Input() public form?: LegacySubViewForm;
-  @Input() public tabView!: LegacyTabViewDetails;
+  public readonly defaultOption: InputSignal<number> = input(0);
+  public readonly form: InputSignal<LegacySubViewForm | undefined> = input<LegacySubViewForm>();
+  public readonly tabView: InputSignal<LegacyTabViewDetails | undefined> = input<LegacyTabViewDetails>();
   //#endregion
 
   //#region Variables
@@ -41,24 +40,25 @@ export class ButtonSaveLegacyComponent extends BaseButton {
   constructor() {
     super();
 
-    this.options = [
+    this.options.set([
       { id: 'save', label: 'Button-Save', icon: 'fa-save' },
       { id: 'save-and-close', label: 'Button-Save-And-Close', icon: 'fa-save' },
       { id: 'save-and-new', label: 'Button-Save-And-New', icon: 'fa-save' },
-    ];
+    ]);
   }
   //#endregion
 
   //#region Event handlers
   protected onButtonClick(option?: string): void {
-    if (!this.form) {
+    const form: LegacySubViewForm | undefined = this.form();
+    if (!form) {
       return;
     }
 
     this.startLoading();
-    this.tabView.loading = true;
+    this.setTabViewLoading(true);
 
-    this.form
+    form
       .save()
       .pipe(take(1))
       .subscribe({
@@ -66,7 +66,7 @@ export class ButtonSaveLegacyComponent extends BaseButton {
           this.finishLoading('success');
 
           this.formService.model = model;
-          this.form?.cancelEdit();
+          form.cancelEdit();
 
           switch (option) {
             case 'save-and-close':
@@ -74,25 +74,23 @@ export class ButtonSaveLegacyComponent extends BaseButton {
               // this.tabService.closeTab(this.tabView);
               break;
             case 'save-and-new':
-              if (this.tabView.buttonNew) {
-                this.tabView.buttonNew.clicked();
-              }
+              this.tabView()?.buttonNew?.clicked();
               break;
           }
         },
         error: (e: HttpErrorResponse) => {
           this.finishLoading('warning');
-          this.form?.beginEdit(false);
+          form.beginEdit(false);
 
-          if (e.status === 400 && !!this.form) {
-            BackendFormValidationHelper.validateAllFormFields(e, this.form.dataForm);
+          if (e.status === 400) {
+            BackendFormValidationHelper.validateAllFormFields(e, form.dataForm);
           } else {
             let errorMessage = 'Modal-Failed-DefaultMessage';
             if (typeof e.error === 'string') {
               errorMessage = e.error;
             }
 
-            this.errorModal.showModal(errorMessage);
+            this.errorModal()?.showModal(errorMessage);
           }
         },
       });
@@ -101,11 +99,17 @@ export class ButtonSaveLegacyComponent extends BaseButton {
 
   //#region Public methods
   public override finishLoading(status: 'failure' | 'warning' | 'success'): void {
-    this.tabView.loading = false;
+    this.setTabViewLoading(false);
     super.finishLoading(status);
   }
   //#endregion
 
   //#region Private methods
+  private setTabViewLoading(isLoading: boolean): void {
+    const tabView: LegacyTabViewDetails | undefined = this.tabView();
+    if (tabView) {
+      tabView.loading = isLoading;
+    }
+  }
   //#endregion
 }

@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, inject, input, InputSignal, OnInit, signal, WritableSignal } from '@angular/core';
 import { DataProviderService, FormService, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/ui/library';
 import { takeUntil } from 'rxjs';
 import { ModalBase } from '../../../views/modals/modal-base';
@@ -8,21 +8,22 @@ import { BaseButton } from '../base-button';
   selector: 'framework-button-edit',
   templateUrl: './button-edit.component.html',
   imports: [RibbonButtonComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonEditComponent) }],
 })
 export class ButtonEditComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public cancelColor = 'text-red-500';
-  @Input() public cancelIcon = 'fa-ban';
-  @Input() public cancelLabel = 'Button-Cancel-Edit';
-  @Input() public editIcon = 'fa-edit';
-  @Input() public editLabel = 'Button-Edit';
-  @Input() public modal?: ModalBase;
+  public readonly cancelColor: InputSignal<string> = input('text-red-500');
+  public readonly cancelIcon: InputSignal<string> = input('fa-ban');
+  public readonly cancelLabel: InputSignal<string> = input('Button-Cancel-Edit');
+  public readonly editIcon: InputSignal<string> = input('fa-edit');
+  public readonly editLabel: InputSignal<string> = input('Button-Edit');
+  public readonly modal: InputSignal<ModalBase | undefined> = input<ModalBase>();
   //#endregion
 
   //#region Variables
-  protected isButtonCancelVisible = false;
+  // A signal rather than a field: the form cancelling an edit flips this from a subscription,
+  // which swaps Edit back in for Cancel.
+  protected readonly isButtonCancelVisible: WritableSignal<boolean> = signal(false);
 
   private dataProviderService: DataProviderService<any> = inject(DataProviderService);
   private formService: FormService = inject(FormService);
@@ -42,24 +43,25 @@ export class ButtonEditComponent extends BaseButton implements OnInit {
 
   public ngOnInit(): void {
     this.formService.editCanceled.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.isButtonCancelVisible = false;
+      this.isButtonCancelVisible.set(false);
     });
   }
   //#endregion
 
   //#region Event handlers
   protected onCancelClicked(): void {
-    if (this.isButtonCancelVisible) {
-      this.isButtonCancelVisible = false;
+    if (this.isButtonCancelVisible()) {
+      this.isButtonCancelVisible.set(false);
       this.formService.cancelEdit();
     }
   }
 
   protected onEditClicked(): void {
-    if (this.modal) {
-      this.modal.toggle();
+    const modal: ModalBase | undefined = this.modal();
+    if (modal) {
+      modal.toggle();
     } else {
-      this.isButtonCancelVisible = true;
+      this.isButtonCancelVisible.set(true);
       this.formService.beginEdit();
     }
   }

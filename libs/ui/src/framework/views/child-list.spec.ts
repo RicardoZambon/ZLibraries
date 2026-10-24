@@ -1,4 +1,4 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, signal } from '@angular/core';
 import { ReplaySubject, Subject } from 'rxjs';
 import { ChildList } from './child-list';
 
@@ -50,7 +50,9 @@ describe('ChildList', () => {
 
     component = Object.create(ChildList.prototype);
     component.destroy$ = new Subject();
-    component.loading = false;
+    // Object.create skips field initialisers, so the signal the base class would have built
+    // has to be supplied here.
+    component.loadingState = signal(false);
     component.selectionCount = 0;
     component.dataGridDataset = mockDataGridDataset;
     component.dataProvider = mockDataProvider;

@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, forwardRef, inject, input, InputSignal } from '@angular/core';
 import { ITabView, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/ui/library';
 import { Tab } from '../../../../models';
 import { TabService } from '../../../../services';
@@ -8,7 +8,6 @@ import { BaseButton } from '../../base-button';
   selector: 'framework-button-new-legacy',
   templateUrl: './button-new.component.html',
   imports: [RibbonButtonComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonNewLegacyComponent) }],
 })
 /**
@@ -18,9 +17,9 @@ import { BaseButton } from '../../base-button';
  */
 export class ButtonNewLegacyComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public endpoint = 'new';
-  @Input() public path!: string;
-  @Input() public tabView!: ITabView;
+  public readonly endpoint: InputSignal<string> = input('new');
+  public readonly path: InputSignal<string> = input('');
+  public readonly tabView: InputSignal<ITabView | undefined> = input<ITabView>();
   //#endregion
 
   //#region Variables
@@ -38,7 +37,7 @@ export class ButtonNewLegacyComponent extends BaseButton {
 
   //#region Public methods
   public clicked(): void {
-    this.tabService.navigateTo(new Tab({ url: `${this.path}/${this.endpoint}` }));
+    this.tabService.navigateTo(new Tab({ url: `${this.path()}/${this.endpoint()}` }));
     // this.tabService.navigateTab(this.tabView, `${this.path}/${this.endpoint}`);
   }
   //#endregion

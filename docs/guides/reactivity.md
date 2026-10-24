@@ -138,14 +138,14 @@ event, its `STILL_EAGER` list is empty, and
 datasets behind them -- `FormService`, `SidebarService`, `DataGridDataset`,
 `MultiSelectResultDataset` -- announce their own changes too.
 
-Also done, in framework and shared: all 20 view, button and filter base classes, `TabsComponent`,
-`TabService` (via the bridge above), `RibbonGroupChild`, `BaseButton` and
-`ServicesHistoryFilterComponent`.
+**`@zambon-dev/framework` is done too**, as of the ribbon buttons. Its `STILL_EAGER` list is
+empty and the lint rule is an error there as well. `ViewBase.loading`, `LegacySubViewForm.viewMode`
+and `DataProviderService`'s entity id went onto signals behind their existing accessors, which is
+what made the buttons' own templates correct without changing a single call site.
 
-Remaining: 21 components in framework and 9 in the shared public API, plus
-`LanguageSelectorComponent` and `LoginComponent`, which shared does not export and the contract
-spec therefore cannot reach. They are named in those two `change-detection-contract.spec.ts`
-files.
+Remaining: 9 components in the shared public API, plus `LanguageSelectorComponent` and
+`LoginComponent`, which shared does not export and the contract spec therefore cannot reach.
+They are named in `libs/shared/src/lib/change-detection-contract.spec.ts`.
 
 **The order that worked, and why.** Take a package's services and datasets before the components
 that read them. Doing it the other way round moves the problem: the component holds signals and

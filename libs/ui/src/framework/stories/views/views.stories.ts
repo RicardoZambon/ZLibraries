@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { Tab } from '../../models';
@@ -12,7 +12,6 @@ import { TabsComponent } from '../../components/views/tabs/tabs.component';
       <div class="p-4 text-sm text-slate-700">Active tab content is rendered by routed views in the application.</div>
     </framework-tabs>
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TabsComponent],
 })
 class StoryTabsHostComponent {

@@ -105,11 +105,11 @@ export default [
     // was configured here before. Kept visible as warnings rather than switched off.
     files: ['**/*.ts'],
     rules: {
-      // A warning for the framework and shared layers, which still have components that depend
-      // on being walked on every event. Each layer's change-detection-contract.spec.ts names
-      // the ones left; no count here, because it would go stale every time one is migrated.
-      // The library layer is finished and ratchets to 'error' below. Delete that block and make
-      // this one 'error' once the other two lists are empty.
+      // A warning for the shared layer, which still has components that depend on being walked
+      // on every event. Its change-detection-contract.spec.ts names the ones left; no count
+      // here, because it would go stale every time one is migrated. The library and framework
+      // layers are finished and ratchet to 'error' below. Delete that block and make this one
+      // 'error' once the shared list is empty too.
       '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
       // The codebase mixes constructor injection and inject(). Converting the
       // remainder is a job for , which needs
@@ -118,17 +118,17 @@ export default [
     },
   },
   {
-    // The library layer is finished: every component in it renders without being walked on every
-    // event, and src/library/change-detection-contract.spec.ts asserts that over the layer's
-    // public API with an empty list. An error here keeps it finished.
+    // The library and framework layers are finished: every component in them renders without
+    // being walked on every event, and each layer's change-detection-contract.spec.ts asserts
+    // that over its public API with an empty list. An error here keeps them finished.
     //
-    // Scoped to the layer rather than the package because the other two are not done. As three
-    // packages this was a per-package switch; one package makes the remaining work visible
-    // instead of hiding it behind a single flag.
+    // Scoped to the layers rather than the package because shared is not done. As three packages
+    // this was a per-package switch; one package makes the remaining work visible instead of
+    // hiding it behind a single flag.
     //
     // The harness's own self-test declares Eager to prove it changes nothing, and disables this
     // rule on that line.
-    files: ['src/library/**/*.ts'],
+    files: ['src/library/**/*.ts', 'src/framework/**/*.ts'],
     rules: {
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
     },

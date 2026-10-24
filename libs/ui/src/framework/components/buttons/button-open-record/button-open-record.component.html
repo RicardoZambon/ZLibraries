@@ -2,9 +2,9 @@
   <lib-ribbon-button
     icon="fa-eye"
     label="Button-Open-Record"
-    [disabled]="disabled || !isAccessLoaded() || !isSelectedOneRecord"
-    [iconSize]="iconSize"
-    [loading]="loading"
+    [disabled]="disabled() || !isAccessLoaded() || !isSelectedOneRecord"
+    [iconSize]="iconSize()"
+    [loading]="loading()"
     (action)="onButtonClicked()"
   >
   </lib-ribbon-button>

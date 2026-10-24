@@ -1,4 +1,4 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { DisplayControls } from '@zambon-dev/ui/library';
 import { Subject } from 'rxjs';
@@ -20,12 +20,14 @@ describe(ButtonFiltersComponent.name, () => {
   function build(): void {
     component = Object.create(ButtonFiltersComponent.prototype);
 
+    // Object.create skips field initialisers, so every signal the component would have built
+    // has to be supplied here.
     Object.assign(<Record<string, unknown>>(<unknown>component), {
-      button: { startLoading: jest.fn() },
-      filters: {},
+      button: signal({ loading: signal(false), startLoading: jest.fn() }),
+      filters: signal({}),
       formGroup: { form },
       gridDataset: { setFilters },
-      modal: { toggleModal },
+      modal: signal({ toggleModal }),
     });
   }
 
@@ -92,8 +94,9 @@ describe(ButtonFiltersComponent.name, () => {
       const button: ButtonFiltersComponent = Object.create(ButtonFiltersComponent.prototype);
 
       Object.assign(<Record<string, unknown>>(<unknown>button), {
+        button: signal(undefined),
         destroy$: new Subject<boolean>(),
-        disabled: true,
+        disabled: signal(true),
         gridDataset: {
           ...gridState,
           loadFinished: new EventEmitter<boolean>(),
@@ -107,15 +110,15 @@ describe(ButtonFiltersComponent.name, () => {
     }
 
     it('is clickable when it arrives at a grid that has already loaded', () => {
-      expect(initialiseAgainst({ hasBeenLoaded: true, isLoading: false }).disabled).toBe(false);
+      expect(initialiseAgainst({ hasBeenLoaded: true, isLoading: false }).disabled()).toBe(false);
     });
 
     it('waits while the grid it arrived at is still loading', () => {
-      expect(initialiseAgainst({ hasBeenLoaded: true, isLoading: true }).disabled).toBe(true);
+      expect(initialiseAgainst({ hasBeenLoaded: true, isLoading: true }).disabled()).toBe(true);
     });
 
     it('waits when the grid has not loaded yet', () => {
-      expect(initialiseAgainst({ hasBeenLoaded: false, isLoading: false }).disabled).toBe(true);
+      expect(initialiseAgainst({ hasBeenLoaded: false, isLoading: false }).disabled()).toBe(true);
     });
   });
 });
