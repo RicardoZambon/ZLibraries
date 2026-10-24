@@ -1,35 +1,40 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  InputSignal,
+  model,
+  ModelSignal,
+  output,
+  OutputEmitterRef,
   Signal,
   viewChild,
 } from '@angular/core';
-import { ModalComponent } from '@zambon-dev/ui/library';
+import { ModalComponent, ModalSize } from '@zambon-dev/ui/library';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'framework-error-modal',
   templateUrl: './error-modal.component.html',
   styleUrls: ['./error-modal.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ModalComponent, TranslatePipe],
 })
 export class ErrorModalComponent {
   //#region ViewChilds, Inputs, Outputs
   private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
-  @Input() public errorMessage = '';
-  @Input() public size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'auto' =
-    'xl';
-  @Input() public subtitle = 'Modal-Failed-Administrator';
-  @Input() public title = 'Modal-Failed-Title';
+  // A model rather than an input: showModal() writes it, and a parent calls that from its own
+  // subscription. As a plain field the message landed with nothing marking this view dirty.
+  public readonly errorMessage: ModelSignal<string> = model('');
 
-  @Output() public closed: EventEmitter<void> = new EventEmitter<void>();
+  public readonly size: InputSignal<ModalSize> = input<ModalSize>('xl');
+  // Models too: DefaultDetailsTabViewComponent sets both before showing the modal, so that a 404
+  // reads as "record not found" rather than as a server error.
+  public readonly subtitle: ModelSignal<string> = model('Modal-Failed-Administrator');
+  public readonly title: ModelSignal<string> = model('Modal-Failed-Title');
+
+  public readonly closed: OutputEmitterRef<void> = output<void>();
   //#endregion
 
   //#region Variables
@@ -62,7 +67,7 @@ export class ErrorModalComponent {
     } else if (typeof error.error === 'string') {
       errorMessage = error.error;
     }
-    this.errorMessage = errorMessage;
+    this.errorMessage.set(errorMessage);
     this.modal()?.toggleModal();
   }
   //#endregion

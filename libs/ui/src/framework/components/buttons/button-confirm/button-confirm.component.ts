@@ -50,7 +50,7 @@ export class ButtonConfirmComponent extends BaseButton {
   }
 
   protected onDelete(): void {
-    if (this.confirmModal.isLoading || !this.confirmModal.isOpen()) {
+    if (this.confirmModal.isLoading() || !this.confirmModal.isOpen()) {
       return;
     }
 

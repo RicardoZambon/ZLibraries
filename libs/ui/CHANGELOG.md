@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
-- **The layers in this release are `library` 4.0.3, `framework` 5.0.2 and `shared` 6.0.1.**
+- **The layers in this release are `library` 4.0.3, `framework` 5.0.3 and `shared` 6.0.1.**
   Moving here from an earlier version of any of the three means taking that layer's remaining
   releases too; they are under **Package history** below. The one worth naming is
   `ModalComponent.isShown`, which became `isOpen` and is a `Signal<boolean>`: reading the
@@ -913,7 +913,38 @@ config options and the `getUserProfile()` method still exist but are no longer c
 
 ### Framework
 
-Tabbed navigation, view scaffolding, ribbon buttons and modals. Published as `@zambon-dev/framework` through 5.0.2.
+Tabbed navigation, view scaffolding, ribbon buttons and modals. Published as `@zambon-dev/framework` through 5.0.3.
+
+#### [5.0.3](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.3) - 2026-10-24
+
+##### Changed
+
+- **The breadcrumbs, the confirm modal and the error modal render under any change-detection
+  strategy.** The breadcrumbs were the clearest case of a getter over state a service mutates
+  elsewhere, and both modals are driven imperatively by a parent calling `showModal` from a
+  subscription -- a message or a title landed with nothing marking the view dirty.
+
+- **The ribbon strip renders without the view forcing a change-detection pass.**
+  `DefaultTabViewComponent` holds the published template in a signal, and `TabViewService` holds
+  its active view in one. The `detectChanges()`/`markForCheck()` pair they used to need is gone,
+  and with it the rule that the ribbon template could never be assigned after the first pass --
+  a signal write there schedules another pass rather than throwing NG0100.
+
+##### ⚠ Breaking Changes / Migration
+
+- **`ConfirmModalComponent` and `ErrorModalComponent` expose their inputs as signals.** Binding to
+  them from a template is unchanged. Code that sets one before showing the modal keeps working
+  through `.set(...)`, because the ones a parent drives -- `errorMessage`, `isLoading`, and the
+  error modal's `title` and `subtitle` -- are `model()`. Code that _reads_ one needs `()`:
+  `confirmModal.isLoading()` rather than `confirmModal.isLoading`.
+
+- **`DefaultTabViewComponent` no longer takes constructor arguments.** It injects `TabViewService`
+  itself and no longer injects `ChangeDetectorRef` at all. A subclass calling
+  `super(changeDetectorRef, tabViewService)` should call `super()`, or drop its constructor.
+
+- **`DefaultTabViewComponent.ribbonTemplate` is a `Signal<TemplateRef | undefined>`.** Read it as
+  `ribbonTemplate()`. `TabViewService.onUpdateRibbonTemplate` is unchanged, so anything
+  subscribing to it keeps working.
 
 #### [5.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.2) - 2026-10-24
 

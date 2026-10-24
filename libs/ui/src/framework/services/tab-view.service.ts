@@ -1,4 +1,4 @@
-import { Injectable, TemplateRef } from '@angular/core';
+import { Injectable, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { ReplaySubject, Subject } from 'rxjs';
 
 @Injectable()
@@ -12,12 +12,12 @@ export class TabViewService {
   >(1);
   public onViewChanged: Subject<string> = new Subject<string>();
 
-  private _activeView?: string;
+  private readonly _activeView: WritableSignal<string | undefined> = signal(undefined);
   //#endregion
 
   //#region Properties
   public get activeView(): string {
-    return this._activeView ?? '';
+    return this._activeView() ?? '';
   }
   //#endregion
 
@@ -29,11 +29,11 @@ export class TabViewService {
 
   //#region Public methods
   public setActiveView(viewId: string): void {
-    if (viewId === this._activeView) {
+    if (viewId === this._activeView()) {
       return;
     }
 
-    this._activeView = viewId;
+    this._activeView.set(viewId);
     this.onViewChanged.next(viewId);
   }
 

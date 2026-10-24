@@ -106,9 +106,10 @@ export default [
     files: ['**/*.ts'],
     rules: {
       // A warning for the framework and shared layers, which still have components that depend
-      // on being walked on every event: 21 and 9 of them, named in each layer's
-      // change-detection-contract.spec.ts. The library layer is finished and ratchets to 'error'
-      // below. Delete that block and make this one 'error' when the other two lists are empty.
+      // on being walked on every event. Each layer's change-detection-contract.spec.ts names
+      // the ones left; no count here, because it would go stale every time one is migrated.
+      // The library layer is finished and ratchets to 'error' below. Delete that block and make
+      // this one 'error' once the other two lists are empty.
       '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
       // The codebase mixes constructor injection and inject(). Converting the
       // remainder is a job for , which needs
