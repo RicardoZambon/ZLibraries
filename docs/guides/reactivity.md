@@ -161,7 +161,8 @@ one rule now, not one per package, since the three became `@zambon-dev/ui`.
 
 The rule itself is in the contract at the top of this guide, exception included. This section
 deliberately does not restate it: it used to, and the two copies drifted apart twice — the
-contract was corrected while the restatement here kept the old wording, then the reverse.
+contract was corrected while the restatement here kept the old wording, then the reverse. A
+restatement is not a copy that happened to go stale; it is the surface that can.
 
 Worth knowing why the contract is worded so carefully. "Declares no strategy" is wrong, and was
 stated for a while. So is a flat "nothing declares `Eager`" written as a list of negatives, which
