@@ -15,9 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Internal only: call sites moved with `@zambon-dev/library`'s modal API.** `ModalComponent.isShown`
-  became `isOpen()`, and the confirm and error modals delegate to it through a signal view query.
-  Nothing in this package's own API changed.
+- **Internal only: call sites moved with `@zambon-dev/library`.** `ModalComponent.isShown` became
+  `isOpen()`, and the confirm and error modals delegate to it through a signal view query.
+  `ButtonFiltersComponent` reads `RibbonButtonComponent.loading` as a signal, which the compiler
+  caught: in a condition the signal object itself is always true. Nothing in this package's own
+  API changed.
 
 ### Deprecated
 
