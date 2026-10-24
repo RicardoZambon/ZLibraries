@@ -43,7 +43,7 @@ export class ButtonOpenRecordComponent extends BaseButton implements OnInit {
 
   //#region Event handlers
   protected onButtonClicked(): void {
-    if (this.disabled || !this.isAccessLoaded || !this.isSelectedOneRecord || !this.visible) {
+    if (this.disabled || !this.isAccessLoaded() || !this.isSelectedOneRecord || !this.isVisible()) {
       return;
     }
 

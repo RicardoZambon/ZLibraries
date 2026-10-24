@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Tab } from '../../../models';
 import { ButtonOpenRecordComponent } from './button-open-record.component';
@@ -36,8 +37,8 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
     component.elementPath = undefined;
     component.rootPath = undefined;
     component.disabled = false;
-    component.visible = true;
-    component.isAccessLoaded = true;
+    component.isVisible = signal(true);
+    component.isAccessLoaded = signal(true);
     component.destroy$ = new Subject();
 
     (component as any).tabService = mockTabService;
@@ -110,7 +111,7 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
 
     it('should NOT navigate when access is not loaded', () => {
       (component as any).selectionCount = 1;
-      component.isAccessLoaded = false;
+      component.isAccessLoaded = signal(false);
 
       component.onButtonClicked();
 
@@ -135,7 +136,7 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
 
     it('should NOT navigate when not visible', () => {
       (component as any).selectionCount = 1;
-      component.visible = false;
+      component.isVisible = signal(false);
 
       component.onButtonClicked();
 

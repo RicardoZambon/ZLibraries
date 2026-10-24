@@ -13,6 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A test harness that catches a component which silently stops rendering**, published as
+  `@zambon-dev/library/testing`. `renderUnderOnPush(MyComponent)` renders a component beneath a
+  clean OnPush ancestor -- which is what your application is -- and `render.tick()` runs a pass
+  that such an ancestor can still short-circuit. A component that updates state without telling
+  Angular cannot update its DOM under it, which is the failure a plain `TestBed` fixture cannot
+  express. Use it on your own components as you remove `ChangeDetectionStrategy.Eager` from them.
+  It works under both a zone and a zoneless test environment, so you can adopt it without
+  changing your test setup first.
+
 ### Changed
 
 ### Deprecated
@@ -21,7 +30,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The sidebar fills in on its own again.** In an application whose components use Angular 22's
+  default strategy -- which is now OnPush -- the sidebar rendered its loading spinner and only
+  filled in when the user next clicked something. Its menus arrived from HTTP, were assigned to a
+  field, and nothing told Angular to render. `SidebarService` and `SidebarComponent` now hold that
+  state in signals, so it reaches the screen whatever strategy your application uses.
+- **A sidebar item's selected state reaches its host element.** `[class.selected]` is a host
+  binding, which Angular evaluates during the _parent's_ pass, so the component's own
+  `detectChanges()` could never refresh it and writing it afterwards raised NG0100.
+- **A ribbon group hides and shows itself when its buttons' visibility resolves.** The group reads
+  its children's visibility from a host binding; nothing notified it when an asynchronous access
+  check flipped one.
+
 ### ⚠ Breaking Changes / Migration
+
+- **`RibbonGroupChild.visible` is now `isVisible`, and it is a `Signal<boolean>`.** If you
+  implement `RibbonGroupChild` yourself -- a custom ribbon button -- replace the field:
+
+  ```ts
+  // before
+  public visible = true;
+  // after
+  public readonly isVisible: Signal<boolean> = computed(() => ...);   // or signal(true)
+  ```
+
+  A plain field cannot work here: the group reads it from a host binding, and nothing can notify
+  the group when a field changes.
+
+- **`RibbonGroupComponent.children` is a signal query**, `Signal<readonly RibbonGroupChild[]>`
+  instead of `QueryList`. Replace `children.length` with `children().length` and
+  `children.get(0)` with `children()[0]`.
+
+- **`SidebarService.isActive`, `isCollapsed` and `shouldActivate` are accessors over signals.**
+  Reading and writing them is unchanged. But if your own `SidebarService` subclass **redeclares**
+  any of them as a field -- `public override isActive = false;` -- delete that line. A field
+  shadows the accessor, and the sidebar stops reacting to it.
 
 ## [3.2.5] - 2026-10-22
 

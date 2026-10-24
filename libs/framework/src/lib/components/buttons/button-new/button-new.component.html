@@ -1,8 +1,8 @@
-@if (visible && (!hasDataProvider || hasDataProviderEntityID)) {
+@if (isVisible() && (!hasDataProvider || hasDataProviderEntityID)) {
   <lib-ribbon-button
     icon="fa-plus"
     label="Button-New"
-    [disabled]="disabled || !isAccessLoaded"
+    [disabled]="disabled || !isAccessLoaded()"
     [loading]="loading"
     [options]="options"
     (action)="onButtonClicked($event)"

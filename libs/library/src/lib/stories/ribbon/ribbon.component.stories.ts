@@ -1,4 +1,4 @@
-import { Component, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, signal, WritableSignal } from '@angular/core';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { RibbonButtonComponent } from '../../components/ribbon-button/ribbon-button.component';
 import { RibbonGroupComponent } from '../../components/ribbon-group/ribbon-group.component';
@@ -12,7 +12,7 @@ import { RibbonGroupChild } from '../../models/ribbon-group-child';
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => StorybookRibbonChildComponent) }],
 })
 class StorybookRibbonChildComponent extends RibbonGroupChild {
-  public visible = true;
+  public readonly isVisible: WritableSignal<boolean> = signal(true);
 }
 
 const meta: Meta<RibbonComponent> = {

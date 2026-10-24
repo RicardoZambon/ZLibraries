@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataProviderService, FormService } from '@zambon-dev/library';
 import { Observable, take, tap, throwError } from 'rxjs';
@@ -9,7 +9,11 @@ import { ViewBase } from '../view-base';
  * @deprecated Use standalone {@link FormView} instead. Migrate by extending FormView
  * and using standalone component imports with inject() for dependency injection.
  */
-@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
+// No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
+// describe a class that is never instantiated, while every subclass compiles to whatever it
+// declares -- which in v22 means OnPush. Correctness comes from the state below notifying
+// Angular, never from this decorator. See docs/guides/reactivity.md.
+@Component({ template: '' })
 export abstract class LegacySubViewForm extends ViewBase implements OnInit {
   @Input() entityId?: number;
   @Input() set model(value: any | null) {

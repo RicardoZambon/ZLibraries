@@ -1,10 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataGridDataset, MultiEditorComponent, MultiEditorDataset } from '@zambon-dev/library';
 import { takeUntil } from 'rxjs';
 import { ModalBase } from './modal-base';
 
-@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
+// No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
+// describe a class that is never instantiated, while every subclass compiles to whatever it
+// declares -- which in v22 means OnPush. Correctness comes from the state below notifying
+// Angular, never from this decorator. See docs/guides/reactivity.md.
+@Component({ template: '' })
 export abstract class MultiEditorLegacyModal extends ModalBase implements OnInit {
   protected _entityId?: number;
 

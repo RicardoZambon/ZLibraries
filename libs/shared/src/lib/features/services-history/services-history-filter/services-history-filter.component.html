@@ -3,13 +3,13 @@
     <lib-form-input-group controlName="name" label="ServicesHistory-Field-Name" [autofocus]="true" [maxLength]="200">
     </lib-form-input-group>
 
-    @if (hasUsersCatalog) {
+    @if (hasUsersCatalog()) {
       <lib-catalog-select
         controlName="changedByID"
         displayControlName="changedByName"
         label="ServicesHistory-Field-ChangedBy"
         [readOnly]="false"
-        [searchEndpoint]="usersCatalogEndpoint!"
+        [searchEndpoint]="usersCatalogEndpoint()!"
       >
       </lib-catalog-select>
     }

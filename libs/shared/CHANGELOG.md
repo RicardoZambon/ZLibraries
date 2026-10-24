@@ -15,13 +15,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`FiltersBase` no longer declares a change-detection strategy**, for the same reason as the
+  framework's view bases: it was never inherited. Your filter components are unaffected.
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+- **The services-history author filter appears when its catalog is supplied.** The template read
+  the endpoint through a getter over a plain `@Input()`, which under Angular 22's default strategy
+  raised NG0100 rather than rendering.
+
 ### ⚠ Breaking Changes / Migration
+
+- **`ServicesHistoryFilterComponent.usersCatalogEndpoint` is a signal input.** Binding it from a
+  template -- `[usersCatalogEndpoint]="endpoint"` -- is unchanged. Assigning it directly on a
+  component instance no longer works; use the binding, or `componentRef.setInput` in a test.
 
 ## [5.0.2] - 2026-09-30
 

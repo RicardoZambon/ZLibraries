@@ -15,13 +15,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The view and button base classes no longer declare a change-detection strategy.** This is not
+  a behaviour change: Angular has never inherited `changeDetection`, so the `Eager` these carried
+  applied to the base class itself -- which is never instantiated -- and never to your subclasses.
+  Your components have compiled to OnPush since you upgraded to Angular 22, whatever the base said.
+  The declaration is gone because it described nothing.
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+- **Ribbon buttons appear once their access check resolves.** `BaseButton` resolved visibility
+  from an asynchronous `checkActionsAreAllowed` call and assigned a plain field, which told Angular
+  nothing. Under Angular 22's default strategy the button stayed hidden until something else forced
+  a render.
+- **The tab strip renders the tabs you open.** In an application whose root component uses
+  Angular 22's default strategy, opening anything from the menu changed the URL and left the tab
+  bar, the view, the ribbon and the breadcrumbs blank: `TabsComponent` reads the open tabs
+  through getters on `TabService`, which mutates its arrays in place, and nothing told the
+  component to render. `TabService` now announces its own changes, so the tabs, the titles that
+  resolve later, and the breadcrumbs all reach the screen. Found by running SecurityHub against
+  this package rather than by a test -- which is why one now guards it.
+
+- **The tab strip re-measures when it narrows.** Bringing the selected tab back into view hung off
+  `ngAfterViewChecked`, which only ever ran because zone.js produced a pass on every event. The
+  `ResizeObserver` -- which is how a browser actually reports a box changing -- now does the full
+  re-measure, and the post-render work uses `afterEveryRender`.
+
 ### ⚠ Breaking Changes / Migration
+
+- **`BaseButton.visible` is now `isVisible`, and it is a signal.** Every component that extends
+  `BaseButton` is affected, in its template and its code:
+
+  | Replace               | With                    |
+  | --------------------- | ----------------------- |
+  | `@if (visible)`       | `@if (isVisible())`     |
+  | `this.visible`        | `this.isVisible()`      |
+  | `!isAccessLoaded`     | `!isAccessLoaded()`     |
+  | `this.isAccessLoaded` | `this.isAccessLoaded()` |
+
+  Both were renamed or re-typed deliberately, so a call site you miss is a compile error rather
+  than a button that quietly never appears. Before you start, turn on `strictTemplates` and
+  `"interpolatedSignalNotInvoked": "error"` under `angularCompilerOptions.extendedDiagnostics` in
+  your `tsconfig.json`, which makes `{{ someSignal }}` a build failure too.
+
+- **A component that delegates its visibility to an inner button needs a signal view query.** If
+  you implement `RibbonGroupChild` by wrapping a `framework-button` and forwarding its state,
+  a rename alone is not enough -- a `computed` reading a plain `@ViewChild` never re-runs when
+  the query resolves:
+
+  ```ts
+  // before
+  @ViewChild(ButtonComponent) private buttonComponent!: ButtonComponent;
+  public get visible(): boolean {
+    return this.buttonComponent?.visible ?? false;
+  }
+
+  // after
+  private readonly buttonComponent = viewChild(ButtonComponent);
+  public readonly isVisible: Signal<boolean> = computed(() => this.buttonComponent()?.isVisible() ?? false);
+  ```
+
+  Every other read of that query moves to `this.buttonComponent()?.…` as well.
+
+- **`TabsComponent` no longer injects `ChangeDetectorRef`.** Only relevant if you construct it
+  yourself; used through its selector, nothing changes.
 
 ## [4.0.5] - 2026-10-22
 

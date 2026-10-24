@@ -5,9 +5,9 @@
 </div>
 
 <nav>
-  @if (!isLoading) {
+  @if (!isLoading()) {
     <ul>
-      @for (region of regions; track trackByRegion($index, region)) {
+      @for (region of regions(); track trackByRegion($index, region)) {
         @if (region.name) {
           <li class="sidebar-region-header">
             <span>{{ region.name | translate }}</span>
@@ -17,7 +17,7 @@
           <lib-sidebar-item [menu]="menu"> </lib-sidebar-item>
         }
       }
-      @if (hasFailed) {
+      @if (hasFailed()) {
         <div class="error">
           <div>
             <i class="fa-solid fa-fw fa-triangle-exclamation"></i>

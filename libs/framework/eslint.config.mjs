@@ -99,8 +99,10 @@ export default [
     // was configured here before. Kept visible as warnings rather than switched off.
     files: ['**/*.ts'],
     rules: {
-      // Tracked work, not an oversight: docs/guides/change-detection.md lists the 66
-      // components still to migrate and what blocks each one.
+      // Tracked work, not an oversight. docs/guides/reactivity.md explains the contract, and
+      // src/lib/change-detection-contract.spec.ts names the 21 components here that still
+      // declare Eager -- a ratchet that fails if the list grows or goes stale. Switch this to
+      // 'error' and delete this block once that list is empty.
       '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
       // The codebase mixes constructor injection and inject(). Converting the
       // remainder is a job for , which needs

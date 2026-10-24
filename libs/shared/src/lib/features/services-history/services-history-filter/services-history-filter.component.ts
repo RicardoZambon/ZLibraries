@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { Component, computed, input, InputSignal, OnInit, Signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonFiltersComponent } from '@zambon-dev/framework';
 import { CatalogSelectComponent, FormGroupComponent, FormInputGroupComponent } from '@zambon-dev/library';
@@ -6,7 +6,6 @@ import { takeUntil } from 'rxjs';
 import { FiltersBase } from '../../../components';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'shared-services-history-filter',
   templateUrl: './services-history-filter.component.html',
   styleUrls: ['./services-history-filter.component.scss'],
@@ -27,16 +26,14 @@ export class ServicesHistoryFilterComponent extends FiltersBase implements OnIni
    * There is no such catalog in this library -- who a user is belongs to the application -- so the
    * author filter is offered only when one is supplied.
    */
-  @Input() public usersCatalogEndpoint?: string;
+  public readonly usersCatalogEndpoint: InputSignal<string | undefined> = input<string>();
   //#endregion
 
   //#region Variables
   //#endregion
 
   //#region Properties
-  protected get hasUsersCatalog(): boolean {
-    return !!this.usersCatalogEndpoint;
-  }
+  protected readonly hasUsersCatalog: Signal<boolean> = computed(() => !!this.usersCatalogEndpoint());
 
   private get changedOnFromControl(): FormControl {
     return <FormControl>this.filterForm.get('changedOnFrom');

@@ -29,7 +29,7 @@ export class ButtonComponent extends BaseButton {
 
   //#region Event handlers
   protected onButtonClicked(): void {
-    if (this.disabled || !this.isAccessLoaded || !this.visible) {
+    if (this.disabled || !this.isAccessLoaded() || !this.isVisible()) {
       return;
     }
 

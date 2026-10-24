@@ -1,8 +1,12 @@
-import { AfterViewInit, Component, inject, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { TabViewService } from '../services';
 import { ViewBase } from './view-base';
 
-@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
+// No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
+// describe a class that is never instantiated, while every subclass compiles to whatever it
+// declares -- which in v22 means OnPush. Correctness comes from the state below notifying
+// Angular, never from this decorator. See docs/guides/reactivity.md.
+@Component({ template: '' })
 export abstract class TabViewBase extends ViewBase implements AfterViewInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild('ribbon') private ribbonTemplate?: TemplateRef<any>;

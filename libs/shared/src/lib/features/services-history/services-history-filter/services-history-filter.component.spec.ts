@@ -80,7 +80,9 @@ describe(ServicesHistoryFilterComponent.name, () => {
     // context. They are rendered, just no longer under this fixture's element.
     expect(document.querySelector('lib-catalog-select')).toBeNull();
 
-    component.usersCatalogEndpoint = 'https://example.test/api/Employees/Catalog';
+    // setInput, not a property assignment: a signal input is how a consumer's template binds it,
+    // and it is what marks the view dirty.
+    fixture.componentRef.setInput('usersCatalogEndpoint', 'https://example.test/api/Employees/Catalog');
     fixture.detectChanges();
 
     expect(document.querySelector('lib-catalog-select')).not.toBeNull();

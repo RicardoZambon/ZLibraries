@@ -1,14 +1,14 @@
 import { NgStyle } from '@angular/common';
 import {
   AfterViewInit,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   inject,
   Input,
   OnInit,
+  signal,
   ViewChild,
-  ChangeDetectionStrategy,
+  WritableSignal,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { delay, filter, takeUntil } from 'rxjs';
@@ -21,13 +21,12 @@ import { BaseComponent } from '../base.component';
   templateUrl: './sidebar-item.component.html',
   styleUrls: ['./sidebar-item.component.scss'],
   imports: [NgStyle, TranslatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.active]': 'isActive',
     '[class.expanded]': '!isCollapsed',
     '[class.first-level]': 'level === 0',
     '[class.last-child]': 'isLast',
-    '[class.selected]': 'isSelected',
+    '[class.selected]': 'isSelected()',
   },
 })
 export class SidebarItemComponent extends BaseComponent implements OnInit, AfterViewInit {
@@ -40,19 +39,22 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   //#endregion
 
   //#region Variables
-  protected hasFailed = false;
-  protected isLoading = false;
-  protected isSelected = false;
+  // Signals, not fields. Three of these are read from host bindings, which Angular evaluates in
+  // the PARENT's pass -- so `changeDetectorRef.detectChanges()` on this component could never
+  // refresh them, and writing them after that pass raised NG0100 instead. A signal write marks
+  // this view and every ancestor, which is the only notification that reaches a host binding.
+  protected readonly hasFailed: WritableSignal<boolean> = signal(false);
+  protected readonly isLoading: WritableSignal<boolean> = signal(false);
+  protected readonly isSelected: WritableSignal<boolean> = signal(false);
 
-  private _childHeight = 0;
-  private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private readonly _childHeight: WritableSignal<number> = signal(0);
   private sidebarConfigs: SidebarConfigs = inject(SIDEBAR_CONFIGS);
   private sidebarService: SidebarService = inject(SidebarService);
   //#endregion
 
   //#region Properties
   public get childHeight(): number {
-    return this._childHeight;
+    return this._childHeight();
   }
 
   protected get areChildrenLoaded(): boolean {
@@ -108,12 +110,10 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
           delay(1000),
         )
         .subscribe((_menu: SidebarMenu) => {
-          this.hasFailed = true;
-          this.isLoading = false;
-          this.isSelected = false;
+          this.hasFailed.set(true);
+          this.isLoading.set(false);
+          this.isSelected.set(false);
           this.menu.isSelected = false;
-
-          this.changeDetectorRef.detectChanges();
         });
 
       this.sidebarService.childrenLoading
@@ -122,8 +122,8 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
           filter((menu: SidebarMenu) => menu.id === this.menu.id),
         )
         .subscribe((_menu: SidebarMenu) => {
-          this.hasFailed = false;
-          this.isLoading = true;
+          this.hasFailed.set(false);
+          this.isLoading.set(true);
         });
 
       this.sidebarService.childrenInitialized
@@ -135,15 +135,13 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
           ),
         )
         .subscribe((_menu: SidebarMenu) => {
-          this.isLoading = false;
-          this.hasFailed = false;
+          this.isLoading.set(false);
+          this.hasFailed.set(false);
           this.updateSubMenuHeight();
 
           if (this.menu.parent) {
             this.sidebarService.childrenInitialized.emit(this.menu.parent);
           }
-
-          this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -153,7 +151,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
         filter((menu: SidebarMenu) => menu.id === this.menu.id),
       )
       .subscribe((menu: SidebarMenu) => {
-        this.isSelected = menu.isSelected;
+        this.isSelected.set(menu.isSelected);
         this.updateSubMenuHeight();
       });
   }
@@ -188,7 +186,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   }
 
   private updateSubMenuHeight(): void {
-    this._childHeight = this.getChildHeight(this.menu);
+    this._childHeight.set(this.getChildHeight(this.menu));
   }
   //#endregion
 }

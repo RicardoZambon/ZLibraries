@@ -1,8 +1,8 @@
-@if (visible) {
+@if (isVisible()) {
   <lib-ribbon-button
     icon="fa-eye"
     label="Button-Open-Record"
-    [disabled]="disabled || !isAccessLoaded || !isSelectedOneRecord"
+    [disabled]="disabled || !isAccessLoaded() || !isSelectedOneRecord"
     [iconSize]="iconSize"
     [loading]="loading"
     (action)="onButtonClicked()"

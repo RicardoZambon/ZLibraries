@@ -72,7 +72,9 @@ describe(`${SidebarComponent.name} region grouping`, () => {
     const fixture: ComponentFixture<SidebarComponent> = TestBed.createComponent(SidebarComponent);
     fixture.detectChanges();
 
-    return <SidebarRegion[]>(<Record<string, unknown>>(<unknown>fixture.componentInstance))['regions'];
+    //  is a signal now, so the spec reads it the way the template does.
+    const regions = (<Record<string, unknown>>(<unknown>fixture.componentInstance))['regions'];
+    return (<() => SidebarRegion[]>regions)();
   }
 
   function menu(options: Partial<SidebarMenu>): SidebarMenu {

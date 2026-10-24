@@ -1,9 +1,9 @@
-@if (visible) {
+@if (isVisible()) {
   <lib-ribbon-button
     label="Button-Save"
     icon="fa-save"
     [defaultOption]="defaultOption"
-    [disabled]="disabled || !isAccessLoaded || !isFormEditMode || isFormLoading"
+    [disabled]="disabled || !isAccessLoaded() || !isFormEditMode || isFormLoading"
     [loading]="loading"
     [options]="options"
     (action)="onButtonClicked($event)"

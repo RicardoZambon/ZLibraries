@@ -2,13 +2,13 @@
   <div
     #menuContainer
     [class.external]="opensInNewBrowserTab"
-    [class.failed]="hasFailed"
-    [class.loading]="isLoading"
+    [class.failed]="hasFailed()"
+    [class.loading]="isLoading()"
     [class.parent]="isParent"
-    [class.selected]="isSelected"
+    [class.selected]="isSelected()"
     role="button"
     tabindex="0"
-    [attr.aria-current]="isSelected"
+    [attr.aria-current]="isSelected()"
     (click)="onSelectItem()"
     (keydown.enter)="onSelectItem()"
     (keydown.space)="onSelectItem(); $event.preventDefault()"
@@ -36,7 +36,7 @@
 
   @if (isParent) {
     <ul
-      [class.open]="isSelected"
+      [class.open]="isSelected()"
       [ngStyle]="{
         'height.px': childHeight,
         'max-height.px': childHeight,
