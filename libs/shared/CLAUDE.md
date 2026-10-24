@@ -35,8 +35,11 @@ a `viewChild()`/`contentChildren()`, a getter composed of those, or a constant f
 component's lifetime.
 
 No template here reads a mutable field, a getter over mutable service state, or a value assigned
-inside `.subscribe()`. No component here declares `changeDetection`, uses `ChangeDetectorRef`, or
-injects `NgZone`.
+inside `.subscribe()`. No component here uses `ChangeDetectorRef` or injects `NgZone`.
+
+No component declares `Eager`. Declaring nothing is the house default -- in v22 that compiles to
+`OnPush` -- and is what to write for a new one. A few components still carry a redundant explicit
+`OnPush`; it changes nothing, and both the lint rule and the contract spec pass either way.
 
 **What that buys the consumer:** a component from `@zambon-dev/shared` renders correctly under any
 change-detection strategy the host application chooses, and under

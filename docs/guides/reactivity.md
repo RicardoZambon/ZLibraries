@@ -8,7 +8,9 @@
 > No library template reads a plain mutable field, a `get` backed by a service's mutable state, or
 > a value assigned inside `.subscribe()`.
 >
-> No library component declares `changeDetection`, and none calls `ChangeDetectorRef`.
+> No library component declares `Eager`. Declaring nothing is the house default -- in v22 that
+> compiles to `OnPush` -- though a few still carry a redundant explicit `OnPush`, which changes
+> nothing. None calls `ChangeDetectorRef` or injects `NgZone`.
 >
 > **What this guarantees a consumer:** a component from these packages renders correctly under any
 > change-detection strategy the host application uses, and under `provideZonelessChangeDetection()`.
