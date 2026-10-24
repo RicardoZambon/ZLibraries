@@ -15,11 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Internal only: call sites moved with `@zambon-dev/library`'s modal API.** `ModalComponent.isShown`
+  became `isOpen()`, and the confirm and error modals delegate to it through a signal view query.
+  Nothing in this package's own API changed.
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- **The peer range on its sibling packages now admits the majors they were released at.** The last
+  release published `@zambon-dev/library` 4.0.0, `@zambon-dev/framework` 5.0.0 and
+  `@zambon-dev/shared` 6.0.0, but the ranges here still asked for the previous majors, so an
+  application installing two of them together got `ERESOLVE`. Nothing else changed.
 
 ### ⚠ Breaking Changes / Migration
 

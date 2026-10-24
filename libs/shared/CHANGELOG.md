@@ -21,7 +21,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The peer range on its sibling packages now admits the majors they were released at.** The last
+  release published `@zambon-dev/library` 4.0.0, `@zambon-dev/framework` 5.0.0 and
+  `@zambon-dev/shared` 6.0.0, but the ranges here still asked for the previous majors, so an
+  application installing two of them together got `ERESOLVE`. Nothing else changed.
+
 ### ⚠ Breaking Changes / Migration
+
+- **`OperationsHistoryModalComponent.isModalShown` is a `Signal<boolean>`.** It followed
+  `@zambon-dev/library`'s `ModalComponent.isShown` becoming `isOpen`, and delegates through a
+  signal view query so it answers correctly once that child resolves. Read it as
+  `isModalShown()`. The compiler will not catch a miss here -- reading the signal object itself is
+  valid TypeScript and always truthy -- so grep for `isModalShown` rather than relying on the
+  build.
 
 ## [6.0.0] - 2026-10-24
 
