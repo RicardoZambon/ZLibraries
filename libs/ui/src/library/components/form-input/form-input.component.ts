@@ -1,5 +1,15 @@
 import { CommonModule, formatDate } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  InputSignal,
+  model,
+  ModelSignal,
+  OnInit,
+  output,
+  OutputEmitterRef,
+} from '@angular/core';
 import {
   ControlContainer,
   FormControl,
@@ -19,9 +29,8 @@ import { BaseComponent } from '../base.component';
   styleUrls: ['./form-input.component.scss'],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
-  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
-    '[class.full-height]': 'isFullHeight',
+    '[class.full-height]': 'isFullHeight()',
     // Clears a stray `type` attribute for the same reason as FormInputGroupComponent — see the
     // comment there. Applies when a consumer sets `type` on `lib-form-input` directly.
     '[attr.type]': 'null',
@@ -29,30 +38,34 @@ import { BaseComponent } from '../base.component';
 })
 export class FormInputComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @Input() public autofocus = false;
-  @Input() public controlName = '';
-  @Input() public disabledControlName?: string;
-  @Input() public displayReadOnlyAsDisabled = true;
-  @Input() public fixedValue?: any;
-  @Input() public format?: string;
-  @Input() public invalid = false;
-  @Input() public isDisabled = true;
-  @Input() public isFullHeight = false;
-  @Input() public maxLength?: number;
-  @Input() public min?: number;
-  @Input() public readOnly = false;
-  @Input() public rows!: number;
-  @Input() public step = 1;
-  @Input() public type = 'text';
+  public readonly autofocus: InputSignal<boolean> = input(false);
+  public readonly controlName: InputSignal<string> = input('');
+  public readonly disabledControlName: InputSignal<string | undefined> = input<string>();
+  public readonly displayReadOnlyAsDisabled: InputSignal<boolean> = input(true);
+  public readonly invalid: InputSignal<boolean> = input(false);
+  public readonly isDisabled: InputSignal<boolean> = input(true);
+  public readonly isFullHeight: InputSignal<boolean> = input(false);
+  public readonly maxLength: InputSignal<number | undefined> = input<number>();
+  public readonly min: InputSignal<number | undefined> = input<number>();
+  public readonly readOnly: InputSignal<boolean> = input(false);
+  public readonly rows: InputSignal<number | undefined> = input<number>();
+  public readonly step: InputSignal<number> = input(1);
+  public readonly type: InputSignal<string> = input('text');
+
+  // Both are written by this component as well as bound by a parent, so they are models rather
+  // than inputs: `fixedValue` is two-way bound through ngModel, and `format` gets a default for
+  // date types when the consumer supplies none.
+  public readonly fixedValue: ModelSignal<any> = model<any>();
+  public readonly format: ModelSignal<string | undefined> = model<string>();
 
   // Deliberately NOT named blur/change/input/focus. <lib-form-input> is a real DOM
   // element, so an output sharing a native event name fires the consumer's handler
   // twice for the bubbling events and shadows the native one for the rest.
-  @Output() public blurred: EventEmitter<void> = new EventEmitter<void>();
-  @Output() public changed: EventEmitter<any> = new EventEmitter<any>();
-  @Output() public fixedValueChanged: EventEmitter<string> = new EventEmitter<string>();
-  @Output() public focused: EventEmitter<void> = new EventEmitter<void>();
-  @Output() public inputChanged: EventEmitter<void> = new EventEmitter<void>();
+  public readonly blurred: OutputEmitterRef<void> = output<void>();
+  public readonly changed: OutputEmitterRef<any> = output<any>();
+  public readonly fixedValueChanged: OutputEmitterRef<string> = output<string>();
+  public readonly focused: OutputEmitterRef<void> = output<void>();
+  public readonly inputChanged: OutputEmitterRef<void> = output<void>();
   //#endregion
 
   //#region Host listeners
@@ -66,11 +79,11 @@ export class FormInputComponent extends BaseComponent implements OnInit {
 
   //#region Properties
   protected get formControl(): FormControl<any> | null {
-    return this.controlName ? <FormControl>this.formGroup.get(this.controlName) : null;
+    return this.controlName() ? <FormControl>this.formGroup.get(this.controlName()) : null;
   }
 
   protected get formControlName(): string {
-    return [...this.parentGroups, this.controlName].join('.');
+    return [...this.parentGroups, this.controlName()].join('.');
   }
 
   protected get formGroup(): FormGroup {
@@ -82,7 +95,7 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   }
 
   protected get isFormControl(): boolean {
-    return !!this.controlName && this.controlName.length > 0;
+    return !!this.controlName() && this.controlName().length > 0;
   }
 
   protected get isFormEditMode(): boolean {
@@ -94,15 +107,15 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   }
 
   protected get stepAttributeValue(): number | null {
-    if (this.type === 'number') {
-      return this.step;
+    if (this.type() === 'number') {
+      return this.step();
     }
     return null;
   }
 
   protected get minAttributeValue(): number | null {
-    if (this.type === 'number') {
-      return this.min ?? null;
+    if (this.type() === 'number') {
+      return this.min() ?? null;
     }
     return null;
   }
@@ -114,7 +127,7 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    switch (this.type) {
+    switch (this.type()) {
       case 'number':
         if (this.formControl) {
           this.formControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: any) => {
@@ -126,8 +139,8 @@ export class FormInputComponent extends BaseComponent implements OnInit {
         break;
 
       case 'date':
-        if (this.format === undefined) {
-          this.format = 'yyyy-MM-dd';
+        if (this.format() === undefined) {
+          this.format.set('yyyy-MM-dd');
         }
 
         if (this.formControl) {
@@ -166,8 +179,8 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   }
 
   protected onValueChanged(newText: string): void {
-    this.fixedValue = newText;
-    this.fixedValueChanged.emit(this.fixedValue);
+    this.fixedValue.set(newText);
+    this.fixedValueChanged.emit(newText);
   }
   //#endregion
 

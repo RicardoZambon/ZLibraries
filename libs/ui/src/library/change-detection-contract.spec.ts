@@ -16,12 +16,7 @@ import * as publicApi from './index';
  * When this list is empty, turn `@angular-eslint/prefer-on-push-component-change-detection` from
  * 'warn' to 'error' in eslint.config.mjs and delete the allowance.
  */
-const STILL_EAGER: readonly string[] = [
-  'CatalogSelectComponent',
-  'DataGridComponent',
-  'FormInputComponent',
-  'RibbonButtonComponent',
-];
+const STILL_EAGER: readonly string[] = ['CatalogSelectComponent'];
 
 describe('change-detection contract', () => {
   const components: [string, Type<unknown>][] = Object.entries(publicApi)
@@ -30,7 +25,7 @@ describe('change-detection contract', () => {
     .map(([name, value]: [string, unknown]) => [name, <Type<unknown>>value]);
 
   it('finds the exported components, so the assertion below cannot pass vacuously', () => {
-    expect(components.length).toBeGreaterThanOrEqual(4);
+    expect(components.length).toBeGreaterThanOrEqual(1);
   });
 
   it('declares Eager only for the components still queued for migration', () => {

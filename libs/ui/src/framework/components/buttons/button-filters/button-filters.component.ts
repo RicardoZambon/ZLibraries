@@ -65,14 +65,14 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
 
     this.gridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.disabled = true;
-      if (this.button.loading) {
+      if (this.button.loading()) {
         this.finishLoading('success');
       }
     });
 
     this.gridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.disabled = false;
-      if (this.button.loading) {
+      if (this.button.loading()) {
         this.finishLoading('success');
       }
     });
