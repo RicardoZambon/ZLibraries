@@ -29,9 +29,15 @@ describe(`${DataGridRowComponent.name} under an OnPush ancestor`, () => {
     // The row measures its cells through ngx-resize-observer, and jsdom has no ResizeObserver.
     // Nothing here depends on a measurement, so it only has to exist.
     globalThis.ResizeObserver = class {
-      public observe(): void {}
-      public unobserve(): void {}
-      public disconnect(): void {}
+      public observe(): void {
+        return undefined;
+      }
+      public unobserve(): void {
+        return undefined;
+      }
+      public disconnect(): void {
+        return undefined;
+      }
     } as unknown as typeof ResizeObserver;
 
     selectedKeys = new Set<string>();
