@@ -26,9 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   mirrors the `FormGroup`'s status, which is not a signal and never notified one, so a control
   bound to it no longer keeps its first answer.
 
-- **`RibbonButtonComponent` renders under any change-detection strategy.** Its inputs are signals,
-  and the dropdown, status and loading state no longer depend on the button being walked on every
-  event.
+- **`RibbonButtonComponent` and `FormInputComponent` render under any change-detection strategy.**
+  Their inputs are signals, and neither depends on being walked on every event any more.
 
 - **Seven more components render under any change-detection strategy**, continuing the work the last
   major started: `ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`,
@@ -74,11 +73,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `itemTemplate()`, `formGroup()`, `addButtonLabel()`, `removeButtonLabel()`, `showAddButton()`
   and `showDeleteButton()`.
 
-- **`RibbonButtonComponent` exposes its inputs as signals.** Binding to it from a template is
-  unchanged. Only code reading one off an instance needs `()` -- `button.loading()` rather than
-  `button.loading`. `loading` is a `model()`, because `BaseButton` drives it imperatively through
-  `startLoading` and `finishLoading`, and `action` is an `output()`, so emitting "no option
-  chosen" is now an explicit `emit(undefined)`.
+- **`RibbonButtonComponent` and `FormInputComponent` expose their inputs as signals.** Binding to
+  them from a template is unchanged. Only code reading one off an instance needs `()` --
+  `button.loading()` rather than `button.loading`.
+
+  Two are `model()` rather than `input()` because the components write them as well:
+  `RibbonButtonComponent.loading`, which `BaseButton` drives through `startLoading` and
+  `finishLoading`, and `FormInputComponent.fixedValue`, which is two-way bound through `ngModel`.
+  `FormInputComponent.format` is also a `model()`, since it defaults itself for date types when
+  the consumer supplies none.
+
+  `RibbonButtonComponent.action` is an `output()`, which has no no-argument overload, so emitting
+  "no option chosen" is now an explicit `emit(undefined)`.
 
 - **`FormInputGroupComponent` and `MultiSelectResultGridComponent` expose their inputs as signals
   too.** Binding to them from a template is unchanged -- `[label]="..."`, `[type]="..."`,
