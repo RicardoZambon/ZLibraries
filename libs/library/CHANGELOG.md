@@ -28,23 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **`FormService` and the datasets announce their own changes.** A component reading
-  `formService.loading`, `formService.model`, `formService.isEditMode`, `formService.isValid`,
-  `dataGridDataset.selectedRowKeys`, `resultDataset.displayedRows` or a grid's loading state from
-  its template now re-renders when that state changes, whatever strategy the host application
-  uses. `columns` is deliberately left alone: a concrete dataset declares it once and never
-  changes it, so making it reactive would only have broken every subclass that declares it. **Nothing to do on your side** -- these were already accessors or
-  became accessors of the same shape, so every read and write keeps working. `isValid` also
-  mirrors the `FormGroup`'s status, which is not a signal and never notified one, so a control
-  bound to it no longer keeps its first answer.
-
-- **Seven more components render under any change-detection strategy**, continuing the work the last
-  major started: `ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`,
-  `MultiSelectComponent`, `MultiEditorComponent`, `FormInputGroupComponent` and
-  `MultiSelectResultGridComponent`. Their state is signals now, and none of them declares a
-  strategy. Four library components are still to go; they are named in
-  `change-detection-contract.spec.ts`.
-
 - **Every component now draws from the tokens**, so a theme moves them all at once. The data grid,
   the group containers, the modal, the multi-select, the catalog select, the ribbon and the form
   controls had their colours, radii, shadows and durations written into their stylesheets; they now
@@ -72,6 +55,44 @@ reduce`. There is nothing to configure.
 ### Removed
 
 ### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+- **`@zambon-dev/shared/styles/theme.css` is now required**, even if you only install this package.
+  Its tokens are where every component's colours come from; without the import they resolve to
+  nothing and components render transparent. Add it to your global stylesheet:
+
+  ```css
+  @import '@zambon-dev/shared/styles/theme.css';
+  ```
+
+- **The three packages move together.** This release majors all of them and their peer ranges
+  name each other, so upgrade them in one step:
+
+  ```bash
+  npm i @zambon-dev/library@latest @zambon-dev/framework@latest @zambon-dev/shared@latest
+  ```
+
+## [4.0.1] - 2026-10-24
+
+### Changed
+
+- **`FormService` and the datasets announce their own changes.** A component reading
+  `formService.loading`, `formService.model`, `formService.isEditMode`, `formService.isValid`,
+  `dataGridDataset.selectedRowKeys`, `resultDataset.displayedRows` or a grid's loading state from
+  its template now re-renders when that state changes, whatever strategy the host application
+  uses. `columns` is deliberately left alone: a concrete dataset declares it once and never
+  changes it, so making it reactive would only have broken every subclass that declares it. **Nothing to do on your side** -- these were already accessors or
+  became accessors of the same shape, so every read and write keeps working. `isValid` also
+  mirrors the `FormGroup`'s status, which is not a signal and never notified one, so a control
+  bound to it no longer keeps its first answer.
+
+- **Seven more components render under any change-detection strategy**, continuing the work the last
+  major started: `ModalComponent`, `GroupAccordionComponent`, `GroupScrollSpyComponent`,
+  `MultiSelectComponent`, `MultiEditorComponent`, `FormInputGroupComponent` and
+  `MultiSelectResultGridComponent`. Their state is signals now, and none of them declares a
+  strategy. Four library components are still to go; they are named in
+  `change-detection-contract.spec.ts`.
 
 ### ⚠ Breaking Changes / Migration
 
@@ -108,21 +129,6 @@ reduce`. There is nothing to configure.
   too.** Binding to them from a template is unchanged -- `[label]="..."`, `[type]="..."`,
   `[validations]="..."` and the rest all still work. Only code reading one off a component
   instance needs `()`. `controlName` is required now, which it always was in practice.
-
-- **`@zambon-dev/shared/styles/theme.css` is now required**, even if you only install this package.
-  Its tokens are where every component's colours come from; without the import they resolve to
-  nothing and components render transparent. Add it to your global stylesheet:
-
-  ```css
-  @import '@zambon-dev/shared/styles/theme.css';
-  ```
-
-- **The three packages move together.** This release majors all of them and their peer ranges
-  name each other, so upgrade them in one step:
-
-  ```bash
-  npm i @zambon-dev/library@latest @zambon-dev/framework@latest @zambon-dev/shared@latest
-  ```
 
 ## [4.0.0] - 2026-10-24
 
@@ -861,7 +867,8 @@ config options and the `getUserProfile()` method still exist but are no longer c
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `library-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/library-v4.0.1...HEAD
+[4.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.1
 [4.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.0
 [3.2.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.5
 [3.2.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v3.2.4

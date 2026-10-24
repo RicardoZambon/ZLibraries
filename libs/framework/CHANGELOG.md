@@ -20,10 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Internal only: call sites moved with `@zambon-dev/library`'s modal API.** `ModalComponent.isShown`
-  became `isOpen()`, and the confirm and error modals delegate to it through a signal view query.
-  Nothing in this package's own API changed.
-
 - **The ribbon and its buttons draw from the design tokens.** Fill, border, radius and the
   success/warning/failure states named Tailwind colours; they now name a role, which is what lets
   them follow a theme. The dropdown menu picks up the shared overlay shadow and blur.
@@ -63,6 +59,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ```bash
   npm i @zambon-dev/library@latest @zambon-dev/framework@latest @zambon-dev/shared@latest
   ```
+
+## [5.0.1] - 2026-10-24
+
+### Changed
+
+- **Internal only: call sites moved with `@zambon-dev/library`'s modal API.** `ModalComponent.isShown`
+  became `isOpen()`, and the confirm and error modals delegate to it through a signal view query.
+  Nothing in this package's own API changed.
+
+### Fixed
+
+- **The peer range on its sibling packages now admits the majors they were released at.** The last
+  release published `@zambon-dev/library` 4.0.0, `@zambon-dev/framework` 5.0.0 and
+  `@zambon-dev/shared` 6.0.0, but the ranges here still asked for the previous majors, so an
+  application installing two of them together got `ERESOLVE`. Nothing else changed.
 
 ## [5.0.0] - 2026-10-24
 
@@ -660,7 +671,8 @@ None.
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `framework-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.0...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/framework-v5.0.1...HEAD
+[5.0.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.1
 [5.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.0
 [4.0.5]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.5
 [4.0.4]: https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v4.0.4
