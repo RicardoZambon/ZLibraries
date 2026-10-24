@@ -65,7 +65,7 @@ export abstract class MultiEditorModal<TEntityModel> extends ModalBase implement
 
   //#region Public methods
   public toggle(): void {
-    if (!this.multiEditor.isShown) {
+    if (!this.multiEditor.isOpen()) {
       this.updateParentID();
     }
 

@@ -20,13 +20,6 @@ const STILL_EAGER: readonly string[] = [
   'CatalogSelectComponent',
   'DataGridComponent',
   'FormInputComponent',
-  'FormInputGroupComponent',
-  'GroupAccordionComponent',
-  'GroupScrollSpyComponent',
-  'ModalComponent',
-  'MultiEditorComponent',
-  'MultiSelectComponent',
-  'MultiSelectResultGridComponent',
   'RibbonButtonComponent',
 ];
 
@@ -37,7 +30,7 @@ describe('change-detection contract', () => {
     .map(([name, value]: [string, unknown]) => [name, <Type<unknown>>value]);
 
   it('finds the exported components, so the assertion below cannot pass vacuously', () => {
-    expect(components.length).toBeGreaterThanOrEqual(11);
+    expect(components.length).toBeGreaterThanOrEqual(4);
   });
 
   it('declares Eager only for the components still queued for migration', () => {

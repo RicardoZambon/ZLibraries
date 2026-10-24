@@ -1,4 +1,15 @@
-import { Component, inject, Input, OnInit, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  InputSignal,
+  OnInit,
+  Signal,
+  signal,
+  TemplateRef,
+  viewChild,
+  WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take, takeUntil } from 'rxjs';
@@ -13,21 +24,20 @@ import { MultiSelectResultGridComponent } from './result-grid/result-grid.compon
   selector: 'lib-multi-select',
   templateUrl: './multi-select.component.html',
   styleUrls: ['./multi-select.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [DataGridComponent, FormsModule, ModalComponent, MultiSelectResultGridComponent, TranslatePipe],
 })
 export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
-  @ViewChild(ModalComponent) private modal!: ModalComponent;
+  private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
-  @Input() public itemTemplate!: TemplateRef<any>;
+  public readonly itemTemplate: InputSignal<TemplateRef<unknown> | undefined> = input<TemplateRef<unknown>>();
   //#endregion
 
   //#region Variables
-  protected isResultGridLoading = false;
-  protected isSearchGridLoading = false;
+  protected readonly isResultGridLoading: WritableSignal<boolean> = signal(false);
+  protected readonly isSearchGridLoading: WritableSignal<boolean> = signal(false);
   protected resultDataset: MultiSelectResultDataset = inject(MultiSelectResultDataset);
-  protected searchCriteria = '';
+  protected readonly searchCriteria: WritableSignal<string> = signal('');
 
   private _searchColumn = '';
   private dataGridDataset: DataGridDataset = inject(DataGridDataset);
@@ -50,7 +60,7 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
     super();
 
     this.dataGridDataset.configs.multiSelect = true;
-    this.closeButtonText = 'Button-Modal-Cancel';
+    this.closeButtonText.set('Button-Modal-Cancel');
   }
 
   public override ngOnInit(): void {
@@ -59,23 +69,23 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
     super.ngOnInit();
 
     this.dataGridDataset.loadStarted.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.isSearchGridLoading = true;
+      this.isSearchGridLoading.set(true);
     });
 
     this.dataGridDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.isSearchGridLoading = false;
+      this.isSearchGridLoading.set(false);
       this.updateSelectedItems();
     });
 
     this.resultDataset.loadFinished.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.isResultGridLoading = false;
+      this.isResultGridLoading.set(false);
       this.updateSelectedItems();
     });
 
     this.dataGridDataset.selectedRowsChanged
       .pipe(takeUntil(this.destroy$))
       .subscribe((selectionChanges: { [id: string]: { rowData: any; selected: boolean } }) => {
-        if (this.isSearchGridLoading || this.isResultGridLoading) {
+        if (this.isSearchGridLoading() || this.isResultGridLoading()) {
           return;
         }
 
@@ -95,12 +105,12 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
 
   //#region Event handlers
   protected onSave(): void {
-    this.modalProcessing = true;
+    this.modalProcessing.set(true);
     this.resultDataset
       .saveChanges()
       .pipe(take(1))
       .subscribe(() => {
-        this.modalProcessing = false;
+        this.modalProcessing.set(false);
         this.toggleModal();
       });
   }
@@ -119,9 +129,9 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
 
     const filters: { [key: string]: string } = this.dataGridDataset.filters ?? {};
 
-    this.isSearchGridLoading = true;
-    if (this.searchCriteria.length > 0) {
-      filters[this.searchColumn] = this.searchCriteria;
+    this.isSearchGridLoading.set(true);
+    if (this.searchCriteria().length > 0) {
+      filters[this.searchColumn] = this.searchCriteria();
       this.dataGridDataset.setFilters(filters);
     } else if (Object.keys(filters).includes(this.searchColumn)) {
       this.clearSearch();
@@ -131,17 +141,17 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
 
   //#region Public methods
   public override closeModal(): void {
-    this.modal.closeModal();
+    this.modal()?.closeModal();
   }
 
   public override toggleModal(): void {
-    this.modal.toggleModal();
+    this.modal()?.toggleModal();
 
-    if (this.modal.isShown) {
-      this.searchCriteria = '';
+    if (this.modal()?.isOpen()) {
+      this.searchCriteria.set('');
       this.clearSearch();
 
-      this.isResultGridLoading = true;
+      this.isResultGridLoading.set(true);
       this.resultDataset.refresh();
     }
   }
@@ -156,7 +166,7 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
     this.dataGridDataset.setFilters(filters);
   }
   private updateSelectedItems(): void {
-    if (this.isSearchGridLoading || this.isResultGridLoading) {
+    if (this.isSearchGridLoading() || this.isResultGridLoading()) {
       return;
     }
 
