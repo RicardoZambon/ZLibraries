@@ -1,0 +1,43 @@
+const isValidation = process.env.SEMANTIC_RELEASE_VALIDATION === 'true';
+
+const plugins = [
+  [
+    '@semantic-release/commit-analyzer',
+    {
+      releaseRules: [
+        { scope: 'no-release', release: false },
+        { type: 'bug', release: 'patch' },
+        { type: 'fix', release: 'patch' },
+        { type: 'refactor', release: 'patch' },
+        { type: 'feat', release: 'minor' },
+        { type: 'breaking-changes', release: 'major' },
+        { breaking: true, release: 'major' },
+      ],
+    },
+  ],
+  '@semantic-release/release-notes-generator',
+];
+
+if (!isValidation) {
+  plugins.push(
+    [
+      '@semantic-release/exec',
+      {
+        // Stamp the published package's CHANGELOG with the resolved version.
+        prepareCmd: 'node ../../scripts/stamp-changelog.mjs ui ${nextRelease.version} --dist',
+      },
+    ],
+    [
+      '@semantic-release/npm',
+      {
+        pkgRoot: '../../dist/libs/ui',
+      },
+    ],
+  );
+}
+
+module.exports = {
+  branches: isValidation ? [process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || 'main'] : ['main'],
+  tagFormat: 'ui-v${version}',
+  plugins,
+};
