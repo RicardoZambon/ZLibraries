@@ -1,16 +1,16 @@
 <lib-modal
   position="top"
   [closeButtonText]="'Button-Modal-Cancel' | translate"
-  [size]="size"
-  [title]="title | translate"
+  [size]="size()"
+  [title]="title() | translate"
 >
   <div body>
     @if (hasMessage) {
       <div class="message">
-        @if (showMessageIcon) {
-          <i class="fa-3x" [ngClass]="[messageIcon, messageIconColor]"></i>
+        @if (showMessageIcon()) {
+          <i class="fa-3x" [ngClass]="[messageIcon(), messageIconColor()]"></i>
         }
-        <h4 [innerHTML]="message | translate"></h4>
+        <h4 [innerHTML]="message() | translate"></h4>
       </div>
     }
 
@@ -18,7 +18,7 @@
 
     @if (hasErrorMessage) {
       <div class="erro">
-        <h4>{{ errorMessage | translate }}</h4>
+        <h4>{{ errorMessage() | translate }}</h4>
         <span>{{ 'Modal-Failed-Administrator' | translate }}</span>
       </div>
     }

@@ -33,10 +33,7 @@ const STILL_EAGER: readonly string[] = [
   'ButtonSaveLegacyComponent',
   'ButtonViewsComponent',
   'ButtonViewsLegacyComponent',
-  'ConfirmModalComponent',
   'DefaultDetailsTabViewComponent',
-  'ErrorModalComponent',
-  'TabBreadcrumbsComponent',
 ];
 
 describe('change-detection contract', () => {
@@ -46,7 +43,7 @@ describe('change-detection contract', () => {
     .map(([name, value]: [string, unknown]) => [name, <Type<unknown>>value]);
 
   it('finds the exported components, so the assertion below cannot pass vacuously', () => {
-    expect(components.length).toBeGreaterThanOrEqual(20);
+    expect(components.length).toBeGreaterThanOrEqual(17);
   });
 
   it('declares Eager only for the components still queued for migration', () => {

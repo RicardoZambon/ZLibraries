@@ -124,12 +124,12 @@ export class DefaultDetailsTabViewComponent extends DefaultTabViewComponent impl
         this.hasLoadError = true;
 
         if (error.status === 404) {
-          this.errorModal.title = 'Modal-NotFound-Title';
-          this.errorModal.subtitle = '';
+          this.errorModal.title.set('Modal-NotFound-Title');
+          this.errorModal.subtitle.set('');
           this.errorModal.showModal('Modal-NotFound-Message');
         } else {
-          this.errorModal.title = 'Modal-Failed-Title';
-          this.errorModal.subtitle = 'Modal-Failed-Administrator';
+          this.errorModal.title.set('Modal-Failed-Title');
+          this.errorModal.subtitle.set('Modal-Failed-Administrator');
           this.errorModal.showModal(error);
         }
       });

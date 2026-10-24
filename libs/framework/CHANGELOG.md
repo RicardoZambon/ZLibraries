@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The breadcrumbs, the confirm modal and the error modal render under any change-detection
+  strategy.** The breadcrumbs were the clearest case of a getter over state a service mutates
+  elsewhere, and both modals are driven imperatively by a parent calling `showModal` from a
+  subscription -- a message or a title landed with nothing marking the view dirty.
+
 - **The ribbon strip renders without the view forcing a change-detection pass.**
   `DefaultTabViewComponent` holds the published template in a signal, and `TabViewService` holds
   its active view in one. The `detectChanges()`/`markForCheck()` pair they used to need is gone,
@@ -28,6 +33,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+- **`ConfirmModalComponent` and `ErrorModalComponent` expose their inputs as signals.** Binding to
+  them from a template is unchanged. Code that sets one before showing the modal keeps working
+  through `.set(...)`, because the ones a parent drives -- `errorMessage`, `isLoading`, and the
+  error modal's `title` and `subtitle` -- are `model()`. Code that _reads_ one needs `()`:
+  `confirmModal.isLoading()` rather than `confirmModal.isLoading`.
 
 - **`DefaultTabViewComponent` no longer takes constructor arguments.** It injects `TabViewService`
   itself and no longer injects `ChangeDetectorRef` at all. A subclass calling
