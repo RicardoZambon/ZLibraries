@@ -15,10 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Internal: `ButtonFiltersComponent` reads `RibbonButtonComponent.loading` as a signal.** The
-  compiler caught the old form — in a condition the signal object itself is always true. No
-  published API changed.
-
 ### Deprecated
 
 ### Removed
@@ -27,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠ Breaking Changes / Migration
 
-- **The layers in this release are `library` 4.0.1, `framework` 5.0.1 and `shared` 6.0.1.**
+- **The layers in this release are `library` 4.0.2, `framework` 5.0.2 and `shared` 6.0.1.**
   Moving here from an earlier version of any of the three means taking that layer's remaining
   releases too; they are under **Package history** below. The one worth naming is
   `ModalComponent.isShown`, which became `isOpen` and is a `Signal<boolean>`: reading the
@@ -74,7 +70,11 @@ will be published on them.
 
 ### Library
 
-UI components, directives, pipes and the data-grid services. Published as `@zambon-dev/library` through 4.0.1.
+UI components, directives, pipes and the data-grid services. Published as `@zambon-dev/library` through 4.0.2.
+
+#### [4.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.2) - 2026-10-24
+
+- Maintenance release (no consumer-facing changes were documented).
 
 #### [4.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/library-v4.0.1) - 2026-10-24
 
@@ -892,7 +892,15 @@ config options and the `getUserProfile()` method still exist but are no longer c
 
 ### Framework
 
-Tabbed navigation, view scaffolding, ribbon buttons and modals. Published as `@zambon-dev/framework` through 5.0.1.
+Tabbed navigation, view scaffolding, ribbon buttons and modals. Published as `@zambon-dev/framework` through 5.0.2.
+
+#### [5.0.2](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.2) - 2026-10-24
+
+##### Changed
+
+- **Internal only: `ButtonFiltersComponent` reads `RibbonButtonComponent.loading` as a signal.**
+  The compiler caught the old form: in a condition, the signal object itself is always true.
+  Nothing in this package's own API changed.
 
 #### [5.0.1](https://github.com/RicardoZambon/ZLibraries/releases/tag/framework-v5.0.1) - 2026-10-24
 
