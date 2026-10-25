@@ -1541,7 +1541,7 @@ const meta: Meta<MainLayoutComponent> = {
             // Plain text, NOT translation keys: BrandComponent renders `{{ appName }}` and
             // `{{ companyName }}` raw, with no translate pipe, so a key would be shown literally.
             appName: 'ZLibraries Showcase',
-            companyName: 'Zambon Dev',
+            companyName: 'Zambon LTDA',
             environment: 'QA',
             logoUrl: SHOWCASE_LOGO,
             notificationsEnabled: true,
