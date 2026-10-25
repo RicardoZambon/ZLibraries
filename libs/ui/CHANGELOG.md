@@ -15,15 +15,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.1.1] - 2026-10-25
+
+### Changed
+
 - **`MultiEditorComponent` announces its form's status when it disables the form.** It still
   disables the controls quietly, as before, so nothing subscribed to one of them hears about it.
   The form as a whole now emits one status and value event afterwards: when the editor opens, when
   it starts with no row selected and when the selected row is removed. Code subscribed to the
   editor's own `FormGroup` sees that one extra event.
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
