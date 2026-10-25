@@ -1,5 +1,5 @@
 import { signal } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { ControlEvent, FormControl, FormGroup, StatusChangeEvent } from '@angular/forms';
 import { Observable, of, Subject } from 'rxjs';
 import { IBatchUpdate } from '../../models/batch-update';
 import { MultiEditorDataset } from '../../services/datasets/multi-editor.dataset';
@@ -179,6 +179,59 @@ describe('MultiEditorComponent', () => {
       const entities: any[] = lastBatch(dataset).entitiesToInsertOrUpdate;
       expect(entities).toHaveLength(1);
       expect(entities[0]).toEqual(expect.objectContaining({ city: 'Toronto', street: '42 Queen Street West' }));
+    });
+  });
+
+  // The fields in the editor read the form's state from its events, so a form disabled without one
+  // left them showing inputs for a form that no longer accepted any. The controls are still
+  // disabled quietly -- nothing subscribed to one of them hears about it -- and the form announces
+  // its new status once, as a whole.
+  describe('disabling the form', () => {
+    function statusEvents(): string[] {
+      const statuses: string[] = [];
+      component
+        .formGroup()
+        .events.subscribe((event: ControlEvent) =>
+          event instanceof StatusChangeEvent ? statuses.push(event.status) : undefined,
+        );
+      return statuses;
+    }
+
+    it('announces it once the editor starts with no row selected', () => {
+      build({});
+      const statuses: string[] = statusEvents();
+
+      component.ngOnInit();
+
+      expect(component.formGroup().disabled).toBe(true);
+      expect(statuses).toContain('DISABLED');
+    });
+
+    it('announces it when the selected row is removed', () => {
+      build({ city: 'Toronto' });
+      component.ngOnInit();
+      (component as any).onNewClick();
+      (component as any).selectedKey.set('key-1');
+      component.formGroup().enable();
+      const statuses: string[] = statusEvents();
+
+      (component as any).onDeleteClick();
+
+      expect(component.formGroup().disabled).toBe(true);
+      expect(statuses).toContain('DISABLED');
+    });
+
+    it('keeps the controls themselves quiet', () => {
+      build({});
+      const controlStatuses: string[] = [];
+      component
+        .formGroup()
+        .get('city')!
+        .statusChanges.subscribe((status: string) => controlStatuses.push(status));
+
+      component.ngOnInit();
+
+      expect(controlStatuses).toEqual([]);
     });
   });
 });

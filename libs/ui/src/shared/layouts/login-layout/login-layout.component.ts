@@ -8,6 +8,10 @@ import { APP_CONFIG, AppConfig } from '@zambon-dev/ui/framework';
   styleUrls: ['./login-layout.component.scss'],
   imports: [RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    // The configuration is fixed for the application's lifetime, so this never has to change.
+    '[class.has-background]': '!!backgroundUrl',
+  },
 })
 export class LoginLayoutComponent {
   //#region ViewChilds, Inputs, Outputs
