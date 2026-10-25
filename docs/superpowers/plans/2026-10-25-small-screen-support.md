@@ -54,10 +54,12 @@ added to the task that owns the code.
 The gate for everything after it. Written first so it fails first.
 
 **Files:**
+
 - Create: `tools/overflow-probe/probe.mjs`
 - Create: `tools/overflow-probe/README.md`
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces: `node tools/overflow-probe/probe.mjs <storybook-dist-dir> [port]`. Prints one line per
   offending element as `<story id> <tag> cut by <n>px`, then a total. Exits 0 when the total is 0,
@@ -137,9 +139,11 @@ git commit -m "test(no-release): add the small-screen overflow probe"
 ### Task 2: The ribbon becomes a query container and scrolls
 
 **Files:**
+
 - Modify: `libs/ui/src/library/components/ribbon/ribbon.component.scss`
 
 **Interfaces:**
+
 - Produces: a container named `ribbon` on the `lib-ribbon` host. Task 3 queries it by that name;
   the name is the contract between them. Tasks 5 and 6 are unrelated — they declare their own
   `modal-body` container inside their own components.
@@ -156,7 +160,7 @@ overflow-x: auto;
 ```
 
 Comment why `width: 100%` is there, in the register the rest of this file uses: inline-size
-containment stops the host sizing to its contents, so in a parent that sizes to *its* contents the
+containment stops the host sizing to its contents, so in a parent that sizes to _its_ contents the
 bar would collapse to nothing. Both in-repo usages stretch it already; this is for consumers.
 
 Scrolling is unconditional, not inside the query: a nine-button bar overflows at 600px, above the
@@ -205,11 +209,13 @@ git commit -m "fix(ui): let the ribbon scroll instead of clipping its buttons"
 ### Task 3: Compact mode below 36rem
 
 **Files:**
+
 - Modify: `libs/ui/src/library/components/ribbon-button/ribbon-button.component.scss`
 - Modify: `libs/ui/src/library/components/ribbon-group/ribbon-group.component.scss`
 - Modify: `libs/ui/src/library/components/ribbon/ribbon.component.scss`
 
 **Interfaces:**
+
 - Consumes: the `ribbon` container from Task 2.
 
 - [ ] **Step 1: Compact the button**
@@ -315,11 +321,13 @@ The only task with Jest tests, because it is the only one jsdom can see — cont
 evaluate there.
 
 **Files:**
+
 - Modify: `libs/ui/src/library/components/ribbon-button/ribbon-button.component.html`
 - Modify: `libs/ui/src/library/components/ribbon-button/ribbon-button.component.ts`
 - Test: `libs/ui/src/library/components/ribbon-button/ribbon-button.component.spec.ts`
 
 **Interfaces:**
+
 - Produces: `protected get accessibleName(): string` on `RibbonButtonComponent` — the label,
   falling back to the tooltip, `''` when both are empty. Translation stays in the template, where
   the label already goes through the `translate` pipe.
@@ -372,7 +380,7 @@ In the template:
   `[attr.aria-labelledby]="accessibleName ? labelId : null"`.
 
 Binding to `null` when the name is empty is Review Focus 3: pointing `aria-labelledby` at an empty
-element names the control *nothing at all*, which is worse than leaving it unnamed, because it
+element names the control _nothing at all_, which is worse than leaving it unnamed, because it
 suppresses the fallback a screen reader would otherwise use.
 
 No new translation key: the chevron borrows the button's name, and `aria-haspopup="menu"` already
@@ -397,6 +405,7 @@ git commit -m "fix(ui): name the ribbon buttons when the labels are hidden"
 The simple one of the two: its panes are in columns because the flow says so.
 
 **Files:**
+
 - Modify: `libs/ui/src/library/components/multi-editor/multi-editor.component.html`
 - Modify: `libs/ui/src/library/components/multi-editor/multi-editor.component.scss`
 
@@ -464,9 +473,10 @@ git commit -m "fix(ui): stack the multi-editor panes on a narrow screen"
 
 Not the same fix, and this is the trap. Its body already sets `grid-flow-row` with `!important`;
 the side-by-side comes from both panes carrying `row-span-full` in a two-row grid, so
-auto-placement puts the second one in a new *column*. Switching the flow here does nothing.
+auto-placement puts the second one in a new _column_. Switching the flow here does nothing.
 
 **Files:**
+
 - Modify: `libs/ui/src/library/components/multi-select/multi-select.component.html`
 - Modify: `libs/ui/src/library/components/multi-select/multi-select.component.scss`
 
@@ -535,6 +545,7 @@ git commit -m "fix(ui): stack the multi-select panes on a narrow screen"
 ### Task 7: Changelog, docs and the acceptance run
 
 **Files:**
+
 - Modify: `libs/ui/CHANGELOG.md`
 - Modify: `README.md`
 - Modify: `tools/style-snapshot/README.md`

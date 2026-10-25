@@ -42,6 +42,13 @@ npm ci
 | `npm run format:check` | Fail if anything is unformatted                     |
 | `npm run storybook`    | Storybook on :4400                                  |
 
+Two checks that need a built Storybook rather than the dev server:
+
+| Command                                                 | What it checks                                                            |
+| ------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `node tools/overflow-probe/probe.mjs dist/storybook/ui` | At 375px, nothing sits past the right edge without a scroller to reach it |
+| `node tools/style-snapshot/capture.mjs …`               | Computed styles, so a restyle cannot change the product unreported        |
+
 To scope a command, or to see what a change affects:
 
 ```bash

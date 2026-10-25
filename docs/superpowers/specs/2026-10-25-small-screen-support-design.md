@@ -22,11 +22,11 @@ the group accordion, the scroll spy and the simple modal all fit.
 
 **Three things break.**
 
-| What | At 375px | Why it matters |
-| --- | --- | --- |
-| Ribbon | List view needs 483px of content in 309px; detail view needs 357px | Refresh and Export are **gone**, not merely clipped: the bar neither wraps nor scrolls, and an ancestor clips it |
-| Multi-select, multi-editor | Two panes forced side by side, ~150px each | Not clipped, so nothing reports it; the grid reads "ID / Na…" and the right pane is a column of unlabelled icons |
-| Form input group | Fits today | Latent: the label never wraps and sits in a `min-content` column, so a long translated label will squeeze the field |
+| What                       | At 375px                                                           | Why it matters                                                                                                      |
+| -------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| Ribbon                     | List view needs 483px of content in 309px; detail view needs 357px | Refresh and Export are **gone**, not merely clipped: the bar neither wraps nor scrolls, and an ancestor clips it    |
+| Multi-select, multi-editor | Two panes forced side by side, ~150px each                         | Not clipped, so nothing reports it; the grid reads "ID / Na…" and the right pane is a column of unlabelled icons    |
+| Form input group           | Fits today                                                         | Latent: the label never wraps and sits in a `min-content` column, so a long translated label will squeeze the field |
 
 The ribbon's breaking point is set by its content, not by the viewport. The detail bar needs 332px
 of content and the list bar 528px. A bar of seven buttons is already cut around 600px — well above
@@ -34,13 +34,13 @@ any phone. **No media query can express this**, which is what rules out the obvi
 
 ## 2. Decisions locked with the user
 
-| Decision | Choice |
-| --- | --- |
-| Smallest supported width | 375px |
-| Ribbon behaviour | Two stages: compact first, scroll with whatever still does not fit |
-| Implementation | CSS only. No JavaScript, no measuring |
-| Group-to-menu collapse | Out. It would need a per-group icon and priority — new public API every consumer must fill in |
-| Stacked modal panes | Each pane scrolls itself, with a floor so neither can be squeezed away. The shared modal is not touched |
+| Decision                 | Choice                                                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Smallest supported width | 375px                                                                                                   |
+| Ribbon behaviour         | Two stages: compact first, scroll with whatever still does not fit                                      |
+| Implementation           | CSS only. No JavaScript, no measuring                                                                   |
+| Group-to-menu collapse   | Out. It would need a per-group icon and priority — new public API every consumer must fill in           |
+| Stacked modal panes      | Each pane scrolls itself, with a floor so neither can be squeezed away. The shared modal is not touched |
 
 ## 3. Approaches considered
 
@@ -77,10 +77,10 @@ is the vertical one.**
 
 The library already has the smaller step and it works — the showcase's address list uses it:
 
-| | Glyph font | Glyph box | Button width | Button height |
-| --- | --- | --- | --- | --- |
-| Large (default) | 36px | 45px | 69px | 80px |
-| Small (`iconSize="small"`) | 24px | 30px | 46–62px | 68px |
+|                            | Glyph font | Glyph box | Button width | Button height |
+| -------------------------- | ---------- | --------- | ------------ | ------------- |
+| Large (default)            | 36px       | 45px      | 69px         | 80px          |
+| Small (`iconSize="small"`) | 24px       | 30px      | 46–62px      | 68px          |
 
 At the small size the label does start to bind: "Refresh" is 46px against a 30px glyph, so that
 button is 62px where "Edit" is 46px. So dropping labels pays off **only once the icon has already
@@ -290,15 +290,15 @@ path and the dependency graph cannot see it, so Nx will otherwise replay a stale
 
 ## 8. Public API and consumer impact
 
-| Change | Type | Migration |
-| --- | --- | --- |
-| Ribbon compacts and scrolls below 36rem of its own width | Changed, visual | None. A consumer who wants labels at every width has no opt-out; add one only if asked |
-| Ribbon host becomes a query container | Changed | None, unless a consumer positions something `fixed` inside the ribbon |
-| Ribbon host gains an explicit `width: 100%` | Changed | None on its own |
+| Change                                                            | Type                 | Migration                                                                                                                                                                                            |
+| ----------------------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ribbon compacts and scrolls below 36rem of its own width          | Changed, visual      | None. A consumer who wants labels at every width has no opt-out; add one only if asked                                                                                                               |
+| Ribbon host becomes a query container                             | Changed              | None, unless a consumer positions something `fixed` inside the ribbon                                                                                                                                |
+| Ribbon host gains an explicit `width: 100%`                       | Changed              | None on its own                                                                                                                                                                                      |
 | **A ribbon in a parent that sizes to its contents now collapses** | **Breaking, narrow** | Give the parent a width. An `inline-block`, float or grid auto column around a `lib-ribbon` must become a block, a grid cell or a stretched flex item. Inherent to making the host a query container |
-| Ribbon host stops shrinking vertically (`flex-shrink: 0`) | Changed, visual | None. It was being squeezed ~6px on a short screen and its group captions painted outside the bar; a very short viewport now scrolls the column instead |
-| `[right]` slot joins the scroll row when narrow | Changed, visual | None |
-| Ribbon button gains an accessible name from its label | Added | None; strictly an improvement |
-| Dropdown chevron takes its name from the button's label | Added | None. Deliberately no new translation key — the library layer ships no translations and a key would be a string every consumer must supply |
-| Two-pane modals stack below 36rem of modal width | Changed, visual | None |
-| Each stacked pane scrolls itself, floored at 11rem | Changed, visual | None. Contained to the two components; `lib-modal` is unchanged |
+| Ribbon host stops shrinking vertically (`flex-shrink: 0`)         | Changed, visual      | None. It was being squeezed ~6px on a short screen and its group captions painted outside the bar; a very short viewport now scrolls the column instead                                              |
+| `[right]` slot joins the scroll row when narrow                   | Changed, visual      | None                                                                                                                                                                                                 |
+| Ribbon button gains an accessible name from its label             | Added                | None; strictly an improvement                                                                                                                                                                        |
+| Dropdown chevron takes its name from the button's label           | Added                | None. Deliberately no new translation key — the library layer ships no translations and a key would be a string every consumer must supply                                                           |
+| Two-pane modals stack below 36rem of modal width                  | Changed, visual      | None                                                                                                                                                                                                 |
+| Each stacked pane scrolls itself, floored at 11rem                | Changed, visual      | None. Contained to the two components; `lib-modal` is unchanged                                                                                                                                      |

@@ -10,17 +10,17 @@ before a change, one after — diff into a list of exactly what moved.
 ## Running it
 
 ```bash
-npx nx run-many --target=build-storybook --projects=framework,library,shared --configuration=ci --skip-nx-cache
-node tools/style-snapshot/capture.mjs dist/storybook/library before-library.json
+npx nx build-storybook ui --configuration=ci --skip-nx-cache
+node tools/style-snapshot/capture.mjs dist/storybook/ui before.json
 # ...make the change, rebuild...
-node tools/style-snapshot/capture.mjs dist/storybook/library after-library.json
-node tools/style-snapshot/diff.mjs before-library.json after-library.json
+node tools/style-snapshot/capture.mjs dist/storybook/ui after.json
+node tools/style-snapshot/diff.mjs before.json after.json
 ```
 
 `--skip-nx-cache` is not optional when the change is in a stylesheet. Every component stylesheet
-in all three packages references `libs/shared/src/styles/theme.css` by relative path, which Nx
-cannot see: editing it leaves `library` and `framework` looking unaffected, and their Storybooks
-are replayed from cache. The snapshot then compares a build that does not contain your change.
+references `libs/ui/src/styles/theme.css` by relative path, which Nx cannot see: editing it leaves
+the project looking unaffected and its Storybook is replayed from cache. The snapshot then
+compares a build that does not contain your change.
 
 `STYLE_SNAPSHOT_CHANNEL=msedge` (or `chrome`) uses an installed browser instead of the one
 Playwright downloads, for a machine that cannot reach its CDN. Either is fine: a snapshot is only

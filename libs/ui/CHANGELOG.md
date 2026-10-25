@@ -13,7 +13,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Ribbon buttons carry an accessible name.** `lib-ribbon-button` sets `aria-label` from its
+  label whether or not the label is on screen, falling back to `tooltip` when there is no label.
+  The dropdown chevron, which had no name at all, borrows the button's through `aria-labelledby`.
+  No new translation key: the chevron reuses the name the button already has.
+- **`title` falls back to the label.** A button with no `tooltip` now explains itself on hover
+  using its label, which matters once a narrow screen has taken that label away.
+
 ### Changed
+
+- **The ribbon adapts to narrow screens.** Below `36rem` of the bar's **own** width — not the
+  window's — buttons drop their labels and their glyph shrinks, and group captions are hidden.
+  Whatever still does not fit scrolls horizontally, at any width. Measured at 375px: the bar is
+  58px tall instead of 110px, and a six-button bar that previously lost two buttons outright now
+  reaches all of them.
+- **The ribbon no longer shrinks vertically.** It is a flex item in the views' full-height
+  column and was being squeezed on short screens, which pushed its group captions outside the bar.
+- **Two-pane modals stack when narrow.** `lib-multi-select` and `lib-multi-editor` put one pane
+  per row below `36rem` of the **modal's** width, each pane scrolling inside a minimum height.
+  Keyed on the modal because its width comes from its `size` input: a `size-sm` modal is narrow on
+  a desktop too. `lib-modal` itself is unchanged.
 
 ### Deprecated
 
@@ -21,7 +40,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Ribbon actions were unreachable on a narrow screen.** The bar neither wrapped nor scrolled, so
+  anything past the edge was clipped by an ancestor with nothing on screen saying so. At 375px a
+  typical list view silently lost its Refresh and Export buttons.
+
 ### ⚠ Breaking Changes / Migration
+
+- **A ribbon inside a parent that sizes to its own contents now collapses.** The ribbon host is a
+  CSS container query container, and a contained element contributes no width to its parent, so an
+  `inline-block`, float or grid auto column around a `lib-ribbon` shrinks to nothing and takes the
+  bar with it — measured at 10px, padding and border only.
+
+  **Migration:** give the parent a width. Make it a block, a grid cell, or a stretched flex item,
+  which is what a full-width toolbar wants anyway. Every usage in this package already satisfies
+  this. The `Library/Ribbon/Ribbon → CollapsesInAContentSizedParent` story shows the failure.
+
+- **If you position something `fixed` inside a `lib-ribbon`**, it is now positioned against the
+  ribbon rather than the viewport, because containment makes the host its containing block. The
+  ribbon button's own options list is unaffected: it already renders through a CDK overlay.
 
 ## [1.1.0] - 2026-10-25
 

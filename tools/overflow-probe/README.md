@@ -4,7 +4,7 @@ The acceptance gate for small-screen support: at 375px, nothing may sit past the
 viewport unless some ancestor can scroll it into view.
 
 The distinction is the whole point. An element that overflows a scroll container is reachable —
-you scroll to it. An element that overflows a container which *clips* is gone, and nothing on
+you scroll to it. An element that overflows a container which _clips_ is gone, and nothing on
 screen says so. That is how the ribbon lost its Refresh and Export buttons on a phone: the bar
 neither wrapped nor scrolled, and an ancestor clipped it.
 
