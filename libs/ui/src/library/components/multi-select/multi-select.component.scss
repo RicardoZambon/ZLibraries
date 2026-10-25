@@ -10,8 +10,23 @@
   display: contents;
 }
 
+/* Nothing but a box to hang the container query on. The stacking below has to be keyed on the
+   width the panes actually have, and a grid cannot query itself, so the grid moved down to
+   `.panes` and this became its container. Keyed on the modal rather than the window because the
+   modal's width comes from its `size` input: a `size-sm` modal is narrow on a desktop too, and
+   should stack there as well. */
 .body-content {
-  @apply grid grid-flow-col auto-cols-fr gap-4 h-full;
+  @apply grid h-full;
+  container-type: inline-size;
+  container-name: modal-body;
+}
+
+/* The flow is rows, and always was -- the `grid-flow-col` that used to sit here was overridden
+   on the next line and did nothing, so it is gone rather than left to mislead. What puts the
+   panes side by side is each of them spanning both rows, which makes auto-placement open a
+   second column. That is what the query below undoes. */
+.panes {
+  @apply grid auto-cols-fr gap-4 h-full;
   @apply grid-rows-[min-content_minmax(0,1fr)];
   @apply grid-flow-row!;
   overflow: clip;
@@ -29,4 +44,37 @@ lib-multi-select-result-grid {
 
 lib-multi-select-result-grid {
   @apply min-h-[24rem];
+}
+
+/* One pane per row once the modal is narrow. Side by side at 375px each pane got about 150px:
+   the grid read "ID / Na..." and the selection pane beside it was a column of unlabelled icons.
+
+   Not the same fix as the multi-editor, and that is the trap this comment exists for. Nothing
+   here is in column flow -- the flow is already rows. The panes sit side by side because each
+   spans both rows, so auto-placement puts the second one in a new column. Switching the flow
+   does nothing; undoing the row span is what stacks them.
+
+   Three undoings, each load-bearing. The row span is the one above. The subgrid tied the search
+   pane's inner rows to outer rows it no longer spans, so it needs tracks of its own. And the
+   24rem minimum is a desktop figure: two of those would be 768px against the ~450px a 375x667
+   phone leaves once the modal's padding, header and footer are out.
+
+   Last in the file on purpose: a container query adds no specificity, so these rules tie with
+   the plain ones above and win only by source order.
+
+   Stacking order needs no rule: the search box and its grid come first in the template, so row
+   flow puts them on top. */
+@container modal-body (max-width: 36rem) {
+  .panes {
+    grid-template-rows: minmax(11rem, 1fr) minmax(11rem, 1fr);
+  }
+
+  .search-grid,
+  lib-multi-select-result-grid {
+    @apply row-span-1 overflow-y-auto min-h-0;
+  }
+
+  .search-grid {
+    @apply grid-rows-[min-content_minmax(0,1fr)];
+  }
 }

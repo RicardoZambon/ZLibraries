@@ -6,31 +6,36 @@
   [size]="size()"
   [title]="title() ?? ''"
 >
+  <!-- `.body-content` exists to be the query container and nothing else; `.panes` is the grid it
+       controls. A grid cannot query itself, and the host is `display: contents` so it has no box
+       of its own to contain anything. -->
   <div body class="body-content">
-    <div class="search-grid">
-      <div class="search">
-        <input
-          class="form-input"
-          placeholder="Search..."
-          type="text"
-          [(ngModel)]="searchCriteria"
-          [disabled]="modalProcessing() || isSearchGridLoading()"
-          (keydown.enter)="onSearch($event)"
-        />
+    <div class="panes">
+      <div class="search-grid">
+        <div class="search">
+          <input
+            class="form-input"
+            placeholder="Search..."
+            type="text"
+            [(ngModel)]="searchCriteria"
+            [disabled]="modalProcessing() || isSearchGridLoading()"
+            (keydown.enter)="onSearch($event)"
+          />
+        </div>
+
+        <lib-data-grid
+          [disabled]="modalProcessing() || isSearchGridLoading() || isResultGridLoading()"
+          [lazyLoadRows]="true"
+        >
+        </lib-data-grid>
       </div>
 
-      <lib-data-grid
-        [disabled]="modalProcessing() || isSearchGridLoading() || isResultGridLoading()"
-        [lazyLoadRows]="true"
+      <lib-multi-select-result-grid
+        [isDisabled]="modalProcessing() || isSearchGridLoading() || isResultGridLoading()"
+        [template]="itemTemplate()!"
       >
-      </lib-data-grid>
+      </lib-multi-select-result-grid>
     </div>
-
-    <lib-multi-select-result-grid
-      [isDisabled]="modalProcessing() || isSearchGridLoading() || isResultGridLoading()"
-      [template]="itemTemplate()!"
-    >
-    </lib-multi-select-result-grid>
   </div>
 
   <div footer>
