@@ -9,6 +9,12 @@
 .lib-button {
   @apply inline-flex items-center justify-center gap-2 px-3 py-1.5 select-none cursor-pointer;
   @apply border border-transparent;
+  /*
+   * One control height across the product: the same 2.25rem as a form field and as the user block
+   * in the top bar, so a row that mixes them sits on one line. A minimum rather than a height, so
+   * a label that wraps still has room.
+   */
+  @apply min-h-9;
   border-radius: var(--radius-control);
   font-size: var(--text-body);
   font-weight: var(--font-weight-ui);
@@ -30,6 +36,15 @@
   .lib-button-label:empty {
     @apply hidden;
   }
+
+  /*
+   * And without the label the horizontal padding is wrong: it is sized for text, so a single glyph
+   * ends up in a box wider than it is tall. Side by side in a toolbar those boxes read as gaps
+   * between the icons. An icon-only button is a square of the control height.
+   */
+  &:has(.lib-button-label:empty) {
+    @apply w-9 px-0;
+  }
 }
 
 .intent-primary {
@@ -46,8 +61,13 @@
   color: var(--color-content-primary);
   border-color: var(--color-line);
 
+  /*
+   * Layered over the fill, not in place of it. Replacing a 40% tint of gray-200 with a 6% wash of
+   * gray-900 lands on almost exactly the same colour, so hovering a secondary button used to do
+   * nothing you could see; over a surface that is not white it also made the button fade.
+   */
   &:hover {
-    background-color: var(--state-hover);
+    background-image: linear-gradient(var(--state-hover), var(--state-hover));
   }
 }
 

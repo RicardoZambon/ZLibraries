@@ -5,19 +5,22 @@
   </div>
 
   <div class="top-bar-section top-bar-end">
-    <shared-notifications></shared-notifications>
-    <shared-language-selector [showFlag]="true"></shared-language-selector>
+    <div class="top-bar-actions">
+      <shared-notifications></shared-notifications>
+      <shared-language-selector [showFlag]="true"></shared-language-selector>
+      <shared-theme-switch></shared-theme-switch>
+    </div>
 
-    <shared-theme-switch></shared-theme-switch>
+    <div class="top-bar-identity">
+      <shared-user-profile></shared-user-profile>
 
-    <shared-user-profile></shared-user-profile>
-
-    <lib-button
-      class="top-bar-logout"
-      intent="ghost"
-      icon="fa-solid fa-arrow-right-from-bracket"
-      [ariaLabel]="'Main-Logout' | translate"
-      (click)="onLogoutClick()"
-    ></lib-button>
+      <lib-button
+        class="top-bar-logout"
+        intent="ghost"
+        icon="fa-solid fa-arrow-right-from-bracket"
+        [ariaLabel]="'Main-Logout' | translate"
+        (click)="onLogoutClick()"
+      ></lib-button>
+    </div>
   </div>
 </div>

@@ -18,7 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   error states the old classes carried, and it blocks activation with the `disabled` attribute
   rather than `pointer-events: none`, so the keyboard cannot fire an action the mouse cannot. There
   is no click output: the element inside is a real `<button>`, so `(click)` on `<lib-button>`
-  receives the bubbled event and `type="submit"` works inside a form with no wiring.
+  receives the bubbled event and `type="submit"` works inside a form with no wiring. Every button is at
+  least 2.25rem tall -- the height of the user block in the top bar -- and one with no label is a
+  square of that size, because the padding that suits text would leave a lone glyph in a box wider
+  than it is tall.
 
 - **At the root barrel the new button is `LibButtonComponent`.** Both layers now define a
   `ButtonComponent` -- the library's `lib-button` and the framework's long-standing
@@ -103,6 +106,12 @@ reduce`. There is nothing to configure.
   fill, text and ring are now derived from one of them, so the badge stays readable when the
   surface behind it goes dark.
 
+- **The top bar's controls on the right are one size, in two groups.** Notifications, language
+  and theme came out at three different heights with three different paddings -- the language
+  toggle wrapped the button in padding of its own, on top of the button's, which made the smallest
+  control the widest -- and all five sat 12px apart. They are now identical squares, shoulder to
+  shoulder, with the user and the way out as their own group beside them.
+
 - **The confirmation buttons render `lib-button`.** Their own API is unchanged apart from
   `ButtonConfirmComponent` below; what changed is that their modal footers no longer depend on the
   global `.btn` classes.
@@ -114,6 +123,17 @@ reduce`. There is nothing to configure.
 - **The global `.btn` classes.** See the migration note below.
 
 ### Fixed
+
+- **The sidebar's collapse handle no longer disappears into the page.** It is a disc that
+  straddles the sidebar's edge, so most of it sits on the app backdrop, and two things hid it: its
+  outline was a hairline the weight of a divider, and hovering it swapped the solid fill for a 40%
+  tint -- which let the rail show through one half of the handle and the page through the other.
+  The outline is the stronger line colour now, and the hover wash sits over the fill rather than
+  replacing it.
+
+- **Hovering a secondary button now shows something.** It went from a 40% tint of one grey to a 6%
+  wash of another, and those land on nearly the same colour, so on a white page nothing happened;
+  on any other surface the button faded instead. That wash also layers over the fill now.
 
 ### ⚠ Breaking Changes / Migration
 

@@ -4,8 +4,10 @@
   @apply relative;
 
   .notifications-badge {
-    // Sits over the bell rather than inside it, and lets the click through to the button.
-    @apply absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full pointer-events-none;
+    // Sits over the bell rather than inside it, and lets the click through to the button. The
+    // offsets are inside the button box, not outside it: the box is a 36px square around an 18px
+    // glyph, so a badge pinned to its corner would float away from the bell.
+    @apply absolute top-1 right-1 min-w-4 h-4 px-1 rounded-full pointer-events-none;
     @apply flex items-center justify-center text-[10px] font-bold leading-none;
     background-color: var(--color-danger);
     color: var(--color-content-on-accent);

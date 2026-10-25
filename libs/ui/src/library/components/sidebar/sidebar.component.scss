@@ -71,11 +71,18 @@
     @apply shadow-md ring-1 transition-colors;
     background-color: var(--color-surface-solid);
     color: var(--color-accent);
-    --tw-ring-color: var(--color-line);
+    // The strong line, not the ordinary one. This handle straddles the sidebar's edge, so most of
+    // it sits on the app backdrop -- and a white disc on a near-white backdrop is only as visible
+    // as its edge. A hairline the colour of a divider left it looking like nothing was there.
+    --tw-ring-color: var(--color-line-strong);
     transform: translateX(40%);
 
     &:hover {
-      background-color: var(--color-surface-inset);
+      // The wash goes OVER the solid fill rather than replacing it. --color-surface-inset is a
+      // 40% tint, meant to sit on an opaque parent; as the fill of a disc that floats across the
+      // sidebar's edge it turned the handle see-through on hover -- the rail showing through one
+      // half of it and the page through the other.
+      background-image: linear-gradient(var(--state-hover), var(--state-hover));
       color: var(--color-accent-strong);
     }
 

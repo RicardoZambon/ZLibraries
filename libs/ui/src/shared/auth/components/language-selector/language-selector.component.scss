@@ -18,14 +18,21 @@
     }
   }
 
+  // A flag in the top bar is an icon, so the toggle is the same square as the buttons next to it.
+  // It used to wrap the button in padding of its own, on top of the button's, which made the
+  // smallest control in the row the widest one. The `:after` rule that sat here coloured a caret
+  // that nothing draws -- no stylesheet gives that pseudo-element a `content`, so it has no box.
   .lang-flag-toggle {
-    @apply w-auto flex items-center justify-center h-9 px-2.5 border-0;
+    @apply flex items-center justify-center h-9 w-9;
 
-    // Match the dropdown caret color to the other top-bar icons (currentColor),
-    // and add a little more space between the flag and the caret.
-    &:after {
-      border-top-color: currentColor;
-      margin-left: 0.325rem;
+    ::ng-deep .lib-button {
+      @apply h-full w-full px-0;
+    }
+
+    // A filled rectangle reads heavier than the thin glyphs beside it, so the flag is matched to
+    // their box rather than kept at the size the dropdown list uses.
+    .flag {
+      @apply w-5 h-3.5;
     }
   }
 
