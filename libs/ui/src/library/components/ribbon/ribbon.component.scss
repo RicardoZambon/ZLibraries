@@ -33,6 +33,58 @@
   border-color: var(--color-line);
   @apply justify-between;
 
+  /* The bar reacts to the room it has, not to the window. Those are different numbers and the
+     window cannot tell them apart: a detail view's bar and a list view's bar sit in the same
+     window at different widths, and inside a tab panel both are narrower than it again. A media
+     query would compact one of them at the wrong moment every time.
+
+     Named, because `lib-ribbon-button` is also used where there is no ribbon -- the data grid's
+     buttons bar projects them directly -- and a bare `@container` in the button's stylesheet
+     would match whatever container happened to be above it. With a name, those buttons simply
+     find no `ribbon` and stay as they are. */
+  container-type: inline-size;
+  container-name: ribbon;
+
+  /* Fills whatever width the parent offers, which is what a toolbar wants and what every usage
+     here already gets from a `flex flex-col` host.
+
+     What it does NOT do is rescue the bar from a parent that sizes to *its* own contents -- an
+     inline-block, a float, a grid auto column. Inline-size containment stops this element
+     contributing any width to its parent, so such a parent shrinks to nothing and `100%` of
+     nothing is nothing: measured at 10px, the padding and border alone. That is inherent to
+     container queries rather than a bug here -- an element cannot both size to its contents and
+     be queried on its own width -- and no declaration on this element fixes it.
+
+     So it is a constraint on the consumer, not a guarantee from us: `lib-ribbon` must sit
+     somewhere that gives it a width. The `CollapsesInAContentSizedParent` story is what that
+     failure looks like, kept so a collapsed bar is one search away from its cause. */
+  width: 100%;
+
+  /* Stage two of the narrow-screen behaviour, and the one that guarantees nothing is lost. The
+     bar used to neither wrap nor scroll, so whatever passed the edge was clipped by an ancestor
+     with no affordance saying so -- the list view lost Refresh and Export outright at 375px.
+
+     Unconditional rather than inside the compact query below: how wide the bar needs to be is set
+     by how many buttons the consumer put in it, not by the screen. A nine-button bar runs out of
+     room around 600px, well above the threshold, and has to be reachable there too.
+
+     This is also what frees the `[right]` slot. `justify-between` falls back to packing from the
+     start once the content overflows, so the slot stops being pinned opposite the groups and
+     simply joins the scrolling row at the end. */
+  overflow-x: auto;
+
+  /* A toolbar is not spare room. The views put this bar in a full-height `flex flex-col`, where
+     it is shrinkable by default, so on a short screen the column takes the space it needs out of
+     the ribbon: measured on the detail view at 375px, the bar was squeezed from the 110.8px its
+     content asks for to 104.5px, and the group captions were painting ~6px below the bar, over
+     whatever came next. Nothing reported that, because the overflow was visible.
+
+     Turning this element into a scroll container is what made it report: the squeeze became 2.5px
+     of vertical scroll on a horizontal toolbar, and on a platform with classic scrollbars it
+     would also have put a vertical scrollbar in every ribbon. Refusing to shrink is the fix for
+     both, and for the overlap that was already there. */
+  flex-shrink: 0;
+
   div {
     @apply inline-flex gap-2;
   }

@@ -105,11 +105,19 @@ Three changes, all in the ribbon's own stylesheet plus the button's.
 viewport — the detail bar and the list bar are in the same window at different widths, and the
 window cannot tell them apart.
 
-The explicit width is not decoration. Inline-size containment means the element no longer sizes to
-its contents, so in a parent that sizes to *its* contents — an inline-block, a flex row, a grid
-auto column — the ribbon would collapse to nothing. Both in-repo usages put it in a `flex flex-col`
-host where it already stretches, but this is a published package and a consumer may have done
-otherwise. `width: 100%` makes the collapse impossible rather than merely unlikely.
+The explicit width makes the bar fill whatever the parent offers, which is what every usage here
+already gets from a `flex flex-col` host.
+
+**It does not prevent the collapse this section originally claimed it did.** Inline-size
+containment stops the element contributing any width to its parent, so a parent that sizes to its
+own contents — an inline-block, a float, a grid auto column — shrinks to nothing and `100%` of
+nothing is nothing. Measured at 10px: padding and border, no buttons. That is inherent to
+container queries, not a defect in this component: an element cannot both size to its contents and
+be queried on its own width, and no declaration on it changes that.
+
+So it is a constraint on the consumer rather than a guarantee from us, and it belongs in the
+impact table below. The `CollapsesInAContentSizedParent` story is kept as the demonstration, so a
+collapsed bar is one search away from its cause.
 
 **Compact mode below the threshold.** Inside `@container (max-width: 36rem)`:
 
@@ -284,7 +292,9 @@ path and the dependency graph cannot see it, so Nx will otherwise replay a stale
 | --- | --- | --- |
 | Ribbon compacts and scrolls below 36rem of its own width | Changed, visual | None. A consumer who wants labels at every width has no opt-out; add one only if asked |
 | Ribbon host becomes a query container | Changed | None, unless a consumer positions something `fixed` inside the ribbon |
-| Ribbon host gains an explicit `width: 100%` | Changed | None. It pins the width a stretched parent already gave, and stops containment collapsing the bar in a content-sized parent |
+| Ribbon host gains an explicit `width: 100%` | Changed | None on its own |
+| **A ribbon in a parent that sizes to its contents now collapses** | **Breaking, narrow** | Give the parent a width. An `inline-block`, float or grid auto column around a `lib-ribbon` must become a block, a grid cell or a stretched flex item. Inherent to making the host a query container |
+| Ribbon host stops shrinking vertically (`flex-shrink: 0`) | Changed, visual | None. It was being squeezed ~6px on a short screen and its group captions painted outside the bar; a very short viewport now scrolls the column instead |
 | `[right]` slot joins the scroll row when narrow | Changed, visual | None |
 | Ribbon button gains an accessible name from its label | Added | None; strictly an improvement |
 | Dropdown chevron takes its name from the button's label | Added | None. Deliberately no new translation key — the library layer ships no translations and a key would be a string every consumer must supply |
