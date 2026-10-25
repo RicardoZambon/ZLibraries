@@ -112,3 +112,32 @@
     }
   }
 }
+
+/* The affordance for the scroll: a button that runs off the right edge fades out instead of
+   being guillotined, so the cut reads as "there is more this way" rather than as a fault. Same
+   intent as the tabs, reached differently.
+
+   A media query, not `@container ribbon`, and the reason is mechanical rather than a preference:
+   a container query matches descendants of a container, and this element *is* the container. It
+   cannot query itself. Everything the compact mode does lives on descendants -- buttons, group
+   captions -- so those are container-keyed; the mask has nowhere else to go. The imprecision is
+   cosmetic: a narrow ribbon on a wide screen compacts but does not fade, and it still scrolls.
+
+   768px is the one breakpoint these libraries use, and keeping the mask behind it is what leaves
+   every desktop ribbon rendering exactly as before -- the style snapshot has a noise floor of
+   zero, and an unconditional mask would light up every one of them.
+
+   The right edge only. Without JavaScript there is no scroll position to key on, so a two-sided
+   fade would dim the first button while sitting at the start, which is the common case and plain
+   wrong. Fading only the far edge is correct at rest, and it costs nothing when the bar does not
+   overflow: there is no content under the gradient to dim.
+
+   1.5rem written out rather than `var(--tabs-fade-width)`: that token is the tabs' published API,
+   and borrowing it would let an application retuning its tabs silently retune this. */
+@media (max-width: 767px) {
+  :host {
+    $ribbon-fade: linear-gradient(to right, black 0, black calc(100% - 1.5rem), transparent 100%);
+    mask-image: $ribbon-fade;
+    -webkit-mask-image: $ribbon-fade;
+  }
+}

@@ -86,9 +86,11 @@ At the small size the label does start to bind: "Refresh" is 46px against a 30px
 button is 62px where "Edit" is 46px. So dropping labels pays off **only once the icon has already
 shrunk** — which fixes the order of the compact step.
 
-**What compacting will and will not buy.** Fully compact, a six-button bar is roughly 362px against
-309px available. It still does not fit. Compacting takes the overflow from 174px to about 53px and
-the height from 110px to about 40px. Scrolling is what guarantees nothing is lost; compacting is
+**What compacting will and will not buy.** Fully compact, a six-button bar still does not fit a
+phone. Measured after the change: the list view's bar is 58px tall instead of 110px and still asks
+for 184px of horizontal scroll, while the detail view's four-button bar now fits outright and
+never scrolls. (The 40px this section first predicted for the height was optimistic — the icon
+row and its padding floor it at 58px.) Scrolling is what guarantees nothing is lost; compacting is
 what keeps the scroll short and gives a phone back 70px of vertical space.
 
 This is stated plainly because it sets expectations: **stage 1 does not remove the need for stage 2
@@ -279,7 +281,7 @@ Today the probe flags the ribbon and the button components inside it: seven elem
 list view, four on the detail view, plus the data grid's header on the detail view, which is the
 exclusion above. Target after the change: zero, excluding that header.
 
-Beyond that: the ribbon's height at 375px should be near 40px rather than 110px; both modals should
+Beyond that: the ribbon's height at 375px should be 58px rather than 110px; both modals should
 show one pane per row; Jest tests for the accessible name; and the Storybook built, since a
 published-API rename passes tests and lint and only fails in the Storybook build.
 
