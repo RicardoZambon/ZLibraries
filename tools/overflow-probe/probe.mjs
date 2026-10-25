@@ -131,41 +131,62 @@ const findOffenders = (page) =>
     // merely trimmed, and "gone" is what this probe is for.
     const VISIBLE_FLOOR_PX = 8;
 
+    // The layout edge, not `innerWidth`. On a platform with classic (non-overlay) scrollbars
+    // `innerWidth` includes the scrollbar, which would excuse ~15px of genuine overflow -- and
+    // CI is exactly such a platform.
+    const edge = document.documentElement.clientWidth;
+
     return [...document.querySelectorAll('*')]
       .filter((el) => {
         const cs = getComputedStyle(el);
-        if (cs.display === 'none' || cs.visibility === 'hidden') return false;
+        if (cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0') return false;
         const r = el.getBoundingClientRect();
-        if (r.width < 4 || r.height < 4 || r.right <= innerWidth + 1) return false;
-
-        /*
-         * A tail hanging past the edge is not the failure. A `span` of text inside a cell with
-         * `overflow: hidden` keeps its full layout width even though the cell shows an ellipsis:
-         * its box reaches past the viewport while the text itself is on screen, truncated on
-         * purpose. The data grid produced five of those and none of them was a defect.
-         *
-         * What matters is whether the element has any meaningful presence on screen. A ribbon
-         * button 69px wide cut by 93px has none -- it is off the edge entirely, which is how
-         * Refresh and Export disappeared.
-         */
-        if (innerWidth - r.left >= VISIBLE_FLOOR_PX) return false;
+        if (r.width < 4 || r.height < 4 || r.right <= edge + 1) return false;
 
         // The one exclusion. See README.md -- the grid's header is kept in line with its body by
         // a script-driven transform, so it has no scrollable ancestor and never will.
         if (el.closest('lib-data-grid .header')) return false;
 
+        /*
+         * Walk up for the first ancestor that decides this element's fate: a horizontal scroller
+         * can bring it into view, a clipping box caps what of it can ever be seen. Whichever
+         * comes first wins -- a scroller ABOVE a clipper cannot help, because scrolling moves the
+         * clipper and the element together and the element stays outside it.
+         */
+        let clipper = null;
         for (let p = el.parentElement; p; p = p.parentElement) {
           const pcs = getComputedStyle(p);
+          if (pcs.overflowX === 'hidden' || pcs.overflowX === 'clip') {
+            clipper = p;
+            break;
+          }
           if ((pcs.overflowX === 'auto' || pcs.overflowX === 'scroll') && p.scrollWidth - p.clientWidth > 1) {
             return false;
           }
         }
-        return true;
+
+        /*
+         * How much of the element can ever be seen, and the measure differs by case.
+         *
+         * Clipped: measure against the clipper's box, not the viewport. That is scroll-invariant,
+         * which is the point -- a grid cell with `overflow: hidden` clips its text to an ellipsis
+         * while the cell itself slides into view as the grid scrolls, so judging it against the
+         * viewport reports intended truncation as a defect. What matters is whether the element
+         * falls inside the box that clips it at all. A `<svg>` clips by default, so its `circle`
+         * and `path` land here too, and they sit inside it.
+         *
+         * Not clipped and nothing scrolls it: the viewport is the box, and anything past it with
+         * less than a sliver showing is simply gone -- which is how the ribbon lost Refresh and
+         * Export.
+         */
+        const box = clipper ? clipper.getBoundingClientRect() : { left: 0, right: edge };
+        const visible = Math.min(r.right, box.right) - Math.max(r.left, box.left);
+        return visible < VISIBLE_FLOOR_PX;
       })
       .map((el) => ({
         owner: owner(el),
         tag: el.tagName.toLowerCase(),
-        cutBy: Math.round(el.getBoundingClientRect().right - innerWidth),
+        cutBy: Math.round(el.getBoundingClientRect().right - edge),
       }));
   });
 
@@ -199,13 +220,33 @@ const run = async () => {
     document.documentElement.appendChild(style);
   });
 
+  /*
+   * A story that throws while rendering leaves `#storybook-root` empty, which measures clean and
+   * turns this gate green for the worst possible reason. The id check above only catches renames.
+   */
+  let pageErrors = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message.split('\n')[0]));
+
   let total = 0;
 
   for (const story of STORIES) {
+    pageErrors = [];
     await page.goto(`http://localhost:${port}/iframe.html?id=${story.id}&viewMode=story`, {
       waitUntil: 'networkidle',
     });
     await settle(page);
+
+    const rendered = await page.evaluate(() => {
+      const root = document.querySelector('#storybook-root');
+      return root ? root.childElementCount : 0;
+    });
+    if (rendered === 0) {
+      console.error(`probe: ${story.id} rendered nothing`);
+      for (const message of pageErrors) console.error(`  ${message}`);
+      await browser.close();
+      await new Promise((r) => server.close(r));
+      process.exit(2);
+    }
 
     if (story.open) {
       const trigger = page.locator('#storybook-root button').first();

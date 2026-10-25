@@ -121,6 +121,21 @@ export class RibbonButtonComponent implements OnDestroy {
     return `${this.instanceId}-label`;
   }
 
+  /**
+   * The chevron borrows the button's name by reference, but only when there is a label element
+   * with text in it. A reference to an empty span names the control *nothing at all*, which is
+   * worse than leaving it unnamed: it suppresses the fallback a screen reader would otherwise
+   * use. An icon-only button with a tooltip is the case that exposes this.
+   */
+  protected get chevronLabelledBy(): string | null {
+    return this.label() ? this.labelId : null;
+  }
+
+  /** The chevron's name when there is no label element to point at. */
+  protected get chevronAriaLabel(): string | null {
+    return this.label() ? null : this.tooltip() || null;
+  }
+
   protected get buttonIcon(): string {
     switch (this.status()) {
       case 'success':

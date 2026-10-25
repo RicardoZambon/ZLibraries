@@ -52,6 +52,27 @@ baseline run produced five of those from the data grid and not one was a defect.
 A ribbon button 69px wide cut by 93px has no presence on screen at all. That is the difference the
 floor draws, and it is the difference between "trimmed" and "gone".
 
+## A scroller further up does not always help
+
+The ancestor walk stops at the first box that hard-clips. An element cut by an
+`overflow: hidden` or `overflow: clip` ancestor is unreachable however far some outer scroller
+scrolls, so finding a scroller above that box proves nothing.
+
+The shape exists in this codebase — `.panes` is `overflow: clip` in both two-pane modals, and the
+ribbon host is now a scroller — so without the stop the probe would quietly excuse exactly the
+kind of defect it exists to find.
+
+The right edge is `document.documentElement.clientWidth`, not `window.innerWidth`. On a platform
+with classic rather than overlay scrollbars the two differ by the scrollbar's width, and using
+`innerWidth` would excuse about 15px of genuine overflow.
+
+## It fails rather than measures an empty page
+
+Two ways a story can be present and still render nothing: it throws while rendering, or its
+modal never opens. Either leaves `#storybook-root` empty, which measures clean and turns the gate
+green for the worst possible reason. The probe asserts the root has children, prints any uncaught
+page error, and exits 2.
+
 ## What it will not catch
 
 Being squeezed rather than cut. The two-pane modals were unusable at 375px — each pane about

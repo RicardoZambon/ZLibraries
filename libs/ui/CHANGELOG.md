@@ -29,6 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   reaches all of them.
 - **The ribbon no longer shrinks vertically.** It is a flex item in the views' full-height
   column and was being squeezed on short screens, which pushed its group captions outside the bar.
+- **The `[right]` slot joins the row when the bar scrolls.** `justify-between` packs from the
+  start once the content overflows, so the slot stops being pinned opposite the groups and sits
+  at the end of the scrolling row. Visible on every detail view at phone width.
 - **Two-pane modals stack when narrow.** `lib-multi-select` and `lib-multi-editor` put one pane
   per row below `36rem` of the **modal's** width, each pane scrolling inside a minimum height.
   Keyed on the modal because its width comes from its `size` input: a `size-sm` modal is narrow on
@@ -55,9 +58,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   which is what a full-width toolbar wants anyway. Every usage in this package already satisfies
   this. The `Library/Ribbon/Ribbon → CollapsesInAContentSizedParent` story shows the failure.
 
-- **If you position something `fixed` inside a `lib-ribbon`**, it is now positioned against the
-  ribbon rather than the viewport, because containment makes the host its containing block. The
-  ribbon button's own options list is unaffected: it already renders through a CDK overlay.
+- **Anything you project into a `lib-ribbon` that used to escape the bar no longer does.** The
+  host is now a horizontal scroll container, so an in-place popover, a `position: sticky` child or
+  an absolutely positioned badge is clipped or scrolled by it instead of painting outside. The
+  ribbon button's own options list is unaffected: it already renders through a CDK overlay, and
+  that is the pattern to follow.
+
+  **Migration:** render anything that must escape the bar through a CDK overlay.
+
+- **`position: fixed` and `position: absolute` inside a `lib-ribbon` now resolve against the
+  ribbon**, not the viewport or an outer ancestor, because containment makes the host a
+  containing block.
+
+- **A `lib-ribbon` inside a flex _row_ now overflows instead of shrinking.** The host declares
+  `width: 100%` and `flex-shrink: 0` — the latter because it was being squeezed on short screens
+  and its group captions were painting outside the bar — so in a row there is nothing left to
+  give. In a flex column, which is how every view in this package uses it, nothing changes.
+
+  **Migration:** give a row-flex parent room, or let the ribbon shrink by overriding
+  `flex-shrink` on it.
 
 ## [1.1.0] - 2026-10-25
 

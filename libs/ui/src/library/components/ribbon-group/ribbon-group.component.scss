@@ -29,9 +29,13 @@
 @container ribbon (max-width: 36rem) {
   :host {
     @apply pr-1;
-  }
 
-  .label {
-    @apply hidden;
+    /* Nested under :host to match the specificity of the base `:host .label` rule above rather
+       than sit one below it. A bare `.label` here happens to work today only because the two
+       rules set different properties -- the base sets font and colour, this sets display -- and
+       the first person to add a `display` up there would break compact mode silently. */
+    .label {
+      @apply hidden;
+    }
   }
 }

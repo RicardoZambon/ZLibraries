@@ -317,4 +317,34 @@ describe('RibbonButtonComponent', () => {
       expect((component as any).accessibleName).toBe('');
     });
   });
+
+  // The chevron borrows the button's name. It can only borrow it by reference when there is a
+  // label element with text in it: pointing `aria-labelledby` at an empty span names the control
+  // nothing at all, and that is worse than leaving it unnamed, because it suppresses the
+  // fallback a screen reader would otherwise use.
+  describe('the dropdown chevron name', () => {
+    it('should point at the label element when there is a label', () => {
+      component.label = signal('Export');
+      component.tooltip = signal('');
+
+      expect((component as any).chevronLabelledBy).toBe((component as any).labelId);
+      expect((component as any).chevronAriaLabel).toBeNull();
+    });
+
+    it('should use the tooltip when there is no label to point at', () => {
+      component.label = signal('');
+      component.tooltip = signal('Export options');
+
+      expect((component as any).chevronLabelledBy).toBeNull();
+      expect((component as any).chevronAriaLabel).toBe('Export options');
+    });
+
+    it('should name it nothing when there is neither', () => {
+      component.label = signal('');
+      component.tooltip = signal('');
+
+      expect((component as any).chevronLabelledBy).toBeNull();
+      expect((component as any).chevronAriaLabel).toBeNull();
+    });
+  });
 });

@@ -133,21 +133,26 @@ condition, the same constraint the tokens guide already records for breakpoints.
 chosen so a bar that fits at its natural size is never compacted gratuitously: the list bar's
 483px is the widest in the showcase, and 576px clears it.
 
-**Scroll whatever is left.** `overflow-x: auto` on the ribbon's content row, with an edge mask that
-fades a clipped button instead of guillotining it — the device the tabs already use, for the reason
-they already give: a cut should read as "there is more this way" rather than as a fault.
+**Scroll whatever is left.** `overflow-x: auto` on the ribbon host.
 
-It is not quite the same device, and the difference is worth stating. The tabs switch their fade on
-from two classes that TypeScript sets by measuring scroll position, so their fade appears only when
-there is something to scroll to. Pure CSS has no scroll state to key on, and the one feature that
-would supply it — a scroll-driven animation — is absent in Firefox, which this repo has no
-browserslist to rule out.
+This section originally called for an edge mask as well, fading a clipped button instead of
+guillotining it, the way the tabs do. **It shipped without one, and that was the right call.**
 
-**So the mask lives inside the compact query only.** Above the threshold nothing changes at all.
-This is a deliberate trade: a narrow bar that happens to fit still gets a faint fade at its ends,
-and in exchange every desktop screen in every consuming application renders byte-identical to
-today. That matters more than it sounds — the style snapshot has a noise floor of zero and an
-empty-diff acceptance criterion, and an always-on fade would light up every ribbon in it.
+The tabs switch their fade on from two classes that TypeScript sets by measuring scroll position,
+so it appears only when there is something to scroll to. Pure CSS has no scroll state to key on —
+the one feature that would supply it, a scroll-driven animation, is absent in Firefox, which this
+repo has no browserslist to rule out. So a CSS fade is unconditional, and an unconditional fade
+dims whatever is at the edge whether or not anything lies beyond it.
+
+Something always is. Every detail view in this library puts the Views button in the `[right]`
+slot, `justify-between` pushes it flush to the edge, and the group inside it carries `pr-0`.
+Measured at 375px, that bar fits with no scroll at all — so the fade would have dimmed a working
+control, at rest, on every detail view on a phone, and eaten part of its focus ring with it. A
+cosmetic hint is not worth obscuring a control.
+
+What remains as the affordance: the scrollbar, touch, and a button visibly cut at the edge. That
+last one is already the whole difference from the old behaviour, which was to lose the button with
+nothing on screen saying so.
 
 No chevrons, for the same reason: the tabs' are driven by measured scroll positions. Under "no
 JavaScript" the affordances are the scrollbar, touch, and the fade.
@@ -293,10 +298,11 @@ path and the dependency graph cannot see it, so Nx will otherwise replay a stale
 | Change                                                            | Type                 | Migration                                                                                                                                                                                            |
 | ----------------------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Ribbon compacts and scrolls below 36rem of its own width          | Changed, visual      | None. A consumer who wants labels at every width has no opt-out; add one only if asked                                                                                                               |
-| Ribbon host becomes a query container                             | Changed              | None, unless a consumer positions something `fixed` inside the ribbon                                                                                                                                |
+| Ribbon host becomes a query container                             | Changed              | Containment makes the host a containing block, so a consumer positioning something `fixed` **or `absolute`** inside the ribbon must check it                                                         |
+| Ribbon host scrolls horizontally                                  | Changed              | Anything projected into the ribbon that used to paint outside it — an in-place popover, a sticky child, an absolutely positioned badge — is now clipped or scrolled by the new scroll container      |
 | Ribbon host gains an explicit `width: 100%`                       | Changed              | None on its own                                                                                                                                                                                      |
 | **A ribbon in a parent that sizes to its contents now collapses** | **Breaking, narrow** | Give the parent a width. An `inline-block`, float or grid auto column around a `lib-ribbon` must become a block, a grid cell or a stretched flex item. Inherent to making the host a query container |
-| Ribbon host stops shrinking vertically (`flex-shrink: 0`)         | Changed, visual      | None. It was being squeezed ~6px on a short screen and its group captions painted outside the bar; a very short viewport now scrolls the column instead                                              |
+| Ribbon host stops shrinking vertically (`flex-shrink: 0`)         | Changed, visual      | None in a column, where the list below absorbs the space. **In a flex _row_ parent the bar now overflows** instead of shrinking to fit: `width: 100%` plus no shrink leaves nothing to give          |
 | `[right]` slot joins the scroll row when narrow                   | Changed, visual      | None                                                                                                                                                                                                 |
 | Ribbon button gains an accessible name from its label             | Added                | None; strictly an improvement                                                                                                                                                                        |
 | Dropdown chevron takes its name from the button's label           | Added                | None. Deliberately no new translation key — the library layer ships no translations and a key would be a string every consumer must supply                                                           |

@@ -179,7 +179,7 @@ ul.options-dropdown {
    label is the wider of the two ("Refresh" is 46px against a 30px glyph). The order matters.
 
    Hiding the label is also most of the vertical win, and on a phone that is the bigger one: the
-   bar goes from 110px to roughly 40px of an 812px screen.
+   bar goes from 110px to 58px of an 812px screen, measured.
 
    Written on `.icon i`, matching the `.small` block above, because that is where this component
    sets glyph size -- a font-size on `.icon` does not reach the glyph here. */
