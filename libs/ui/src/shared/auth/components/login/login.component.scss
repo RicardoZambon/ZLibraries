@@ -125,8 +125,14 @@
   }
 }
 
+/* The surface is set by the login layout, only when a photograph sits behind the card. */
 .login-footer {
-  @apply flex flex-wrap items-center justify-center gap-x-3 px-2 text-center;
+  @apply flex flex-wrap items-center justify-center gap-x-3 text-center;
+  padding: var(--login-footer-padding, 0 0.5rem);
+  border-radius: var(--radius-control);
+  background-color: var(--login-footer-surface, transparent);
+  backdrop-filter: var(--login-footer-blur, none);
+  -webkit-backdrop-filter: var(--login-footer-blur, none);
   font-size: var(--text-caption);
   color: var(--color-content-secondary);
 }

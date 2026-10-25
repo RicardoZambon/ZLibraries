@@ -78,6 +78,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   **Migration:** give a row-flex parent room, or let the ribbon shrink by overriding
   `flex-shrink` on it.
 
+## [1.1.1] - 2026-10-25
+
+### Changed
+
+- **`MultiEditorComponent` announces its form's status when it disables the form.** It still
+  disables the controls quietly, as before, so nothing subscribed to one of them hears about it.
+  The form as a whole now emits one status and value event afterwards: when the editor opens, when
+  it starts with no row selected and when the selected row is removed. Code subscribed to the
+  editor's own `FormGroup` sees that one extra event.
+
+### Fixed
+
+- **A field in a multi-editor turns into an input when a row is picked.** `lib-form-input`
+  decided between an input and a read-only value by reading `form.enabled` and the control's value
+  straight from the form, which is not a signal. Under `OnPush` nothing told it the multi-editor
+  had enabled its form, so the editor showed every field read-only and nothing could be typed.
+  The field now follows the form's events.
+
+- **A field leaves edit mode when the edit is cancelled, even if its control stayed disabled.** A
+  control kept disabled through an edit -- a read-only username, say -- went on showing a disabled
+  input after the view cancelled, instead of its value. Same cause, same fix.
+
+- **A read-only field shows a value patched into a disabled form.** It used to keep the value it
+  painted first.
+
+- **The sign-in screen shows `AppConfig.loginBackgroundUrl`.** The photograph sat at a negative
+  z-index under a host that painted the backdrop and had no stacking context of its own, so it was
+  always hidden behind the backdrop. When a photograph is set, the footer under the card now gets a
+  glass surface, so its text stays readable over the picture.
+
+### ⚠ Breaking Changes / Migration
+
+- None.
+
 ## [1.1.0] - 2026-10-25
 
 ### Added

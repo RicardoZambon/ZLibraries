@@ -113,7 +113,7 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
       });
 
     // Start with an empty form and, since there is no selected row, disable the form.
-    this.formGroup().disable({ emitEvent: false });
+    this.disableFormQuietly();
   }
   //#endregion
 
@@ -129,7 +129,7 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
     this.formGroup().reset({ emitEvent: false });
     this.clearAllFormArrays(this.formGroup());
 
-    this.formGroup().disable({ emitEvent: false });
+    this.disableFormQuietly();
   }
 
   protected onNewClick(): void {
@@ -210,7 +210,7 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
       this.selectedKey.set(undefined);
       this.formGroup().reset({ emitEvent: false });
       this.clearAllFormArrays(this.formGroup());
-      this.formGroup().disable({ emitEvent: false });
+      this.disableFormQuietly();
     }
   }
   //#endregion
@@ -228,6 +228,18 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
         this.clearAllFormArrays(control);
       }
     });
+  }
+
+  /**
+   * Disables the form without telling anything subscribed to its controls, then announces the new
+   * status once, from the form itself.
+   *
+   * The fields in the editor read the form's state from its events. A form disabled without one
+   * left them showing inputs for a form that no longer accepted any.
+   */
+  private disableFormQuietly(): void {
+    this.formGroup().disable({ emitEvent: false });
+    this.formGroup().updateValueAndValidity({ onlySelf: true });
   }
   //#endregion
 }

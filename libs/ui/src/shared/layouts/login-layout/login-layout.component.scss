@@ -10,12 +10,27 @@
 :host {
   @apply relative block h-screen overflow-y-auto;
   background: var(--app-backdrop);
+
+  /*
+   * The photograph below sits at a negative z-index. Without a stacking context of its own here,
+   * that placed it behind this host's backdrop, so a configured photograph never showed.
+   */
+  isolation: isolate;
+}
+
+/*
+ * Over a photograph the footer's text sits on whatever the picture has there. The sign-in screen
+ * reads these to give it a surface of its own; without a photograph they stay unset.
+ */
+:host(.has-background) {
+  --login-footer-surface: var(--color-surface-glass);
+  --login-footer-padding: 0.25rem 0.75rem;
+  --login-footer-blur: blur(var(--blur-glass));
 }
 
 /*
  * An optional photograph behind the backdrop, from `AppConfig.loginBackgroundUrl`. There is no
- * longer a hard-coded `/background.jpg`: that file existed in no application we ship, so the only
- * thing it reliably produced was a 404.
+ * longer a hard-coded `/background.jpg`: an application that has one names it.
  */
 .background {
   @apply fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat;
