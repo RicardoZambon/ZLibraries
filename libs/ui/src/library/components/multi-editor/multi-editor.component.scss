@@ -10,7 +10,18 @@
   display: contents;
 }
 
+/* Nothing but a box to hang the container query on. The stacking below has to be keyed on the
+   width the panes actually have, and a grid cannot query itself, so the grid moved down to
+   `.panes` and this became its container. Keyed on the modal rather than the window because the
+   modal's width comes from its `size` input: a `size-sm` modal is narrow on a desktop too, and
+   should stack there as well. */
 .body-content {
+  @apply grid h-full;
+  container-type: inline-size;
+  container-name: modal-body;
+}
+
+.panes {
   @apply grid grid-flow-col auto-cols-fr gap-4;
   overflow: clip;
   overflow-clip-margin: 4px;
@@ -31,5 +42,36 @@
 
   .buttons {
     @apply grid grid-flow-col gap-2 auto-cols-auto border-b-gray-300/90;
+  }
+}
+
+/* One pane per row once the modal is narrow. Side by side at 375px each pane got about 150px:
+   the grid read "ID / Na..." and the form beside it was unusable.
+
+   Last in the file on purpose. A container query adds no specificity, so these rules tie with
+   the plain ones above and win only by source order -- `.data`'s 24rem minimum in particular,
+   which is a desktop figure that must not survive here: two of those would be 768px against the
+   ~450px a 375x667 phone leaves once the modal's padding, header and footer are out.
+
+   Each pane scrolls inside its own row rather than the modal body scrolling as a whole. That
+   keeps this inside the component: `lib-modal` is shared by every dialog in the library and in
+   consuming applications, and its body does not scroll today.
+
+   The floor is what stops either pane being squeezed away by the other -- the lower one holds a
+   form the consuming application projects, whose height is their content and not ours to
+   compress. 11rem is a header plus about three rows at the data grid's default row height of
+   41.6px.
+
+   Stacking order needs no rule: the grid comes before the form in the template, so row flow puts
+   it on top, and the add/delete buttons live inside `.data` and travel with the form. */
+@container modal-body (max-width: 36rem) {
+  .panes {
+    @apply grid-flow-row;
+    grid-template-rows: minmax(11rem, 1fr) minmax(11rem, 1fr);
+  }
+
+  .data-grid,
+  .data {
+    @apply overflow-y-auto min-h-0;
   }
 }
