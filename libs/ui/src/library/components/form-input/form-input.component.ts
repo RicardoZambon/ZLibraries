@@ -1,6 +1,7 @@
 import { CommonModule, formatDate } from '@angular/common';
 import {
   Component,
+  computed,
   inject,
   input,
   InputSignal,
@@ -9,6 +10,9 @@ import {
   OnInit,
   output,
   OutputEmitterRef,
+  Signal,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import {
   ControlContainer,
@@ -75,9 +79,41 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   protected readonly formGroupDirective: FormGroupDirective = inject(FormGroupDirective);
   protected readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
   protected readonly formService: FormService = inject(FormService);
+
+  /**
+   * Bumped on every event the form emits -- a status change, a value change, a reset.
+   *
+   * A FormGroup is not a signal, so the template could not track whether the form is enabled or
+   * what a control holds. Angular's own `NgControlStatus` notified this view by accident, but only
+   * while an input was on screen and only when that control's own status moved. So the field never
+   * turned into an input when a multi-editor enabled its form, and a control kept disabled through
+   * an edit stayed an input after the edit was cancelled.
+   *
+   * A change made with `emitEvent: false` emits nothing, and still reaches no one.
+   */
+  private readonly formChanged: WritableSignal<number> = signal(0);
   //#endregion
 
   //#region Properties
+  /**
+   * Whether the field is an input rather than a read-only value. Both halves are read every time:
+   * with `||` the edit-mode signal went untracked whenever the form happened to be enabled.
+   */
+  protected readonly isEditable: Signal<boolean> = computed(() => {
+    this.formChanged();
+    const isFormEnabled: boolean = this.formGroupDirective.form?.enabled ?? false;
+    const isEditMode: boolean = this.formService.isEditMode;
+    return isFormEnabled || isEditMode;
+  });
+
+  /** What the read-only face shows: the fixed value, or else the control's current value. */
+  protected readonly shownValue: Signal<any> = computed(() => {
+    this.formChanged();
+    return (
+      this.fixedValue() ?? this.formGroupDirective.form?.get(this.disabledControlName() ?? this.controlName())?.value
+    );
+  });
+
   protected get formControl(): FormControl<any> | null {
     return this.controlName() ? <FormControl>this.formGroup.get(this.controlName()) : null;
   }
@@ -96,10 +132,6 @@ export class FormInputComponent extends BaseComponent implements OnInit {
 
   protected get isFormControl(): boolean {
     return !!this.controlName() && this.controlName().length > 0;
-  }
-
-  protected get isFormEditMode(): boolean {
-    return this.formService.isEditMode;
   }
 
   protected get parentGroups(): string[] {
@@ -127,6 +159,10 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.formGroupDirective.form?.events
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.formChanged.update((count: number) => count + 1));
+
     switch (this.type()) {
       case 'number':
         if (this.formControl) {

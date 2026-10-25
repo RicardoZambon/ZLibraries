@@ -1,4 +1,4 @@
-@if (formGroupDirective.form?.enabled || isFormEditMode) {
+@if (isEditable()) {
   @switch (type()) {
     @case ('textarea') {
       <textarea
@@ -85,40 +85,26 @@
   @switch (type()) {
     @case ('checkbox') {
       <span class="value">
-        <i
-          [ngClass]="
-            (fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value)
-              ? 'fa-solid fa-square-check'
-              : 'fa-regular fa-square'
-          "
-        ></i>
+        <i [ngClass]="shownValue() ? 'fa-solid fa-square-check' : 'fa-regular fa-square'"></i>
       </span>
     }
     @case ('date') {
       <span class="value">
-        {{
-          fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | date: format()
-        }}
+        {{ shownValue() | date: format() }}
       </span>
     }
     @case ('datetime-local') {
       <span class="value">
-        {{
-          fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | date: format()
-        }}
+        {{ shownValue() | date: format() }}
       </span>
     }
     @case ('number') {
       <span class="value">
-        {{
-          fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value | number: format()
-        }}
+        {{ shownValue() | number: format() }}
       </span>
     }
     @default {
-      <span class="value text">{{
-        fixedValue() ?? formGroupDirective.form.get(disabledControlName() ?? controlName())?.value
-      }}</span>
+      <span class="value text">{{ shownValue() }}</span>
     }
   }
 }
