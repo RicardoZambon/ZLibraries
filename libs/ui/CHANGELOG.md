@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.1.0] - 2026-10-25
+
+### Added
+
 - **A button component, `lib-button`.** One component with an `intent` -- `primary`, `secondary`,
   `danger`, `ghost` -- in place of a class that named a colour. It carries the loading, success and
   error states the old classes carried, and it blocks activation with the `disabled` attribute
@@ -115,8 +129,6 @@ reduce`. There is nothing to configure.
 - **The confirmation buttons render `lib-button`.** Their own API is unchanged apart from
   `ButtonConfirmComponent` below; what changed is that their modal footers no longer depend on the
   global `.btn` classes.
-
-### Deprecated
 
 ### Removed
 
