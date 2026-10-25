@@ -10,12 +10,17 @@ before a change, one after — diff into a list of exactly what moved.
 ## Running it
 
 ```bash
-npx nx run-many --target=build-storybook --projects=framework,library,shared --configuration=ci
+npx nx run-many --target=build-storybook --projects=framework,library,shared --configuration=ci --skip-nx-cache
 node tools/style-snapshot/capture.mjs dist/storybook/library before-library.json
 # ...make the change, rebuild...
 node tools/style-snapshot/capture.mjs dist/storybook/library after-library.json
 node tools/style-snapshot/diff.mjs before-library.json after-library.json
 ```
+
+`--skip-nx-cache` is not optional when the change is in a stylesheet. Every component stylesheet
+in all three packages references `libs/shared/src/styles/theme.css` by relative path, which Nx
+cannot see: editing it leaves `library` and `framework` looking unaffected, and their Storybooks
+are replayed from cache. The snapshot then compares a build that does not contain your change.
 
 `STYLE_SNAPSHOT_CHANNEL=msedge` (or `chrome`) uses an installed browser instead of the one
 Playwright downloads, for a machine that cannot reach its CDN. Either is fine: a snapshot is only
@@ -30,8 +35,18 @@ this exists to catch.
 
 **Animated transforms are normalised.** A spinner is mid-rotation at an arbitrary angle, so its
 matrix differs between two runs of the same build. Whether an element animates is the signal, the
-angle is noise, so a rotation matrix on an animated element is recorded as `<animated>`. Everything
-else is captured verbatim: two runs against one build are byte-identical.
+angle is noise, so a rotation matrix on an animated element is recorded as `<animated>`.
+
+**It waits for the page to stop moving.** Animations and transitions are forced to zero duration,
+but a story keeps working after the network goes quiet: the data grid debounces a ResizeObserver
+for 150ms and then recalculates its viewport, a ribbon button's access check resolves and drops it
+to 60% opacity, a web font arrives and reflows everything by a fraction of a pixel. This used to
+wait a flat 350ms, which landed in the middle of that -- two runs against one build of the shared
+Storybook disagreed on 122 of its 1331 elements, enough noise to bury a real change. It now polls
+box sizes and opacity until they hold still for three rounds. The floor that measured 122 is now 0.
+
+With that, two runs against one build are byte-identical. A story that never settles is captured
+anyway after eight seconds, and the diff is where that shows up.
 
 ## What it does not do
 

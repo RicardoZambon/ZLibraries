@@ -233,7 +233,11 @@
      The gap is this panel's own padding plus its border, so the value is derived rather than
      written down, and it follows --tabs-radius if that is ever retuned. Inner surfaces read it
      through var(--surface-radius, …) and keep their own default everywhere else — they appear in
-     plenty of places that are not a tab panel. */
+     plenty of places that are not a tab panel.
+
+     The core carries the same formula as --radius-nested, and this deliberately does not read
+     it: --tabs-radius is a published token an application may retune on its own, and reading
+     the core value would quietly stop the inner corners following it. */
   --surface-radius: calc(var(--tabs-radius) - 0.5rem - 1px);
 
   /* Own stacking context, so the backdrop layer below can sit at z-index -1 behind this

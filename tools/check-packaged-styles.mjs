@@ -14,7 +14,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 // Source-only syntax. Each has to be gone by the time it is packaged.
-const FORBIDDEN = ['@apply', '@reference', '@tailwind ', '@screen', '@plugin', '@theme'];
+const FORBIDDEN = ['@apply', '@reference', '@tailwind ', '@screen', '@plugin', '@theme', '@custom-variant', '@utility'];
 
 const DIST = 'dist/libs';
 

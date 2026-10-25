@@ -780,25 +780,27 @@ interface IDashboardCard {
     <div class="p-6 flex flex-col gap-6">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         @for (card of cards; track card.label) {
-          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <div class="rounded-nested border border-line bg-surface-solid p-4 shadow-sm">
             <div class="flex items-center gap-3">
-              <i class="fa-solid {{ card.icon }} text-xl text-slate-400"></i>
+              <i class="fa-solid {{ card.icon }} text-xl text-content-subtle"></i>
               <div>
-                <div class="text-2xl font-semibold text-slate-800">{{ card.value }}</div>
-                <div class="text-xs uppercase tracking-wide text-slate-500">{{ card.label | translate }}</div>
+                <div class="text-2xl font-semibold text-content-primary">{{ card.value }}</div>
+                <div class="text-caption uppercase tracking-wide text-content-secondary">
+                  {{ card.label | translate }}
+                </div>
               </div>
             </div>
           </div>
         }
       </div>
 
-      <div class="rounded-lg border border-slate-200 bg-white shadow-sm">
-        <div class="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700">
+      <div class="rounded-nested border border-line bg-surface-solid shadow-sm">
+        <div class="border-b border-line px-4 py-3 text-body font-semibold text-content-primary">
           {{ 'Showcase-Dashboard-RecentActivity' | translate }}
         </div>
-        <ul class="divide-y divide-slate-100">
+        <ul class="divide-y divide-line">
           @for (entry of activity; track entry) {
-            <li class="px-4 py-2 text-sm text-slate-600">{{ entry | translate }}</li>
+            <li class="px-4 py-2 text-body text-content-secondary">{{ entry | translate }}</li>
           }
         </ul>
       </div>
@@ -1539,7 +1541,7 @@ const meta: Meta<MainLayoutComponent> = {
             // Plain text, NOT translation keys: BrandComponent renders `{{ appName }}` and
             // `{{ companyName }}` raw, with no translate pipe, so a key would be shown literally.
             appName: 'ZLibraries Showcase',
-            companyName: 'Zambon Dev',
+            companyName: 'Zambon LTDA',
             environment: 'QA',
             logoUrl: SHOWCASE_LOGO,
             notificationsEnabled: true,
@@ -1571,7 +1573,7 @@ function showcaseWith(seedTabs: { title: string; url: string }[]): StoryObj<Main
       props: { seedTabs },
       template: `
         ${FIT_TO_CONTAINER}
-        <div class="h-screen bg-slate-100">
+        <div class="h-screen">
           <shared-showcase-root [seedTabs]="seedTabs"></shared-showcase-root>
         </div>
       `,

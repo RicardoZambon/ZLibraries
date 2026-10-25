@@ -13,15 +13,176 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A button component, `lib-button`.** One component with an `intent` -- `primary`, `secondary`,
+  `danger`, `ghost` -- in place of a class that named a colour. It carries the loading, success and
+  error states the old classes carried, and it blocks activation with the `disabled` attribute
+  rather than `pointer-events: none`, so the keyboard cannot fire an action the mouse cannot. There
+  is no click output: the element inside is a real `<button>`, so `(click)` on `<lib-button>`
+  receives the bubbled event and `type="submit"` works inside a form with no wiring. Every button is at
+  least 2.25rem tall -- the height of the user block in the top bar -- and one with no label is a
+  square of that size, because the padding that suits text would leave a lone glyph in a box wider
+  than it is tall.
+
+- **At the root barrel the new button is `LibButtonComponent`.** Both layers now define a
+  `ButtonComponent` -- the library's `lib-button` and the framework's long-standing
+  `framework-button` -- so `@zambon-dev/ui` exports the framework one under the bare name it
+  already had and the library one under an alias. From the layer entry points
+  (`@zambon-dev/ui/library`, `@zambon-dev/ui/framework`) both are just `ButtonComponent`,
+  which is how they read in context and what the examples below use.
+
+- **A semantic token core.** 59 tokens that name a role -- a surface, a piece of content, a line, a
+  state, a shape, a duration -- defined in `@zambon-dev/ui/styles/theme.css`. Each is also a
+  Tailwind utility: `bg-surface-glass`, `text-content-secondary`, `rounded-surface`. The
+  [design tokens guide](https://github.com/RicardoZambon/ZLibraries/blob/main/docs/guides/design-tokens.md)
+  lists them and explains what is safe to override.
+
+- **A dark theme, and a switch for it in the top bar.** The slot reserved there since July is
+  filled. The switch steps light, dark, follow-the-system, and `ThemeService` exposes the same
+  thing to your code: `preference()` for what the user chose, `resolved()` for what is applied.
+  Your application opts in by adding one snippet to `index.html`; leave it out and every screen
+  stays light. The guide above has the snippet and explains why it cannot be an Angular service.
+
+- **`AppConfig.loginLogoUrl` and `AppConfig.loginBackgroundUrl`.** The sign-in screen used to load
+  `/logo-login.png` and `/background.jpg` from fixed absolute paths that no application ships, so
+  in practice it rendered a broken image over no background. Both are optional: without a logo the
+  card simply has none, and without a background the app backdrop shows through.
+
+- **`LoginLayoutComponent` projects content.** It rendered a `<router-outlet>` and nothing else,
+  so a sign-in screen placed inside the element was silently dropped. It now renders projected
+  content beside the outlet, which lets an application host a sign-in screen that is not reached
+  through the router.
+
+- **The two login translation keys that were missing.** `Login-Title` and `Login-Copyright` were
+  used by the template and defined in neither language file, so the card's heading and its footer
+  rendered the raw key. Both now exist in English and Portuguese, and `Login-SelectLanguage` --
+  which had been sitting unused -- labels the language picker on that screen.
+
 ### Changed
+
+- **Every component now draws from the tokens**, so a theme moves them all at once. The data grid,
+  the group containers, the modal, the multi-select, the catalog select, the ribbon and the form
+  controls had their colours, radii, shadows and durations written into their stylesheets; they now
+  name a role instead. Expect small shifts where a literal and its nearest token were not identical
+  -- borders settle on one grey, selection on one blue.
+
+- **`--sidebar-*` and `--tabs-*` derive from that core.** They are still the names you override and
+  they still compute the same values. They moved into `@layer tokens`, which means an override of
+  yours now wins whatever the import order -- previously it only won if your stylesheet came last.
+  Write the override without a layer.
+
+- **Focus is shown on `:focus-visible` and is thinner.** Fields and buttons used `focus:ring-4` on
+  plain `:focus`, so a four-pixel halo appeared on every mouse click. The ring is now two pixels,
+  reads `--color-focus-ring`, and appears when focus is actually worth showing.
+
+- **Form labels are no longer uppercase, bold and letter-spaced.** They are a quiet caption at the
+  same size. This is the single change that most alters how a dense form reads; labels also get
+  narrower, so field columns gain a little width.
+
+- **Transitions read duration tokens**, which collapse to 1ms under `prefers-reduced-motion:
+reduce`. There is nothing to configure.
+
+- **The sign-in screen was rebuilt.** It had had no design decision since May 2025 and used the
+  brand colour nowhere: an amber frame around the logo, slate field icons, a generic blue border.
+  It is now the same glass card as the rest of the product. Concretely:
+
+  - The logo sits inside the card instead of hanging above it on a -160px margin over a fixed
+    160px height, so a logo that is not square no longer skews everything around it.
+  - The card has a maximum width that shrinks. The previous `w-10/12 md:w-8/12 xl:w-5/12`
+    resolved against an absolutely positioned parent with no width of its own, so those
+    breakpoints never did what their names suggested.
+  - The page scrolls when the card does not fit. On a 768px-tall laptop it used to be cut off at
+    both ends with no way to reach what was missing.
+  - Both fields carry `autocomplete`, so password managers recognise them; the error block is a
+    live region, so it is announced; and the submit button is genuinely disabled while signing in
+    rather than only unclickable.
+
+- **The application toolbar joined the glass language.** It was the one surface of the shell still
+  outside the token system -- opaque white, square, with a hairline under it, directly above a
+  rounded translucent panel. The hairline is gone: in this language surfaces are separated by
+  elevation.
+
+- **The ribbon, the top bar, the notifications panel, the language picker and the audit history
+  views draw from the design tokens**, as does the environment badge -- it keeps its four hues, but
+  fill, text and ring are now derived from one of them, so the badge stays readable when the
+  surface behind it goes dark.
+
+- **The top bar's controls on the right are one size, in two groups.** Notifications, language
+  and theme came out at three different heights with three different paddings -- the language
+  toggle wrapped the button in padding of its own, on top of the button's, which made the smallest
+  control the widest -- and all five sat 12px apart. They are now identical squares, shoulder to
+  shoulder, with the user and the way out as their own group beside them.
+
+- **The confirmation buttons render `lib-button`.** Their own API is unchanged apart from
+  `ButtonConfirmComponent` below; what changed is that their modal footers no longer depend on the
+  global `.btn` classes.
 
 ### Deprecated
 
 ### Removed
 
+- **The global `.btn` classes.** See the migration note below.
+
 ### Fixed
 
+- **The sidebar's collapse handle no longer disappears into the page.** It is a disc that
+  straddles the sidebar's edge, so most of it sits on the app backdrop, and two things hid it: its
+  outline was a hairline the weight of a divider, and hovering it swapped the solid fill for a 40%
+  tint -- which let the rail show through one half of the handle and the page through the other.
+  The outline is the stronger line colour now, and the hover wash sits over the fill rather than
+  replacing it.
+
+- **Hovering a secondary button now shows something.** It went from a 40% tint of one grey to a 6%
+  wash of another, and those land on nearly the same colour, so on a white page nothing happened;
+  on any other surface the button faded instead. That wash also layers over the fill now.
+
 ### ⚠ Breaking Changes / Migration
+
+- **`.btn` and its 154 colour variants are gone.** They were generated by interpolating Tailwind
+  colour names in a loop, so a button's appearance was a palette decision rather than a statement
+  of what it was for, and none of them could follow a theme. Replace each one with `lib-button`
+  from `@zambon-dev/ui/library`:
+
+  ```html
+  <!-- before -->
+  <button type="button" class="btn blue-500" (click)="save()">Save</button>
+
+  <!-- after -->
+  <lib-button intent="primary" (click)="save()">Save</lib-button>
+  ```
+
+  | Class                                                 | Intent      |
+  | ----------------------------------------------------- | ----------- |
+  | `blue-*`, `green-*`, any brand colour                 | `primary`   |
+  | `red-*`                                               | `danger`    |
+  | `gray-*`, `slate-*`, `neutral-*`, `stone-*`, `zinc-*` | `secondary` |
+  | a bare `.btn` inside a toolbar                        | `ghost`     |
+
+  The state classes move to inputs: `[class.loading]` becomes `[loading]`, `.success` becomes
+  `[success]`, `.error` becomes `[error]`. `[disabled]` is unchanged. `(click)` still works, since
+  the component renders a real button and the event bubbles.
+
+- **`ButtonConfirmComponent.modalConfirmButtonColor` is now `modalConfirmButtonIntent`.** It took a
+  Tailwind palette name, which said nothing about what the button was for and could not follow a
+  theme. Replace the colour with the intent it stood for:
+
+  | Before                                | After                                  |
+  | ------------------------------------- | -------------------------------------- |
+  | `modalConfirmButtonColor="red-500"`   | `modalConfirmButtonIntent="danger"`    |
+  | `modalConfirmButtonColor="blue-500"`  | `modalConfirmButtonIntent="primary"`   |
+  | `modalConfirmButtonColor="green-500"` | `modalConfirmButtonIntent="primary"`   |
+  | any grey                              | `modalConfirmButtonIntent="secondary"` |
+
+  The input now has a default of `danger`, so a confirmation that deletes something needs nothing
+  at all.
+
+- **`@zambon-dev/ui/styles/theme.css` is now required** in your global stylesheet. It already was
+  in practice for anything using the sidebar; it now carries every component's colours, and
+  without it they resolve to nothing and render transparent.
+
+- **Component tokens moved into `@layer tokens`.** Not a break, but worth knowing: an override of
+  `--sidebar-bg` or `--tabs-*` now wins whatever the import order, where before it only won if your
+  stylesheet came after ours. Write overrides without a layer. A static override holds in both
+  themes; to vary one by theme, write it under `:root[data-theme='dark']`.
 
 ## [1.0.0] - 2026-10-24
 

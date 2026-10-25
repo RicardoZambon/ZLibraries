@@ -8,12 +8,18 @@
 }
 
 .user-profile {
-  @apply flex items-center gap-2 min-w-0 h-9 rounded-sm px-2 select-none;
-  @apply bg-black/5 transition-colors hover:bg-black/10;
+  @apply flex items-center gap-2 min-w-0 h-9 px-2 select-none transition-colors;
+  border-radius: var(--radius-control);
+  background-color: var(--state-hover);
+
+  &:hover {
+    background-color: var(--state-pressed);
+  }
 
   .user-avatar {
     @apply flex items-center justify-center h-7 w-7 rounded-full shrink-0 overflow-hidden;
-    @apply bg-primary-500 text-white;
+    background-color: var(--color-accent);
+    color: var(--color-content-on-accent);
   }
 
   .user-avatar-img {
@@ -25,11 +31,16 @@
   }
 
   .user-name {
-    @apply font-medium text-sm truncate leading-4 text-stone-800;
+    @apply truncate leading-4;
+    font-size: var(--text-body);
+    font-weight: var(--font-weight-ui);
+    color: var(--color-content-primary);
   }
 
   .user-position {
-    @apply text-xs truncate leading-4 text-stone-500;
+    @apply truncate leading-4;
+    font-size: var(--text-caption);
+    color: var(--color-content-secondary);
   }
 
   .user-text {

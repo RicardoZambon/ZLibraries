@@ -1,15 +1,31 @@
 @reference '../../../styles/theme.css';
 
-@import '../../../styles/mixins/background';
-
+/*
+ * The card used to be centred with `position: absolute; top: 50%; translateY(-50%)` against a host
+ * that was never `relative` -- so it positioned itself against the viewport by accident -- and the
+ * host was `h-screen` with no scrolling. On a 768px-tall laptop the card was simply cut off at both
+ * ends with no way to reach what was missing. Centring is a flex job, and `min-h-full` lets the
+ * page grow past the viewport and scroll when the card does not fit.
+ */
 :host {
-  @apply block h-screen;
+  @apply relative block h-screen overflow-y-auto;
+  background: var(--app-backdrop);
 }
 
+/*
+ * An optional photograph behind the backdrop, from `AppConfig.loginBackgroundUrl`. There is no
+ * longer a hard-coded `/background.jpg`: that file existed in no application we ship, so the only
+ * thing it reliably produced was a 404.
+ */
 .background {
-  @include fixed-background('/background.jpg', 'bg-white/30');
+  @apply fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat;
 }
 
 .container {
-  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+  @apply flex min-h-full items-center justify-center p-6;
+}
+
+/* The outlet is a sibling marker with no box of its own; as a flex item it would add a gap. */
+router-outlet {
+  @apply hidden;
 }

@@ -16,6 +16,7 @@ import {
 } from '@angular/core';
 import { IModal, ModalSize } from '../../models';
 import { BaseComponent } from '../base.component';
+import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'lib-modal',
@@ -25,7 +26,7 @@ import { BaseComponent } from '../base.component';
     title: '', // This is to ensure that the title input does not conflict with the native HTML title attribute.
     '[class.show]': 'isOpen()',
   },
-  imports: [],
+  imports: [ButtonComponent],
 })
 export class ModalComponent extends BaseComponent implements IModal, OnInit {
   //#region ViewChilds, Inputs, Outputs

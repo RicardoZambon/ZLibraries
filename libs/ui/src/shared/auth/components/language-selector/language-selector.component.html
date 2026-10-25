@@ -1,18 +1,16 @@
 <div #dropdown class="dropdown right" [class.show]="showDropdown()">
-  <button
-    class="btn"
-    type="button"
-    (click)="onDropdownClick()"
-    [class.gray-300]="showFlag()"
+  <lib-button
+    intent="ghost"
     [class.lang-flag-toggle]="showFlag()"
-    [attr.aria-label]="showFlag() ? (title() | translate) : null"
+    [ariaLabel]="showFlag() ? (title() | translate) : undefined"
+    (click)="onDropdownClick()"
   >
     @if (showFlag()) {
       <span class="flag flag-{{ selectedLanguage }}"></span>
     } @else {
       {{ title() | translate }}
     }
-  </button>
+  </lib-button>
 
   <ul>
     @for (lang of languages; track lang) {

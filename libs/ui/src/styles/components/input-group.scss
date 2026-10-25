@@ -4,7 +4,9 @@
 
     .input-group-text {
       @apply py-1.5 px-3 rounded-l flex flex-row items-center whitespace-nowrap select-none;
-      @apply bg-slate-500 text-gray-50 border-blue-400;
+      background-color: var(--color-surface-inset);
+      color: var(--color-content-secondary);
+      border-color: var(--color-line-strong);
     }
 
     input[type='text'].form-input,
@@ -14,7 +16,8 @@
 
       &.ng-touched.ng-invalid {
         ~ .input-group-text {
-          @apply bg-red-600;
+          background-color: var(--color-danger);
+          color: var(--color-content-on-accent);
         }
       }
     }
@@ -39,6 +42,7 @@
 
   .validations {
     @apply hidden basis-full mt-1;
-    @apply text-red-600 text-sm;
+    @apply text-sm;
+    color: var(--color-danger);
   }
 }

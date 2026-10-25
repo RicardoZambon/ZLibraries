@@ -1,6 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, forwardRef, inject, input, InputSignal, Signal, viewChild } from '@angular/core';
-import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/ui/library';
+import {
+  ButtonComponent,
+  type ButtonIntent,
+  DataGridDataset,
+  RibbonButtonComponent,
+  RibbonGroupChild,
+} from '@zambon-dev/ui/library';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, take } from 'rxjs';
 import { ConfirmModalComponent } from '../../modals';
@@ -9,7 +15,7 @@ import { BaseButton } from '../base-button';
 @Component({
   selector: 'framework-button-confirm',
   templateUrl: './button-confirm.component.html',
-  imports: [ConfirmModalComponent, RibbonButtonComponent, TranslatePipe],
+  imports: [ButtonComponent, ConfirmModalComponent, RibbonButtonComponent, TranslatePipe],
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonConfirmComponent) }],
 })
 export class ButtonConfirmComponent extends BaseButton {
@@ -20,7 +26,12 @@ export class ButtonConfirmComponent extends BaseButton {
   public readonly color: InputSignal<string> = input('text-primary-500');
   public readonly icon: InputSignal<string> = input('');
   public readonly label: InputSignal<string> = input('');
-  public readonly modalConfirmButtonColor: InputSignal<string> = input('');
+  /**
+   * What the confirm button is for. Replaces `modalConfirmButtonColor`, which took a Tailwind
+   * palette name -- `green-500` -- and so could neither follow a theme nor say what the button
+   * meant.
+   */
+  public readonly modalConfirmButtonIntent: InputSignal<ButtonIntent> = input<ButtonIntent>('danger');
   public readonly modalConfirmButtonLabel: InputSignal<string> = input('');
   public readonly modalMessage: InputSignal<string> = input('');
   public readonly modalMessageIcon: InputSignal<string> = input('fa-solid fa-circle-question');

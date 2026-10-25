@@ -1,3 +1,4 @@
+import { ButtonComponent } from '@zambon-dev/ui/library';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { ConfirmModalComponent } from '../../components/modals/confirm-modal/confirm-modal.component';
 import { ErrorModalComponent } from '../../components/modals/error-modal/error-modal.component';
@@ -6,7 +7,7 @@ const meta: Meta<ConfirmModalComponent> = {
   component: ConfirmModalComponent,
   decorators: [
     moduleMetadata({
-      imports: [ConfirmModalComponent, ErrorModalComponent],
+      imports: [ButtonComponent, ConfirmModalComponent, ErrorModalComponent],
     }),
   ],
   title: 'Framework/Modals',
@@ -27,9 +28,9 @@ export const ConfirmModal: Story = {
     props: args,
     template: `
       <div class="p-4">
-        <button type="button" class="btn blue-500" (click)="modal.toggleModal()">
+        <lib-button intent="primary" (click)="modal.toggleModal()">
           Open confirmation
-        </button>
+        </lib-button>
 
         <framework-confirm-modal
           #modal
@@ -40,9 +41,9 @@ export const ConfirmModal: Story = {
           [size]="size"
           [title]="title">
           <div footer>
-            <button type="button" class="btn blue-500" (click)="modal.closeModal()">
+            <lib-button intent="primary" (click)="modal.closeModal()">
               Confirm
-            </button>
+            </lib-button>
           </div>
         </framework-confirm-modal>
       </div>
@@ -54,9 +55,9 @@ export const ErrorModal: StoryObj<ErrorModalComponent> = {
   render: () => ({
     template: `
       <div class="p-4">
-        <button type="button" class="btn red-500" (click)="modal.showModal('The server rejected the requested operation.')">
+        <lib-button intent="danger" (click)="modal.showModal('The server rejected the requested operation.')">
           Open error
-        </button>
+        </lib-button>
 
         <framework-error-modal
           #modal

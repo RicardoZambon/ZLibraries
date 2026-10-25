@@ -4,17 +4,23 @@
   @apply relative;
 
   .notifications-badge {
-    @apply absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full;
+    // Sits over the bell rather than inside it, and lets the click through to the button. The
+    // offsets are inside the button box, not outside it: the box is a 36px square around an 18px
+    // glyph, so a badge pinned to its corner would float away from the bell.
+    @apply absolute top-1 right-1 min-w-4 h-4 px-1 rounded-full pointer-events-none;
     @apply flex items-center justify-center text-[10px] font-bold leading-none;
-    @apply bg-red-600 text-white;
+    background-color: var(--color-danger);
+    color: var(--color-content-on-accent);
   }
 
   .notifications-empty {
-    @apply px-3 py-6 text-center text-sm text-stone-500;
+    @apply px-3 py-6 text-center text-sm;
+    color: var(--color-content-secondary);
   }
 
   .notifications-header {
-    @apply flex items-center justify-between px-3 py-2 border-b border-stone-200;
+    @apply flex items-center justify-between px-3 py-2 border-b;
+    border-color: var(--color-line);
     @apply text-sm font-semibold;
   }
 
@@ -22,10 +28,11 @@
     @apply max-h-80 overflow-y-auto;
 
     .notifications-item {
-      @apply border-b border-stone-100 last:border-b-0;
+      @apply border-b last:border-b-0;
+      border-color: var(--color-line);
 
       &.unread {
-        @apply bg-primary-50/60;
+        background-color: var(--state-selected);
       }
 
       .notifications-item-body {
@@ -34,49 +41,54 @@
 
       .notifications-item-btn {
         @apply flex items-start gap-2.5 w-full px-3 py-2 text-left cursor-pointer;
-        @apply hover:bg-stone-50;
+        &:hover {
+          background-color: var(--state-hover);
+        }
       }
 
       .notifications-item-cta {
-        @apply mt-1 shrink-0 text-xs text-stone-400;
+        @apply mt-1 shrink-0 text-xs;
+        color: var(--color-content-subtle);
       }
 
       .notifications-item-description {
-        @apply text-xs text-stone-500;
+        @apply text-xs;
+        color: var(--color-content-secondary);
       }
 
       .notifications-item-icon {
         @apply flex items-center justify-center w-6 h-6 mt-0.5 shrink-0 rounded-full;
-        @apply bg-stone-100 text-stone-600 text-xs;
+        @apply text-xs;
+        background-color: var(--color-surface-inset);
+        color: var(--color-content-secondary);
       }
 
       .notifications-item-title {
-        @apply text-sm font-medium text-stone-800;
+        @apply text-sm font-medium;
+        color: var(--color-content-primary);
       }
     }
   }
 
   .notifications-mark-all {
-    @apply text-xs font-medium text-primary-400 hover:text-primary-500;
+    @apply text-xs font-medium;
+    color: var(--color-accent);
+
+    &:hover {
+      color: var(--color-accent-strong);
+    }
   }
 
   .notifications-panel {
     @apply absolute right-0 top-full mt-1 z-50 w-80 max-w-[90vw];
-    @apply rounded-md border border-stone-200 bg-white;
-    @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
+    @apply border;
+    border-radius: var(--radius-control);
+    border-color: var(--color-line);
+    background-color: var(--color-surface-solid);
+    box-shadow: var(--shadow-overlay);
   }
 
   .notifications-toggle {
     @apply relative;
-
-    // The unread badge is an absolutely-positioned overlay, so it adds no width — but it is still
-    // a DOM sibling after the bell, which defeats the global `.btn i:not(:last-child)` margin
-    // guard in styles/components/button.scss. That put 8px of dead space to the bell's right and
-    // shifted it off-centre, but only while a count was showing, which is why it looked
-    // intermittent. The guard is right for icon-plus-label buttons, so it is neutralised here
-    // rather than changed for every button in the app.
-    i {
-      @apply mr-0;
-    }
   }
 }

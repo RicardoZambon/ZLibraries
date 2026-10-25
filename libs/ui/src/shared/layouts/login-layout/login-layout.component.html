@@ -1,5 +1,12 @@
-<div class="background"></div>
+@if (backgroundUrl) {
+  <div class="background" [style.background-image]="'url(' + backgroundUrl + ')'"></div>
+}
 
 <div class="container">
   <router-outlet></router-outlet>
+
+  <!-- Projected content renders beside the outlet, so the layout can host a sign-in screen that is
+       not reached through the router. Without it, a child placed inside this element was silently
+       dropped -- which is what the Storybook story had been doing. -->
+  <ng-content></ng-content>
 </div>

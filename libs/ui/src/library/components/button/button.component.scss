@@ -1,0 +1,132 @@
+@reference '../../../styles/theme.css';
+
+/* @use 'tailwindcss'; */
+
+:host {
+  @apply inline-flex;
+}
+
+.lib-button {
+  @apply inline-flex items-center justify-center gap-2 px-3 py-1.5 select-none cursor-pointer;
+  @apply border border-transparent;
+  /*
+   * One control height across the product: the same 2.25rem as a form field and as the user block
+   * in the top bar, so a row that mixes them sits on one line. A minimum rather than a height, so
+   * a label that wraps still has room.
+   */
+  @apply min-h-9;
+  border-radius: var(--radius-control);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-ui);
+  transition-property: background-color, border-color, color;
+  transition-duration: var(--duration-instant);
+  transition-timing-function: var(--ease-standard);
+
+  &:focus-visible {
+    @apply outline-hidden ring-[length:var(--focus-ring-width)];
+    --tw-ring-color: var(--color-focus-ring);
+  }
+
+  &:disabled {
+    @apply pointer-events-none;
+    opacity: var(--opacity-disabled);
+  }
+
+  /* An empty label would otherwise still take the gap, leaving an icon-only button off-centre. */
+  .lib-button-label:empty {
+    @apply hidden;
+  }
+
+  /*
+   * And without the label the horizontal padding is wrong: it is sized for text, so a single glyph
+   * ends up in a box wider than it is tall. Side by side in a toolbar those boxes read as gaps
+   * between the icons. An icon-only button is a square of the control height.
+   */
+  &:has(.lib-button-label:empty) {
+    @apply w-9 px-0;
+  }
+}
+
+.intent-primary {
+  background-color: var(--color-accent);
+  color: var(--color-content-on-accent);
+
+  &:hover {
+    background-color: var(--color-accent-strong);
+  }
+}
+
+.intent-secondary {
+  background-color: var(--color-surface-inset);
+  color: var(--color-content-primary);
+  border-color: var(--color-line);
+
+  /*
+   * Layered over the fill, not in place of it. Replacing a 40% tint of gray-200 with a 6% wash of
+   * gray-900 lands on almost exactly the same colour, so hovering a secondary button used to do
+   * nothing you could see; over a surface that is not white it also made the button fade.
+   */
+  &:hover {
+    background-image: linear-gradient(var(--state-hover), var(--state-hover));
+  }
+}
+
+.intent-danger {
+  background-color: var(--color-danger);
+  color: var(--color-content-on-accent);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--color-danger) 85%, black);
+  }
+}
+
+.intent-ghost {
+  color: var(--color-content-secondary);
+
+  &:hover {
+    background-color: var(--state-hover);
+    color: var(--color-content-primary);
+  }
+}
+
+/* Success and failure override the intent, because what the button now says is the outcome. */
+.is-success {
+  background-color: var(--color-success);
+  color: var(--color-content-on-accent);
+  border-color: transparent;
+}
+
+.is-error {
+  background-color: var(--color-danger);
+  color: var(--color-content-on-accent);
+  border-color: transparent;
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--color-danger) 85%, black);
+  }
+}
+
+/*
+ * A ring drawn in `currentColor` rather than the white SVG the global class used. That one was a
+ * data URI baked with `stroke="white"`, which meant a second copy baked in black for pale buttons,
+ * and neither could follow a theme.
+ */
+.lib-button-spinner {
+  @apply inline-block h-4 w-4 rounded-full border-2 shrink-0;
+  border-color: currentColor;
+  border-right-color: transparent;
+  animation: lib-button-spin 0.6s linear infinite;
+}
+
+@keyframes lib-button-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* The ring still reads as "busy" standing still, and `aria-busy` says so regardless. */
+@media (prefers-reduced-motion: reduce) {
+  .lib-button-spinner {
+    animation: none;
+  }
+}

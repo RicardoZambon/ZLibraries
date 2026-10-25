@@ -1,72 +1,132 @@
 @reference '../../../../styles/theme.css';
 
+/* @use 'tailwindcss'; */
+
 :host {
-  @apply block;
+  @apply flex flex-col items-center gap-3 w-full max-w-md;
 }
 
-.content {
-  @apply mx-auto w-10/12 md:w-8/12 xl:w-5/12 rounded-lg;
-  @apply divide-y divide-zinc-400;
-  @apply shadow-[0_4px_8px_0_rgba(0,0,0,0.2),0_6px_20px_0_rgba(0,0,0,0.19)];
+/*
+ * The same glass card the rest of the product is made of, instead of the previous arrangement: a
+ * logo hung outside the panel on a -160px margin, over a fixed 160px image height, inside widths
+ * written as `w-10/12 md:w-8/12 xl:w-5/12` that resolved against an absolutely positioned parent
+ * with no width of its own -- so those breakpoints never did what their names suggested. The card
+ * is now a fixed maximum width that simply shrinks, and the logo sits inside it.
+ */
+.login-card {
+  @apply w-full px-6 py-8 text-center;
+  background-color: var(--color-surface-glass-strong);
+  border-radius: var(--radius-surface);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  box-shadow: var(--shadow-float);
+}
 
-  .login {
-    @apply mt-20 pt-20 px-6 pb-6 rounded-t-lg bg-white/60 relative z-10 backdrop-blur-md;
+.login-logo {
+  /* Bounded rather than fixed: a logo that is not square no longer skews the layout around it. */
+  @apply mx-auto mb-5 max-h-20 w-auto object-contain;
+}
 
-    .logo-container {
-      @apply -mt-40 ml-auto mr-auto mb-4 w-fit rounded-3xl p-2;
-      @apply bg-white shadow-[0_4px_8px_0_rgba(0,0,0,0.2),0_6px_20px_0_rgba(0,0,0,0.19)];
+.login-title {
+  font-size: var(--text-display);
+  font-weight: var(--font-weight-strong);
+  color: var(--color-content-primary);
+}
 
-      .logo {
-        @apply w-fit p-2 rounded-3xl;
-        @apply border-2 border-amber-300;
+.login-subtitle {
+  @apply mt-1;
+  font-size: var(--text-body);
+  color: var(--color-content-secondary);
+}
 
-        img {
-          @apply min-w-fit h-40;
-        }
-      }
-    }
+.login-form {
+  @apply grid gap-4 mt-6 text-left;
+}
 
-    .title {
-      @apply text-3xl font-bold text-center pb-5;
-    }
+.login-error {
+  @apply px-3 py-2 text-center;
+  border-radius: var(--radius-field);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-emphasis);
+  color: var(--color-content-on-accent);
+  background-color: var(--color-danger);
+}
 
-    form {
-      > .validations {
-        @apply text-center text-red-500 font-bold;
+.login-field {
+  @apply grid gap-1;
+}
 
-        &:after {
-          @apply content-[''] block border-b border-red-500 mb-2 mx-auto;
-          @apply animate-[separator_1s_ease-in-out_forwards];
-        }
-      }
+.login-label {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-emphasis);
+  color: var(--color-content-secondary);
+}
 
-      .options {
-        @apply flex flex-row justify-between mb-3 flex-wrap-reverse;
+/*
+ * The icon sits inside the field rather than in a box glued to its left edge. The old treatment
+ * was a `flex-row-reverse` with a -1px margin and `w-1 grow` on the input, which only held
+ * together at one width.
+ */
+.login-control {
+  @apply flex items-center gap-2 px-3 border;
+  border-radius: var(--radius-field);
+  border-color: var(--color-line-strong);
+  background-color: var(--color-surface-solid);
+  transition-property: border-color, box-shadow;
+  transition-duration: var(--duration-instant);
+  transition-timing-function: var(--ease-standard);
 
-        shared-language-selector {
-          @apply mb-3 sm:mb-0 w-full sm:w-auto;
-        }
-      }
-
-      .buttons {
-        @apply flex justify-center gap-4;
-      }
-    }
+  > i {
+    color: var(--color-content-subtle);
   }
 
-  .footer {
-    @apply px-2 py-0.5 rounded-b-lg;
-    @apply bg-slate-200/60 backdrop-blur-md;
-    @apply text-sm font-semibold tracking-tight;
-    @apply flex justify-between flex-wrap;
+  input {
+    @apply w-full py-2 bg-transparent border-0 outline-hidden;
+    color: var(--color-content-primary);
+    font-size: var(--text-body);
+  }
+
+  /* The ring goes on the wrapper, so the icon is inside the highlight rather than beside it. */
+  &:focus-within {
+    border-color: var(--color-focus-ring);
+    box-shadow: 0 0 0 var(--focus-ring-width) var(--color-focus-ring);
+  }
+
+  &.invalid {
+    border-color: var(--color-danger);
+
+    &:focus-within {
+      box-shadow: 0 0 0 var(--focus-ring-width) var(--color-danger);
+    }
   }
 }
 
-@keyframes separator {
-  from {
-    width: 0;
+.login-validation {
+  font-size: var(--text-caption);
+  color: var(--color-danger);
+}
+
+.login-options {
+  @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.login-remember {
+  @apply flex items-center gap-2 cursor-pointer select-none;
+  font-size: var(--text-body);
+  color: var(--color-content-secondary);
+}
+
+.login-submit {
+  @apply w-full;
+
+  /* The host is inline-flex; the button inside it has to fill the card's width. */
+  ::ng-deep .lib-button {
+    @apply w-full;
   }
-  to {
-    width: 100%;
-  }
+}
+
+.login-footer {
+  @apply flex flex-wrap items-center justify-center gap-x-3 px-2 text-center;
+  font-size: var(--text-caption);
+  color: var(--color-content-secondary);
 }

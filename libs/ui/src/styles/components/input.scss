@@ -1,14 +1,22 @@
 .form-input {
-  @apply border-gray-400;
-  @apply focus:border-gray-400 focus:ring-4 focus:ring-primary-400/30;
+  border-color: var(--color-line-strong);
+
+  &:focus-visible {
+    @apply outline-hidden ring-[length:var(--focus-ring-width)];
+    --tw-ring-color: var(--color-focus-ring);
+  }
   @apply transition-colors transition-shadow;
 
-  @apply invalid:border-red-400;
+  &:invalid {
+    border-color: var(--color-danger);
+  }
 
-  @apply disabled:bg-slate-100;
+  &:disabled {
+    background-color: var(--color-surface-inset);
+  }
 
   &.ng-invalid.ng-touched {
-    @apply border-red-600;
+    border-color: var(--color-danger);
   }
 }
 
@@ -17,11 +25,14 @@ input[type='number'],
 input[type='password'],
 textarea {
   &.form-input {
-    @apply mt-1 block w-full rounded-md shadow-xs;
+    @apply mt-1 block w-full shadow-xs;
+    border-radius: var(--radius-field);
 
     &.ng-invalid.ng-touched {
       @apply pr-9;
-      @apply focus:ring-red-400/30;
+      &:focus-visible {
+        --tw-ring-color: var(--color-danger);
+      }
       @apply bg-no-repeat bg-[right_0.5625rem_center] bg-[length:1.125rem_1.125rem];
       background-image: url("data:image/svg+xml,%3csvg class='text-white' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
     }
@@ -31,12 +42,17 @@ textarea {
 input[type='checkbox'].form-input {
   @apply p-0.5 h-5 w-5 rounded-sm relative;
   @apply inline-flex flex-row justify-end;
-  @apply appearance-none bg-white;
+  @apply appearance-none;
+  background-color: var(--color-surface-solid);
 
   @apply disabled:pointer-events-none disabled:opacity-50;
 
   &:not(.switch) {
-    @apply border-2 shadow-md focus:ring-3 focus:shadow-none;
+    @apply border-2 shadow-md;
+
+    &:focus-visible {
+      @apply shadow-none;
+    }
 
     &:before {
       @apply content-[''] rounded-sm;
@@ -47,11 +63,13 @@ input[type='checkbox'].form-input {
   }
 
   &:checked {
-    @apply bg-none bg-primary-400 border-primary-400/80;
+    @apply bg-none;
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
 
     &:before {
       @apply content-['\f00c'];
-      @apply text-white;
+      color: var(--color-content-on-accent);
     }
   }
 
@@ -68,11 +86,12 @@ input[type='checkbox'].form-input {
 
 input[type='checkbox'].form-input.switch {
   @apply w-10 rounded-[2rem];
-  @apply appearance-none bg-white;
+  @apply appearance-none;
+  background-color: var(--color-surface-solid);
 
   &:before {
     @apply content-[''] h-full aspect-square rounded-full;
-    @apply bg-slate-500/60;
+    background-color: var(--color-content-subtle);
   }
 
   &:after {
@@ -80,16 +99,18 @@ input[type='checkbox'].form-input.switch {
     transition: flex-grow 0.15s ease-in-out;
   }
 
-  &:focus:before {
-    @apply bg-slate-500/60;
+  &:focus-visible:before {
+    background-color: var(--color-accent);
   }
 
   &:checked {
-    @apply bg-none bg-primary-400 border-primary-400/80;
+    @apply bg-none;
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
 
     &:before {
       @apply content-[''];
-      @apply bg-white;
+      background-color: var(--color-surface-solid);
     }
 
     &:after {

@@ -21,19 +21,19 @@ lib-data-grid {
     @apply text-sm font-semibold;
 
     &.added {
-      @apply text-green-700;
+      color: var(--color-success);
     }
 
     &.deleted {
-      @apply text-red-700;
+      color: var(--color-danger);
     }
 
     &.modified {
-      @apply text-blue-700;
+      color: var(--color-info);
     }
 
     &.unchanged {
-      @apply text-gray-700;
+      color: var(--color-content-secondary);
     }
   }
 }

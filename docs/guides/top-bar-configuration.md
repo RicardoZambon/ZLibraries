@@ -35,7 +35,7 @@ export const appConfig: ApplicationConfig = {
       provide: APP_CONFIG,
       useValue: new AppConfig(environment.apiBaseUrl, {
         appName: 'Engineering Change',
-        companyName: 'Zilia Technologies',
+        companyName: 'Zambon LTDA',
         environment: environment.name, // 'DEV' | 'QA' | 'STG' | 'PROD'
         logoUrl: '/assets/logo.svg', // optional
         version: '1.4.0', // shown at the bottom of the sidebar

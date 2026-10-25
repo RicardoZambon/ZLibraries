@@ -3,8 +3,15 @@
 .top-bar {
   @apply flex items-center justify-between gap-3 w-full;
 
-  .top-bar-end {
-    @apply shrink-0;
+  /*
+   * Two groups, not five controls in a row. The three icon buttons are actions on the application
+   * and sit shoulder to shoulder; the user and the way out belong to whoever is signed in. Spacing
+   * is what says so -- 2px inside a group, the section's 12px between them -- which is also why
+   * the theme switch no longer crowds the user's name.
+   */
+  .top-bar-actions,
+  .top-bar-identity {
+    @apply flex items-center gap-0.5;
   }
 
   .top-bar-section {
@@ -13,5 +20,9 @@
 
   .top-bar-start {
     @apply min-w-0;
+  }
+
+  .top-bar-end {
+    @apply shrink-0;
   }
 }

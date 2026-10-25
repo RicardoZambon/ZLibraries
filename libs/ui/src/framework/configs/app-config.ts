@@ -10,6 +10,8 @@ export interface AppConfigOptions {
   companyName?: string;
   environment?: string;
   logoUrl?: string;
+  loginBackgroundUrl?: string;
+  loginLogoUrl?: string;
   notificationsEnabled?: boolean;
   notificationsUrl?: string;
   version?: string;
@@ -30,6 +32,12 @@ export class AppConfig {
   /** Optional brand logo URL shown in the top bar. */
   public logoUrl?: string;
 
+  /** Optional photograph behind the sign-in screen. Without one the app backdrop shows. */
+  public loginBackgroundUrl?: string;
+
+  /** Optional logo on the sign-in card. Falls back to `logoUrl`. */
+  public loginLogoUrl?: string;
+
   /** Whether the top-bar notifications feature (bell + badge) is enabled. */
   public notificationsEnabled: boolean;
 
@@ -45,6 +53,8 @@ export class AppConfig {
     this.companyName = options?.companyName ?? '';
     this.environment = options?.environment ?? '';
     this.logoUrl = options?.logoUrl;
+    this.loginBackgroundUrl = options?.loginBackgroundUrl;
+    this.loginLogoUrl = options?.loginLogoUrl;
     this.notificationsEnabled = options?.notificationsEnabled ?? false;
     this.notificationsUrl = options?.notificationsUrl ?? '';
     this.version = options?.version ?? '';

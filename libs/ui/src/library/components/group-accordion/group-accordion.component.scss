@@ -24,7 +24,8 @@
   @apply select-none;
 
   i {
-    @apply mr-2 pt-1 text-slate-500 transition-transform;
+    @apply mr-2 pt-1 transition-transform;
+    color: var(--color-content-secondary);
   }
 
   h6 {

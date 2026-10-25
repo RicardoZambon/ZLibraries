@@ -11,7 +11,13 @@
 
   .clear-button {
     @apply absolute right-7 top-1/2 -translate-y-1/2 flex items-center justify-center;
-    @apply w-5 h-5 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-200;
+    @apply w-5 h-5 rounded-full;
+    color: var(--color-content-subtle);
+
+    &:hover {
+      color: var(--color-content-secondary);
+      background-color: var(--state-hover);
+    }
     @apply cursor-pointer border-none bg-transparent p-0 text-sm leading-none z-10;
   }
 
@@ -38,7 +44,11 @@ div {
 }
 
 .dropdown {
-  @apply rounded-md border overflow-y-auto overscroll-none border-gray-400 bg-white shadow-sm;
+  @apply border overflow-y-auto overscroll-none;
+  border-radius: var(--radius-control);
+  border-color: var(--color-line);
+  background-color: var(--color-surface-solid);
+  box-shadow: var(--shadow-overlay);
   @apply max-h-52;
 
   li {
@@ -58,22 +68,26 @@ div {
       @apply cursor-pointer;
 
       &:nth-child(even) {
-        @apply bg-stone-100/70;
+        background-color: var(--state-hover);
       }
 
       &.selected {
-        @apply bg-primary-200/20 font-bold;
+        @apply font-bold;
+        background-color: var(--state-selected);
       }
 
       &.focused {
-        @apply bg-primary-200/30 outline-hidden;
+        @apply outline-hidden;
+        background-color: var(--state-selected);
       }
 
       &,
       &:nth-child(even),
       &.selected,
       &.focused {
-        @apply hover:bg-primary-200/50;
+        &:hover {
+          background-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
+        }
       }
     }
   }

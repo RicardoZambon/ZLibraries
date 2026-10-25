@@ -19,12 +19,20 @@ import { MultiSelectResultDataset } from '../../services/datasets/multi-select-r
 import { DataGridComponent } from '../data-grid/data-grid.component';
 import { ModalComponent } from '../modal/modal.component';
 import { MultiSelectResultGridComponent } from './result-grid/result-grid.component';
+import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'lib-multi-select',
   templateUrl: './multi-select.component.html',
   styleUrls: ['./multi-select.component.scss'],
-  imports: [DataGridComponent, FormsModule, ModalComponent, MultiSelectResultGridComponent, TranslatePipe],
+  imports: [
+    ButtonComponent,
+    DataGridComponent,
+    FormsModule,
+    ModalComponent,
+    MultiSelectResultGridComponent,
+    TranslatePipe,
+  ],
 })
 export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs

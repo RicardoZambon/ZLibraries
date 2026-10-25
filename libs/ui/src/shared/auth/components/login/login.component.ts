@@ -2,6 +2,8 @@ import { Component, ElementRef, inject, OnInit, signal, Signal, viewChild, Writa
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { APP_CONFIG, AppConfig } from '@zambon-dev/ui/framework';
+import { ButtonComponent } from '@zambon-dev/ui/library';
 import { finalize, tap } from 'rxjs';
 import { AuthenticationService } from '../../../services';
 import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
@@ -10,7 +12,7 @@ import { LanguageSelectorComponent } from '../language-selector/language-selecto
   selector: 'shared-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [LanguageSelectorComponent, ReactiveFormsModule, RouterModule, TranslatePipe],
+  imports: [ButtonComponent, LanguageSelectorComponent, ReactiveFormsModule, RouterModule, TranslatePipe],
 })
 export class LoginComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -34,11 +36,21 @@ export class LoginComponent implements OnInit {
   });
 
   private authenticationService: AuthenticationService = inject(AuthenticationService);
+  private config: AppConfig = inject(APP_CONFIG);
   private formBuilder: FormBuilder = inject(FormBuilder);
   private router: Router = inject(Router);
   //#endregion
 
   //#region Properties
+  /** Company line under the title, when the application supplies one. */
+  protected get companyName(): string {
+    return this.config.companyName;
+  }
+
+  /** The sign-in logo, falling back to the top bar's. Nothing is drawn when neither is set. */
+  protected get logoUrl(): string | undefined {
+    return this.config.loginLogoUrl ?? this.config.logoUrl;
+  }
   //#endregion
 
   //#region Constructor and Angular life cycle methods
@@ -94,6 +106,11 @@ export class LoginComponent implements OnInit {
   //#endregion
 
   //#region Public methods
+  /** A field is only shown as wrong once the user has been given a chance to fill it. */
+  protected isInvalid(field: string): boolean {
+    const control = this.form.get(field);
+    return !!control && control.touched && control.invalid;
+  }
   //#endregion
 
   //#region Private methods

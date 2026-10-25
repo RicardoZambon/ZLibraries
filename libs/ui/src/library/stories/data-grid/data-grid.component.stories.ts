@@ -1,3 +1,4 @@
+import { ButtonComponent } from '../../components/button/button.component';
 import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
@@ -47,14 +48,14 @@ export const WithButtons: Story = {
           [lazyLoadRows]="lazyLoadRows"
           [showButtons]="showButtons">
           <div buttons class="flex gap-2">
-            <button type="button" class="btn slate-100">
+            <lib-button intent="secondary">
               <i class="fa-solid fa-plus"></i>
               Add
-            </button>
-            <button type="button" class="btn slate-100">
+            </lib-button>
+            <lib-button intent="secondary">
               <i class="fa-solid fa-rotate"></i>
               Refresh
-            </button>
+            </lib-button>
           </div>
         </lib-data-grid>
       </div>
@@ -77,14 +78,14 @@ export const ChildListWithButtons: Story = {
           [lazyLoadRows]="lazyLoadRows"
           [showButtons]="showButtons">
           <div buttons class="flex gap-2">
-            <button type="button" class="btn green-500">
+            <lib-button intent="primary">
               <i class="fa-solid fa-plus"></i>
               New
-            </button>
-            <button type="button" class="btn red-500">
+            </lib-button>
+            <lib-button intent="danger">
               <i class="fa-solid fa-trash"></i>
               Remove
-            </button>
+            </lib-button>
           </div>
         </lib-data-grid>
       </div>
@@ -123,7 +124,7 @@ class TallRowsMultiSelectDataset extends DataGridDataset {
 // resolves from the element injector, which always wins over the preview-wide provider.
 @Component({
   selector: 'lib-tall-rows-multi-select-host',
-  imports: [DataGridComponent],
+  imports: [ButtonComponent, DataGridComponent],
   providers: [{ provide: DataGridDataset, useClass: TallRowsMultiSelectDataset }],
   template: `
     <div class="p-4 max-w-5xl h-96">

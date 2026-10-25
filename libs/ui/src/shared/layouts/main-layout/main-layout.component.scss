@@ -15,9 +15,24 @@
   }
 
   .toolbar {
-    @apply flex justify-between p-2 border-b border-stone-300 bg-white/90;
-    @apply shadow-[0_0_4px_0_rgba(0,0,0,0.2),_0_3px_20px_0_rgba(0,0,0,0.19)];
+    @apply flex justify-between p-2 relative z-30;
+    box-shadow: var(--shadow-overlay);
     grid-area: toolbar;
+
+    /* The glass goes on a pseudo-element rather than on the bar itself. `backdrop-filter`
+       makes its own element a stacking context, and the notifications panel is an absolutely
+       positioned z-50 child that has to paint over the tab panel further down the grid --
+       from inside a stacking context it could not. The tab panel does the same thing, for a
+       reason in the same family. The z-30 here is what lifts the bar over the content region.
+
+       No bottom border any more: in this language surfaces are separated by elevation, and a
+       hairline under a floating card is the thing that made this bar look bolted on. */
+    &::before {
+      @apply content-[''] absolute inset-0 -z-[1] pointer-events-none;
+      background-color: var(--color-surface-glass-strong);
+      backdrop-filter: blur(var(--blur-glass));
+      -webkit-backdrop-filter: blur(var(--blur-glass));
+    }
   }
 
   .content {

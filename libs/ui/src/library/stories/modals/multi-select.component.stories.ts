@@ -1,8 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/angular';
+import { ButtonComponent } from '../../components/button/button.component';
+import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { MultiSelectComponent } from '../../components/multi-select/multi-select.component';
 
 const meta: Meta<MultiSelectComponent> = {
   component: MultiSelectComponent,
+  decorators: [moduleMetadata({ imports: [ButtonComponent] })],
   title: 'Library/Modals/Multi Select',
 };
 export default meta;
@@ -21,9 +23,9 @@ export const Primary: Story = {
     props: args,
     template: `
       <div class="p-4">
-        <button type="button" class="btn blue-500" (click)="multiSelect.toggleModal()">
+        <lib-button intent="primary" (click)="multiSelect.toggleModal()">
           Open selector
-        </button>
+        </lib-button>
 
         <lib-multi-select
           #multiSelect

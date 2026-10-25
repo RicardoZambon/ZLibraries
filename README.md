@@ -55,6 +55,15 @@ The Storybook is published from `main` to
 [https://ricardozambon.github.io/ZLibraries/](https://ricardozambon.github.io/ZLibraries/). The
 three layers are its top-level sections.
 
+Guides for applications that consume these packages:
+
+| Guide                                                         | What it covers                                                                  |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| [Design tokens and theming](docs/guides/design-tokens.md)     | The token families, what is safe to override, and how to turn on the dark theme |
+| [Top bar configuration](docs/guides/top-bar-configuration.md) | Brand, environment badge, notifications, language and user profile              |
+| [Dependency holds](docs/guides/dependency-holds.md)           | Why certain dependencies are pinned                                             |
+| [Reactivity](docs/guides/reactivity.md)                       | How these components reach the screen under OnPush                              |
+
 ## Nx Cloud
 
 Remote caching is optional. To enable it, set `NX_CLOUD_ACCESS_TOKEN` in your environment — the

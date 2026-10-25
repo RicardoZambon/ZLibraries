@@ -15,12 +15,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { INotification } from '../../../models';
 import { NotificationsService } from '../../../services';
+import { ButtonComponent } from '@zambon-dev/ui/library';
 
 @Component({
   selector: 'shared-notifications',
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss'],
-  imports: [AsyncPipe, TranslatePipe],
+  imports: [AsyncPipe, ButtonComponent, TranslatePipe],
 })
 export class NotificationsComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs

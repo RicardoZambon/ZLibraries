@@ -11,6 +11,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { ButtonComponent } from '@zambon-dev/ui/library';
 import { LangChangeEvent, TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 
@@ -18,7 +19,7 @@ import { map } from 'rxjs';
   selector: 'shared-language-selector',
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
-  imports: [TranslatePipe],
+  imports: [ButtonComponent, TranslatePipe],
 })
 export class LanguageSelectorComponent {
   //#region ViewChilds, Inputs, Outputs

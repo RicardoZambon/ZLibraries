@@ -1,8 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/angular';
+import { ButtonComponent } from '../../components/button/button.component';
+import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { ModalComponent } from '../../components/modal/modal.component';
 
 const meta: Meta<ModalComponent> = {
   component: ModalComponent,
+  decorators: [moduleMetadata({ imports: [ButtonComponent] })],
   title: 'Library/Modals/Simple Modal',
 };
 export default meta;
@@ -21,9 +23,9 @@ export const Primary: Story = {
     props: args,
     template: `
       <div class="p-4">
-        <button type="button" class="btn blue-500" (click)="modal.toggleModal()">
+        <lib-button intent="primary" (click)="modal.toggleModal()">
           Open modal
-        </button>
+        </lib-button>
 
         <lib-modal
           #modal
@@ -39,9 +41,9 @@ export const Primary: Story = {
           </div>
 
           <div footer>
-            <button type="button" class="btn blue-500" (click)="modal.toggleModal()">
+            <lib-button intent="primary" (click)="modal.toggleModal()">
               Confirm
-            </button>
+            </lib-button>
           </div>
         </lib-modal>
       </div>
@@ -62,9 +64,9 @@ export const TopConfirmation: Story = {
     props: args,
     template: `
       <div class="p-4">
-        <button type="button" class="btn blue-500" (click)="modal.toggleModal()">
+        <lib-button intent="primary" (click)="modal.toggleModal()">
           Open confirmation
-        </button>
+        </lib-button>
 
         <lib-modal
           #modal
@@ -80,9 +82,9 @@ export const TopConfirmation: Story = {
           </div>
 
           <div footer>
-            <button type="button" class="btn red-500" (click)="modal.toggleModal()">
+            <lib-button intent="danger" (click)="modal.toggleModal()">
               Confirm
-            </button>
+            </lib-button>
           </div>
         </lib-modal>
       </div>
@@ -103,9 +105,9 @@ export const ErrorDialog: Story = {
     props: args,
     template: `
       <div class="p-4">
-        <button type="button" class="btn red-500" (click)="modal.toggleModal()">
+        <lib-button intent="danger" (click)="modal.toggleModal()">
           Open error
-        </button>
+        </lib-button>
 
         <lib-modal
           #modal
