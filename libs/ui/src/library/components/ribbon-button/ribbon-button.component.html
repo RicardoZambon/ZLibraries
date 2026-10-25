@@ -1,9 +1,16 @@
-<div #buttonContainer class="button-container" [attr.title]="tooltip() || null">
+<!-- The title falls back to the label so a button that gives no tooltip still explains itself on
+     hover once compact mode has taken its label away. -->
+<div #buttonContainer class="button-container" [attr.title]="tooltip() || (label() | translate) || null">
+  <!-- aria-label is carried whether or not the label is on screen, because compact mode hides it
+       below 36rem of ribbon width and the icon alone names nothing. Null rather than an empty
+       string when there is neither label nor tooltip: an empty aria-label names the control
+       nothing at all, which suppresses the fallback a screen reader would otherwise use. -->
   <a
     class="button"
     role="button"
     [attr.tabindex]="isButtonDisabled ? -1 : 0"
     [attr.aria-disabled]="isButtonDisabled"
+    [attr.aria-label]="accessibleName ? (accessibleName | translate) : null"
     [class.disabled]="isButtonDisabled"
     [class.success]="status() === 'success'"
     [class.warning]="status() === 'warning'"
@@ -26,7 +33,7 @@
       </svg>
     </span>
 
-    <span class="label" [class.text-white]="status() !== null">
+    <span class="label" [id]="labelId" [class.text-white]="status() !== null">
       {{ label() | translate }}
     </span>
   </a>
@@ -39,6 +46,7 @@
       [attr.aria-disabled]="isButtonDisabled"
       aria-haspopup="menu"
       [attr.aria-expanded]="showDropdown()"
+      [attr.aria-labelledby]="accessibleName ? labelId : null"
       [class.disabled]="isButtonDisabled"
       [class.success]="status() === 'success'"
       [class.warning]="status() === 'warning'"

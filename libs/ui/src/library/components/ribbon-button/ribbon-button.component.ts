@@ -93,6 +93,11 @@ export class RibbonButtonComponent implements OnDestroy {
   protected readonly showDropdown: WritableSignal<boolean> = signal(false);
   protected readonly status: WritableSignal<null | 'failure' | 'warning' | 'success'> = signal(null);
 
+  // Stable per instance, so the chevron has something to point `aria-labelledby` at. Same shape
+  // as TabsComponent and CatalogSelectComponent, which is where this pattern already lives.
+  private static instances = 0;
+  private readonly instanceId: string = `ribbon-button-${RibbonButtonComponent.instances++}`;
+
   private clickedOutside = false;
   private overlay: Overlay = inject(Overlay);
   private overlayRef?: OverlayRef;
@@ -101,6 +106,21 @@ export class RibbonButtonComponent implements OnDestroy {
   //#endregion
 
   //#region Properties
+  /**
+   * What this button is called, whether or not its label is on screen. Compact mode hides the
+   * label below 36rem of ribbon width, and an icon with no accessible name is unusable with a
+   * screen reader. The tooltip is the fallback because a consumer who gives one and no label has
+   * already said what the button does; with neither there is nothing to invent.
+   */
+  protected get accessibleName(): string {
+    return this.label() || this.tooltip();
+  }
+
+  /** Id of the label element, so the dropdown chevron can borrow this button's name. */
+  protected get labelId(): string {
+    return `${this.instanceId}-label`;
+  }
+
   protected get buttonIcon(): string {
     switch (this.status()) {
       case 'success':

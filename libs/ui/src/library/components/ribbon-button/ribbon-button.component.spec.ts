@@ -292,4 +292,29 @@ describe('RibbonButtonComponent', () => {
       expect((component as any).showDropdown()).toBe(false);
     });
   });
+
+  // Compact mode hides the label, so the visible text stops being the accessible name. These
+  // cover the getter the template binds to; whether the label is hidden is decided by a
+  // container query, which jsdom does not evaluate.
+  describe('accessibleName', () => {
+    it('should use the label when there is one', () => {
+      component.label = signal('Save');
+
+      expect((component as any).accessibleName).toBe('Save');
+    });
+
+    it('should fall back to the tooltip when the label is empty', () => {
+      component.label = signal('');
+      component.tooltip = signal('Save the record');
+
+      expect((component as any).accessibleName).toBe('Save the record');
+    });
+
+    it('should be empty when there is neither', () => {
+      component.label = signal('');
+      component.tooltip = signal('');
+
+      expect((component as any).accessibleName).toBe('');
+    });
+  });
 });
