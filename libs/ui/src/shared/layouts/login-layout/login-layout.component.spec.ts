@@ -33,4 +33,13 @@ describe(LoginLayoutComponent.name, () => {
     expect(fixture.nativeElement.classList.contains('has-background')).toBe(false);
     expect(fixture.nativeElement.querySelector('.background')).toBeNull();
   });
+
+  // `container` is a Tailwind utility too. An application that scans this package generates it,
+  // and its breakpoint max-widths pushed the sign-in card left of centre on wide screens.
+  it('does not name anything after the Tailwind container utility', () => {
+    const fixture: ComponentFixture<LoginLayoutComponent> = render();
+
+    expect(fixture.nativeElement.querySelector('.container')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.login-container')).not.toBeNull();
+  });
 });

@@ -36,7 +36,12 @@
   @apply fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat;
 }
 
-.container {
+/*
+ * Not `.container`: that is also a Tailwind utility, and an application whose build scans this
+ * package generates it. It caps the width at each breakpoint without centring, so on any screen
+ * wider than 1280px the sign-in card sat left of centre.
+ */
+.login-container {
   @apply flex min-h-full items-center justify-center p-6;
 }
 
