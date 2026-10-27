@@ -46,6 +46,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Ribbon actions were unreachable on a narrow screen.** The bar neither wrapped nor scrolled, so
   anything past the edge was clipped by an ancestor with nothing on screen saying so. At 375px a
   typical list view silently lost its Refresh and Export buttons.
+- **The data grid's header was nearly the same colour as its striped rows.** The header and the
+  zebra stripe were drawn from two different ramps that converged: measured over white, the header
+  landed 7.5 apart from a striped row while the two row colours are 23.7 apart, so the header read
+  as a third, fainter stripe rather than as a heading. In the dark theme both ramps lighten and the
+  gap was 3.7 — no difference at all. The header now sits on the same ink as the stripe, several
+  rungs up, so it is always the strongest of the three and inverts with the theme on its own.
 
 ### ⚠ Breaking Changes / Migration
 
