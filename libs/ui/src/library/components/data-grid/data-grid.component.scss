@@ -90,7 +90,9 @@ lib-data-grid-row,
     @apply py-2 -mt-px border-y cursor-pointer;
     border-color: var(--color-line);
 
-    &:nth-child(even) {
+    // Set by the row from its index in the data. `:nth-child(even)` counted the rows the virtual
+    // scroll had rendered, so the stripes swapped under the cursor while scrolling.
+    &.striped {
       background-color: var(--state-hover);
     }
 
@@ -106,7 +108,7 @@ lib-data-grid-row,
     &.selected {
       @apply z-10 relative;
       background-color: var(--state-selected);
-      border-color: var(--color-accent);
+      border-color: var(--color-line-selected);
 
       &:hover {
         background-color: var(--state-selected);

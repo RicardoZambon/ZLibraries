@@ -2,8 +2,18 @@
 
 /* @use 'tailwindcss'; */
 
+/*
+ * Three rows so that the card, not the card and its footer together, is what sits in the middle of
+ * the screen. The two outer rows share the height left over, and the footer hangs in the bottom one;
+ * as a column of card plus footer the card sat half a footer above centre -- 28px on a laptop, where
+ * the footer wraps to two lines. Stretching to the layout's full height is what gives the outer
+ * rows something to share. When the screen is too short for that, the bottom row keeps the footer's
+ * height and the top row gives way first.
+ */
 :host {
-  @apply flex flex-col items-center gap-3 w-full max-w-md;
+  @apply grid w-full max-w-md;
+  grid-template-rows: 1fr auto 1fr;
+  align-self: stretch;
 }
 
 /*
@@ -14,7 +24,7 @@
  * is now a fixed maximum width that simply shrinks, and the logo sits inside it.
  */
 .login-card {
-  @apply w-full px-6 py-8 text-center;
+  @apply row-start-2 w-full px-6 py-8 text-center;
   background-color: var(--color-surface-glass-strong);
   border-radius: var(--radius-surface);
   backdrop-filter: blur(var(--blur-glass));
@@ -127,7 +137,7 @@
 
 /* The surface is set by the login layout, only when a photograph sits behind the card. */
 .login-footer {
-  @apply flex flex-wrap items-center justify-center gap-x-3 text-center;
+  @apply row-start-3 mt-3 self-start justify-self-center flex flex-wrap items-center justify-center gap-x-3 text-center;
   padding: var(--login-footer-padding, 0 0.5rem);
   border-radius: var(--radius-control);
   background-color: var(--login-footer-surface, transparent);

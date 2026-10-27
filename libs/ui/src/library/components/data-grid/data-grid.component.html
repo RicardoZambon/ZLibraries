@@ -48,6 +48,7 @@
       [disabled]="disabled()"
       [isFirstRow]="isFirstVisibleRow(i)"
       [rowData]="row"
+      [rowIndex]="i"
       [style.height.px]="configs.rowHeight"
       (selectionResized)="onSelectionResized($event)"
     >
