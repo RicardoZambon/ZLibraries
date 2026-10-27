@@ -40,8 +40,12 @@
 .data {
   @apply grid-rows-[min-content_minmax(0,1fr)] gap-2 min-h-[24rem];
 
+  /* Add at the start, where it always is, and remove at the end, lined up with the form's right
+     edge and kept apart from it. These used to be grid columns that split the pane in two; a
+     `lib-button` keeps its own width inside a cell, so add sat at the left of one half and remove
+     started at the middle and stopped short of the edge. */
   .buttons {
-    @apply grid grid-flow-col gap-2 auto-cols-auto border-b-gray-300/90;
+    @apply flex flex-wrap items-center justify-between gap-2;
   }
 }
 
