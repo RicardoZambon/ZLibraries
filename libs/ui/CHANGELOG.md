@@ -13,7 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`--color-line-selected`**, the rule around a selected row. It is the rung of the selection
+  wash at full strength: `primary-200` in the light theme, `primary-300` in the dark one.
+- **`DataGridRowComponent.rowIndex`**, the row's index in the data. The data grid sets it; the
+  zebra stripe follows it.
+
 ### Changed
+
+- **The multi-editor's add and remove buttons sit at the two ends of their row.** Add stays at
+  the start, where it always is. Remove lines up with the form's right edge, apart from add.
 
 ### Deprecated
 
@@ -21,7 +29,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The sign-in card is centred on the screen, both ways.**
+  - _Horizontally:_ the login layout's wrapper was called `.container`, which is also a Tailwind
+    utility. An application that scans this package generates it, and it caps the width at each
+    breakpoint without centring, so on any screen wider than 1280px the card sat left of centre --
+    by 192px at 1920px. The wrapper is now `.login-container`.
+  - _Vertically:_ the card and the footer under it were centred as one block, which left the card
+    half a footer above the middle -- 28px on a laptop, where the footer wraps to two lines. The
+    footer now hangs below a card that is centred on its own. On a screen too short for both, the
+    card moves up first and the footer stays readable.
+- **A selected grid row is framed in blue, not near-black.** The rule around it used the accent,
+  a fill colour, which as a 1px line around a pale wash read as black in the light theme. It now
+  uses `--color-line-selected`. The dark theme looks the same as before.
+- **The multi-editor's buttons no longer split the pane in two.** Each sat in half of a grid, and a
+  `lib-button` keeps its own width, so add hugged the left of one half and remove began in the
+  middle and stopped short of the edge.
+- **Grid stripes hold still while you scroll.** The zebra stripe was `:nth-child(even)` over the
+  rows the virtual scroll had rendered. That window moves, so whenever it moved by an odd number of
+  rows every stripe swapped -- on a long list, constantly. It now follows each row's index in the
+  data.
+
 ### ⚠ Breaking Changes / Migration
+
+- None.
 
 ## [1.2.0] - 2026-10-27
 
