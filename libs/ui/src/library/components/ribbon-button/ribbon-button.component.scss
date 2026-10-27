@@ -164,3 +164,45 @@ ul.options-dropdown {
     }
   }
 }
+
+/* Compact mode: the bar is narrow, so the buttons become icons.
+
+   Keyed on the ribbon's width rather than the window's, because those are different numbers --
+   a detail view's bar and a list view's bar sit in the same window at different widths. Named,
+   so it fires only inside a `lib-ribbon`: these buttons are also projected straight into the
+   data grid's buttons bar, which is not a ribbon and keeps its labels at every width.
+
+   The icon is the lever, not the label. Font Awesome's fixed-width glyph is 1.25x its font size,
+   so at the default 36px the glyph box is 45px while these labels are 45px or narrower -- hiding
+   a label on its own moved the list view's bar by 8px out of 174px. Dropping the glyph to 24px is
+   what takes a button from 69px to 46px; hiding the label then pays, because at that size the
+   label is the wider of the two ("Refresh" is 46px against a 30px glyph). The order matters.
+
+   Hiding the label is also most of the vertical win, and on a phone that is the bigger one: the
+   bar goes from 110px to 58px of an 812px screen, measured.
+
+   Written on `.icon i`, matching the `.small` block above, because that is where this component
+   sets glyph size -- a font-size on `.icon` does not reach the glyph here. */
+@container ribbon (max-width: 36rem) {
+  .button {
+    @apply px-2;
+
+    .icon {
+      i {
+        @apply text-2xl h-7;
+      }
+
+      svg {
+        @apply h-6;
+      }
+    }
+
+    .label {
+      @apply hidden;
+    }
+  }
+
+  .button-dropdown {
+    @apply text-sm px-0.5;
+  }
+}

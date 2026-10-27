@@ -37,7 +37,20 @@ lib-data-grid-row,
 
 .header {
   @apply font-bold border-b overflow-hidden;
-  background-color: var(--color-surface-inset);
+
+  /* The same ink as the zebra stripe below, several rungs up, rather than a different ramp.
+     That is the whole fix: this used to be --color-surface-inset, which lightens with gray-200,
+     while the striped row darkens with --state-hover. Two ramps aimed at the same place, and
+     they arrived. Measured over white, the header landed on 245 and the striped row on 241 --
+     7.5 apart, while the two row colours are 23.7 apart. The header read as a third, fainter
+     stripe rather than as a heading. In the dark theme both ramps lighten and it was worse: 3.7
+     apart, which is no difference at all.
+
+     Mixing the theme's own ink makes the header and the stripe commensurable -- 0% for an odd
+     row, the state wash for an even one, 14% here -- so the band is always the strongest of the
+     three and the ladder inverts with the theme on its own. 14% is the lowest value that clears
+     the stripe in both themes with room to spare; it is a straight retune if it reads heavy. */
+  background-color: color-mix(in srgb, var(--color-content-primary) 14%, transparent);
   border-color: var(--color-line);
 
   &.hide {

@@ -19,3 +19,23 @@
     color: var(--color-content-secondary);
   }
 }
+
+/* Compact mode. See the ribbon button's stylesheet for why this is keyed on the ribbon's own
+   width and why the query is named.
+
+   The caption earns its place on a desktop and not on a phone. Dropping it is almost entirely a
+   vertical saving rather than a horizontal one -- a group is nearly always wider than its own
+   label -- and vertical is what a phone is short of. */
+@container ribbon (max-width: 36rem) {
+  :host {
+    @apply pr-1;
+
+    /* Nested under :host to match the specificity of the base `:host .label` rule above rather
+       than sit one below it. A bare `.label` here happens to work today only because the two
+       rules set different properties -- the base sets font and colour, this sets display -- and
+       the first person to add a `display` up there would break compact mode silently. */
+    .label {
+      @apply hidden;
+    }
+  }
+}

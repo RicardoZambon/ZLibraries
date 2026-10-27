@@ -93,6 +93,11 @@ export class RibbonButtonComponent implements OnDestroy {
   protected readonly showDropdown: WritableSignal<boolean> = signal(false);
   protected readonly status: WritableSignal<null | 'failure' | 'warning' | 'success'> = signal(null);
 
+  // Stable per instance, so the chevron has something to point `aria-labelledby` at. Same shape
+  // as TabsComponent and CatalogSelectComponent, which is where this pattern already lives.
+  private static instances = 0;
+  private readonly instanceId: string = `ribbon-button-${RibbonButtonComponent.instances++}`;
+
   private clickedOutside = false;
   private overlay: Overlay = inject(Overlay);
   private overlayRef?: OverlayRef;
@@ -101,6 +106,36 @@ export class RibbonButtonComponent implements OnDestroy {
   //#endregion
 
   //#region Properties
+  /**
+   * What this button is called, whether or not its label is on screen. Compact mode hides the
+   * label below 36rem of ribbon width, and an icon with no accessible name is unusable with a
+   * screen reader. The tooltip is the fallback because a consumer who gives one and no label has
+   * already said what the button does; with neither there is nothing to invent.
+   */
+  protected get accessibleName(): string {
+    return this.label() || this.tooltip();
+  }
+
+  /** Id of the label element, so the dropdown chevron can borrow this button's name. */
+  protected get labelId(): string {
+    return `${this.instanceId}-label`;
+  }
+
+  /**
+   * The chevron borrows the button's name by reference, but only when there is a label element
+   * with text in it. A reference to an empty span names the control *nothing at all*, which is
+   * worse than leaving it unnamed: it suppresses the fallback a screen reader would otherwise
+   * use. An icon-only button with a tooltip is the case that exposes this.
+   */
+  protected get chevronLabelledBy(): string | null {
+    return this.label() ? this.labelId : null;
+  }
+
+  /** The chevron's name when there is no label element to point at. */
+  protected get chevronAriaLabel(): string | null {
+    return this.label() ? null : this.tooltip() || null;
+  }
+
   protected get buttonIcon(): string {
     switch (this.status()) {
       case 'success':
