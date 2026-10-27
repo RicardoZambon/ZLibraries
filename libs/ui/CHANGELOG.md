@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.2.0] - 2026-10-27
+
+### Added
+
 - **Ribbon buttons carry an accessible name.** `lib-ribbon-button` sets `aria-label` from its
   label whether or not the label is on screen, falling back to `tooltip` when there is no label.
   The dropdown chevron, which had no name at all, borrows the button's through `aria-labelledby`.
@@ -36,10 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   per row below `36rem` of the **modal's** width, each pane scrolling inside a minimum height.
   Keyed on the modal because its width comes from its `size` input: a `size-sm` modal is narrow on
   a desktop too. `lib-modal` itself is unchanged.
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
