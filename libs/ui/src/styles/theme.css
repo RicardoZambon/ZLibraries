@@ -133,6 +133,9 @@
   --color-line-strong: color-mix(in srgb, var(--color-gray-400) 90%, transparent);
   --color-line-on-glass: color-mix(in srgb, white 60%, transparent);
   --color-line-on-brand: color-mix(in srgb, white 80%, var(--color-primary-600));
+  /* Frames a selected row. The same rung as the selection wash, at full strength: the accent is a
+     fill colour, and as a 1px rule around a pale wash it read as black in the light theme. */
+  --color-line-selected: var(--color-primary-200);
 
   /*
    * "Accent" rather than "primary": `--color-primary-*` is already the raw ramp, so this names the
@@ -280,6 +283,8 @@
   --color-line-strong: var(--color-gray-600);
   --color-line-on-glass: color-mix(in srgb, white 12%, transparent);
   --color-line-on-brand: color-mix(in srgb, white 45%, var(--color-primary-800));
+  /* What the selected row was already framed with here, when it borrowed the accent. */
+  --color-line-selected: var(--color-primary-300);
 
   --color-accent: var(--color-primary-300);
   --color-accent-strong: var(--color-primary-200);

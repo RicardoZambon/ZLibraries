@@ -6,7 +6,9 @@ import {
   EventEmitter,
   HostListener,
   inject,
+  input,
   Input,
+  InputSignal,
   OnInit,
   Output,
   signal,
@@ -25,6 +27,7 @@ import { BaseComponent } from '../base.component';
   host: {
     '[class.focused]': 'dataGridDataset.focusedRowKey === rowData',
     '[class.selected]': 'dataGridDataset.isKeySelected(rowKey)',
+    '[class.striped]': 'rowIndex() % 2 === 1',
   },
   styleUrls: ['./data-grid-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +41,13 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
     this._rowData = value;
     this.refreshSelection();
   }
+
+  /**
+   * The row's index in the data, which is what the zebra stripe follows. Its position among the
+   * rendered rows would not do: the virtual scroll renders a moving window, and a stripe keyed on
+   * the DOM swapped on every row whenever that window moved by an odd number of rows.
+   */
+  public readonly rowIndex: InputSignal<number> = input(0);
 
   @Output() public selectionResized: EventEmitter<number> = new EventEmitter<number>();
   //#endregion

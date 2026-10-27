@@ -106,4 +106,43 @@ describe(`${DataGridRowComponent.name} under an OnPush ancestor`, () => {
 
     expect(checkbox(render).checked).toBe(false);
   });
+
+  // The zebra stripe follows the row's index in the data, not its position among the rows the
+  // virtual scroll happens to have rendered. Keyed on the DOM, every row swapped stripes whenever
+  // the rendered window moved by an odd number of rows -- which is most of the time while scrolling.
+  describe('stripe', () => {
+    it('is on for a row at an odd index', async () => {
+      const render: OnPushRender<DataGridRowComponent> = renderUnderOnPush(DataGridRowComponent, {
+        rowData: { id: 'row-1', name: 'Ada' },
+        rowIndex: 3,
+      });
+      await render.fixture.whenStable();
+
+      expect(render.element.classList).toContain('striped');
+    });
+
+    it('is off for a row at an even index', async () => {
+      const render: OnPushRender<DataGridRowComponent> = renderUnderOnPush(DataGridRowComponent, {
+        rowData: { id: 'row-1', name: 'Ada' },
+        rowIndex: 4,
+      });
+      await render.fixture.whenStable();
+
+      expect(render.element.classList).not.toContain('striped');
+    });
+
+    it('follows the index when the virtual scroll reuses the row for another one', async () => {
+      const render: OnPushRender<DataGridRowComponent> = renderUnderOnPush(DataGridRowComponent, {
+        rowData: { id: 'row-1', name: 'Ada' },
+        rowIndex: 0,
+      });
+      await render.fixture.whenStable();
+      expect(render.element.classList).not.toContain('striped');
+
+      render.setInput('rowIndex', 7);
+      await render.fixture.whenStable();
+
+      expect(render.element.classList).toContain('striped');
+    });
+  });
 });
