@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.2.1] - 2026-10-27
+
+### Added
+
 - **`--color-line-selected`**, the rule around a selected row. It is the rung of the selection
   wash at full strength: `primary-200` in the light theme, `primary-300` in the dark one.
 - **`DataGridRowComponent.rowIndex`**, the row's index in the data. The data grid sets it; the
@@ -22,10 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **The multi-editor's add and remove buttons sit at the two ends of their row.** Add stays at
   the start, where it always is. Remove lines up with the form's right edge, apart from add.
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
