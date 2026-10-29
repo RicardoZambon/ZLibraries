@@ -9,9 +9,9 @@
     </div>
   } @else {
     <ng-container *ngTemplateOutlet="template() ?? defaultTemplate"> </ng-container>
-    @if (formControl?.touched) {
-      <div class="validations" [class.show]="formControl?.invalid">
-        @for (error of $safeNavigationMigration(formControl?.errors) | keyvalue; track error) {
+    @if (isTouched()) {
+      <div class="validations" [class.show]="isInvalid()">
+        @for (error of errors() | keyvalue; track error) {
           @if (hasValidation(error.key)) {
             <span>{{ validations()[error.key] | translate }}</span>
           }

@@ -1,6 +1,17 @@
 import { KeyValuePipe, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { Component, inject, input, InputSignal, OnInit, signal, TemplateRef, WritableSignal } from '@angular/core';
-import { FormControl, FormGroup, FormGroupDirective, FormGroupName } from '@angular/forms';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  InputSignal,
+  OnInit,
+  Signal,
+  signal,
+  TemplateRef,
+  WritableSignal,
+} from '@angular/core';
+import { FormControl, FormGroup, FormGroupDirective, FormGroupName, ValidationErrors } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, takeUntil } from 'rxjs';
 import { FormService } from '../../services';
@@ -52,9 +63,34 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   protected readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
   protected formService: FormService = inject(FormService);
   protected readonly loadingField: WritableSignal<boolean> = signal(false);
+
+  /**
+   * Bumped on every event the control emits -- a value, status or touched change.
+   *
+   * A FormControl is not a signal, so the template could not track the control's errors or whether
+   * it was touched. A change the field made itself redrew it, but one made from outside did not: the
+   * server's errors after a save turned the input red and left the message hidden until the user
+   * typed again, and a save marking every field as touched showed no required message at all.
+   */
+  private readonly controlChanged: WritableSignal<number> = signal(0);
   //#endregion
 
   //#region Properties
+  protected readonly errors: Signal<ValidationErrors | null> = computed(() => {
+    this.controlChanged();
+    return this.formControl?.errors ?? null;
+  });
+
+  protected readonly isInvalid: Signal<boolean> = computed(() => {
+    this.controlChanged();
+    return this.formControl?.invalid ?? false;
+  });
+
+  protected readonly isTouched: Signal<boolean> = computed(() => {
+    this.controlChanged();
+    return this.formControl?.touched ?? false;
+  });
+
   protected get formControl(): FormControl<any> | null {
     return this.controlName() ? <FormControl>this.formGroup.get(this.controlName()) : null;
   }
@@ -82,6 +118,10 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.formControl?.events
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.controlChanged.update((count: number) => count + 1));
+
     this.formControl?.statusChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.loadingField.set(false);
     });
