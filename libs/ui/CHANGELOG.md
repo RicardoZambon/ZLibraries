@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.2.2] - 2026-10-30
+
+### Fixed
+
 - **A field shows the server's validation message as soon as the answer arrives.**
   `lib-form-input-group` read its control's errors and touched state straight from the control,
   which is not a signal. Under `OnPush` nothing told it when they changed from outside the field.
@@ -28,8 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the user typed in the field again. The group now follows the control's events. This also covers
   `lib-catalog-select`, which draws its field inside the group.
 - **A save that marks every field as touched shows the required messages.** Same cause, same fix.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.2.1] - 2026-10-27
 
