@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.4.0] - 2026-10-31
+
+### Added
+
 - **The audit shows an operation's changes as a diff.** The change details list each field with
   its label and its value before and after. Changed values are marked in red and green, with +/−
   markers and screen-reader text, so the change does not rely on colour alone. Dates, numbers and
@@ -25,22 +39,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   into "Nome completo". Provide a function to use the application's own field labels or
   translation keys.
 
-### Changed
-
 ### Deprecated
 
 - **`shared-operations-history-modal`'s `oldValues` and `newValues` inputs.** Bind `operation`
   instead. The operations list's `selectedOldValues` and `selectedNewValues` give way to
   `selectedOperation` likewise.
 
-### Removed
-
 ### Fixed
 
 - **Selecting an operation with no stored values no longer throws.** The operations list parsed an
   empty string as JSON.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.3.0] - 2026-10-31
 
