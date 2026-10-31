@@ -16,11 +16,15 @@
       [class.modified]="rowData.operationType === 'Modified'"
       [class.unchanged]="rowData.operationType === 'Unchanged'"
     >
-      {{ rowData.operationType }}
+      {{ 'OperationsHistory-Operation-' + rowData.operationType | translate }}
     </span>
     {{ rowData.entityName }}
+    @if (rowData.operationType === 'Modified') {
+      <span class="changed-count">
+        {{ 'OperationsHistory-List-ChangedFields' | translate: { count: changedFieldsOf(rowData) } }}
+      </span>
+    }
   </div>
 </ng-template>
 
-<shared-operations-history-modal [newValues]="selectedNewValues()" [oldValues]="selectedOldValues()">
-</shared-operations-history-modal>
+<shared-operations-history-modal [operation]="selectedOperation()"> </shared-operations-history-modal>

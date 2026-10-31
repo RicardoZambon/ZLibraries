@@ -1,5 +1,20 @@
 {
+  "OperationsHistory-List-ChangedFields": "{{count}} field(s) changed",
+  "OperationsHistory-Modal-After": "After",
+  "OperationsHistory-Modal-Before": "Before",
+  "OperationsHistory-Modal-Changed": "changed",
+  "OperationsHistory-Modal-Field": "Field",
+  "OperationsHistory-Modal-NoChanges": "This operation changed no fields.",
+  "OperationsHistory-Modal-ShowAllFields": "Show all fields",
+  "OperationsHistory-Modal-SystemFields": "System fields",
   "OperationsHistory-Modal-Title": "Object changes details",
+  "OperationsHistory-Operation-Added": "Created",
+  "OperationsHistory-Operation-Deleted": "Deleted",
+  "OperationsHistory-Operation-Modified": "Updated",
+  "OperationsHistory-Operation-Unchanged": "Unchanged",
+  "OperationsHistory-Value-Empty": "—",
+  "OperationsHistory-Value-No": "No",
+  "OperationsHistory-Value-Yes": "Yes",
 
   "": ""
 }

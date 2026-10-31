@@ -2,10 +2,142 @@
 
 /* @use 'tailwindcss'; */
 
-div[body] {
-  @apply flex flex-row;
+.changes {
+  @apply flex flex-col gap-3 min-w-0;
+  // The table stacks by the modal's width, not the window's: a modal's size is set by its input.
+  container-type: inline-size;
+}
 
-  pre {
-    @apply grow overflow-x-auto w-1/2 text-sm;
+.summary {
+  @apply flex flex-wrap items-center gap-x-3 gap-y-2;
+
+  .operation {
+    @apply rounded px-2 py-0.5 text-xs font-semibold uppercase tracking-wide;
+    background-color: var(--color-info-surface);
+    color: var(--color-info);
+
+    &.added {
+      background-color: var(--color-success-surface);
+      color: var(--color-success);
+    }
+
+    &.deleted {
+      background-color: var(--color-danger-surface);
+      color: var(--color-danger);
+    }
+  }
+
+  .entity {
+    @apply font-semibold;
+    color: var(--color-content-primary);
+
+    .record {
+      @apply font-normal;
+      color: var(--color-content-secondary);
+    }
+  }
+
+  .show-all {
+    @apply ms-auto inline-flex cursor-pointer items-center gap-2 text-sm;
+    color: var(--color-content-secondary);
+
+    &.disabled {
+      @apply cursor-not-allowed opacity-60;
+    }
+
+    input {
+      accent-color: var(--color-accent);
+    }
+  }
+}
+
+.empty {
+  @apply py-6 text-center text-sm;
+  color: var(--color-content-secondary);
+}
+
+.table-scroller {
+  @apply max-w-full overflow-x-auto;
+}
+
+.fields {
+  @apply w-full border-collapse text-sm;
+
+  th,
+  td {
+    @apply px-3 py-2 text-start align-top;
+    border-bottom: 1px solid var(--color-line);
+    overflow-wrap: anywhere;
+  }
+
+  thead th {
+    @apply text-xs font-semibold uppercase tracking-wide;
+    color: var(--color-content-secondary);
+    border-bottom-color: var(--color-line-strong);
+  }
+
+  tbody th[scope='row'] {
+    @apply w-1/4 font-medium;
+    color: var(--color-content-primary);
+  }
+
+  tbody td {
+    color: var(--color-content-secondary);
+  }
+
+  tr.changed td {
+    color: var(--color-content-primary);
+  }
+
+  del,
+  ins {
+    @apply inline-flex gap-1.5 rounded px-1.5 py-0.5 no-underline;
+  }
+
+  del {
+    background-color: var(--color-danger-surface);
+    color: var(--color-danger);
+    text-decoration: line-through;
+  }
+
+  ins {
+    background-color: var(--color-success-surface);
+    color: var(--color-success);
+  }
+
+  .marker {
+    @apply font-semibold;
+    text-decoration: none;
+  }
+
+  .system th[scope='rowgroup'] {
+    @apply pt-4;
+  }
+
+  .system-toggle {
+    @apply inline-flex cursor-pointer items-center gap-2 text-xs font-semibold uppercase tracking-wide;
+    color: var(--color-content-secondary);
+  }
+}
+
+.visually-hidden {
+  @apply sr-only;
+}
+
+/* Narrow modals: the before and after values stack under the field name. */
+@container (max-width: 36rem) {
+  .fields {
+    thead {
+      @apply sr-only;
+    }
+
+    tr {
+      @apply grid grid-cols-1;
+    }
+
+    tbody th[scope='row'] {
+      @apply w-auto pb-0;
+      border-bottom: none;
+    }
   }
 }
