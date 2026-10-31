@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### ⚠ Breaking Changes / Migration
+
+## [1.4.1] - 2026-10-31
+
+### Fixed
+
 - **A sidebar parent leaves its loading state once its children arrive.** Opening a parent kept
   the spinner on even when the menus answered: the children were handed over in a plain field, so
   under `OnPush` the item never re-rendered, its child items never rendered, and only they end the
@@ -31,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sit on a light tint with a firmer border.
 - **The audit diff scrolls.** A record with more fields than the modal's height ran past it with no
   way to scroll. The field table now scrolls inside the modal, under a sticky header.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.4.0] - 2026-10-31
 
