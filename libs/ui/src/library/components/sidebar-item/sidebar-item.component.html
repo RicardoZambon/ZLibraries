@@ -42,7 +42,7 @@
         'max-height.px': childHeight,
       }"
     >
-      @for (child of menu.children; track trackByFn($index, child); let last = $last) {
+      @for (child of children(); track trackByFn($index, child); let last = $last) {
         <lib-sidebar-item [menu]="child" [level]="level + 1" [isLast]="last"> </lib-sidebar-item>
       }
     </ul>

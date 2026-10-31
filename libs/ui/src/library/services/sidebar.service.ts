@@ -9,6 +9,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export abstract class SidebarService {
   //#region ViewChilds, Inputs, Outputs
   public childrenFailed: EventEmitter<SidebarMenu> = new EventEmitter<SidebarMenu>();
+  public childrenLoaded: EventEmitter<SidebarMenu> = new EventEmitter<SidebarMenu>();
   public childrenLoading: EventEmitter<SidebarMenu> = new EventEmitter<SidebarMenu>();
   public childrenInitialized: EventEmitter<SidebarMenu> = new EventEmitter<SidebarMenu>();
   public menuExternalUrlSelected: EventEmitter<SidebarMenu> = new EventEmitter<SidebarMenu>();
@@ -89,6 +90,9 @@ export abstract class SidebarService {
       tap((childrenMenus: SidebarMenu[]) => {
         parentMenu.children = childrenMenus;
         childrenMenus.forEach((childMenu: SidebarMenu) => (childMenu.parent = parentMenu));
+
+        // children is a plain field: the item that asked for them has to be told they arrived.
+        this.childrenLoaded.emit(parentMenu);
       }),
     );
   }
