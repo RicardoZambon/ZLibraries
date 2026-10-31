@@ -13,15 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **A details view can depend on the record.** A view's route `data` takes `visibleWhen`, which
-  lists the view only for the records it accepts, and `enabledWhen`, which lists it for all of them
-  but lets it be chosen only for those. Both receive the record, its ID and the details route, may
-  call `inject()`, and may answer with an `Observable`. They run again on every record the data
-  provider emits, so a status change updates the Views menu at once. When the view on screen
-  becomes hidden or disabled, the tab goes back to its first view. `IDetailsViewRouteData` types a
-  view's route `data`, and [the details views guide](../../docs/guides/details-views.md) lists
-  every key.
-
 ### Changed
 
 ### Deprecated
@@ -31,6 +22,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### ⚠ Breaking Changes / Migration
+
+## [1.3.0] - 2026-10-31
+
+### Added
+
+- **A details view can depend on the record.** A view's route `data` takes `visibleWhen`, which
+  lists the view only for the records it accepts, and `enabledWhen`, which lists it for all of them
+  but lets it be chosen only for those. Both receive the record, its ID and the details route, may
+  call `inject()`, and may answer with an `Observable`. They run again on every record the data
+  provider emits, so a status change updates the Views menu at once. When the view on screen
+  becomes hidden or disabled, the tab goes back to its first view. `IDetailsViewRouteData` types a
+  view's route `data`, and [the details views guide](../../docs/guides/details-views.md) lists
+  every key.
 
 ## [1.2.2] - 2026-10-30
 
