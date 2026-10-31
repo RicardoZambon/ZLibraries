@@ -1,4 +1,15 @@
-import { Component, forwardRef, inject, input, InputSignal, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  forwardRef,
+  inject,
+  Injector,
+  input,
+  InputSignal,
+  OnInit,
+  runInInjectionContext,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { ActivatedRouteSnapshot, NavigationEnd, Route, Router, UrlSegment } from '@angular/router';
 import {
   DataProviderService,
@@ -6,11 +17,37 @@ import {
   RibbonButtonComponent,
   RibbonGroupChild,
 } from '@zambon-dev/ui/library';
-import { filter, takeUntil } from 'rxjs';
+import { catchError, combineLatest, filter, isObservable, map, Observable, of, switchMap, takeUntil } from 'rxjs';
 import { RouteHelper } from '../../../helpers';
-import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, ITab, Tab } from '../../../models';
+import {
+  DetailsViewCondition,
+  FRAMEWORK_VIEW_TYPE,
+  FrameworkViewType,
+  IDetailsViewRouteData,
+  ITab,
+  Tab,
+} from '../../../models';
 import { TabService, TabViewService } from '../../../services';
 import { BaseButton } from '../base-button';
+
+/** A view that declares `visibleWhen` or `enabledWhen`. */
+interface IConditionalView {
+  enabledWhen?: DetailsViewCondition;
+  id: string;
+  visibleWhen?: DetailsViewCondition;
+}
+
+/** What a view's conditions answered for the current record. */
+interface IViewState {
+  isEnabled: boolean;
+  isVisible: boolean;
+}
+
+/** One conditional view's answer for one record. */
+interface IViewAnswer {
+  id: string;
+  state: IViewState;
+}
 
 @Component({
   selector: 'framework-button-views',
@@ -28,6 +65,10 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#region Variables
   private baseUrlPath?: string;
   private dataProviderService: DataProviderService<any> | null = inject(DataProviderService, { optional: true });
+  // Whether the views' conditions have answered for a record yet. Until then a pending view is no
+  // reason to leave it: a direct link to it has to survive the record loading.
+  private hasViewStates = false;
+  private injector: Injector = inject(Injector);
   private isInternalNavigation = false;
   private router: Router = inject(Router);
   // A signal rather than a field: switching views changes which option the dropdown marks as the
@@ -35,6 +76,9 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   private readonly selectedViewId: WritableSignal<string | undefined> = signal(undefined);
   private tabService: TabService = inject(TabService);
   private tabViewService: TabViewService = inject(TabViewService);
+  // Only a view that declares a condition has an entry; every other view is shown and available.
+  // Not read by the template: the options are, and applyViewStates() writes these into them.
+  private readonly viewStates: Map<string, IViewState> = new Map<string, IViewState>();
   //#endregion
 
   //#region Properties
@@ -78,32 +122,51 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
   public ngOnInit(): void {
     const detailsViewRoute: ActivatedRouteSnapshot | null = this.detailsViewRoute();
     if (detailsViewRoute) {
+      const viewRoutes: Route[] =
+        detailsViewRoute.routeConfig?.children?.filter(
+          (route: Route) => !!route.data && route.data['ignoreRoute'] !== true,
+        ) ?? [];
+
       this.options.set(
-        detailsViewRoute.routeConfig?.children
-          ?.filter((route: Route) => !!route.data && route.data['ignoreRoute'] !== true)
-          ?.map((route: Route) => {
-            const data: { [key: string | symbol]: any } = route.data ?? {};
+        viewRoutes.map((route: Route) => {
+          const data: IDetailsViewRouteData = route.data ?? {};
 
-            const option: IRibbonButtonOption = {
-              id: route.path ?? '',
-              isDisabled: false,
-              isVisible: true,
-              label: data['title'] ?? '',
-            };
+          const option: IRibbonButtonOption = {
+            id: route.path ?? '',
+            isDisabled: false,
+            isVisible: true,
+            label: data.title ?? '',
+          };
 
-            const icon: string | undefined = data['icon'];
-            if (icon) {
-              option.icon = icon;
-            }
+          const icon: string | undefined = data.icon;
+          if (icon) {
+            option.icon = icon;
+          }
 
-            const allowedActions: string[] | undefined = data['allowedActions'];
-            if (allowedActions && allowedActions.length > 0) {
-              option.allowedActions = allowedActions;
-            }
+          const allowedActions: string[] | undefined = data.allowedActions;
+          if (allowedActions && allowedActions.length > 0) {
+            option.allowedActions = allowedActions;
+          }
 
-            return option;
-          }) ?? [],
+          return option;
+        }),
       );
+
+      // The first view is where every tab lands, and where a view that goes away sends it, so it
+      // cannot be conditional itself.
+      const conditionalViews: IConditionalView[] = viewRoutes
+        .slice(1)
+        .map((route: Route) => {
+          const data: IDetailsViewRouteData = route.data ?? {};
+          return { enabledWhen: data.enabledWhen, id: route.path ?? '', visibleWhen: data.visibleWhen };
+        })
+        .filter((view: IConditionalView) => !!view.visibleWhen || !!view.enabledWhen);
+
+      // A pending view is hidden and unavailable, so it never shows only to vanish a moment later.
+      conditionalViews.forEach((view: IConditionalView) =>
+        this.viewStates.set(view.id, { isEnabled: !view.enabledWhen, isVisible: !view.visibleWhen }),
+      );
+      this.applyViewStates();
 
       const url: string = RouteHelper.getRouteURL(detailsViewRoute);
       this.baseUrlPath = url;
@@ -113,6 +176,10 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
       if (option === this.defaultViewId) {
         // We just need to check if the current option is the default, otherwise the router.events will handle the option selection.
         this.changeSelectedView(this.defaultViewId);
+      }
+
+      if (conditionalViews.length > 0) {
+        this.watchViewConditions(detailsViewRoute, conditionalViews);
       }
     }
 
@@ -153,6 +220,8 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
             } else {
               this.isInternalNavigation = false;
             }
+
+            this.leaveUnavailableView();
           }
         }
       });
@@ -182,20 +251,66 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
 
   //#region Private methods
   /**
-   * Marks the chosen view as the current one, which is how the dropdown greys its own entry out.
+   * Writes each view's state into the options: hidden when its `visibleWhen` said no, and
+   * disabled when it is the current view or its `enabledWhen` said no.
    *
    * The options are rebuilt rather than edited in place: the ribbon button takes the list as an
-   * input, so a field changed inside it is a change nothing can see.
+   * input, so a field changed inside it is a change nothing can see. An option whose state did not
+   * change keeps its identity, so the dropdown does not rebuild every row.
+   */
+  private applyViewStates(): void {
+    const selectedViewId: string | undefined = this.selectedViewId();
+
+    this.options.update((options: IRibbonButtonOption[]) =>
+      options.map((option: IRibbonButtonOption) => {
+        const state: IViewState | undefined = this.viewStates.get(option.id);
+        const isVisible: boolean = state?.isVisible ?? true;
+        const isDisabled: boolean = option.id === selectedViewId || !(state?.isEnabled ?? true);
+
+        return option.isVisible === isVisible && option.isDisabled === isDisabled
+          ? option
+          : { ...option, isDisabled, isVisible };
+      }),
+    );
+  }
+
+  /**
+   * Marks the chosen view as the current one, which is how the dropdown greys its own entry out.
    */
   private changeSelectedView(viewId: string | undefined): void {
     this.selectedViewId.set(viewId);
     this.tabViewService.setActiveView(viewId ?? '');
 
-    this.options.update((options: IRibbonButtonOption[]) =>
-      options.map((option: IRibbonButtonOption) =>
-        option.isDisabled === (option.id === viewId) ? option : { ...option, isDisabled: option.id === viewId },
-      ),
-    );
+    this.applyViewStates();
+  }
+
+  /**
+   * Runs one condition for one record, as a stream of answers.
+   *
+   * A condition that throws, errors, or answers anything but `true` counts as `false`: a view whose
+   * condition is broken stays out of reach rather than showing where it should not.
+   */
+  private evaluateCondition(
+    condition: DetailsViewCondition | undefined,
+    detailsViewRoute: ActivatedRouteSnapshot,
+    entity: any,
+  ): Observable<boolean> {
+    if (!condition) {
+      return of(true);
+    }
+
+    try {
+      const result: boolean | Observable<boolean> = runInInjectionContext(this.injector, () =>
+        condition({ entity, entityID: this.dataProviderService?.entityID, route: detailsViewRoute }),
+      );
+
+      return (isObservable(result) ? result : of(result)).pipe(
+        map((answer: boolean) => answer === true),
+        catchError(() => of(false)),
+      );
+    } catch {
+      return of(false);
+    }
   }
 
   private getActiveOption(url: string): string {
@@ -206,6 +321,72 @@ export class ButtonViewsComponent extends BaseButton implements OnInit {
     }
 
     return this.defaultViewId;
+  }
+
+  /**
+   * Sends this tab back to its first view when the view it shows has been hidden or disabled --
+   * because the record changed under it, or because it was opened by a direct link.
+   *
+   * Only for the tab the router is showing: a detached tab keeps its subscriptions, and the
+   * navigation below always acts on the current tab.
+   */
+  private leaveUnavailableView(): void {
+    const selectedViewId: string | undefined = this.selectedViewId();
+    if (!this.hasViewStates || selectedViewId === undefined || selectedViewId === this.defaultViewId) {
+      return;
+    }
+
+    const state: IViewState | undefined = this.viewStates.get(selectedViewId);
+    if (!state || (state.isVisible && state.isEnabled)) {
+      return;
+    }
+
+    const currentRoute: ActivatedRouteSnapshot | null = RouteHelper.getRouteByData(
+      this.router.routerState.root.snapshot,
+      FRAMEWORK_VIEW_TYPE,
+      FrameworkViewType.Details,
+    );
+    if (
+      !currentRoute ||
+      currentRoute.routeConfig !== this.detailsViewRoute()?.routeConfig ||
+      RouteHelper.getRouteURL(currentRoute) !== this.baseUrlPath
+    ) {
+      return;
+    }
+
+    this.onViewClicked(this.defaultViewId);
+  }
+
+  /**
+   * Answers every conditional view again each time the data provider emits the record, so a save
+   * or a status change shows, hides, enables or disables views at once.
+   */
+  private watchViewConditions(detailsViewRoute: ActivatedRouteSnapshot, conditionalViews: IConditionalView[]): void {
+    const entity$: Observable<any> = this.dataProviderService?.getModel$() ?? of(null);
+
+    entity$
+      .pipe(
+        switchMap((entity: any) =>
+          combineLatest(
+            conditionalViews.map((view: IConditionalView): Observable<IViewAnswer> =>
+              combineLatest([
+                this.evaluateCondition(view.visibleWhen, detailsViewRoute, entity),
+                this.evaluateCondition(view.enabledWhen, detailsViewRoute, entity),
+              ]).pipe(
+                map(([isVisible, isEnabled]: [boolean, boolean]) => ({ id: view.id, state: { isEnabled, isVisible } })),
+              ),
+            ),
+          ),
+        ),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((answers: IViewAnswer[]) => {
+        answers.forEach((answer: IViewAnswer) => this.viewStates.set(answer.id, answer.state));
+        this.hasViewStates = true;
+
+        this.applyViewStates();
+        this.leaveUnavailableView();
+      });
   }
   //#endregion
 }

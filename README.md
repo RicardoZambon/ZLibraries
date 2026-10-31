@@ -67,6 +67,7 @@ Guides for applications that consume these packages:
 | Guide                                                         | What it covers                                                                  |
 | ------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | [Design tokens and theming](docs/guides/design-tokens.md)     | The token families, what is safe to override, and how to turn on the dark theme |
+| [Details views](docs/guides/details-views.md)                 | The route data a details tab reads, and views shown or enabled per record       |
 | [Top bar configuration](docs/guides/top-bar-configuration.md) | Brand, environment badge, notifications, language and user profile              |
 | [Dependency holds](docs/guides/dependency-holds.md)           | Why certain dependencies are pinned                                             |
 | [Reactivity](docs/guides/reactivity.md)                       | How these components reach the screen under OnPush                              |
