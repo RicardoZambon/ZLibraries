@@ -1,6 +1,127 @@
 <lib-modal size="6xl" [title]="'OperationsHistory-Modal-Title' | translate">
-  <div body>
-    <pre>{{ oldValues() | json }}</pre>
-    <pre>{{ newValues() | json }}</pre>
+  <div body class="changes">
+    @if (currentOperation(); as operation) {
+      <div class="summary">
+        @if (operationLabel()) {
+          <span
+            class="operation"
+            [class.added]="isAdded()"
+            [class.deleted]="isDeleted()"
+            [class.modified]="operation.operationType === 'Modified'"
+          >
+            {{ operationLabel() | translate }}
+          </span>
+        }
+
+        <span class="entity">
+          {{ operation.entityName }}
+          @if (operation.entityID) {
+            <span class="record">#{{ operation.entityID }}</span>
+          }
+        </span>
+
+        <label class="show-all" [class.disabled]="!hasFullRecord()">
+          <input
+            type="checkbox"
+            [checked]="showAllFields()"
+            [disabled]="!hasFullRecord()"
+            (change)="onShowAllFieldsChanged($event)"
+          />
+          {{ 'OperationsHistory-Modal-ShowAllFields' | translate }}
+        </label>
+      </div>
+
+      @if (dataRows().length === 0 && systemRows().length === 0) {
+        <p class="empty">{{ 'OperationsHistory-Modal-NoChanges' | translate }}</p>
+      } @else {
+        <div class="table-scroller">
+          <table class="fields">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'OperationsHistory-Modal-Field' | translate }}</th>
+                @if (!isAdded()) {
+                  <th scope="col">{{ 'OperationsHistory-Modal-Before' | translate }}</th>
+                }
+                @if (!isDeleted()) {
+                  <th scope="col">{{ 'OperationsHistory-Modal-After' | translate }}</th>
+                }
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (row of dataRows(); track row.name) {
+                <ng-container *ngTemplateOutlet="fieldRow; context: { $implicit: row }"></ng-container>
+              }
+            </tbody>
+
+            @if (systemRows().length > 0) {
+              <tbody class="system">
+                <tr>
+                  <th scope="rowgroup" [attr.colspan]="isAdded() || isDeleted() ? 2 : 3">
+                    <button
+                      type="button"
+                      class="system-toggle"
+                      [attr.aria-expanded]="showSystemFields()"
+                      (click)="onSystemFieldsToggled()"
+                    >
+                      <i
+                        class="fa-solid"
+                        aria-hidden="true"
+                        [class.fa-chevron-down]="showSystemFields()"
+                        [class.fa-chevron-right]="!showSystemFields()"
+                      ></i>
+                      {{ 'OperationsHistory-Modal-SystemFields' | translate }} ({{ systemRows().length }})
+                    </button>
+                  </th>
+                </tr>
+
+                @if (showSystemFields()) {
+                  @for (row of systemRows(); track row.name) {
+                    <ng-container *ngTemplateOutlet="fieldRow; context: { $implicit: row }"></ng-container>
+                  }
+                }
+              </tbody>
+            }
+          </table>
+        </div>
+      }
+    }
   </div>
 </lib-modal>
+
+<ng-template #fieldRow let-row>
+  <tr [class.changed]="row.isChanged && !isAdded() && !isDeleted()">
+    <th scope="row">
+      {{ row.label | translate }}
+      @if (row.isChanged && !isAdded() && !isDeleted()) {
+        <span class="visually-hidden">({{ 'OperationsHistory-Modal-Changed' | translate }})</span>
+      }
+    </th>
+
+    @if (!isAdded()) {
+      <td class="before">
+        @if (row.isChanged && !isDeleted()) {
+          <del>
+            <span class="marker" aria-hidden="true">−</span>
+            {{ row.oldValue.isKey ? (row.oldValue.text | translate) : row.oldValue.text }}
+          </del>
+        } @else {
+          {{ row.oldValue.isKey ? (row.oldValue.text | translate) : row.oldValue.text }}
+        }
+      </td>
+    }
+
+    @if (!isDeleted()) {
+      <td class="after">
+        @if (row.isChanged && !isAdded()) {
+          <ins>
+            <span class="marker" aria-hidden="true">+</span>
+            {{ row.newValue.isKey ? (row.newValue.text | translate) : row.newValue.text }}
+          </ins>
+        } @else {
+          {{ row.newValue.isKey ? (row.newValue.text | translate) : row.newValue.text }}
+        }
+      </td>
+    }
+  </tr>
+</ng-template>

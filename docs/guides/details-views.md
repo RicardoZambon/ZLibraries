@@ -50,6 +50,23 @@ compiler check the keys.
 The **first** view is where every tab lands. It cannot be hidden or disabled, and conditions on it
 are ignored.
 
+### The audit view's field labels
+
+The audit's change details label each field from its property name. By default `NomeCompleto`
+reads "Nome completo". To use the application's own labels, provide
+`OPERATIONS_HISTORY_FIELD_LABEL` from `@zambon-dev/ui/shared`. The result goes through the
+translation pipe, so it may be a key:
+
+```ts
+{
+  provide: OPERATIONS_HISTORY_FIELD_LABEL,
+  useValue: (field: string, entityName: string | undefined) => `${entityName}-Field-${field}`,
+}
+```
+
+The full record before and after an update needs ZWebAPI 1.17 or later. An older backend sends only
+the changed fields, and the details show only those.
+
 ## Views that depend on the record
 
 `visibleWhen` and `enabledWhen` take a `DetailsViewCondition`: a function that receives an

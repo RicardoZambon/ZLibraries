@@ -36,4 +36,9 @@ lib-data-grid {
       color: var(--color-content-secondary);
     }
   }
+
+  .changed-count {
+    @apply ms-1 text-xs;
+    color: var(--color-content-secondary);
+  }
 }

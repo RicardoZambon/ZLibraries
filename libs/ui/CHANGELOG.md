@@ -13,13 +13,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **The audit shows an operation's changes as a diff.** The change details list each field with
+  its label and its value before and after. Changed values are marked in red and green, with +/−
+  markers and screen-reader text, so the change does not rely on colour alone. Dates, numbers and
+  booleans follow the user's locale. The details open on the fields the operation changed; **Show
+  all fields** lists the rest of the record, with the key and audit columns grouped apart. That
+  needs ZWebAPI 1.17 or later, which rebuilds the whole record; against an older backend the
+  changed fields still show and the option is off.
+- **Each operation in the list says how many fields it changed.**
+- **`OPERATIONS_HISTORY_FIELD_LABEL` labels the audited fields.** The default turns `NomeCompleto`
+  into "Nome completo". Provide a function to use the application's own field labels or
+  translation keys.
+
 ### Changed
 
 ### Deprecated
 
+- **`shared-operations-history-modal`'s `oldValues` and `newValues` inputs.** Bind `operation`
+  instead. The operations list's `selectedOldValues` and `selectedNewValues` give way to
+  `selectedOperation` likewise.
+
 ### Removed
 
 ### Fixed
+
+- **Selecting an operation with no stored values no longer throws.** The operations list parsed an
+  empty string as JSON.
 
 ### ⚠ Breaking Changes / Migration
 

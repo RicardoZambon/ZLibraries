@@ -1,15 +1,17 @@
 import { AfterViewInit, Component, Input, signal, Signal, TemplateRef, viewChild, WritableSignal } from '@angular/core';
 import { ChildList } from '@zambon-dev/ui/framework';
 import { DataGridComponent, DataGridDataset } from '@zambon-dev/ui/library';
+import { TranslatePipe } from '@ngx-translate/core';
 import { OperationsHistoryDataset } from '../../../datasets';
 import { IOperationsHistoryList } from '../../../models';
+import { countChangedFields } from '../operations-history-fields';
 import { OperationsHistoryModalComponent } from '../operations-history-modal/operations-history-modal.component';
 
 @Component({
   selector: 'shared-operations-history-child-list',
   templateUrl: './operations-history-child-list.component.html',
   styleUrls: ['./operations-history-child-list.component.scss'],
-  imports: [DataGridComponent, OperationsHistoryModalComponent],
+  imports: [DataGridComponent, OperationsHistoryModalComponent, TranslatePipe],
   providers: [{ provide: DataGridDataset, useClass: OperationsHistoryDataset }],
 })
 export class OperationsHistoryChildListComponent extends ChildList<any> implements AfterViewInit {
@@ -44,10 +46,13 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
   //#endregion
 
   //#region Variables
-  // Signals: both are bound into the modal and are filled when a row is picked, which the grid
+  // Signals: they are bound into the modal and are filled when a row is picked, which the grid
   // reports through a callback rather than a binding on this view.
+  /** @deprecated Read `selectedOperation` instead, which also carries the whole record. */
   public readonly selectedNewValues: WritableSignal<any | null> = signal(null);
+  /** @deprecated Read `selectedOperation` instead, which also carries the whole record. */
   public readonly selectedOldValues: WritableSignal<any | null> = signal(null);
+  public readonly selectedOperation: WritableSignal<IOperationsHistoryList | null> = signal(null);
   //#endregion
 
   //#region Properties
@@ -60,6 +65,11 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
   //#endregion
 
   //#region Event handlers
+  /** How many data fields an operation changed, for the summary beside it. */
+  protected changedFieldsOf(operation: IOperationsHistoryList): number {
+    return countChangedFields(operation);
+  }
+
   public openModal(): void {
     const modal: OperationsHistoryModalComponent | undefined = this.modal();
     if (modal && !modal.isModalShown()) {
@@ -76,12 +86,26 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
       const key: string = this.dataGridDataset.selectedRowKeys[0];
 
       const data: IOperationsHistoryList = this.dataGridDataset.getRowData(key);
-      this.selectedOldValues.set(JSON.parse(data.oldValues?.trim() ?? ''));
-      this.selectedNewValues.set(JSON.parse(data.newValues?.trim() ?? ''));
+      this.selectedOperation.set(data);
+      this.selectedOldValues.set(parseJson(data.oldValues));
+      this.selectedNewValues.set(parseJson(data.newValues));
     }
   }
   //#endregion
 
   //#region Private methods
   //#endregion
+}
+
+/** Parses stored values, reading a missing or malformed one as nothing rather than throwing. */
+function parseJson(json: string | undefined): unknown {
+  if (!json?.trim()) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
 }

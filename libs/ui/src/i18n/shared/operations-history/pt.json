@@ -1,5 +1,20 @@
 {
+  "OperationsHistory-List-ChangedFields": "{{count}} campo(s) alterado(s)",
+  "OperationsHistory-Modal-After": "Depois",
+  "OperationsHistory-Modal-Before": "Antes",
+  "OperationsHistory-Modal-Changed": "alterado",
+  "OperationsHistory-Modal-Field": "Campo",
+  "OperationsHistory-Modal-NoChanges": "Esta operação não alterou nenhum campo.",
+  "OperationsHistory-Modal-ShowAllFields": "Mostrar todos os campos",
+  "OperationsHistory-Modal-SystemFields": "Campos de sistema",
   "OperationsHistory-Modal-Title": "Detalhes de alteração do objeto",
+  "OperationsHistory-Operation-Added": "Criado",
+  "OperationsHistory-Operation-Deleted": "Excluído",
+  "OperationsHistory-Operation-Modified": "Alterado",
+  "OperationsHistory-Operation-Unchanged": "Sem alteração",
+  "OperationsHistory-Value-Empty": "—",
+  "OperationsHistory-Value-No": "Não",
+  "OperationsHistory-Value-Yes": "Sim",
 
   "": ""
 }
