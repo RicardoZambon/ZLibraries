@@ -1,7 +1,7 @@
-import { signal } from '@angular/core';
+import { inject, InjectionToken, Injector, signal } from '@angular/core';
 import { NavigationEnd } from '@angular/router';
-import { of, Subject } from 'rxjs';
-import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, Tab } from '../../../models';
+import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
+import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, IDetailsViewContext, Tab } from '../../../models';
 import { RouteHelper } from '../../../helpers';
 import { ButtonViewsComponent } from './button-views.component';
 
@@ -14,7 +14,7 @@ describe('ButtonViewsComponent — view switching logic', () => {
   let mockTabViewService: { setActiveView: jest.Mock };
   let mockAuthService: { checkActionsAreAllowed: jest.Mock };
   let mockRouter: { events: Subject<any>; routerState: { root: { snapshot: any } } };
-  let mockDataProviderService: { hasEntityID: boolean } | null;
+  let mockDataProviderService: { entityID?: number; getModel$?: () => any; hasEntityID: boolean } | null;
 
   function createDetailsViewRoute(baseUrl: string, children: any[]): any {
     return {
@@ -73,6 +73,9 @@ describe('ButtonViewsComponent — view switching logic', () => {
     component.isVisible = signal(true);
     component.isAccessLoaded = signal(true);
     component.destroy$ = new Subject();
+    (component as any).hasViewStates = false;
+    (component as any).injector = Injector.create({ providers: [] });
+    (component as any).viewStates = new Map();
 
     // Inject mocks via private field names
     (component as any).tabService = mockTabService;
@@ -382,6 +385,262 @@ describe('ButtonViewsComponent — view switching logic', () => {
       (component as any).dataProviderService = null;
 
       expect(component.isNewEntity).toBe(true);
+    });
+  });
+
+  describe('visibleWhen and enabledWhen — views that depend on the record', () => {
+    let entity$: Subject<any>;
+    let route: any;
+
+    function conditionalChildren(): any[] {
+      return [
+        { path: '', data: { title: 'Details', visibleWhen: () => false, enabledWhen: () => false } },
+        {
+          path: 'payments',
+          data: { title: 'Payments', visibleWhen: ({ entity }: any) => entity?.isCustomer === true },
+        },
+        { path: 'notes', data: { title: 'Notes', enabledWhen: ({ entity }: any) => entity?.isOpen === true } },
+        { path: 'audit', data: { title: 'Audit' } },
+      ];
+    }
+
+    function option(id: string): any {
+      return component.options().find((o: any) => o.id === id);
+    }
+
+    // The router shows this tab: same route definition, same base URL.
+    function showThisTab(): void {
+      jest.spyOn(RouteHelper, 'getRouteByData').mockReturnValue({ routeConfig: route.routeConfig } as any);
+    }
+
+    function init(children: any[] = conditionalChildren()): void {
+      route = createDetailsViewRoute('/customers/1', children);
+      component.detailsViewRoute = signal(route);
+      jest.spyOn(RouteHelper, 'getRouteURL').mockReturnValue('/customers/1');
+
+      component.ngOnInit();
+    }
+
+    beforeEach(() => {
+      entity$ = new Subject();
+      mockDataProviderService = { entityID: 1, getModel$: () => entity$, hasEntityID: true };
+      (component as any).dataProviderService = mockDataProviderService;
+    });
+
+    it('should keep a conditional view hidden or unavailable until its condition answers', () => {
+      init();
+
+      expect(option('payments').isVisible).toBe(false);
+      expect(option('notes').isVisible).toBe(true);
+      expect(option('notes').isDisabled).toBe(true);
+      expect(option('audit').isVisible).toBe(true);
+      expect(option('audit').isDisabled).toBe(false);
+    });
+
+    it('should show and hide a view as the record changes', () => {
+      init();
+
+      entity$.next({ isCustomer: true });
+      expect(option('payments').isVisible).toBe(true);
+
+      entity$.next({ isCustomer: false });
+      expect(option('payments').isVisible).toBe(false);
+    });
+
+    it('should list a view that enabledWhen turns down, but not let it be chosen', () => {
+      init();
+
+      entity$.next({ isOpen: false });
+      expect(option('notes').isVisible).toBe(true);
+      expect(option('notes').isDisabled).toBe(true);
+
+      entity$.next({ isOpen: true });
+      expect(option('notes').isDisabled).toBe(false);
+    });
+
+    it('should still mark the current view as disabled when its condition allows it', () => {
+      init();
+      entity$.next({ isOpen: true });
+
+      component.onViewClicked('notes');
+
+      expect(option('notes').isDisabled).toBe(true);
+    });
+
+    it('should never apply conditions to the first view', () => {
+      init();
+      entity$.next({});
+
+      expect(option('').isVisible).toBe(true);
+      expect(option('').isDisabled).toBe(true);
+      expect((component as any).viewStates.has('')).toBe(false);
+    });
+
+    it('should hand a condition the record, its ID and the details route', () => {
+      const visibleWhen: jest.Mock = jest.fn().mockReturnValue(true);
+      init([
+        { path: '', data: { title: 'Details' } },
+        { path: 'payments', data: { title: 'Payments', visibleWhen } },
+      ]);
+
+      const entity: any = { id: 1 };
+      entity$.next(entity);
+
+      const context: IDetailsViewContext = visibleWhen.mock.calls[0][0];
+      expect(context.entity).toBe(entity);
+      expect(context.entityID).toBe(1);
+      expect(context.route).toBe(route);
+    });
+
+    it('should let a condition inject a service', () => {
+      const FEATURE_ON: InjectionToken<boolean> = new InjectionToken<boolean>('FEATURE_ON');
+      (component as any).injector = Injector.create({ providers: [{ provide: FEATURE_ON, useValue: true }] });
+      init([
+        { path: '', data: { title: 'Details' } },
+        { path: 'payments', data: { title: 'Payments', visibleWhen: () => inject(FEATURE_ON) } },
+      ]);
+
+      entity$.next({});
+
+      expect(option('payments').isVisible).toBe(true);
+    });
+
+    it('should follow the latest answer of a condition that returns an Observable', () => {
+      const answer$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+      init([
+        { path: '', data: { title: 'Details' } },
+        { path: 'payments', data: { title: 'Payments', visibleWhen: () => answer$ } },
+      ]);
+
+      entity$.next({});
+      expect(option('payments').isVisible).toBe(false);
+
+      answer$.next(true);
+      expect(option('payments').isVisible).toBe(true);
+    });
+
+    it('should treat a condition that throws, errors or answers a non-boolean as false', () => {
+      init([
+        { path: '', data: { title: 'Details' } },
+        {
+          path: 'throws',
+          data: {
+            title: 'Throws',
+            visibleWhen: () => {
+              throw new Error('broken');
+            },
+          },
+        },
+        { path: 'errors', data: { title: 'Errors', visibleWhen: () => throwError(() => new Error('broken')) } },
+        { path: 'truthy', data: { title: 'Truthy', visibleWhen: () => 'yes' } },
+        { path: 'fine', data: { title: 'Fine', visibleWhen: () => true } },
+      ]);
+
+      entity$.next({});
+
+      expect(option('throws').isVisible).toBe(false);
+      expect(option('errors').isVisible).toBe(false);
+      expect(option('truthy').isVisible).toBe(false);
+      expect(option('fine').isVisible).toBe(true);
+    });
+
+    it('should not ask the data provider for the record when no view declares a condition', () => {
+      const getModel$: jest.Mock = jest.fn().mockReturnValue(entity$);
+      (component as any).dataProviderService = { getModel$, hasEntityID: true };
+
+      init(defaultChildren());
+
+      expect(getModel$).not.toHaveBeenCalled();
+      expect(component.options().every((o: any) => o.isVisible)).toBe(true);
+    });
+
+    it('should answer conditions once, without a record, when there is no data provider', () => {
+      (component as any).dataProviderService = null;
+      const visibleWhen: jest.Mock = jest.fn().mockReturnValue(true);
+
+      init([
+        { path: '', data: { title: 'Details' } },
+        { path: 'payments', data: { title: 'Payments', visibleWhen } },
+      ]);
+
+      expect(visibleWhen).toHaveBeenCalledTimes(1);
+      expect(visibleWhen.mock.calls[0][0].entity).toBeNull();
+      expect(option('payments').isVisible).toBe(true);
+    });
+
+    it('should send the tab back to the first view when the record hides the view it shows', () => {
+      init();
+      showThisTab();
+      entity$.next({ isCustomer: true });
+      component.onViewClicked('payments');
+      mockTabService.replaceCurrentTabSubView.mockClear();
+
+      entity$.next({ isCustomer: false });
+
+      expect(lastReplaceCall()).toEqual(['/customers/1']);
+      expect((component as any).selectedViewId()).toBe('');
+    });
+
+    it('should send the tab back to the first view when the record disables the view it shows', () => {
+      init();
+      showThisTab();
+      entity$.next({ isOpen: true });
+      component.onViewClicked('notes');
+      mockTabService.replaceCurrentTabSubView.mockClear();
+
+      entity$.next({ isOpen: false });
+
+      expect(lastReplaceCall()).toEqual(['/customers/1']);
+    });
+
+    it('should leave a hidden view reached by a direct link', () => {
+      init();
+      showThisTab();
+      entity$.next({ isCustomer: false });
+
+      mockRouter.events.next(new NavigationEnd(1, '/customers/1/payments', '/customers/1/payments'));
+
+      expect(lastReplaceCall()).toEqual(['/customers/1']);
+    });
+
+    it('should keep a direct link while the record is still loading', () => {
+      init();
+      showThisTab();
+
+      mockRouter.events.next(new NavigationEnd(1, '/customers/1/payments', '/customers/1/payments'));
+      expect(mockTabService.replaceCurrentTabSubView).not.toHaveBeenCalled();
+
+      entity$.next({ isCustomer: true });
+      expect(mockTabService.replaceCurrentTabSubView).not.toHaveBeenCalled();
+      expect((component as any).selectedViewId()).toBe('payments');
+    });
+
+    it('should not navigate a tab the router is not showing', () => {
+      init();
+      showThisTab();
+      entity$.next({ isCustomer: true });
+      component.onViewClicked('payments');
+      mockTabService.replaceCurrentTabSubView.mockClear();
+
+      // Another details tab is in front.
+      jest.spyOn(RouteHelper, 'getRouteByData').mockReturnValue({ routeConfig: { children: [] } } as any);
+      entity$.next({ isCustomer: false });
+
+      expect(mockTabService.replaceCurrentTabSubView).not.toHaveBeenCalled();
+      expect(option('payments').isVisible).toBe(false);
+    });
+
+    it('should stop answering once the button is destroyed', () => {
+      const visibleWhen: jest.Mock = jest.fn().mockReturnValue(true);
+      init([
+        { path: '', data: { title: 'Details' } },
+        { path: 'payments', data: { title: 'Payments', visibleWhen } },
+      ]);
+
+      component.destroy$.next(true);
+      entity$.next({});
+
+      expect(visibleWhen).not.toHaveBeenCalled();
     });
   });
 });
