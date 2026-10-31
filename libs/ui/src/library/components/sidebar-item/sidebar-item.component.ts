@@ -43,6 +43,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   // the PARENT's pass -- so `changeDetectorRef.detectChanges()` on this component could never
   // refresh them, and writing them after that pass raised NG0100 instead. A signal write marks
   // this view and every ancestor, which is the only notification that reaches a host binding.
+  protected readonly children: WritableSignal<SidebarMenu[]> = signal([]);
   protected readonly hasFailed: WritableSignal<boolean> = signal(false);
   protected readonly isLoading: WritableSignal<boolean> = signal(false);
   protected readonly isSelected: WritableSignal<boolean> = signal(false);
@@ -58,7 +59,7 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
   }
 
   protected get areChildrenLoaded(): boolean {
-    return this.isParent && (this.menu.children?.length ?? 0) > 0;
+    return this.isParent && this.children().length > 0;
   }
 
   protected get externalLinkText(): string {
@@ -115,6 +116,17 @@ export class SidebarItemComponent extends BaseComponent implements OnInit, After
           this.isSelected.set(false);
           this.menu.isSelected = false;
         });
+
+      // The service hands the children over in a plain field, which tells this item nothing. Copying
+      // them into a signal is what renders the child items, and only their childrenInitialized ends
+      // the loading state -- without it the item stayed on "loading" after a successful answer.
+      this.children.set(this.menu.children ?? []);
+      this.sidebarService.childrenLoaded
+        .pipe(
+          takeUntil(this.destroy$),
+          filter((menu: SidebarMenu) => menu.id === this.menu.id),
+        )
+        .subscribe((menu: SidebarMenu) => this.children.set(menu.children ?? []));
 
       this.sidebarService.childrenLoading
         .pipe(

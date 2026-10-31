@@ -11,19 +11,22 @@
 .summary {
   @apply flex flex-wrap items-center gap-x-3 gap-y-2;
 
+  // A tint of the status colour behind text in the full colour, with a firmer border: readable in
+  // both themes. The *-surface tokens are the colour at 75%, too close to the text to read on.
   .operation {
-    @apply rounded px-2 py-0.5 text-xs font-semibold uppercase tracking-wide;
-    background-color: var(--color-info-surface);
-    color: var(--color-info);
+    --operation-color: var(--color-info);
+
+    @apply rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-wide;
+    background-color: color-mix(in srgb, var(--operation-color) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--operation-color) 45%, transparent);
+    color: var(--operation-color);
 
     &.added {
-      background-color: var(--color-success-surface);
-      color: var(--color-success);
+      --operation-color: var(--color-success);
     }
 
     &.deleted {
-      background-color: var(--color-danger-surface);
-      color: var(--color-danger);
+      --operation-color: var(--color-danger);
     }
   }
 
@@ -56,8 +59,11 @@
   color: var(--color-content-secondary);
 }
 
+// The record can have more fields than the modal has height: the table scrolls inside it, under a
+// header that stays in place.
 .table-scroller {
-  @apply max-w-full overflow-x-auto;
+  @apply max-w-full overflow-auto;
+  max-height: min(65vh, 42rem);
 }
 
 .fields {
@@ -71,7 +77,8 @@
   }
 
   thead th {
-    @apply text-xs font-semibold uppercase tracking-wide;
+    @apply sticky top-0 z-10 text-xs font-semibold uppercase tracking-wide;
+    background-color: var(--color-surface-solid);
     color: var(--color-content-secondary);
     border-bottom-color: var(--color-line-strong);
   }
@@ -95,13 +102,15 @@
   }
 
   del {
-    background-color: var(--color-danger-surface);
+    background-color: color-mix(in srgb, var(--color-danger) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-danger) 35%, transparent);
     color: var(--color-danger);
     text-decoration: line-through;
   }
 
   ins {
-    background-color: var(--color-success-surface);
+    background-color: color-mix(in srgb, var(--color-success) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-success) 35%, transparent);
     color: var(--color-success);
   }
 
