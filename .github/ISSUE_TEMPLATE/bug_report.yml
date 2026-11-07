@@ -1,0 +1,71 @@
+name: Bug report
+description: Something in @zambon-dev/ui does not work as documented.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. Please search the existing issues first.
+        For a security problem, do not use this form. See the security policy instead.
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: The `@zambon-dev/ui` version from your lock file.
+      placeholder: 1.2.0
+    validations:
+      required: true
+  - type: input
+    id: angular
+    attributes:
+      label: Angular version
+      placeholder: 22.2.0
+    validations:
+      required: true
+  - type: dropdown
+    id: entry-point
+    attributes:
+      label: Entry point
+      options:
+        - '@zambon-dev/ui/library'
+        - '@zambon-dev/ui/framework'
+        - '@zambon-dev/ui/shared'
+        - Styles or theming
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: change-detection
+    attributes:
+      label: Change detection
+      options:
+        - Zoneless
+        - zone.js
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 140
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: Include any console errors.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: How to reproduce
+      description: A link to a minimal repository or StackBlitz is best. Otherwise, list the steps.
+    validations:
+      required: true

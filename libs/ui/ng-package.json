@@ -8,6 +8,11 @@
       "output": "."
     },
     {
+      "glob": "LICENSE",
+      "input": ".",
+      "output": "."
+    },
+    {
       "glob": "CHANGELOG.md",
       "input": ".",
       "output": "."

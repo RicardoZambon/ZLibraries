@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://ricardozambon.github.io/ZLibraries/
+    about: Guides, component pages and API reference.
+  - name: Report a security vulnerability
+    url: https://github.com/RicardoZambon/ZLibraries/security/advisories/new
+    about: Report security problems privately, not as a public issue.
