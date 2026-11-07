@@ -1,59 +1,27 @@
-import { ButtonComponent, MultiSelectComponent } from '@zambon-dev/ui/library';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import { MultiSelectComponent } from '@zambon-dev/ui/library';
+import { MultiSelectBasicExample } from '../../examples/multi-select/multi-select-basic.example';
 
 const meta: Meta<MultiSelectComponent> = {
   component: MultiSelectComponent,
-  decorators: [moduleMetadata({ imports: [ButtonComponent] })],
+  decorators: [moduleMetadata({ imports: [MultiSelectBasicExample] })],
   title: 'Library/Modals/Multi Select',
 };
 export default meta;
 type Story = StoryObj<MultiSelectComponent>;
 
 export const Primary: Story = {
-  args: {
-    closeButtonText: 'Cancel',
-    dialog: true,
-    modalProcessing: false,
-    position: 'center',
-    size: '5xl',
-    title: 'Select records',
-  },
-  render: (args) => ({
-    props: args,
-    template: `
-      <div class="p-4">
-        <lib-button intent="primary" (click)="multiSelect.toggleModal()">
-          Open selector
-        </lib-button>
-
-        <lib-multi-select
-          #multiSelect
-          [closeButtonText]="closeButtonText"
-          [dialog]="dialog"
-          [modalProcessing]="modalProcessing"
-          [position]="position"
-          [size]="size"
-          [title]="title">
-        </lib-multi-select>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-multi-select-basic></example-multi-select-basic>` }),
 };
 
 export const CompactSelector: Story = {
-  args: {
-    ...Primary.args,
-    size: '3xl',
-    title: 'Select assignees',
-  },
-  render: Primary.render,
+  render: () => ({
+    template: `<example-multi-select-basic modalSize="3xl" modalTitle="Select assignees"></example-multi-select-basic>`,
+  }),
 };
 
 export const WidePermissionSelector: Story = {
-  args: {
-    ...Primary.args,
-    size: '7xl',
-    title: 'Select permissions',
-  },
-  render: Primary.render,
+  render: () => ({
+    template: `<example-multi-select-basic modalSize="7xl" modalTitle="Select permissions"></example-multi-select-basic>`,
+  }),
 };

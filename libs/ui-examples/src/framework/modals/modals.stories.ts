@@ -1,70 +1,20 @@
-import { ButtonComponent } from '@zambon-dev/ui/library';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { ConfirmModalComponent, ErrorModalComponent } from '@zambon-dev/ui/framework';
+import { ConfirmModalBasicExample } from '../../examples/framework-modals/confirm-modal-basic.example';
+import { ErrorModalBasicExample } from '../../examples/framework-modals/error-modal-basic.example';
 
 const meta: Meta<ConfirmModalComponent> = {
   component: ConfirmModalComponent,
-  decorators: [
-    moduleMetadata({
-      imports: [ButtonComponent, ConfirmModalComponent, ErrorModalComponent],
-    }),
-  ],
+  decorators: [moduleMetadata({ imports: [ConfirmModalBasicExample, ErrorModalBasicExample] })],
   title: 'Framework/Modals',
 };
 export default meta;
 type Story = StoryObj<ConfirmModalComponent>;
 
 export const ConfirmModal: Story = {
-  args: {
-    message: 'This action will update the selected record.',
-    messageIcon: 'fa-solid fa-circle-question',
-    messageIconColor: 'text-cyan-500',
-    showMessageIcon: true,
-    size: 'xl',
-    title: 'Confirm action',
-  },
-  render: (args) => ({
-    props: args,
-    template: `
-      <div class="p-4">
-        <lib-button intent="primary" (click)="modal.toggleModal()">
-          Open confirmation
-        </lib-button>
-
-        <framework-confirm-modal
-          #modal
-          [message]="message"
-          [messageIcon]="messageIcon"
-          [messageIconColor]="messageIconColor"
-          [showMessageIcon]="showMessageIcon"
-          [size]="size"
-          [title]="title">
-          <div footer>
-            <lib-button intent="primary" (click)="modal.closeModal()">
-              Confirm
-            </lib-button>
-          </div>
-        </framework-confirm-modal>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-confirm-modal-basic></example-confirm-modal-basic>` }),
 };
 
 export const ErrorModal: StoryObj<ErrorModalComponent> = {
-  render: () => ({
-    template: `
-      <div class="p-4">
-        <lib-button intent="danger" (click)="modal.showModal('The server rejected the requested operation.')">
-          Open error
-        </lib-button>
-
-        <framework-error-modal
-          #modal
-          size="xl"
-          title="Action failed"
-          subtitle="Please review the record and try again.">
-        </framework-error-modal>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-error-modal-basic></example-error-modal-basic>` }),
 };

@@ -1,51 +1,15 @@
-import { Component, inject } from '@angular/core';
-import { RouteReuseStrategy } from '@angular/router';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { CustomReuseStrategy, Tab, TabsComponent, TabService } from '@zambon-dev/ui/framework';
-
-@Component({
-  selector: 'framework-story-tabs-host',
-  template: `
-    <framework-tabs>
-      <div class="p-4 text-sm text-slate-700">Active tab content is rendered by routed views in the application.</div>
-    </framework-tabs>
-  `,
-  imports: [TabsComponent],
-})
-class StoryTabsHostComponent {
-  private readonly tabService = inject(TabService);
-
-  constructor() {
-    this.tabService.closeAllTabs();
-    this.tabService.openTab(new Tab({ title: 'Commissions', url: '/finance/commissions', isTitleLoading: false }));
-    this.tabService.openTab(new Tab({ title: 'Customers', url: '/general/customers', isTitleLoading: false }));
-    this.tabService.openTab(new Tab({ title: 'Settings', url: '/security/settings', isTitleLoading: false }));
-    this.tabService.replaceCurrentTabSubView(
-      '/security/settings',
-      new Tab({ title: 'Audit', url: '/security/settings/audit', isTitleLoading: false }),
-    );
-  }
-}
+import { TabsComponent } from '@zambon-dev/ui/framework';
+import { TabsBreadcrumbsExample } from '../../examples/tabs/tabs-breadcrumbs.example';
 
 const meta: Meta<TabsComponent> = {
   component: TabsComponent,
-  decorators: [
-    moduleMetadata({
-      imports: [StoryTabsHostComponent],
-      providers: [TabService, { provide: RouteReuseStrategy, useClass: CustomReuseStrategy }],
-    }),
-  ],
+  decorators: [moduleMetadata({ imports: [TabsBreadcrumbsExample] })],
   title: 'Framework/Views',
 };
 export default meta;
 type Story = StoryObj<TabsComponent>;
 
 export const TabsWithBreadcrumbs: Story = {
-  render: () => ({
-    template: `
-      <div class="h-80 bg-white">
-        <framework-story-tabs-host></framework-story-tabs-host>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-tabs-breadcrumbs></example-tabs-breadcrumbs>` }),
 };

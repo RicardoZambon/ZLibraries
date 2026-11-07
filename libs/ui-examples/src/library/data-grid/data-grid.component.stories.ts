@@ -1,159 +1,42 @@
-import { ButtonComponent, DataGridComponent, DataGridDataset, IGridColumn } from '@zambon-dev/ui/library';
-import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { Observable, of } from 'rxjs';
+import { DataGridComponent } from '@zambon-dev/ui/library';
+import { DataGridBasicExample } from '../../examples/data-grid/data-grid-basic.example';
+import { DataGridChildListExample } from '../../examples/data-grid/data-grid-child-list.example';
+import { DataGridMultiSelectExample } from '../../examples/data-grid/data-grid-multi-select.example';
+import { DataGridToolbarExample } from '../../examples/data-grid/data-grid-toolbar.example';
 
 const meta: Meta<DataGridComponent> = {
   component: DataGridComponent,
+  decorators: [
+    moduleMetadata({
+      imports: [DataGridBasicExample, DataGridChildListExample, DataGridMultiSelectExample, DataGridToolbarExample],
+    }),
+  ],
   title: 'Library/Data Grid/Data Grid',
 };
 export default meta;
 type Story = StoryObj<DataGridComponent>;
 
 export const Primary: Story = {
-  args: {
-    disabled: false,
-    lazyLoadRows: false,
-    showButtons: false,
-  },
-  render: (args) => ({
-    props: args,
-    template: `
-      <div class="p-4 max-w-5xl h-96">
-        <lib-data-grid
-          [disabled]="disabled"
-          [lazyLoadRows]="lazyLoadRows"
-          [showButtons]="showButtons">
-        </lib-data-grid>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-data-grid-basic></example-data-grid-basic>` }),
 };
 
 export const WithButtons: Story = {
-  args: {
-    disabled: false,
-    lazyLoadRows: false,
-    showButtons: true,
-  },
-  render: (args) => ({
-    props: args,
-    template: `
-      <div class="p-4 max-w-5xl h-96">
-        <lib-data-grid
-          [disabled]="disabled"
-          [lazyLoadRows]="lazyLoadRows"
-          [showButtons]="showButtons">
-          <div buttons class="flex gap-2">
-            <lib-button intent="secondary">
-              <i class="fa-solid fa-plus"></i>
-              Add
-            </lib-button>
-            <lib-button intent="secondary">
-              <i class="fa-solid fa-rotate"></i>
-              Refresh
-            </lib-button>
-          </div>
-        </lib-data-grid>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-data-grid-toolbar></example-data-grid-toolbar>` }),
 };
 
 export const ChildListWithButtons: Story = {
-  args: {
-    disabled: false,
-    lazyLoadRows: true,
-    showButtons: true,
-  },
-  render: (args) => ({
-    props: args,
-    template: `
-      <div class="p-4 max-w-5xl h-80">
-        <lib-data-grid
-          [disabled]="disabled"
-          [lazyLoadRows]="lazyLoadRows"
-          [showButtons]="showButtons">
-          <div buttons class="flex gap-2">
-            <lib-button intent="primary">
-              <i class="fa-solid fa-plus"></i>
-              New
-            </lib-button>
-            <lib-button intent="danger">
-              <i class="fa-solid fa-trash"></i>
-              Remove
-            </lib-button>
-          </div>
-        </lib-data-grid>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-data-grid-child-list></example-data-grid-child-list>` }),
 };
 
-// Multi-select turned on over rows taller than the 41.6px default — the height a row needs once it
-// shows a thumbnail. Anything misaligned in the selection column stands out at this height, so this
-// is the story to look at when checking the checkbox's vertical centring.
-type TallRow = { id: number; name: string; status: string };
-
-@Injectable()
-class TallRowsMultiSelectDataset extends DataGridDataset {
-  public override columns: IGridColumn[] = [
-    { field: 'id', headerName: 'ID', size: '5rem' },
-    { field: 'name', headerName: 'Name', size: 'minmax(12rem, 1fr)' },
-    { field: 'status', headerName: 'Status', size: '10rem' },
-  ];
-
-  constructor() {
-    super();
-    this.configs = { ...this.configs, multiSelect: true, rowHeight: 56 };
-  }
-
-  public getData(): Observable<TallRow[]> {
-    return of([
-      { id: 1, name: 'Alpha record', status: 'Active' },
-      { id: 2, name: 'Beta record', status: 'Pending' },
-      { id: 3, name: 'Gamma record', status: 'Archived' },
-    ]);
-  }
-}
-
-// The dataset is provided on a host component rather than through the story's module metadata so it
-// resolves from the element injector, which always wins over the preview-wide provider.
-@Component({
-  selector: 'lib-tall-rows-multi-select-host',
-  imports: [ButtonComponent, DataGridComponent],
-  providers: [{ provide: DataGridDataset, useClass: TallRowsMultiSelectDataset }],
-  template: `
-    <div class="p-4 max-w-5xl h-96">
-      <lib-data-grid></lib-data-grid>
-    </div>
-  `,
-})
-class TallRowsMultiSelectHostComponent {}
-
+/**
+ * Multi-select over rows taller than the 41.6px default. Anything misaligned in the selection
+ * column stands out at this height, so this is the story to check the checkbox centring.
+ */
 export const MultiSelectTallRows: Story = {
-  decorators: [moduleMetadata({ imports: [TallRowsMultiSelectHostComponent] })],
-  render: () => ({
-    template: `<lib-tall-rows-multi-select-host></lib-tall-rows-multi-select-host>`,
-  }),
+  render: () => ({ template: `<example-data-grid-multi-select></example-data-grid-multi-select>` }),
 };
 
 export const Disabled: Story = {
-  args: {
-    disabled: true,
-    lazyLoadRows: false,
-    showButtons: false,
-  },
-  render: (args) => ({
-    props: args,
-    template: `
-      <div class="p-4 max-w-5xl h-96">
-        <lib-data-grid
-          [disabled]="disabled"
-          [lazyLoadRows]="lazyLoadRows"
-          [showButtons]="showButtons">
-        </lib-data-grid>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-data-grid-basic [disabled]="true"></example-data-grid-basic>` }),
 };

@@ -12,6 +12,15 @@ export default [
       // reader can tell them apart from the package's own components.
       '@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'example', style: 'kebab-case' }],
       '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'example', style: 'camelCase' }],
+      // An example's class ends in `Example`, so the registry and the docs can tell it from a helper.
+      '@angular-eslint/component-class-suffix': ['error', { suffixes: ['Example', 'Component'] }],
+    },
+  },
+  {
+    files: ['**/*.html'],
+    rules: {
+      // `lib-form-input` renders a native input, so a label wrapping it is associated with it.
+      '@angular-eslint/template/label-has-associated-control': ['error', { controlComponents: ['lib-form-input'] }],
     },
   },
   {

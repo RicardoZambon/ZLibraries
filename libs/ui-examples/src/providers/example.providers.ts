@@ -4,14 +4,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { APP_CONFIG, AppConfig, AuthService } from '@zambon-dev/ui/framework';
-import {
-  DataGridConfigsProvider,
-  DataGridDataset,
-  DataProviderService,
-  FormService,
-  GridConfigsProvider,
-  MultiSelectResultDataset,
-} from '@zambon-dev/ui/library';
+import { DataGridConfigsProvider, GridConfigsProvider } from '@zambon-dev/ui/library';
 import { AuthenticationService } from '@zambon-dev/ui/shared';
 import { provideTranslateService, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -371,46 +364,6 @@ class StorybookTranslateLoader implements TranslateLoader {
   }
 }
 
-class StorybookDataGridDataset extends DataGridDataset {
-  public override columns = [
-    { field: 'id', headerName: 'ID', size: '5rem' },
-    { field: 'name', headerName: 'Name', size: 'minmax(12rem, 1fr)' },
-    { field: 'status', headerName: 'Status', size: '10rem' },
-  ];
-
-  public getData(): Observable<any[]> {
-    return of([
-      { id: 1, name: 'Alpha record', status: 'Active' },
-      { id: 2, name: 'Beta record', status: 'Pending' },
-      { id: 3, name: 'Gamma record', status: 'Archived' },
-    ]);
-  }
-}
-
-class StorybookMultiSelectResultDataset extends MultiSelectResultDataset {
-  public getData(): Observable<any[]> {
-    return of([
-      { id: 1, name: 'Selected alpha', status: 'Active' },
-      { id: 2, name: 'Selected beta', status: 'Pending' },
-    ]);
-  }
-
-  protected saveData(changedIds: any): Observable<any> {
-    return of(changedIds);
-  }
-}
-
-const dataProviderMock = {
-  entityID: 1,
-  hasEntityID: true,
-  getError$: () => of(),
-  getModel$: () => of({ id: 1, name: 'Storybook record' }),
-  getTitle: (model: any) => model?.name ?? 'Storybook record',
-  resetForNewEntity: () => undefined,
-  saveModel: (model: any) => of(model),
-  updateModel: () => undefined,
-};
-
 const authServiceMock = {
   adminAction: 'AdministrativeMaster',
   authenticate: () => of(undefined),
@@ -434,6 +387,12 @@ function initializeTranslate(translateService: TranslateService): () => void {
   };
 }
 
+/**
+ * What any application provides once, at its root: animations, HTTP, the router, translations,
+ * the app config, the auth services and the grid configs. Storybook and the docs site both use
+ * this list. Anything else an example needs, such as a dataset or a form service, the example
+ * provides itself, so the code a reader copies is complete.
+ */
 export const exampleProviders: Array<Provider | EnvironmentProviders> = [
   provideAnimations(),
   provideHttpClient(withXhr()),
@@ -455,10 +414,6 @@ export const exampleProviders: Array<Provider | EnvironmentProviders> = [
   JwtHelperService,
   DataGridConfigsProvider,
   { provide: GridConfigsProvider, useExisting: DataGridConfigsProvider },
-  FormService,
-  { provide: DataGridDataset, useClass: StorybookDataGridDataset },
-  { provide: MultiSelectResultDataset, useClass: StorybookMultiSelectResultDataset },
-  { provide: DataProviderService, useValue: dataProviderMock },
   { provide: AuthService, useValue: authServiceMock },
   { provide: AuthenticationService, useValue: authServiceMock },
 ];

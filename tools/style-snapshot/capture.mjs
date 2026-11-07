@@ -211,7 +211,18 @@ const run = async () => {
       // A stable address for each element: its index path from the story root, plus its tag. Class
       // names are deliberately not part of the key -- a utility rename would change the key and
       // hide the very difference this is looking for.
-      const walk = (el, path) => {
+      //
+      // An example host is transparent. A story renders `<example-*>`, the component the docs site
+      // also shows, around markup that used to sit directly in the story. Keying through that host
+      // would shift every path below it, so its children are keyed as children of its parent and
+      // the host itself is not recorded. Only the outermost one: an `example-*` element inside an
+      // example is the example's own markup, such as a helper component, and is recorded as usual.
+      const isExampleHost = (el, insideExample) => !insideExample && el.tagName.toLowerCase().startsWith('example-');
+      const keyedChildren = (el, insideExample) =>
+        [...el.children].flatMap((child) =>
+          isExampleHost(child, insideExample) ? keyedChildren(child, true) : [[child, insideExample]],
+        );
+      const walk = (el, path, insideExample) => {
         const cs = getComputedStyle(el);
         const styles = {};
         for (const p of props) styles[p] = cs.getPropertyValue(p);
@@ -221,9 +232,9 @@ const run = async () => {
           styles.transform = '<animated>';
         }
         out.push({ path, tag: el.tagName.toLowerCase(), styles });
-        [...el.children].forEach((child, i) => walk(child, `${path}/${i}`));
+        keyedChildren(el, insideExample).forEach(([child, inside], i) => walk(child, `${path}/${i}`, inside));
       };
-      [...root.children].forEach((child, i) => walk(child, String(i)));
+      keyedChildren(root, false).forEach(([child, inside], i) => walk(child, String(i), inside));
       return out;
     }, PROPS);
   }

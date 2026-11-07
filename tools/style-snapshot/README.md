@@ -46,6 +46,12 @@ the story root plus its tag name. Keying on class names would mean a utility ren
 and the diff showed a removal and an addition rather than the change itself — hiding the one thing
 this exists to catch.
 
+**An example host is transparent.** Most stories render an `<example-*>` component from
+`libs/ui-examples`, the same one the docs site shows. Its children are keyed as children of its
+parent and the host is not recorded, so wrapping a story's markup in an example does not shift
+every path below it. Only the outermost `example-*` element is skipped. One nested inside an
+example, such as a helper component, is recorded like any other element.
+
 **Animated transforms are normalised.** A spinner is mid-rotation at an arbitrary angle, so its
 matrix differs between two runs of the same build. Whether an element animates is the signal, the
 angle is noise, so a rotation matrix on an animated element is recorded as `<animated>`.

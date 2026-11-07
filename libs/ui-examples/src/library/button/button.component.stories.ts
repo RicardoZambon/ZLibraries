@@ -1,41 +1,29 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { ButtonComponent } from '@zambon-dev/ui/library';
+import { ButtonIconOnlyExample } from '../../examples/button/button-icon-only.example';
+import { ButtonIntentsExample } from '../../examples/button/button-intents.example';
+import { ButtonOverviewExample } from '../../examples/button/button-overview.example';
+import { ButtonStatesExample } from '../../examples/button/button-states.example';
 
 const meta: Meta<ButtonComponent> = {
   component: ButtonComponent,
-  decorators: [moduleMetadata({ imports: [ButtonComponent] })],
+  decorators: [
+    moduleMetadata({
+      imports: [ButtonIconOnlyExample, ButtonIntentsExample, ButtonOverviewExample, ButtonStatesExample],
+    }),
+  ],
   title: 'Buttons/Button',
 };
 export default meta;
 type Story = StoryObj<ButtonComponent>;
 
 export const Primary: Story = {
-  args: {
-    intent: 'primary',
-    icon: 'fa-solid fa-floppy-disk',
-  },
-  render: (args) => ({
-    props: args,
-    template: `
-      <lib-button [intent]="intent" [icon]="icon" [disabled]="disabled" [loading]="loading" [success]="success" [error]="error">
-        Save
-      </lib-button>
-    `,
-  }),
+  render: () => ({ template: `<example-button-overview></example-button-overview>` }),
 };
 
 /** The four intents side by side. An intent says what the button is for; the theme picks the colour. */
 export const Intents: Story = {
-  render: () => ({
-    template: `
-      <div class="flex items-center gap-3 p-4">
-        <lib-button intent="primary" icon="fa-solid fa-floppy-disk">Save</lib-button>
-        <lib-button intent="secondary">Cancel</lib-button>
-        <lib-button intent="danger" icon="fa-solid fa-trash">Delete</lib-button>
-        <lib-button intent="ghost" icon="fa-solid fa-ellipsis" ariaLabel="More"></lib-button>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-button-intents></example-button-intents>` }),
 };
 
 /**
@@ -43,29 +31,10 @@ export const Intents: Story = {
  * not: it is the one outcome you retry from.
  */
 export const States: Story = {
-  render: () => ({
-    template: `
-      <div class="flex items-center gap-3 p-4">
-        <lib-button intent="primary" icon="fa-solid fa-floppy-disk">Idle</lib-button>
-        <lib-button intent="primary" [loading]="true">Saving</lib-button>
-        <lib-button intent="primary" [success]="true">Saved</lib-button>
-        <lib-button intent="primary" [error]="true">Failed</lib-button>
-        <lib-button intent="primary" [disabled]="true">Disabled</lib-button>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-button-states></example-button-states>` }),
 };
 
 /** With no text the label collapses, so an icon-only button stays square and centred. */
 export const IconOnly: Story = {
-  render: () => ({
-    template: `
-      <div class="flex items-center gap-3 p-4">
-        <lib-button intent="primary" icon="fa-solid fa-plus" ariaLabel="Add"></lib-button>
-        <lib-button intent="secondary" icon="fa-solid fa-rotate" ariaLabel="Refresh"></lib-button>
-        <lib-button intent="danger" icon="fa-solid fa-trash" ariaLabel="Delete"></lib-button>
-        <lib-button intent="ghost" icon="fa-solid fa-gear" ariaLabel="Settings"></lib-button>
-      </div>
-    `,
-  }),
+  render: () => ({ template: `<example-button-icon-only></example-button-icon-only>` }),
 };
