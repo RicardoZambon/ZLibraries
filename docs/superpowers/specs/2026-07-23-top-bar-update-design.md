@@ -1,7 +1,7 @@
 # Top Bar Update — Design (as built)
 
 **Date:** 2026-07-23
-**Status:** Implemented
+**Status:** Implemented. Superseded in part: the top bar now has a theme switch, added by the 2026-10-24 layout review. See `docs/guides/top-bar-configuration.md`.
 **Location:** `@shared` library — `MainLayoutComponent` toolbar
 
 ## Overview

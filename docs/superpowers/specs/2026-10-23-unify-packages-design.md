@@ -1,5 +1,8 @@
 # Unifying the three packages — design
 
+- **Date:** 2026-10-23
+- **Status:** Implemented in @zambon-dev/ui 1.0.0.
+
 ## Intent
 
 Replace `@zambon-dev/library`, `@zambon-dev/framework` and `@zambon-dev/shared` with a single

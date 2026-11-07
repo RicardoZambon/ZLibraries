@@ -229,8 +229,8 @@
   --focus-ring-offset: 0px;
 
   /* Named for how they feel, not what they measure: a `--duration-200` is a number with extra
-     steps. Routing every transition through these is what makes the reduced-motion block below a
-     single rule instead of an audit. */
+     steps. A transition that reads these collapses under the reduced-motion block below; a few
+     older transitions still use fixed durations and do not. */
   --duration-instant: 120ms;
   --duration-short: 200ms;
   --duration-long: 600ms;

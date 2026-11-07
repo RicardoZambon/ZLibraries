@@ -52,6 +52,13 @@ npx jest --config libs/ui/jest.config.ts --testPathPatterns="button"
 On Windows, `nx format:write` rewrites every file to LF line endings. To see your real changes,
 use `git diff --ignore-cr-at-eol`.
 
+Nx Cloud remote caching is optional. Set `NX_CLOUD_ACCESS_TOKEN` in your environment to use it;
+without it, Nx uses the local cache.
+
+The [style snapshot](tools/style-snapshot/README.md) and the
+[overflow probe](tools/overflow-probe/README.md) are manual checks. Their READMEs explain how to
+run them.
+
 ## Package rules
 
 These rules hold the package together. Most are enforced by lint or by a spec. The full list, with
@@ -72,6 +79,12 @@ One layer reaches another through its public subpath, such as `@zambon-dev/ui/li
 a relative path across layers. Each entry point is a separate bundle, so a relative import would
 compile a second copy of a class, and two copies of a service are two different DI tokens.
 
+Lint rejects an upward import in either spelling. It does not catch a relative import downward,
+such as framework code importing `../../library/...`, so watch for that in review.
+
+Inside a layer, import by concrete path where a barrel would form a cycle. For example, the
+framework buttons barrel re-exports the legacy buttons, which import the views barrel.
+
 ### Selector prefixes
 
 Each layer has its own prefix: `lib-` for library, `framework-` for framework, `shared-` for
@@ -82,12 +95,17 @@ shared. ESLint enforces them.
 A component must render correctly under any change-detection strategy, including zoneless. So:
 
 - Every value a template reads is a signal, a `computed`, an `input()` or `model()`, a query
-  signal such as `viewChild()`, or a constant.
+  signal such as `viewChild()`, a getter built only from those, or a constant.
 - No template reads a mutable field or a value assigned inside `.subscribe()`.
 - Do not declare a change-detection strategy in a new component. Angular 22 defaults to OnPush.
+  `changeDetection` is not inherited, so base classes declare nothing either.
 - Never inject `ChangeDetectorRef` to force a pass.
+- Use `NgZone` only for `runOutsideAngular` around scroll, wheel or resize listeners. The handler
+  must still write a signal, because under zoneless the call does nothing.
+- When you convert a field to a signal, rename it (`loading` becomes `isLoading`). The compiler
+  catches `{{ loading }}` but not `@if (loading)`, which is always true for a signal.
 
-The [reactivity guide](docs/guides/reactivity.md) explains why, and how to test it.
+The [change detection guide](docs/guides/reactivity.md) explains the guarantee consumers get.
 
 ### Styling
 
@@ -135,8 +153,15 @@ The [reactivity guide](docs/guides/reactivity.md) explains why, and how to test 
 ## Testing
 
 - Add or update a unit spec for every behavior change.
-- A component spec should render the component under an OnPush parent. The
-  `@zambon-dev/ui/testing` entry point has a harness for that.
+- Tests run zoneless. A view renders only when something notifies it. Assert after
+  `await fixture.whenStable()`. Do not call `fixture.detectChanges()` in new specs, and do not use
+  `fakeAsync`: both hide the bugs these tests exist to catch.
+- A component with an asynchronous source gets a `*.renders-under-on-push.spec.ts`, using
+  `renderUnderOnPush` from `@zambon-dev/ui/testing`. Drive the source after the render and assert
+  the DOM.
+- Service specs use `provideHttpClient()` and `provideHttpClientTesting()`, not the deprecated
+  `HttpClientTestingModule`.
+- A clean Storybook console proves nothing about stale views. A Jest spec is the oracle.
 - Changes to stories or examples must pass `npx nx build-storybook ui-examples`. Unit tests and the
   package build do not compile stories.
 - For a visual change, compare the style snapshot before and after. For a layout change, run the
@@ -171,7 +196,7 @@ node tools/overflow-probe/probe.mjs dist/storybook/ui-examples
 ### Lint rules
 
 - When you change the layer rule in `libs/ui/eslint.config.mjs`, prove it: add a forbidden import,
-  watch lint fail, then remove it. The rule blocks both the subpath and the relative path.
+  watch lint fail, then remove it. It blocks an upward import both by subpath and by relative path.
 
 ## Changelog
 

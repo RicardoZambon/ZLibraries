@@ -61,7 +61,7 @@
       "allowedVersions": "<25"
     },
     {
-      "description": "Held deliberately. See docs/guides/dependency-holds.md before taking any of these.",
+      "description": "Held deliberately. See docs/maintainers/dependency-holds.md before taking any of these.",
       "matchPackageNames": ["typescript", "@ngx-translate/core"],
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true

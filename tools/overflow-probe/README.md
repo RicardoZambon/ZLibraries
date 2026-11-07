@@ -1,7 +1,9 @@
 # Overflow probe
 
-The acceptance gate for small-screen support: at 375px, nothing may sit past the right edge of the
-viewport unless some ancestor can scroll it into view.
+The acceptance check for small-screen support: at 375px, nothing may sit past the right edge of
+the viewport unless some ancestor can scroll it into view.
+
+It is a manual check: CI does not run it. Run it before merging a layout or stylesheet change.
 
 The distinction is the whole point. An element that overflows a scroll container is reachable —
 you scroll to it. An element that overflows a container which _clips_ is gone, and nothing on
@@ -14,18 +16,27 @@ nothing to compare against.
 
 ## Running it
 
-Needs a built Storybook, and the build must not come from the Nx cache when a stylesheet changed:
+The probe drives Chromium through Playwright. Playwright is not a direct dependency of the
+workspace; it arrives with `@storybook/test-runner`. Download its browser once:
 
 ```bash
-npx nx build-storybook ui --configuration=ci --skip-nx-cache
-node tools/overflow-probe/probe.mjs dist/storybook/ui
+npx playwright install chromium
 ```
 
-One line per offending element, then a total. Exit 0 when the total is 0, 1 otherwise, 2 when the
-probe itself could not run.
+Or set `OVERFLOW_PROBE_CHANNEL=msedge` (or `chrome`) to use an installed browser instead, for a
+machine that cannot reach Playwright's CDN.
 
-`OVERFLOW_PROBE_CHANNEL=msedge` (or `chrome`) uses an installed browser instead of the one
-Playwright downloads, for a machine that cannot reach its CDN.
+Then build Storybook and run the probe against it:
+
+```bash
+npm run build-storybook -- --skip-nx-cache
+node tools/overflow-probe/probe.mjs dist/storybook/ui-examples
+```
+
+`--skip-nx-cache` makes sure the build contains the current source, not a cached result.
+
+It prints one line per offending element, then a total. It exits 0 when the total is 0, 1
+otherwise, and 2 when the probe itself could not run.
 
 ## The one exclusion: the data grid's header
 

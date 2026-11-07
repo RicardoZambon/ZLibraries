@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-27
 **Component:** `@library` `lib-sidebar` / `lib-sidebar-item`
-**Status:** Approved design → implementation
+**Status:** Implemented.
 **Reference:** Figma community "Sidebar Navigation Menu for Dashboard (Dark & Light)"
 
 ## 1. Background & goal
@@ -23,7 +23,7 @@ The rework is **planned in full but delivered in reviewed slices**:
 ### Architectural framing
 
 The reference is a **sidebar-only** layout. Our app is **top-bar + sidebar**: the
-[top-bar](../../../libs/shared/src/lib/layouts/top-bar/top-bar.component.html) already
+the top bar already
 owns `shared-brand`, `shared-user-profile`, notifications, and language, and reserves a
 (deferred) theme-switch slot. Therefore the sidebar stays focused on **navigation** and
 does **not** duplicate identity/brand. Decisions locked with the user:
@@ -104,7 +104,7 @@ popping the whole rail open as an overlay. Expanded and mobile-overlay states ke
 existing **inline accordion** untouched.
 
 **Implementation** reuses the established CDK-overlay pattern from
-[catalog-select](../../../libs/library/src/lib/components/catalog-select/catalog-select.component.ts):
+`catalog-select`:
 
 - `Overlay` + `OverlayPositionBuilder` + `FlexibleConnectedPositionStrategy` +
   `TemplatePortal`, `hasBackdrop: false`, `scrollStrategies.reposition()`.
