@@ -14,7 +14,7 @@
   </div>
   @if (heroExample) {
     <div class="hero-demo" aria-label="Live example">
-      @defer (on viewport) {
+      @defer (on viewport; on idle) {
         <docs-example-island [exampleId]="heroExample" />
       } @placeholder {
         <div class="demo-placeholder"></div>

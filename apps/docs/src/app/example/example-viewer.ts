@@ -54,7 +54,7 @@ import { ExampleIsland } from './example-island';
         </div>
       }
 
-      @defer (on viewport) {
+      @defer (on viewport; on idle) {
         <div class="example-canvas">
           <docs-example-island [exampleId]="ex.id" />
         </div>
