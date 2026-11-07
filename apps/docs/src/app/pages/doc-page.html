@@ -25,12 +25,12 @@
         }
       </header>
 
-      <!-- Delegated: the click comes from the links inside, which Enter activates too. -->
+      <!-- Delegated: the click comes from the links inside, which Enter activates too. The prose styles sit on each Markdown block only, so they never reach the live examples. -->
       <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
-      <div class="prose" (click)="onContentClick($event)">
+      <div class="doc-content" (click)="onContentClick($event)">
         @for (block of page.blocks; track $index) {
           @if (block.type === 'html') {
-            <div [innerHTML]="block.html | trustedHtml"></div>
+            <div class="prose" [innerHTML]="block.html | trustedHtml"></div>
           } @else {
             @if (page.examples[block.id]; as example) {
               <docs-example-viewer [example]="example" />
@@ -38,7 +38,9 @@
           }
         }
         @if (page.api.length) {
-          <h2 id="api"><a class="anchor" [href]="page.route + '#api'" aria-hidden="true" tabindex="-1">#</a>API</h2>
+          <div class="prose">
+            <h2 id="api"><a class="anchor" [href]="page.route + '#api'" aria-hidden="true" tabindex="-1">#</a>API</h2>
+          </div>
           <docs-api-tables [names]="page.api" />
         }
       </div>

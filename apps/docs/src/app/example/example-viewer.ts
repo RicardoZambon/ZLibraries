@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { afterNextRender, Component, computed, inject, input, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ExampleData } from '../content/content.models';
 import { TrustedHtmlPipe } from '../content/trusted-html.pipe';
@@ -54,12 +54,18 @@ import { ExampleIsland } from './example-island';
         </div>
       }
 
-      @defer (on viewport; on idle) {
+      @if (eager()) {
         <div class="example-canvas">
           <docs-example-island [exampleId]="ex.id" />
         </div>
-      } @placeholder {
-        <div class="example-canvas is-placeholder" aria-hidden="true"></div>
+      } @else {
+        @defer (on viewport; on idle) {
+          <div class="example-canvas">
+            <docs-example-island [exampleId]="ex.id" />
+          </div>
+        } @placeholder {
+          <div class="example-canvas is-placeholder" aria-hidden="true"></div>
+        }
       }
     </figure>
   `,
@@ -73,6 +79,18 @@ export class ExampleViewer {
   protected readonly activeFile = signal(0);
   protected readonly copied = signal(false);
   protected readonly current = computed(() => this.example().files[this.activeFile()]);
+  /**
+   * `?examples=eager` starts every example at once instead of when it scrolls into view. For
+   * automated checks, which run in pages the browser treats as hidden. Read after hydration, so
+   * the prerendered markup stays the same.
+   */
+  protected readonly eager = signal(false);
+
+  constructor() {
+    afterNextRender(() => {
+      this.eager.set(new URLSearchParams(this.document.location.search).get('examples') === 'eager');
+    });
+  }
 
   protected async copy(): Promise<void> {
     const pre = this.document.createElement('div');

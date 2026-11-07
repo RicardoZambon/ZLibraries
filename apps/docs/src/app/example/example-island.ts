@@ -9,6 +9,7 @@ import {
   inject,
   input,
   provideZonelessChangeDetection,
+  reflectComponentType,
   signal,
   viewChild,
 } from '@angular/core';
@@ -101,7 +102,9 @@ export class ExampleIsland {
           ...exampleProviders,
           provideZonelessChangeDetection(),
           provideRouter([], withDisabledInitialNavigation()),
-          { provide: LocationStrategy, useClass: IslandLocationStrategy },
+          // A factory, not `useClass`: the class has no @Injectable, so `useClass` would fall back to
+          // LocationStrategy's own factory and hand the router the real PathLocationStrategy.
+          { provide: LocationStrategy, useFactory: () => new IslandLocationStrategy() },
           { provide: APP_ID, useValue: `example${++islandCount}` },
         ],
       });
@@ -109,7 +112,8 @@ export class ExampleIsland {
         appRef.destroy();
         return;
       }
-      const root = document.createElement('div');
+      // The example's own tag, as in Storybook, so styles keyed to the host element match.
+      const root = document.createElement(reflectComponentType(component)?.selector ?? 'div');
       this.host().nativeElement.appendChild(root);
       appRef.bootstrap(component, root);
       this.appRef = appRef;

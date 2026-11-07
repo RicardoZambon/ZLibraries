@@ -11,12 +11,15 @@ html {
   scroll-padding-top: calc(var(--docs-header-height) + 1rem);
 }
 
+/*
+ * No font size or line height here: live examples inherit from body, and they should see what an
+ * application gives them (Tailwind's preflight), as they do in Storybook. The shell and the prose
+ * set their own.
+ */
 body {
   margin: 0;
   background: var(--color-surface-solid);
   color: var(--color-content-primary);
-  font-size: 1rem;
-  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -43,6 +46,7 @@ pre {
 /* Rendered Markdown. Global because the HTML arrives through [innerHTML]. */
 .prose {
   color: var(--color-content-primary);
+  line-height: 1.6;
 
   h2 {
     margin: 2.5rem 0 0.75rem;
