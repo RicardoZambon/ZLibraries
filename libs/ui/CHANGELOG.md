@@ -17,6 +17,8 @@ packages are listed under [Package history](#package-history) at the end.
 
 ### Added
 
+- **`LoginComponent` is exported from `@zambon-dev/ui/shared`.** `SharedAuthModule` still routes
+  to it. Import it directly to place the sign-in card in a layout of your own.
 - **The package ships its license.** The npm tarball now contains the MIT `LICENSE` file.
 - **The logout labels ship with the shared translations.** `Main-Logout`,
   `Main-Logout-Modal-Message`, `Main-Logout-Modal-Message-Cancel` and
