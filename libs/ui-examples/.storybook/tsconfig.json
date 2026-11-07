@@ -7,14 +7,5 @@
     "ignoreDeprecations": "6.0"
   },
   "exclude": ["../**/*.spec.ts"],
-  "include": [
-    "../src/i18n/**/*.json",
-    "../src/**/*.stories.ts",
-    "../src/**/*.stories.js",
-    "../src/**/*.stories.jsx",
-    "../src/**/*.stories.tsx",
-    "../src/**/*.stories.mdx",
-    "*.js",
-    "*.ts"
-  ]
+  "include": ["../src/**/*.ts", "*.ts"]
 }

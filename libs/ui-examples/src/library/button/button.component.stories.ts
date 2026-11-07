@@ -1,5 +1,5 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { ButtonComponent } from '../../components/button/button.component';
+import { ButtonComponent } from '@zambon-dev/ui/library';
 
 const meta: Meta<ButtonComponent> = {
   component: ButtonComponent,

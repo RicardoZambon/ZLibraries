@@ -1,7 +1,6 @@
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { FormGroupComponent } from '../../components/form-group/form-group.component';
-import { FormInputGroupComponent } from '../../components/form-input-group/form-input-group.component';
+import { FormGroupComponent, FormInputGroupComponent } from '@zambon-dev/ui/library';
 
 const meta: Meta<FormGroupComponent> = {
   component: FormGroupComponent,

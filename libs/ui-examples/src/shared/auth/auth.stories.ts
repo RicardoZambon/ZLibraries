@@ -1,8 +1,7 @@
 import { APP_CONFIG, AppConfig } from '@zambon-dev/ui/framework';
 import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent } from 'storybook/test';
-import { LoginComponent } from '../../auth/components/login/login.component';
-import { LoginLayoutComponent } from '../../layouts/login-layout/login-layout.component';
+import { LoginComponent, LoginLayoutComponent } from '@zambon-dev/ui/shared';
 
 const meta: Meta<LoginComponent> = {
   component: LoginComponent,

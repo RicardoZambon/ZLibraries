@@ -1,9 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, signal, WritableSignal } from '@angular/core';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { RibbonButtonComponent } from '../../components/ribbon-button/ribbon-button.component';
-import { RibbonGroupComponent } from '../../components/ribbon-group/ribbon-group.component';
-import { RibbonComponent } from '../../components/ribbon/ribbon.component';
-import { RibbonGroupChild } from '../../models/ribbon-group-child';
+import { RibbonButtonComponent, RibbonComponent, RibbonGroupChild, RibbonGroupComponent } from '@zambon-dev/ui/library';
 
 @Component({
   selector: 'storybook-ribbon-child',

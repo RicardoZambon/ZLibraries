@@ -1,7 +1,5 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { GroupAccordionComponent } from '../../components/group-accordion/group-accordion.component';
-import { GroupContainerComponent } from '../../components/group-container/group-container.component';
-import { GroupScrollSpyComponent } from '../../components/group-scroll-spy/group-scroll-spy.component';
+import { GroupAccordionComponent, GroupContainerComponent, GroupScrollSpyComponent } from '@zambon-dev/ui/library';
 
 const meta: Meta<GroupContainerComponent> = {
   component: GroupContainerComponent,

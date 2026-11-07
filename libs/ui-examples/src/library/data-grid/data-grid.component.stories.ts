@@ -1,10 +1,7 @@
-import { ButtonComponent } from '../../components/button/button.component';
+import { ButtonComponent, DataGridComponent, DataGridDataset, IGridColumn } from '@zambon-dev/ui/library';
 import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
-import { DataGridComponent } from '../../components/data-grid/data-grid.component';
-import { IGridColumn } from '../../models';
-import { DataGridDataset } from '../../services/datasets/data-grid.dataset';
 
 const meta: Meta<DataGridComponent> = {
   component: DataGridComponent,

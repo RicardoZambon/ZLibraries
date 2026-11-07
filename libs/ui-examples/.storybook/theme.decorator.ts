@@ -32,7 +32,6 @@ export const themeInitialGlobals = { theme: 'light' };
  * anything teleported out of it -- a CDK overlay, a modal -- stayed light.
  */
 declare global {
-  // eslint-disable-next-line no-var
   var __FORCED_THEME__: string | undefined;
 }
 

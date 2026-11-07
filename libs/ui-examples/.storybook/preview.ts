@@ -1,13 +1,13 @@
 import type { Preview } from '@storybook/angular';
 import { applicationConfig } from '@storybook/angular';
-import { storybookApplicationProviders } from '../../../tools/storybook/storybook.providers';
-import { themeGlobalTypes, themeInitialGlobals, withTheme } from '../../../tools/storybook/theme.decorator';
+import { exampleProviders } from '../src/providers/example.providers';
+import { themeGlobalTypes, themeInitialGlobals, withTheme } from './theme.decorator';
 
 const preview: Preview = {
   decorators: [
     withTheme,
     applicationConfig({
-      providers: storybookApplicationProviders,
+      providers: exampleProviders,
     }),
   ],
   globalTypes: themeGlobalTypes,

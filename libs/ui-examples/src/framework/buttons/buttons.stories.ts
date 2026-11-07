@@ -3,17 +3,21 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { RibbonComponent, RibbonGroupComponent } from '@zambon-dev/ui/library';
 import { of } from 'rxjs';
-import { ButtonComponent } from '../../components/buttons/button/button.component';
-import { ButtonConfirmComponent } from '../../components/buttons/button-confirm/button-confirm.component';
-import { ButtonDeleteComponent } from '../../components/buttons/button-delete/button-delete.component';
-import { ButtonEditComponent } from '../../components/buttons/button-edit/button-edit.component';
-import { ButtonFiltersComponent } from '../../components/buttons/button-filters/button-filters.component';
-import { ButtonNewComponent } from '../../components/buttons/button-new/button-new.component';
-import { ButtonOpenRecordComponent } from '../../components/buttons/button-open-record/button-open-record.component';
-import { ButtonRefreshComponent } from '../../components/buttons/button-refresh/button-refresh.component';
-import { ButtonSaveComponent } from '../../components/buttons/button-save/button-save.component';
-import { ButtonViewsComponent } from '../../components/buttons/button-views/button-views.component';
-import { CustomReuseStrategy, TabService, TabViewService } from '../../services';
+import {
+  ButtonComponent,
+  ButtonConfirmComponent,
+  ButtonDeleteComponent,
+  ButtonEditComponent,
+  ButtonFiltersComponent,
+  ButtonNewComponent,
+  ButtonOpenRecordComponent,
+  ButtonRefreshComponent,
+  ButtonSaveComponent,
+  ButtonViewsComponent,
+  CustomReuseStrategy,
+  TabService,
+  TabViewService,
+} from '@zambon-dev/ui/framework';
 
 const meta: Meta<ButtonComponent> = {
   component: ButtonComponent,

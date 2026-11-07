@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { GroupAccordionComponent } from '../../components/group-accordion/group-accordion.component';
+import { GroupAccordionComponent } from '@zambon-dev/ui/library';
 
 const meta: Meta<GroupAccordionComponent> = {
   component: GroupAccordionComponent,

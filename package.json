@@ -8,8 +8,8 @@
     "lint": "nx run-many --target=lint --all",
     "format": "nx format:write",
     "format:check": "nx format:check",
-    "build-storybook": "nx build-storybook ui --configuration=ci",
-    "storybook": "nx storybook ui"
+    "build-storybook": "nx build-storybook ui-examples --configuration=ci",
+    "storybook": "nx storybook ui-examples"
   },
   "private": true,
   "engines": {

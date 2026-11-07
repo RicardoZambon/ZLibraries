@@ -1,7 +1,6 @@
 import { ButtonComponent } from '@zambon-dev/ui/library';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { ConfirmModalComponent } from '../../components/modals/confirm-modal/confirm-modal.component';
-import { ErrorModalComponent } from '../../components/modals/error-modal/error-modal.component';
+import { ConfirmModalComponent, ErrorModalComponent } from '@zambon-dev/ui/framework';
 
 const meta: Meta<ConfirmModalComponent> = {
   component: ConfirmModalComponent,

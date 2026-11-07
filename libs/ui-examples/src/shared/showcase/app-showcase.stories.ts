@@ -50,17 +50,19 @@ import {
   SidebarService,
 } from '@zambon-dev/ui/library';
 import { BehaviorSubject, defer, delay, map, Observable, of } from 'rxjs';
-import { FiltersBase } from '../../components';
-import { externalContentRoutes } from '../../features/external-content';
-import { ServicesHistoryViewComponent } from '../../features/services-history/services-history-view/services-history-view.component';
-import { MainLayoutComponent } from '../../layouts/main-layout/main-layout.component';
-import { INotification, IOperationsHistoryList, IServicesHistoryList } from '../../models';
 import {
   AuthenticationService,
+  externalContentRoutes,
+  FiltersBase,
+  INotification,
+  IOperationsHistoryList,
+  IServicesHistoryList,
+  MainLayoutComponent,
   NotificationsService,
   OperationsHistoryService,
   ServicesHistoryService,
-} from '../../services';
+  ServicesHistoryViewComponent,
+} from '@zambon-dev/ui/shared';
 
 // ---------------------------------------------------------------------------
 // Mock backend — latency
@@ -1530,7 +1532,7 @@ const meta: Meta<MainLayoutComponent> = {
     applicationConfig({
       providers: [
         // Adds the showcase routes to the router configured globally in
-        // tools/storybook/storybook.providers.ts (which registers an empty route table).
+        // the example providers (which registers an empty route table).
         { provide: ROUTES, multi: true, useValue: showcaseRoutes },
         TabService,
         { provide: RouteReuseStrategy, useClass: CustomReuseStrategy },

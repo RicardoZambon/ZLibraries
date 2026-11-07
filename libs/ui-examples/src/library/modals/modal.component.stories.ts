@@ -1,6 +1,5 @@
-import { ButtonComponent } from '../../components/button/button.component';
+import { ButtonComponent, ModalComponent } from '@zambon-dev/ui/library';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { ModalComponent } from '../../components/modal/modal.component';
 
 const meta: Meta<ModalComponent> = {
   component: ModalComponent,

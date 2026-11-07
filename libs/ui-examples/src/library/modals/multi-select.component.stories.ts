@@ -1,6 +1,5 @@
-import { ButtonComponent } from '../../components/button/button.component';
+import { ButtonComponent, MultiSelectComponent } from '@zambon-dev/ui/library';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { MultiSelectComponent } from '../../components/multi-select/multi-select.component';
 
 const meta: Meta<MultiSelectComponent> = {
   component: MultiSelectComponent,

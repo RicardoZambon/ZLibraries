@@ -1,8 +1,13 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { ISidebarProfile, SIDEBAR_CONFIGS, SidebarConfigs, SidebarMenu } from '../../models';
-import { SidebarService } from '../../services';
+import {
+  ISidebarProfile,
+  SIDEBAR_CONFIGS,
+  SidebarComponent,
+  SidebarConfigs,
+  SidebarMenu,
+  SidebarService,
+} from '@zambon-dev/ui/library';
 
 class StorybookSidebarService extends SidebarService {
   public getMenuFromUrl(url: string): Observable<SidebarMenu> {

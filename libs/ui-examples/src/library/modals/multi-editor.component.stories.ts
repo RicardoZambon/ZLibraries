@@ -1,12 +1,15 @@
-import { ButtonComponent } from '../../components/button/button.component';
+import {
+  ButtonComponent,
+  CatalogSelectComponent,
+  DataGridDataset,
+  FormInputGroupComponent,
+  IBatchUpdate,
+  MultiEditorComponent,
+  MultiEditorDataset,
+} from '@zambon-dev/ui/library';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
-import { CatalogSelectComponent } from '../../components/catalog-select/catalog-select.component';
-import { FormInputGroupComponent } from '../../components/form-input-group/form-input-group.component';
-import { MultiEditorComponent } from '../../components/multi-editor/multi-editor.component';
-import { IBatchUpdate } from '../../models/batch-update';
-import { DataGridDataset, MultiEditorDataset } from '../../services';
 
 class StorybookMultiEditorGridDataset extends DataGridDataset {
   public override columns = [

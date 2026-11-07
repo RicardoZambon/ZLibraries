@@ -1,7 +1,6 @@
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { CatalogSelectComponent } from '../../components/catalog-select/catalog-select.component';
-import { FormGroupComponent } from '../../components/form-group/form-group.component';
+import { CatalogSelectComponent, FormGroupComponent } from '@zambon-dev/ui/library';
 
 const meta: Meta<CatalogSelectComponent> = {
   component: CatalogSelectComponent,

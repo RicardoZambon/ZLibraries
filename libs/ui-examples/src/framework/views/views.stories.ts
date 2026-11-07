@@ -1,9 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { Tab } from '../../models';
-import { CustomReuseStrategy, TabService } from '../../services';
-import { TabsComponent } from '../../components/views/tabs/tabs.component';
+import { CustomReuseStrategy, Tab, TabsComponent, TabService } from '@zambon-dev/ui/framework';
 
 @Component({
   selector: 'framework-story-tabs-host',

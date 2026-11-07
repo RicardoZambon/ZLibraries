@@ -15,20 +15,20 @@ import {
 import { AuthenticationService } from '@zambon-dev/ui/shared';
 import { provideTranslateService, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import frameworkEn from '../../libs/ui/src/i18n/framework/en.json';
-import frameworkPt from '../../libs/ui/src/i18n/framework/pt.json';
-import sharedExternalContentEn from '../../libs/ui/src/i18n/shared/external-content/en.json';
-import sharedExternalContentPt from '../../libs/ui/src/i18n/shared/external-content/pt.json';
-import sharedLanguageSelectorEn from '../../libs/ui/src/i18n/shared/language-selector/en.json';
-import sharedLanguageSelectorPt from '../../libs/ui/src/i18n/shared/language-selector/pt.json';
-import sharedLoginEn from '../../libs/ui/src/i18n/shared/login/en.json';
-import sharedLoginPt from '../../libs/ui/src/i18n/shared/login/pt.json';
-import sharedOperationsHistoryEn from '../../libs/ui/src/i18n/shared/operations-history/en.json';
-import sharedOperationsHistoryPt from '../../libs/ui/src/i18n/shared/operations-history/pt.json';
-import sharedServicesHistoryEn from '../../libs/ui/src/i18n/shared/services-history/en.json';
-import sharedServicesHistoryPt from '../../libs/ui/src/i18n/shared/services-history/pt.json';
-import sharedTopBarEn from '../../libs/ui/src/i18n/shared/top-bar/en.json';
-import sharedTopBarPt from '../../libs/ui/src/i18n/shared/top-bar/pt.json';
+import frameworkEn from '@zambon-dev/ui/i18n/framework/en.json';
+import frameworkPt from '@zambon-dev/ui/i18n/framework/pt.json';
+import sharedExternalContentEn from '@zambon-dev/ui/i18n/shared/external-content/en.json';
+import sharedExternalContentPt from '@zambon-dev/ui/i18n/shared/external-content/pt.json';
+import sharedLanguageSelectorEn from '@zambon-dev/ui/i18n/shared/language-selector/en.json';
+import sharedLanguageSelectorPt from '@zambon-dev/ui/i18n/shared/language-selector/pt.json';
+import sharedLoginEn from '@zambon-dev/ui/i18n/shared/login/en.json';
+import sharedLoginPt from '@zambon-dev/ui/i18n/shared/login/pt.json';
+import sharedOperationsHistoryEn from '@zambon-dev/ui/i18n/shared/operations-history/en.json';
+import sharedOperationsHistoryPt from '@zambon-dev/ui/i18n/shared/operations-history/pt.json';
+import sharedServicesHistoryEn from '@zambon-dev/ui/i18n/shared/services-history/en.json';
+import sharedServicesHistoryPt from '@zambon-dev/ui/i18n/shared/services-history/pt.json';
+import sharedTopBarEn from '@zambon-dev/ui/i18n/shared/top-bar/en.json';
+import sharedTopBarPt from '@zambon-dev/ui/i18n/shared/top-bar/pt.json';
 
 // Real translations for the keys used across the stories, so the `translate` pipe resolves
 // keys to text instead of echoing the key. Keys not listed here fall back to the key itself.
@@ -434,7 +434,7 @@ function initializeTranslate(translateService: TranslateService): () => void {
   };
 }
 
-export const storybookApplicationProviders: Array<Provider | EnvironmentProviders> = [
+export const exampleProviders: Array<Provider | EnvironmentProviders> = [
   provideAnimations(),
   provideHttpClient(withXhr()),
   provideRouter([]),
