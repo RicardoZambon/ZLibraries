@@ -27,9 +27,9 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-**The tab strip.** `TabsComponent` (`<framework-tabs>`) renders the tabs, the breadcrumbs and the
-router outlet. `MainLayoutComponent` from `@zambon-dev/ui/shared` already includes it, together
-with the sidebar. Route your screens as children of the layout, so the tab strip starts after the
+**The tab strip.** `TabsComponent` (`<framework-tabs>`) renders the tabs and the breadcrumbs, and
+projects its content below them. Put the `<router-outlet>` inside it. `MainLayoutComponent` from
+`@zambon-dev/ui/shared` already does both, together with the sidebar. Route your screens as children of the layout, so the tab strip starts after the
 router has matched a route.
 
 ## Route rules
