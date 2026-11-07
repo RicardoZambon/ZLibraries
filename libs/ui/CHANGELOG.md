@@ -36,6 +36,10 @@ packages are listed under [Package history](#package-history) at the end.
 
 ### Fixed
 
+- **A multi-select grid shows its checkboxes again.** In a grid narrower than its columns, as the
+  multi-select modal's search pane usually is, the selection column stayed at its 1.5rem minimum
+  and the row's padding left the checkbox no room, so it was cut off entirely. The column is now
+  sized to its content. A `multiSelectSize` you set yourself is unchanged.
 - **Tailwind utilities used in the package's templates are generated in your build.** Tailwind's
   automatic source detection skips `node_modules`, so an application's build could miss utilities
   that only the package's templates use. `theme.css` now declares the package as a source.

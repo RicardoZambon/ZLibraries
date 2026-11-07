@@ -139,7 +139,7 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
   protected get selectionColWidth(): string {
     return this.selectionColRealSize
       ? `${this.selectionColRealSize}px`
-      : (this.configs.multiSelectSize ?? 'minmax(1.5rem,min-content)');
+      : (this.configs.multiSelectSize ?? 'min-content');
   }
 
   protected get shouldDisplayMessageWhenEmpty(): boolean {

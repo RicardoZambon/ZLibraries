@@ -36,7 +36,7 @@ export abstract class DataGridDataset extends GridDataset {
     const sizes: string[] = [];
 
     if (this.configs.multiSelect) {
-      sizes.push(this.configs.multiSelectSize ?? 'minmax(1.5rem,min-content)');
+      sizes.push(this.configs.multiSelectSize ?? 'min-content');
     }
 
     sizes.push(...this.columns.map((col: IGridColumn) => col.size ?? 'minmax(0,1fr)'));
