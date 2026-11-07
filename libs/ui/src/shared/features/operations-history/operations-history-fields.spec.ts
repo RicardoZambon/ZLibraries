@@ -77,10 +77,10 @@ describe('operations history fields', () => {
 
   describe('humanizeFieldName', () => {
     it.each([
-      ['NomeCompleto', 'Nome completo'],
-      ['CadastroID', 'Cadastro ID'],
-      ['cpf', 'Cpf'],
-      ['RG', 'RG'],
+      ['FullName', 'Full name'],
+      ['RecordID', 'Record ID'],
+      ['vat', 'Vat'],
+      ['SKU', 'SKU'],
       ['Email1', 'Email 1'],
       ['HTMLContent', 'HTML content'],
     ])('should read %s as "%s"', (name: string, label: string) => {

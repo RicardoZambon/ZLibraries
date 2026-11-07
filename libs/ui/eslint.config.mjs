@@ -115,8 +115,9 @@ export default [
       // changes nothing, and disables the rule on that line.
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
       // The codebase mixes constructor injection and inject(). Converting the
-      // remainder is a job for , which needs
-      // Node 22+, not a hand edit of base classes their subclasses call super() on.
+      // remainder is a job for the Angular inject() migration
+      // (`ng generate @angular/core:inject`), not a hand edit of base classes
+      // their subclasses call super() on.
       '@angular-eslint/prefer-inject': 'warn',
     },
   },

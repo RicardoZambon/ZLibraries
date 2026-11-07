@@ -17,9 +17,10 @@ const SYSTEM_DARK_QUERY = '(prefers-color-scheme: dark)';
 /**
  * Owns the light/dark choice and writes it to `<html>`.
  *
- * The CSS switch is an attribute rather than `prefers-color-scheme` so that both sides keep a
- * choice: an application can leave the attribute unwritten and never have a dark theme, and a user
- * can pick light on a dark machine. Following the operating system is still a supported choice --
+ * The CSS switch is an attribute rather than `prefers-color-scheme` so that a user can pick light on
+ * a dark machine. Once this service exists it always writes the attribute; with nothing stored it
+ * keeps whatever the page already set, and falls back to light. Following the operating system is
+ * still a supported choice --
  * it is resolved here, in TypeScript, and written out as a concrete `light` or `dark`. That is why
  * `theme.css` holds one dark block instead of two that would have to be kept identical.
  *

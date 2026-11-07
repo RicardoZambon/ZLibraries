@@ -9,11 +9,11 @@
  * Two kinds of file consume this:
  *
  *   An application's global stylesheet imports it, and gets the framework plus the theme:
- *     @import '@zambon-dev/shared/styles/theme.css';
+ *     @import '@zambon-dev/ui/styles/theme.css';
  *
  *   A stylesheet that only uses `@apply` references it, and gets the theme without emitting the
  *   framework a second time:
- *     @reference '@zambon-dev/shared/styles/theme.css';
+ *     @reference '@zambon-dev/ui/styles/theme.css';
  *
  * That split is new in 4. In 3 the PostCSS plugin carried the config to every file it processed,
  * so `@apply` worked anywhere; in 4 a file is on its own unless it says where its theme comes from.
@@ -28,6 +28,15 @@
  */
 @import 'tailwindcss' theme(static);
 
+/*
+ * Component templates use Tailwind utilities, and Tailwind only generates the ones it finds in the
+ * files it scans. Its automatic detection skips node_modules, so an application would build none
+ * of the utilities this package's templates need. This points the scan at the package itself: from
+ * the published `styles/` folder, `..` is the package root with its compiled templates; in this
+ * workspace it is the package source.
+ */
+@source '..';
+
 @plugin '@tailwindcss/forms';
 
 /*
@@ -39,7 +48,7 @@
 
 /*
  * Tailwind 4 changed the default border colour from `gray-200` to `currentColor`, so every element
- * with a border and no colour of its own inherits the text colour. Across the Storybooks that was
+ * with a border and no colour of its own inherits the text colour. Across the Storybook that was
  * 615 elements going from a light grey hairline to solid black -- a change nothing in the build
  * reports, which is the case tools/style-snapshot exists to catch.
  *
@@ -59,7 +68,7 @@
 /*
  * Tailwind 4 dropped the preflight rule that gave buttons a pointer cursor; the base reset now
  * leaves them on the browser default. Restored, because every button in these libraries relied on
- * it -- 41 elements across the Storybooks lost their pointer.
+ * it -- 41 elements across the Storybook lost their pointer.
  */
 @layer base {
   button:not(:disabled),

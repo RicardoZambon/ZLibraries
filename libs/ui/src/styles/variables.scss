@@ -3,7 +3,7 @@
  *
  * These names are API: applications override them, and the CHANGELOG documents them. So they stay.
  * What changed is where their values come from. Each one now names a role in the semantic core
- * (see shared/styles/theme.css) instead of repeating a literal, which is what lets a theme move
+ * (see theme.css) instead of repeating a literal, which is what lets a theme move
  * them all at once. The component token is the contract; the core is the implementation.
  *
  * Wrapped in a cascade layer on purpose. Until now an application's override only won if its

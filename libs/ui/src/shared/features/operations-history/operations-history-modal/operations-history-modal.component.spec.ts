@@ -5,15 +5,15 @@ import { OperationsHistoryModalComponent } from './operations-history-modal.comp
 
 const UPDATE: IOperationsHistoryList = {
   entityID: 3,
-  entityName: 'Cadastros',
+  entityName: 'Customers',
   fields: [
     { isChanged: false, isSystem: true, name: 'ID', newValue: 3, oldValue: 3, type: 'key' },
-    { isChanged: true, isSystem: false, name: 'NomeCompleto', newValue: 'Beta', oldValue: 'Alpha', type: 'text' },
-    { isChanged: false, isSystem: false, name: 'Ativo', newValue: true, oldValue: true, type: 'boolean' },
+    { isChanged: true, isSystem: false, name: 'FullName', newValue: 'Beta', oldValue: 'Alpha', type: 'text' },
+    { isChanged: false, isSystem: false, name: 'Active', newValue: true, oldValue: true, type: 'boolean' },
   ],
   id: 10,
-  newValues: '{"NomeCompleto":"Beta"}',
-  oldValues: '{"NomeCompleto":"Alpha"}',
+  newValues: '{"FullName":"Beta"}',
+  oldValues: '{"FullName":"Alpha"}',
   operationType: 'Modified',
 };
 
@@ -46,8 +46,8 @@ describe(OperationsHistoryModalComponent.name, () => {
       {
         isChanged: true,
         isSystem: false,
-        label: 'Nome completo',
-        name: 'NomeCompleto',
+        label: 'Full name',
+        name: 'FullName',
         newValue: { isKey: false, text: 'Beta' },
         oldValue: { isKey: false, text: 'Alpha' },
       },
@@ -62,7 +62,7 @@ describe(OperationsHistoryModalComponent.name, () => {
 
     component.showAllFields.set(true);
 
-    expect(component.dataRows().map((row: any) => row.name)).toEqual(['NomeCompleto', 'Ativo']);
+    expect(component.dataRows().map((row: any) => row.name)).toEqual(['FullName', 'Active']);
     expect(component.systemRows().map((row: any) => row.name)).toEqual(['ID']);
     expect(component.dataRows()[1].newValue).toEqual({ isKey: true, text: 'OperationsHistory-Value-Yes' });
   });
@@ -72,7 +72,7 @@ describe(OperationsHistoryModalComponent.name, () => {
     fixture.componentRef.setInput('operation', { ...UPDATE, fields: undefined });
 
     expect(component.hasFullRecord()).toBe(false);
-    expect(component.dataRows().map((row: any) => row.name)).toEqual(['NomeCompleto']);
+    expect(component.dataRows().map((row: any) => row.name)).toEqual(['FullName']);
   });
 
   it('should tell creations and deletions apart', () => {
@@ -89,8 +89,8 @@ describe(OperationsHistoryModalComponent.name, () => {
 
   it('should still read the deprecated value inputs when no operation is bound', () => {
     create();
-    fixture.componentRef.setInput('oldValues', { NomeCompleto: 'Alpha' });
-    fixture.componentRef.setInput('newValues', { NomeCompleto: 'Beta' });
+    fixture.componentRef.setInput('oldValues', { FullName: 'Alpha' });
+    fixture.componentRef.setInput('newValues', { FullName: 'Beta' });
 
     expect(component.dataRows().map((row: any) => row.newValue.text)).toEqual(['Beta']);
   });
@@ -102,7 +102,7 @@ describe(OperationsHistoryModalComponent.name, () => {
     create();
     fixture.componentRef.setInput('operation', UPDATE);
 
-    expect(component.dataRows()[0].label).toBe('Cadastros-Field-NomeCompleto');
+    expect(component.dataRows()[0].label).toBe('Customers-Field-FullName');
   });
 
   it('should render the changes table without errors', () => {
