@@ -17,8 +17,11 @@ import {
   TabViewService,
 } from '@zambon-dev/ui/framework';
 import {
+  DataGridComponent,
   DataGridDataset,
   DataProviderService,
+  FormGroupComponent,
+  FormInputGroupComponent,
   FormService,
   IGridColumn,
   RibbonComponent,
@@ -83,6 +86,9 @@ class RecordDataProvider extends DataProviderService<RecordRow> {
     ButtonRefreshComponent,
     ButtonSaveComponent,
     ButtonViewsComponent,
+    DataGridComponent,
+    FormGroupComponent,
+    FormInputGroupComponent,
     ReactiveFormsModule,
     RibbonComponent,
     RibbonGroupComponent,
@@ -125,18 +131,22 @@ class RecordDataProvider extends DataProviderService<RecordRow> {
 
         <div right>
           <lib-ribbon-group label="View">
-            <form [formGroup]="filtersForm">
-              <framework-button-filters modalTitle="Filters" modalSize="xl">
-                <div class="grid gap-3 p-2">
-                  <input class="form-input" formControlName="search" placeholder="Search" aria-label="Search" />
-                  <input class="form-input" formControlName="status" placeholder="Status" aria-label="Status" />
-                </div>
-              </framework-button-filters>
-            </form>
+            <framework-button-filters modalTitle="Filters" modalSize="xl" [formGroup]="filtersForm">
+              <lib-form-group>
+                <lib-form-input-group controlName="search" label="Search" [maxLength]="200"></lib-form-input-group>
+                <lib-form-input-group controlName="status" label="Status" [maxLength]="50"></lib-form-input-group>
+              </lib-form-group>
+            </framework-button-filters>
             <framework-button-views></framework-button-views>
           </lib-ribbon-group>
         </div>
       </lib-ribbon>
+
+      <!-- The grid the buttons act on. Filter stays disabled until it has loaded once, and Open
+           acts on the selected row. -->
+      <div class="mt-4 h-64">
+        <lib-data-grid></lib-data-grid>
+      </div>
     </div>
   `,
 })

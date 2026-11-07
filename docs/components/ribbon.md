@@ -75,8 +75,6 @@ and keep their icons. This uses a CSS container query, which has one cost: a rib
 that sizes to its content (`inline-block`, a float, an `auto` grid column) collapses to nothing. Put
 it in a block, a grid cell or a stretched flex item.
 
-<!-- example: ribbon-content-sized-parent -->
-
 ## Accessibility
 
 - A ribbon button is a focusable element with `role="button"`. Enter and Space activate it.

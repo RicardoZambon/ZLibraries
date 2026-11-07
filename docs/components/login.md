@@ -10,6 +10,8 @@ storybook: shared-auth--login
 me" and a language picker, and signs in through `AuthenticationService`. `shared-login-layout` puts
 it on the application backdrop, or on a background picture you configure.
 
+<!-- example: login-card -->
+
 ## Usage
 
 Route `SharedAuthModule` at the root of your routes. It serves the layout and the form at `/login`:

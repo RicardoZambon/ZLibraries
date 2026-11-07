@@ -1,4 +1,4 @@
-import { Component, Injectable } from '@angular/core';
+import { AfterViewInit, Component, inject, Injectable } from '@angular/core';
 import { ButtonComponent, DataGridComponent, DataGridDataset, IGridColumn } from '@zambon-dev/ui/library';
 import { Observable, of } from 'rxjs';
 
@@ -50,4 +50,13 @@ class RecordsDataset extends DataGridDataset {
     </div>
   `,
 })
-export class DataGridChildListExample {}
+export class DataGridChildListExample implements AfterViewInit {
+  private readonly dataset = inject(DataGridDataset);
+
+  public ngAfterViewInit(): void {
+    // A lazy grid waits to be told whose rows to show. In a details view, ChildList does this when
+    // the record arrives; here the parent is record 1.
+    this.dataset.parentEntityId = 1;
+    this.dataset.refresh();
+  }
+}

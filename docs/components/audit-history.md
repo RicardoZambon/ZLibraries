@@ -12,6 +12,7 @@ api:
     ServicesHistoryDataset,
     OperationsHistoryDataset,
   ]
+storybook: shared-app-showcase--details-view
 ---
 
 The audit history shows every change made to a record. The left grid lists the **services**: each

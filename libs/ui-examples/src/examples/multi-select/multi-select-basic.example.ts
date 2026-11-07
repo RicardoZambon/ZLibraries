@@ -64,9 +64,17 @@ class SelectedRecordsDataset extends MultiSelectResultDataset {
       <lib-multi-select
         #multiSelect
         closeButtonText="Cancel"
+        [itemTemplate]="selectedItem"
         [size]="modalSize()"
         [title]="modalTitle()"
       ></lib-multi-select>
+
+      <!-- How one chosen record reads in the selection list. Without it the list shows only the
+           remove buttons. -->
+      <ng-template #selectedItem let-row="rowData">
+        <span class="font-medium">{{ row.name }}</span>
+        <span class="text-sm text-slate-500"> · {{ row.status }}</span>
+      </ng-template>
     </div>
   `,
 })

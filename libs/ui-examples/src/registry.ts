@@ -332,4 +332,12 @@ export const EXAMPLES: readonly ExampleEntry[] = [
     load: () => import('./examples/theme-switch/theme-switch-basic.example').then((m) => m.ThemeSwitchBasicExample),
     files: [file('theme-switch/theme-switch-basic.example.ts')],
   },
+  // Login
+  {
+    id: 'login-card',
+    title: 'Sign-in screen',
+    description: 'The sign-in card on its layout, as SharedAuthModule shows it at /login.',
+    load: () => import('./examples/login/login-card.example').then((m) => m.LoginCardExample),
+    files: [file('login/login-card.example.ts')],
+  },
 ];
