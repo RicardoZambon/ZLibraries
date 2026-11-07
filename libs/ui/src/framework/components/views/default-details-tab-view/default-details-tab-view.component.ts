@@ -25,6 +25,10 @@ function dataProviderFactory(route: ActivatedRoute): DataProviderService<any> {
   return <DataProviderService<any>>route.snapshot.data['dataProvider']();
 }
 
+/**
+ * Route shell for a record screen in a tab. Provides the record's data provider from the route,
+ * shows the record title and a views button, and opens an error modal when the record fails to load.
+ */
 @Component({
   selector: 'framework-default-details-tab-view',
   templateUrl: './default-details-tab-view.component.html',

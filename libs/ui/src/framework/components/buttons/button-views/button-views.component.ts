@@ -49,6 +49,11 @@ interface IViewAnswer {
   state: IViewState;
 }
 
+/**
+ * Ribbon dropdown that switches between the views of a details page. It builds its options from the
+ * child routes of `detailsViewRoute` and applies their `allowedActions`, `visibleWhen` and
+ * `enabledWhen` route data. Disabled for a record that is not saved yet.
+ */
 @Component({
   selector: 'framework-button-views',
   templateUrl: './button-views.component.html',
@@ -57,6 +62,7 @@ interface IViewAnswer {
 })
 export class ButtonViewsComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
+  /** Route of the details page whose child routes are the views. The button shows nothing while it is `null` (the default). */
   public readonly detailsViewRoute: InputSignal<ActivatedRouteSnapshot | null> = input<ActivatedRouteSnapshot | null>(
     null,
   );

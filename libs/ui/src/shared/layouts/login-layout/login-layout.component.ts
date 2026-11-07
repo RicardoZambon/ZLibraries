@@ -2,6 +2,10 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { APP_CONFIG, AppConfig } from '@zambon-dev/ui/framework';
 
+/**
+ * Page layout for the sign-in screen: the configured `loginBackgroundUrl` behind a router outlet
+ * and any projected content, which hold the login form.
+ */
 @Component({
   selector: 'shared-login-layout',
   templateUrl: './login-layout.component.html',

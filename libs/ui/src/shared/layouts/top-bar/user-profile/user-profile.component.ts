@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core
 import { ICurrentUserInfo } from '../../../models';
 import { AuthenticationService } from '../../../services';
 
+/** Signed-in user's picture, name and position in the top bar. Shows initials when there is no picture. */
 @Component({
   selector: 'shared-user-profile',
   templateUrl: './user-profile.component.html',

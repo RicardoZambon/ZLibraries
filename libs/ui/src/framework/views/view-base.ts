@@ -5,6 +5,10 @@ import { Subject } from 'rxjs';
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Root of every framework view. Tracks a `loading` flag for the view's spinner and buttons, and
+ * cleans up subscriptions when the view is destroyed.
+ */
 @Component({ template: '' })
 export abstract class ViewBase implements OnDestroy {
   //#region ViewChilds, Inputs, Outputs
@@ -21,9 +25,11 @@ export abstract class ViewBase implements OnDestroy {
   //#endregion
 
   //#region Properties
+  /** Whether the view is busy loading or saving. Its buttons are disabled while this is `true`. */
   public get loading(): boolean {
     return this.loadingState();
   }
+  /** Marks the view as busy (`true`) or idle (`false`). */
   public set loading(value: boolean) {
     this.loadingState.set(value);
   }

@@ -5,21 +5,25 @@ import { Tab } from '../../../../models';
 import { TabService } from '../../../../services';
 import { BaseButton } from '../../base-button';
 
+/**
+ * Ribbon button that opens the record selected in the surrounding data grid at `path`/ID. Enabled
+ * only when exactly one row is selected.
+ *
+ * @deprecated Use {@link ButtonOpenRecordComponent} instead.
+ */
 @Component({
   selector: 'framework-button-open-record-legacy',
   templateUrl: './button-open-record.component.html',
   imports: [RibbonButtonComponent],
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonOpenRecordLegacyComponent) }],
 })
-/**
- * @deprecated Use standalone {@link ButtonOpenRecordComponent} instead.
- * Migrate by replacing this legacy component with the standalone equivalent
- * and using inject() for dependency injection.
- */
 export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
+  /** Not used; kept so existing bindings still compile. */
   public readonly endpoint: InputSignal<string> = input('new');
+  /** Base URL placed before the selected record's ID. Defaults to `''`. */
   public readonly path: InputSignal<string> = input('');
+  /** Not used; kept so existing bindings still compile. */
   public readonly tabView: InputSignal<ITabView | undefined> = input<ITabView>();
   //#endregion
 
@@ -46,6 +50,7 @@ export class ButtonOpenRecordLegacyComponent extends BaseButton implements OnIni
   //#endregion
 
   //#region Public methods
+  /** Opens the selected record when exactly one row is selected, as a click on the button does. */
   public clicked(): void {
     if (this.dataGridDataset.hasSelectedRows && this.selectionCount() === 1) {
       const selectedKey: string = this.dataGridDataset.selectedRowKeys[0];

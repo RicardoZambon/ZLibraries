@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ButtonFiltersComponent } from '@zambon-dev/ui/framework';
 import { Subject } from 'rxjs';
 
+/**
+ * Base class for a ribbon filter panel. Subclasses build the filter form in `formSetup()` and place
+ * a `framework-button-filters` in their template, which applies the form to the grid.
+ */
 // No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
@@ -38,6 +42,7 @@ export abstract class FiltersBase implements OnInit, OnDestroy {
   //#endregion
 
   //#region Public methods
+  /** Fills the filter form with the given values and applies them through the filters button. */
   public setFilters(filters: { [key: string]: any }): void {
     this.filterForm.patchValue(filters);
 

@@ -14,13 +14,19 @@ import { ModalBase } from './modal-base';
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base for a modal that wraps a `lib-multi-editor`, for editing several child records at once.
+ * The parent record comes from the data provider, or from `overrideParentID` when set.
+ */
 @Component({ template: '' })
 export abstract class MultiEditorModal<TEntityModel> extends ModalBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   @ViewChild(MultiEditorComponent) protected multiEditor!: MultiEditorComponent;
 
+  /** Parent record ID to use instead of the data provider's entity. */
   @Input() public overrideParentID?: number;
 
+  /** Emits after the editor saves its changes. */
   @Output() public savedChanges: EventEmitter<any> = new EventEmitter();
   //#endregion
 
@@ -64,6 +70,7 @@ export abstract class MultiEditorModal<TEntityModel> extends ModalBase implement
   //#endregion
 
   //#region Public methods
+  /** Opens or closes the multi-editor. Opening it first scopes the editor to the current parent record. */
   public toggle(): void {
     if (!this.multiEditor.isOpen()) {
       this.updateParentID();

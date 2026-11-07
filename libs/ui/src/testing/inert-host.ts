@@ -17,6 +17,7 @@ import { Component, ViewContainerRef, viewChild } from '@angular/core';
 })
 export class InertHostComponent {
   //#region ViewChilds, Inputs, Outputs
+  /** Where the component under test is created, e.g. `host.outlet().createComponent(MyComponent)`. */
   public readonly outlet = viewChild.required('outlet', { read: ViewContainerRef });
   //#endregion
 }

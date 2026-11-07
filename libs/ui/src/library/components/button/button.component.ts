@@ -34,6 +34,7 @@ export class ButtonComponent {
   /** Native button type. `submit` works because the rendered button is inside the host's form. */
   public readonly type: InputSignal<'button' | 'submit' | 'reset'> = input<'button' | 'submit' | 'reset'>('button');
 
+  /** Disables the native button, so it cannot be clicked or focused. Defaults to `false`. */
   public readonly disabled: InputSignal<boolean> = input(false);
 
   /** Shows a spinner, announces `aria-busy` and blocks activation -- by the keyboard too. */

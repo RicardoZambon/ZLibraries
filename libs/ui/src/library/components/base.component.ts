@@ -5,6 +5,10 @@ import { Subject } from 'rxjs';
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Abstract base for the library's components. Gives subclasses a `destroy$` subject that emits
+ * and completes when the component is destroyed, for ending subscriptions with `takeUntil`.
+ */
 @Component({ template: '' })
 export abstract class BaseComponent implements OnDestroy {
   //#region ViewChilds, Inputs, Outputs

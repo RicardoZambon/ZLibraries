@@ -1,5 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+/**
+ * Replaces one substring in a string, for example `label | replace: '{0}': count`. Only the first
+ * occurrence is replaced; a `null` or `undefined` replacement becomes an empty string.
+ */
 @Pipe({
   name: 'replace',
 })

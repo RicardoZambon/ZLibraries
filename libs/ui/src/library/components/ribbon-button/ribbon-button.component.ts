@@ -23,6 +23,11 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { IRibbonButtonOption } from '../../models/ribbon-button-option';
 
+/**
+ * A large icon button for a `lib-ribbon-group`. With `options` it becomes a split button whose
+ * chevron opens a dropdown list; it can also show a spinner and a brief success, warning or
+ * failure state.
+ */
 @Component({
   selector: 'lib-ribbon-button',
   templateUrl: './ribbon-button.component.html',
@@ -40,16 +45,38 @@ export class RibbonButtonComponent implements OnDestroy {
   private readonly optionsDropdown: Signal<TemplateRef<unknown> | undefined> =
     viewChild<TemplateRef<unknown>>('optionsDropdown');
 
+  /** CSS class that colours the icon, the spinner and the chevron. Defaults to `text-primary-500`. */
   public readonly color: InputSignal<string> = input('text-primary-500');
+  /**
+   * Index of the option the main button triggers directly when `options` is set. With `-1`, the
+   * default, the main button opens the dropdown instead.
+   */
   public readonly defaultOption: InputSignal<number> = input(-1);
+  /** Disables the button and its dropdown. Defaults to `false`. */
   public readonly disabled: InputSignal<boolean> = input(false);
+  /** Font Awesome icon class, for example `fa-save`. */
   public readonly icon: InputSignal<string | undefined> = input<string>();
+  /** Size of the icon: `small` or `large`. Defaults to `large`. */
   public readonly iconSize: InputSignal<'small' | 'large'> = input<'small' | 'large'>('large');
+  /** Text under the icon, as a translation key. Hidden when the ribbon is narrow. Defaults to empty. */
   public readonly label: InputSignal<string> = input('');
+  /** Shows a spinner in place of the icon and blocks clicks while `true`. Defaults to `false`. */
   public readonly loading: ModelSignal<boolean> = model(false);
+  /**
+   * Entries of the dropdown list. When set, the button gets a chevron that opens the list. The
+   * button is disabled when none of the options is visible. Defaults to none.
+   */
   public readonly options: InputSignal<IRibbonButtonOption[]> = input<IRibbonButtonOption[]>([]);
+  /**
+   * Hover text, shown as given; the translated label is shown on hover when it is empty. Also
+   * names the button for screen readers, translated, when there is no label. Defaults to empty.
+   */
   public readonly tooltip: InputSignal<string> = input('');
 
+  /**
+   * Emits when the button is activated. Carries the `id` of the chosen option, or `undefined` for
+   * a button without options.
+   */
   public readonly action: OutputEmitterRef<string | undefined> = output<string | undefined>();
   //#endregion
 
@@ -193,6 +220,7 @@ export class RibbonButtonComponent implements OnDestroy {
   //#endregion
 
   //#region Public methods
+  /** Ends the loading state and shows the given result on the button for one second. */
   public finishLoading(status: 'failure' | 'warning' | 'success'): void {
     this.loading.set(false);
     this.status.set(status);
@@ -202,6 +230,7 @@ export class RibbonButtonComponent implements OnDestroy {
     }, 1000);
   }
 
+  /** Puts the button in its loading state, the same as setting `loading` to `true`. */
   public startLoading(): void {
     this.loading.set(true);
   }

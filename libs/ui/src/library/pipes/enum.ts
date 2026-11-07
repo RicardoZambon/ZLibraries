@@ -2,6 +2,10 @@ import { inject, Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
+/**
+ * Turns a TypeScript enum into a list of `{ value, display }` options, where `display` is an
+ * observable of the translated enum key. Use it to fill a select from an enum.
+ */
 @Pipe({
   name: 'enumTranslate',
 })

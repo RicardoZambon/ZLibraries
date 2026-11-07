@@ -9,6 +9,11 @@ export type ExportFormat = 'xlsx' | 'pdf' | 'csv' | 'xml' | 'mhtml';
 
 export const MaxExportRows = 50000;
 
+/**
+ * Ribbon button that exports the surrounding data grid, with its current filters, as Excel, PDF,
+ * CSV, XML or MHTML and downloads the file. Disabled when the grid has more than
+ * `MaxExportRows` rows.
+ */
 @Component({
   selector: 'framework-button-export',
   templateUrl: './button-export.component.html',
@@ -18,12 +23,11 @@ export const MaxExportRows = 50000;
 export class ButtonExportComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   /**
-   * Index into `options` exported when the main button is clicked, defaulting to Excel.
-   * `RibbonButtonComponent` treats -1 as "no default" and merely toggles the dropdown, which left
-   * Export needing two clicks for the common case while Save (which sets 0) needed one. Set -1 to
-   * restore the dropdown-only behaviour.
+   * Index of the format in `options` that the main button exports. Defaults to `0` (Excel); `-1`
+   * makes the main button only open the format dropdown.
    */
   public readonly defaultOption: InputSignal<number> = input(0);
+  /** File name used when the server response does not name the file. Defaults to `export`. */
   public readonly fileBaseName: InputSignal<string> = input('export');
   //#endregion
 

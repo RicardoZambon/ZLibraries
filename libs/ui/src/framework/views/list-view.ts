@@ -6,6 +6,10 @@ import { TabViewList } from './tabview-list';
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * List screen for the child records of the entity held by the tab's data provider. Scopes the grid,
+ * and the multi-select result dataset when one is provided, to that entity and loads the rows.
+ */
 @Component({ template: '' })
 export abstract class ListView<TEntityModel, TListModel> extends TabViewList<TListModel> implements OnInit {
   //#region ViewChilds, Inputs, Outputs

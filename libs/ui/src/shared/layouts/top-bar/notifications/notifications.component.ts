@@ -17,6 +17,10 @@ import { INotification } from '../../../models';
 import { NotificationsService } from '../../../services';
 import { ButtonComponent } from '@zambon-dev/ui/library';
 
+/**
+ * Bell with an unread count that opens a list of notifications. Clicking one marks it as read
+ * and follows its link: external URLs open in a new window, others navigate in the app.
+ */
 @Component({
   selector: 'shared-notifications',
   templateUrl: './notifications.component.html',
@@ -25,6 +29,7 @@ import { ButtonComponent } from '@zambon-dev/ui/library';
 })
 export class NotificationsComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
+  /** The open notifications panel; clicks inside it do not close it. */
   public readonly dropdown: Signal<ElementRef<HTMLDivElement> | undefined> =
     viewChild<ElementRef<HTMLDivElement>>('dropdown');
   //#endregion
@@ -54,14 +59,17 @@ export class NotificationsComponent implements OnInit {
   //#endregion
 
   //#region Event handlers
+  /** Opens or closes the notifications panel. */
   public onDropdownClick(): void {
     this.showDropdown.update((isShown: boolean) => !isShown);
   }
 
+  /** Marks every notification as read. */
   public onMarkAllAsRead(): void {
     this.notificationsService.markAllAsRead();
   }
 
+  /** Marks the notification as read, closes the panel and follows its `callToActionUrl`, if any. */
   public onNotificationClick(notification: INotification): void {
     this.notificationsService.markAsRead(notification);
     this.showDropdown.set(false);

@@ -4,6 +4,10 @@ import { TabService } from './tab.service';
 
 const ADMINISTRATIVE_MASTER_ACTION = 'AdministrativeMaster';
 
+/**
+ * Base for the app's authentication service. Reads the stored session token and checks which
+ * actions the signed-in user may perform. The app extends it and supplies `getActions()`.
+ */
 export abstract class AuthService {
   //#region ViewChilds, Inputs, Outputs
   //#endregion
@@ -14,16 +18,21 @@ export abstract class AuthService {
   //#endregion
 
   //#region Properties
+  /** Name of the action that grants every permission in `checkActionIsAllowed()`. */
   public abstract get adminAction(): string;
+  /** `true` when a username is stored for the session. */
   public get isAuthenticated(): boolean {
     return this.username !== null;
   }
+  /** `true` when a token is stored and it has expired. */
   public get isTokenExpired(): boolean {
     return this.token !== null && this.jwtHelper.isTokenExpired(this.token);
   }
+  /** The stored access token, from local or session storage, or `null`. */
   public get token(): string | null {
     return localStorage.getItem('token') ?? sessionStorage.getItem('token');
   }
+  /** ID of the signed-in user. The base class always returns `0`; override it to supply the real ID. */
   public get userID(): number | undefined {
     return 0;
   }
@@ -49,6 +58,10 @@ export abstract class AuthService {
   //#endregion
 
   //#region Public methods
+  /**
+   * Emits whether the user may perform an action. Holding `adminAction` allows every action.
+   * The user's actions are loaded once and cached.
+   */
   public checkActionIsAllowed(actionToCheck: string): Observable<boolean> {
     if (!this.isActionsCacheInitialized) {
       this.isActionsCacheInitialized = true;
@@ -65,6 +78,11 @@ export abstract class AuthService {
     );
   }
 
+  /**
+   * Emits, for each action in `actionsToCheck`, whether the user may perform it.
+   *
+   * @param checkForAdministrativeMaster Whether holding `AdministrativeMaster` allows every action. Defaults to `true`.
+   */
   public checkActionsAreAllowed(actionsToCheck: string[], checkForAdministrativeMaster = true): Observable<boolean[]> {
     if (!this.isActionsCacheInitialized) {
       this.isActionsCacheInitialized = true;
@@ -89,6 +107,7 @@ export abstract class AuthService {
     );
   }
 
+  /** Clears local and session storage, closes every tab and forgets the cached actions. */
   public signOut(): void {
     localStorage.clear();
     sessionStorage.clear();
@@ -127,6 +146,7 @@ export abstract class AuthService {
   //#endregion
 
   //#region Abstract methods
+  /** Loads the names of the actions the signed-in user may perform. */
   public abstract getActions(): Observable<string[]>;
   //#endregion
 }

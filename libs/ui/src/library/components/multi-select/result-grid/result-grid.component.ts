@@ -6,6 +6,10 @@ import { MultiSelectResultDataset } from '../../../services/datasets/multi-selec
 import { BaseComponent } from '../../base.component';
 import { DataGridDataset } from '../../../services';
 
+/**
+ * The selection list inside `lib-multi-select`. Shows the records of the `MultiSelectResultDataset`
+ * with a remove button on each, and loads more rows as the user scrolls to the end.
+ */
 @Component({
   selector: 'lib-multi-select-result-grid',
   templateUrl: './result-grid.component.html',
@@ -17,7 +21,9 @@ import { DataGridDataset } from '../../../services';
 })
 export class MultiSelectResultGridComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
+  /** Disables the remove buttons. Defaults to `false`. */
   public readonly isDisabled: InputSignal<boolean> = input(false);
+  /** Template that renders one record. It receives the record as `rowData`. */
   public readonly template: InputSignal<TemplateRef<any> | undefined> = input<TemplateRef<any>>();
   //#endregion
 
@@ -47,6 +53,7 @@ export class MultiSelectResultGridComponent extends BaseComponent implements OnI
   //#endregion
 
   //#region Event handlers
+  /** Marks the record at the given displayed row index for removal and unticks it in the search grid. */
   public onItemRemoved(rowIndex: number): void {
     const id: any = this.resultDataset.displayedIDs[rowIndex];
 

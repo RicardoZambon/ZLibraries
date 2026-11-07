@@ -3,23 +3,28 @@ import { DataGridDataset, MultiSelectResultDataset } from '@zambon-dev/ui/librar
 import { takeUntil } from 'rxjs';
 import { ViewBase } from './view-base';
 
-/**
- * @deprecated Use standalone {@link ChildList} instead. Migrate by extending ChildList
- * and using standalone component imports with inject() for dependency injection.
- */
 // No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base for a grid of child records whose parent is passed in through `entityId`. Follows the
+ * grid's loading and selection.
+ *
+ * @deprecated Use {@link ChildList} instead. Migrate by extending ChildList
+ * and using standalone component imports with inject() for dependency injection.
+ */
 @Component({ template: '' })
 export abstract class ChildListLegacy extends ViewBase implements OnInit {
   private _entityId?: number;
 
   protected selectionCount = 0;
 
+  /** ID of the parent record. Setting it scopes the grid to that record and loads its rows if none are loaded yet. */
   get entityId(): number | undefined {
     return this._entityId;
   }
+  /** Sets the parent record; see the getter. */
   @Input() set entityId(value: number | undefined) {
     if (this._entityId !== value) {
       this._entityId = value;
@@ -35,6 +40,7 @@ export abstract class ChildListLegacy extends ViewBase implements OnInit {
     }
   }
 
+  /** Asks the list to disable its actions. Only takes effect where the subclass template reads it. Defaults to `false`. */
   @Input() disabled = false;
 
   protected dataGridDataset: DataGridDataset = inject(DataGridDataset);
@@ -62,6 +68,7 @@ export abstract class ChildListLegacy extends ViewBase implements OnInit {
     });
   }
 
+  /** Called when the grid selection changes. Updates the selection count; subclasses may extend it. */
   selectedRowChanged(): void {
     this.selectionCount = this.dataGridDataset.selectedRowKeys.length;
   }

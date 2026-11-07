@@ -24,6 +24,10 @@ const SCROLL_EPSILON = 1;
 /** How much of the visible strip one press of a scroll button travels. */
 const SCROLL_BUTTON_STEP = 0.8;
 
+/**
+ * The app's tab strip. Lists the open tabs with their breadcrumbs, scrolls when they overflow, and
+ * opens a tab for the list or record route the app starts on.
+ */
 @Component({
   selector: 'framework-tabs',
   templateUrl: './tabs.component.html',

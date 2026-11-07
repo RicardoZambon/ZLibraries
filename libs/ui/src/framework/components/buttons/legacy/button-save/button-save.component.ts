@@ -8,23 +8,27 @@ import { LegacySubViewForm, LegacyTabViewDetails } from '../../../../views';
 import { ErrorModalComponent } from '../../../modals/error-modal/error-modal.component';
 import { BaseButton } from '../../base-button';
 
+/**
+ * Ribbon button that saves a legacy sub-view form, with Save, Save and close, and Save and new
+ * options. Does nothing without `form`.
+ *
+ * @deprecated Use {@link ButtonSaveComponent} instead.
+ */
 @Component({
   selector: 'framework-button-save-legacy',
   templateUrl: './button-save.component.html',
   imports: [ErrorModalComponent, RibbonButtonComponent],
   providers: [{ provide: RibbonGroupChild, useExisting: forwardRef(() => ButtonSaveLegacyComponent) }],
 })
-/**
- * @deprecated Use standalone {@link ButtonSaveComponent} instead.
- * Migrate by replacing this legacy component with the standalone equivalent
- * and using inject() for dependency injection.
- */
 export class ButtonSaveLegacyComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   private readonly errorModal: Signal<ErrorModalComponent | undefined> = viewChild(ErrorModalComponent);
 
+  /** Index of the option in `options` that the main button runs. Defaults to `0` (Save). */
   public readonly defaultOption: InputSignal<number> = input(0);
+  /** Legacy form to save. The button is enabled only while it is in edit mode. */
   public readonly form: InputSignal<LegacySubViewForm | undefined> = input<LegacySubViewForm>();
+  /** Details view to mark as loading while saving. Its New button runs for Save and new. */
   public readonly tabView: InputSignal<LegacyTabViewDetails | undefined> = input<LegacyTabViewDetails>();
   //#endregion
 
@@ -98,6 +102,7 @@ export class ButtonSaveLegacyComponent extends BaseButton {
   //#endregion
 
   //#region Public methods
+  /** Stops the spinner, clears the tab view's loading flag and briefly shows the outcome. */
   public override finishLoading(status: 'failure' | 'warning' | 'success'): void {
     this.setTabViewLoading(false);
     super.finishLoading(status);

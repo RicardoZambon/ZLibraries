@@ -4,6 +4,10 @@ import { Router, RouteReuseStrategy } from '@angular/router';
 import { CustomReuseStrategy } from './custom-reuse-strategy';
 import { ITab } from '../models';
 
+/**
+ * Keeps the app's open tabs. Each tab has a history stack of the views opened in it; the service
+ * opens, focuses, navigates and closes tabs, and keeps the router's view cache in step.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -27,16 +31,19 @@ export class TabService {
   //#endregion
 
   //#region Properties
+  /** The active tab's history stack, root first. Empty when no tab is open. */
   public get activeTabHistory(): ITab[] {
     this.revision();
     return this.openTabs[this.activeTabIndex] ?? [];
   }
 
+  /** The root entry of every open tab, in strip order. */
   public get activeTabs(): ITab[] {
     this.revision();
     return this.openTabs.map((tabs: ITab[]) => tabs[0]) ?? [];
   }
 
+  /** The title each open tab shows: that of the entry it was last navigated to, in strip order. */
   public get activeTabsDisplayTitles(): (string | undefined)[] {
     this.revision();
     return this.openTabs.map((tabs: ITab[], i: number) => {
@@ -45,6 +52,7 @@ export class TabService {
     });
   }
 
+  /** Whether each open tab's title is still loading, in strip order. */
   public get activeTabsLoadingStates(): boolean[] {
     this.revision();
     return this.openTabs.map((tabs: ITab[], i: number) => {
@@ -77,12 +85,14 @@ export class TabService {
   //#endregion
 
   //#region Public methods
+  /** Focuses a tab, given its root entry, and navigates to the view it was showing. */
   public activateTab(tab: ITab): void {
     this.activeTabIndex = this.activeTabs.indexOf(tab);
     this.touched();
     this.navigateTo(this.currentViewOf(this.activeTabIndex));
   }
 
+  /** Navigates to `url` while keeping the active tab's current view cached under it. */
   public cloneCurrentTab(url: string): void {
     if (!this.activeTab) {
       return;
@@ -98,10 +108,12 @@ export class TabService {
     this.navigateTo(tab, url);
   }
 
+  /** Closes the active tab. */
   public closeActiveTab(): void {
     this.closeTab(this.activeTabIndex);
   }
 
+  /** Closes every tab and clears the view cache. */
   public closeAllTabs(): void {
     this.openTabs = [];
     this.touched();
@@ -112,6 +124,7 @@ export class TabService {
     this.customReuseStrategy.clearAllHandles();
   }
 
+  /** Closes the tab at `index`. Closing the active tab focuses a neighbour, or goes home when none is left. */
   public closeTab(index: number): void {
     if (index > this.activeTabs.length - 1 || this.activeTabs.length === 0) {
       return;
@@ -149,10 +162,16 @@ export class TabService {
     });
   }
 
+  /** Whether `tab`, a root entry, belongs to the active tab. */
   public isTabActive(tab: ITab): boolean {
     return this.activeTabs[this.activeTabIndex] === tab;
   }
 
+  /**
+   * Whether the active tab is showing `url`.
+   *
+   * @param checkForClones Also match URLs cloned from the current view. Defaults to `false`.
+   */
   public isUrlActive(url: string, checkForClones = false): boolean {
     if (!this.activeTab) {
       return false;
@@ -169,12 +188,14 @@ export class TabService {
     return false;
   }
 
+  /** Whether any tab has `url` anywhere in its history. */
   public isUrlOpen(url: string): boolean {
     const tabs: ITab[] = this.openTabs.flatMap((tabs: ITab[]) => tabs);
 
     return this.isTabExists(tabs, url);
   }
 
+  /** Goes back one step in the active tab's history, or closes the tab when it has no earlier step. */
   public navigateBackOrCloseActiveTab(): void {
     if (!this.activeTab || this.activeTab.length === 0) {
       return;
@@ -188,6 +209,10 @@ export class TabService {
     }
   }
 
+  /**
+   * Opens a view in the active tab, adding it to the tab's history. Focuses another tab instead when
+   * that one already shows the same record or URL.
+   */
   public navigateCurrentTab(tab: ITab): void {
     if (!this.activeTab) {
       return;
@@ -239,6 +264,7 @@ export class TabService {
     this.navigateTo(tab, clonedUrl);
   }
 
+  /** Goes back to an earlier entry of the active tab, dropping the entries after it. */
   public navigateCurrentTabBack(tab: ITab): void {
     if (!this.activeTab) {
       return;
@@ -281,6 +307,11 @@ export class TabService {
     this.navigateTo(tab);
   }
 
+  /**
+   * Navigates the router to a tab entry, or to the home URL when `tab` is undefined.
+   *
+   * @param clonedUrl URL to navigate to instead of the entry's own URL.
+   */
   public navigateTo(tab: ITab | undefined, clonedUrl?: string): void {
     let url: string = tab?.url ?? '/';
     if (clonedUrl) {
@@ -299,6 +330,7 @@ export class TabService {
     });
   }
 
+  /** Opens a view in a new tab, or focuses the tab that already shows that URL or record. */
   public openTab(tab: ITab): void {
     // 1. Exact URL match at top-of-stack — focus that tab.
     const exactMatchIndex: number = this.findTabIndexByCurrentView(tab.url);
@@ -333,6 +365,10 @@ export class TabService {
     this.navigateTo(tab);
   }
 
+  /**
+   * Replaces the sub-view of the active tab: keeps its history up to the entry at `baseUrl`, then adds
+   * `tab` when given, and navigates to the result.
+   */
   public replaceCurrentTabSubView(baseUrl: string, tab?: ITab): void {
     if (!this.activeTab || this.activeTab.length === 0) {
       return;
@@ -373,6 +409,11 @@ export class TabService {
     this.navigateTo(current[current.length - 1]);
   }
 
+  /**
+   * Changes the URL of the active tab's current entry without navigating, such as after a new record is saved.
+   *
+   * @param updateLocation Whether to also replace the browser address. Defaults to `true`.
+   */
   public redirectCurrentTab(url: string, updateLocation = true): void {
     if (!this.activeTab) {
       return;
@@ -393,10 +434,12 @@ export class TabService {
     }
   }
 
+  /** Makes the next navigation to `fromUrl` reuse the cached view of `toUrl`. */
   public setRouteRedirect(fromUrl: string, toUrl: string): void {
     this.customReuseStrategy.redirects[fromUrl] = toUrl;
   }
 
+  /** Sets the title of the active tab's root entry. */
   public updateActiveTabRootTitle(title: string): void {
     if (this.activeTab && this.activeTab.length > 0) {
       this.activeTab[0].title = title;
@@ -404,6 +447,7 @@ export class TabService {
     }
   }
 
+  /** Sets the title of every tab entry whose URL is `url`. */
   public updateTabTitle(url: string, title: string): void {
     this.openTabs
       .flatMap((tabs: ITab[]) => tabs)

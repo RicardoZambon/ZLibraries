@@ -5,6 +5,7 @@ import { IListParameters } from '@zambon-dev/ui/library';
 import { Observable } from 'rxjs';
 import { IOperationsHistoryList } from '../models';
 
+/** Loads the field-level operations of one change set from the audit API. */
 @Injectable({
   providedIn: 'root',
 })
@@ -27,6 +28,10 @@ export class OperationsHistoryService {
   //#endregion
 
   //#region Public methods
+  /**
+   * Lists the operations of change set `serviceHistoryID` on the record `entityID` under the API
+   * controller `controllerName`, filtered and paged by `parameters`.
+   */
   public list(
     controllerName: string,
     entityID: number,

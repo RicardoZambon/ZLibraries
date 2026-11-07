@@ -3,6 +3,11 @@ import { EventEmitter, Injectable, signal, WritableSignal } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
 
+/**
+ * Holds the state of one form view: the form group, the loaded model, view or edit mode and the
+ * loading flag. Provide it on the view; the library's form fields read it to decide whether to
+ * show inputs or read-only values.
+ */
 @Injectable()
 export class FormService {
   //#region ViewChilds, Inputs, Outputs

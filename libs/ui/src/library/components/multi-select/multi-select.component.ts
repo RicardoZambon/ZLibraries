@@ -21,6 +21,11 @@ import { ModalComponent } from '../modal/modal.component';
 import { MultiSelectResultGridComponent } from './result-grid/result-grid.component';
 import { ButtonComponent } from '../button/button.component';
 
+/**
+ * A modal for picking many records at once: a searchable grid on one side and the current
+ * selection on the other. It reads both lists from the `DataGridDataset` and
+ * `MultiSelectResultDataset` provided around it, and saves through the result dataset on Confirm.
+ */
 @Component({
   selector: 'lib-multi-select',
   templateUrl: './multi-select.component.html',
@@ -38,6 +43,7 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
+  /** Template that renders one selected record in the selection list. It receives the record as `rowData`. */
   public readonly itemTemplate: InputSignal<TemplateRef<unknown> | undefined> = input<TemplateRef<unknown>>();
   //#endregion
 
@@ -148,10 +154,12 @@ export class MultiSelectComponent extends ModalComponent implements OnInit {
   //#endregion
 
   //#region Public methods
+  /** Closes the modal if it is open, without saving. */
   public override closeModal(): void {
     this.modal()?.closeModal();
   }
 
+  /** Opens or closes the modal. Opening clears the search and reloads the current selection. */
   public override toggleModal(): void {
     this.modal()?.toggleModal();
 

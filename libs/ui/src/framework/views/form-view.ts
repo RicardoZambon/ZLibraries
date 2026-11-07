@@ -8,6 +8,10 @@ import { TabViewBase } from './tabview-base';
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base for a record's form screen. Builds the form from `formSetup()`, loads the record from the
+ * data provider into `FormService`, and starts in edit mode when the record is new.
+ */
 @Component({ template: '' })
 export abstract class FormView<TEntityModel> extends TabViewBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs

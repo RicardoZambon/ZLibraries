@@ -16,6 +16,10 @@ import { SidebarService } from '../../services';
 import { BaseComponent } from '../base.component';
 import { SidebarItemComponent } from '../sidebar-item/sidebar-item.component';
 
+/**
+ * The application's navigation sidebar. Loads its menus through `SidebarService`, groups them
+ * into regions and closes itself on navigation, Escape or a click outside it on small screens.
+ */
 @Component({
   selector: 'lib-sidebar',
   templateUrl: './sidebar.component.html',
@@ -125,6 +129,7 @@ export class SidebarComponent extends BaseComponent implements AfterViewInit, On
   //#endregion
 
   //#region Public methods
+  /** Toggles the sidebar between collapsed and expanded. Collapsing also clears the selected menus. */
   public collapse(): void {
     this.sidebarService.isCollapsed = !this.sidebarService.isCollapsed;
     this.sidebarService.isActive = false;

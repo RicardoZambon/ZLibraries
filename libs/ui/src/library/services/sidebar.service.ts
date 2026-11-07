@@ -3,6 +3,10 @@ import { map, Observable, take, tap } from 'rxjs';
 import { ISidebarProfile, SidebarMenu, SidebarMenuOpenMode, toSidebarMenuOpenMode } from '../models';
 import { HttpErrorResponse } from '@angular/common/http';
 
+/**
+ * Loads and tracks the menus of `lib-sidebar`: the tree, the selected item and the collapsed and
+ * open states. Extend it and implement `loadMenus`, `getMenuFromUrl` and `getUserProfile`.
+ */
 @Injectable({
   providedIn: 'root',
 })

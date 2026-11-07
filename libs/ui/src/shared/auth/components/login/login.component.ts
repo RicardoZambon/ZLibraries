@@ -8,6 +8,10 @@ import { finalize, tap } from 'rxjs';
 import { AuthenticationService } from '../../../services';
 import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
 
+/**
+ * Sign-in form with username, password and "remember me". On success it navigates to the
+ * `returnUrl` query parameter, or to `/`; on failure it shows the error and clears the password.
+ */
 @Component({
   selector: 'shared-login',
   templateUrl: './login.component.html',
@@ -16,6 +20,7 @@ import { LanguageSelectorComponent } from '../language-selector/language-selecto
 })
 export class LoginComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
+  /** The username field, focused again after a failed sign-in. */
   public readonly username: Signal<ElementRef<HTMLInputElement> | undefined> =
     viewChild<ElementRef<HTMLInputElement>>('username');
   //#endregion
@@ -65,6 +70,7 @@ export class LoginComponent implements OnInit {
   //#endregion
 
   //#region Event handlers
+  /** Validates the form and signs in with the entered credentials. */
   public onSubmit(): void {
     this.form.markAllAsTouched();
 

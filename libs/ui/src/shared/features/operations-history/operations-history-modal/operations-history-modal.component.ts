@@ -32,6 +32,10 @@ interface IOperationsHistoryRow {
   oldValue: IOperationsHistoryValue;
 }
 
+/**
+ * Modal listing what one operation changed, field by field, with the value before and after.
+ * It can also list the unchanged and system fields when the backend sends the full record.
+ */
 @Component({
   selector: 'shared-operations-history-modal',
   templateUrl: './operations-history-modal.component.html',
@@ -43,12 +47,16 @@ export class OperationsHistoryModalComponent extends ModalBase {
   private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
   /**
+   * Values after the change, as an object of field names to values.
+   *
    * @deprecated Bind `operation` instead, which also carries the whole record. Read only when
    * `operation` is not bound.
    */
   public readonly newValues: InputSignal<object | null | undefined> = input<object | null>();
 
   /**
+   * Values before the change, as an object of field names to values.
+   *
    * @deprecated Bind `operation` instead, which also carries the whole record. Read only when
    * `operation` is not bound.
    */
@@ -71,7 +79,7 @@ export class OperationsHistoryModalComponent extends ModalBase {
   //#endregion
 
   //#region Properties
-  /** Delegates to the inner modal; a signal query, so it re-runs once that child resolves. */
+  /** Whether the modal is open. */
   public readonly isModalShown: Signal<boolean> = computed(() => this.modal()?.isOpen() ?? false);
 
   /** The operation shown, built from the deprecated inputs when `operation` is not bound. */
@@ -142,6 +150,7 @@ export class OperationsHistoryModalComponent extends ModalBase {
   //#endregion
 
   //#region Public methods
+  /** Opens the modal when it is closed, and closes it when it is open. */
   public toggle(): void {
     this.modal()?.toggleModal();
   }

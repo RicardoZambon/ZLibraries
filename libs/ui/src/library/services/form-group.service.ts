@@ -1,5 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 
+/** An empty service with no members. Nothing in the package uses it. */
 @Injectable()
 export class FormGroupService {
   //#region ViewChilds, Inputs, Outputs

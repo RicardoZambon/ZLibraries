@@ -8,6 +8,10 @@ import { ModalBase } from './modal-base';
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base for a modal that shows one record in a form. The record is loaded through `loadData()` each
+ * time the modal opens.
+ */
 @Component({ template: '' })
 export abstract class ViewModal<TEntityModel> extends ModalBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs
@@ -58,6 +62,11 @@ export abstract class ViewModal<TEntityModel> extends ModalBase implements OnIni
   //#endregion
 
   //#region Public methods
+  /**
+   * Opens the modal and loads the record, or closes it when it is open.
+   *
+   * @param entityID ID of the record to load. Passed to `loadData()`; ignored when closing.
+   */
   public toggle(entityID?: number): void {
     this.formService.model = null;
     this.formService.loading = true;

@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { APP_CONFIG, AppConfig } from '@zambon-dev/ui/framework';
 
+/**
+ * Badge naming the configured environment, e.g. `DEV`, `QA` or `STG`, each in its own colour.
+ * Hidden in `PROD` and when no environment is configured.
+ */
 @Component({
   selector: 'shared-environment-badge',
   templateUrl: './environment-badge.component.html',

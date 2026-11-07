@@ -3,6 +3,7 @@ import { DataGridDataset, RibbonButtonComponent, RibbonGroupChild } from '@zambo
 import { takeUntil } from 'rxjs';
 import { BaseButton } from '../base-button';
 
+/** Ribbon button that reloads the surrounding data grid and spins until the load finishes. */
 @Component({
   selector: 'framework-button-refresh',
   templateUrl: './button-refresh.component.html',

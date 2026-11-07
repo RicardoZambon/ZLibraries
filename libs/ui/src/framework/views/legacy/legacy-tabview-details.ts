@@ -7,25 +7,30 @@ import { Tab } from '../../models';
 import { TabService } from '../../services';
 import { LegacyTabViewBase } from './legacy-tabview-base';
 
-/**
- * @deprecated Use standalone {@link TabViewBase} with {@link DefaultDetailsTabViewComponent} pattern instead.
- * Migrate by extending TabViewBase and composing detail/history views as child routes
- * with standalone component imports.
- */
 // No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base for a legacy record screen inside a tab. Loads the record from the route's `id`, switches
+ * between its `details` and `history` sub-views, and keeps the tab title and URL in sync.
+ *
+ * @deprecated Use {@link TabViewBase} with the {@link DefaultDetailsTabViewComponent} pattern instead.
+ * Migrate by extending TabViewBase and composing detail/history views as child routes
+ * with standalone component imports.
+ */
 @Component({ template: '' })
 export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements AfterViewInit, OnInit {
   //#region ViewChilds, Inputs, Outputs
   // A forward reference: the legacy buttons import the views barrel, so this class is defined before
   // ButtonNewLegacyComponent -- and in the published bundle it sits further down the file, where
   // reading it eagerly throws the moment a JIT runtime such as Jest loads the package.
+  /** The view's New button, when its template has one. */
   @ViewChild(forwardRef(() => ButtonNewLegacyComponent)) public buttonNew!: ButtonNewLegacyComponent;
   //#endregion
 
   //#region Variables
+  /** Title of the record, shown on its tab. Cleared while the record loads. */
   public override title = '';
 
   protected defaultView = 'details';
@@ -37,10 +42,12 @@ export abstract class LegacyTabViewDetails extends LegacyTabViewBase implements 
   //#endregion
 
   //#region Properties
+  /** Whether the record is loading. Writes are mirrored to `FormService.loading`. */
   public override get loading(): boolean {
     return super.loading;
   }
 
+  /** Marks the view and its form as busy (`true`) or idle (`false`). */
   public override set loading(value: boolean) {
     super.loading = value;
     this.formService.loading = value;
