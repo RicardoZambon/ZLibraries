@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ZLibraries</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Angular 22 components and an application shell: form controls, data grid, modals, ribbon, sidebar, tabbed navigation and authentication, themed with Tailwind CSS 4."
+    />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <script>
+      // Sets the theme before the first paint, so a dark-theme reader never sees a light flash.
+      // 'zambon-theme' is THEME_STORAGE_KEY from @zambon-dev/ui/shared. With nothing stored, the
+      // site follows the operating system.
+      (function () {
+        try {
+          var p = localStorage.getItem('zambon-theme') || 'system';
+          if (p === 'system') p = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          document.documentElement.dataset.theme = p;
+        } catch (e) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <docs-root></docs-root>
+  </body>
+</html>

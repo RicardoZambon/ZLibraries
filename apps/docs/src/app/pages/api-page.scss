@@ -1,0 +1,61 @@
+.api-page {
+  max-width: 56rem;
+}
+
+.doc-header {
+  margin-bottom: 2rem;
+
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+  }
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--color-accent);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-emphasis);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.lede {
+  color: var(--color-content-secondary);
+}
+
+.filter input {
+  width: min(24rem, 100%);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-field);
+  background: var(--color-surface-solid);
+  color: var(--color-content-primary);
+}
+
+h2 {
+  margin: 2.5rem 0 0.75rem;
+  padding-bottom: 0.375rem;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.api-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 1rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--text-caption);
+
+  a {
+    color: var(--color-accent);
+    text-decoration: none;
+
+    &.is-deprecated {
+      color: var(--color-content-subtle);
+      text-decoration: line-through;
+    }
+  }
+}

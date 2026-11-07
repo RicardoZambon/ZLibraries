@@ -1,0 +1,65 @@
+<section class="hero">
+  <div class="hero-text">
+    <p class="eyebrow">Angular 22 · Tailwind CSS 4 · zoneless-ready</p>
+    <h1>Components and an application shell for data-heavy Angular apps</h1>
+    <p class="lede">
+      Form controls, a virtual-scroll data grid, modals and a ribbon toolbar. Or take the whole shell: sidebar, top bar,
+      tabbed navigation, sign-in and audit history. Themed with design tokens, with a dark theme built in.
+    </p>
+    <div class="hero-actions">
+      <a class="button is-primary" routerLink="/guides/getting-started">Get started</a>
+      <a class="button" routerLink="/components">Browse components</a>
+    </div>
+    <pre class="install"><code>{{ install }}</code></pre>
+  </div>
+  @if (heroExample) {
+    <div class="hero-demo" aria-label="Live example">
+      @defer (on viewport) {
+        <docs-example-island [exampleId]="heroExample" />
+      } @placeholder {
+        <div class="demo-placeholder"></div>
+      }
+    </div>
+  }
+</section>
+
+<section class="features" aria-label="What is in the package">
+  <a class="feature" routerLink="/api/library">
+    <i class="fa-solid fa-shapes" aria-hidden="true"></i>
+    <h2>Library</h2>
+    <p>Form controls, data grid, modal, multi-select and multi-editor, ribbon, sidebar and button.</p>
+    <code>&#64;zambon-dev/ui/library</code>
+  </a>
+  <a class="feature" routerLink="/guides/tabbed-navigation">
+    <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+    <h2>Framework</h2>
+    <p>Tabbed navigation, list and details views, ribbon action buttons, confirm and error modals.</p>
+    <code>&#64;zambon-dev/ui/framework</code>
+  </a>
+  <a class="feature" routerLink="/guides/top-bar-configuration">
+    <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
+    <h2>Shared</h2>
+    <p>Sign-in, the main layout with sidebar and top bar, light and dark theme, and audit history.</p>
+    <code>&#64;zambon-dev/ui/shared</code>
+  </a>
+</section>
+
+<section class="facts">
+  <div>
+    <h2>Renders under any change detection</h2>
+    <p>
+      Every component works under OnPush and zoneless hosts. <a routerLink="/guides/reactivity">How that is kept</a>.
+    </p>
+  </div>
+  <div>
+    <h2>Themed with tokens</h2>
+    <p>Retune the brand by overriding a few CSS variables. <a routerLink="/guides/design-tokens">Theming</a>.</p>
+  </div>
+  <div>
+    <h2>Typed API reference</h2>
+    <p>
+      Generated from the source on every release. <a routerLink="/api">API reference</a> or
+      <a [href]="storybookUrl" target="_blank" rel="noopener">Storybook</a>.
+    </p>
+  </div>
+</section>

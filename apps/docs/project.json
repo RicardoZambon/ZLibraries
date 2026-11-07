@@ -1,0 +1,69 @@
+{
+  "name": "docs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/docs/src",
+  "projectType": "application",
+  "prefix": "docs",
+  "tags": ["type:docs"],
+  "implicitDependencies": ["ui", "ui-examples"],
+  "targets": {
+    "content": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/docs/**/*",
+        "{workspaceRoot}/tools/docs-content/**/*",
+        "{workspaceRoot}/libs/ui/src/**/*",
+        "{workspaceRoot}/libs/ui/CHANGELOG.md",
+        "{workspaceRoot}/libs/ui/tsconfig*.json",
+        "{workspaceRoot}/libs/ui-examples/src/**/*"
+      ],
+      "outputs": ["{workspaceRoot}/dist/docs-content", "{projectRoot}/src/generated"],
+      "options": {
+        "command": "node tools/docs-content/build.mjs"
+      }
+    },
+    "build": {
+      "executor": "@angular/build:application",
+      "dependsOn": ["content"],
+      "cache": true,
+      "inputs": ["production", "^production", "{workspaceRoot}/dist/docs-content/**/*"],
+      "outputs": ["{options.outputPath.base}"],
+      "options": {
+        "outputPath": { "base": "dist/apps/docs" },
+        "index": "apps/docs/src/index.html",
+        "browser": "apps/docs/src/main.ts",
+        "server": "apps/docs/src/main.server.ts",
+        "outputMode": "static",
+        "baseHref": "/ZLibraries/",
+        "tsConfig": "apps/docs/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "sourceMap": false,
+        "assets": [
+          { "glob": "**/*", "input": "apps/docs/public" },
+          { "glob": "**/*", "input": "dist/docs-content", "output": "content" }
+        ],
+        "styles": [
+          "node_modules/@fortawesome/fontawesome-free/css/all.css",
+          "libs/ui/src/styles/theme.css",
+          "libs/ui/src/styles/common.scss",
+          "apps/docs/src/styles.scss"
+        ],
+        "budgets": [
+          { "type": "initial", "maximumWarning": "900kb", "maximumError": "1.5mb" },
+          { "type": "anyComponentStyle", "maximumWarning": "16kb", "maximumError": "32kb" }
+        ]
+      }
+    },
+    "site": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/docs-content/postbuild.mjs dist/apps/docs/browser"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

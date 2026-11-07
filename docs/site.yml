@@ -1,0 +1,59 @@
+# Navigation for the documentation site (apps/docs).
+# Every guide in docs/guides and every page in docs/components must be listed here exactly once;
+# the content build fails otherwise. Order here is the order in the sidebar.
+
+guides:
+  - title: Start here
+    pages:
+      - getting-started
+      - compatibility
+      - migrating-to-ui
+  - title: Styling
+    pages:
+      - design-tokens
+  - title: Application shell
+    pages:
+      - top-bar-configuration
+      - internationalization
+      - tabbed-navigation
+      - building-views
+      - details-views
+      - backend-contract
+  - title: Under the hood
+    pages:
+      - reactivity
+
+components:
+  - title: Buttons and actions
+    pages:
+      - button
+      - ribbon
+      - action-buttons
+  - title: Forms
+    pages:
+      - form-group
+      - form-input-group
+      - form-input
+      - catalog-select
+  - title: Layout
+    pages:
+      - group-container
+      - group-accordion
+      - group-scroll-spy
+  - title: Data
+    pages:
+      - data-grid
+      - audit-history
+  - title: Overlays
+    pages:
+      - modal
+      - confirm-and-error-modals
+      - multi-select
+      - multi-editor
+  - title: Application shell
+    pages:
+      - main-layout
+      - sidebar
+      - tabs
+      - theme-switch
+      - login
