@@ -17,6 +17,20 @@ packages are listed under [Package history](#package-history) at the end.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### ⚠ Breaking Changes / Migration
+
+## [1.5.0] - 2026-11-08
+
+### Added
+
 - **`LoginComponent` is exported from `@zambon-dev/ui/shared`.** `SharedAuthModule` still routes
   to it. Import it directly to place the sign-in card in a layout of your own.
 - **The package ships its license.** The npm tarball now contains the MIT `LICENSE` file.
@@ -30,10 +44,6 @@ packages are listed under [Package history](#package-history) at the end.
 - **The confirm and error modals' message block is styled as `.error`.** It was `.erro`. Only a
   stylesheet that reached into these modals with `::ng-deep .erro` is affected.
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - **A multi-select grid shows its checkboxes again.** In a grid narrower than its columns, as the
@@ -45,8 +55,6 @@ packages are listed under [Package history](#package-history) at the end.
   that only the package's templates use. `theme.css` now declares the package as a source.
 - **The comments in the published stylesheets name the current import path,**
   `@zambon-dev/ui/styles/theme.css`, instead of the retired `@zambon-dev/shared` one.
-
-### ⚠ Breaking Changes / Migration
 
 ## [1.4.1] - 2026-10-31
 
@@ -2730,7 +2738,8 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
 
-[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/ui-v1.4.1...HEAD
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/ui-v1.5.0...HEAD
+[1.5.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.5.0
 [1.4.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.4.1
 [1.4.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.4.0
 [1.3.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.3.0
