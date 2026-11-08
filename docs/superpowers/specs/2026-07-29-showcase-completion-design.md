@@ -1,7 +1,7 @@
 # Showcase completion + two library fixes
 
 - **Date:** 2026-07-29
-- **Status:** Approved (design)
+- **Status:** Implemented.
 - **Libraries affected:** `@library` and `@framework` (shipped code), `@shared` (story only), `tools/storybook`
 - **Branch:** `feat/sidebar-rework`
 - **Predecessor:** [2026-07-28-storybook-app-showcase-design.md](2026-07-28-storybook-app-showcase-design.md)

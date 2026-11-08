@@ -22,6 +22,11 @@ import { FormGroupComponent } from '../form-group/form-group.component';
 import { ModalComponent } from '../modal/modal.component';
 import { ButtonComponent } from '../button/button.component';
 
+/**
+ * A modal for editing many records in one go: a grid of rows on one side and a form for the
+ * selected row on the other. Project the form fields as content, bound to `formGroup`; changes
+ * are kept per row and saved together through the provided `MultiEditorDataset` on Confirm.
+ */
 @Component({
   selector: 'lib-multi-editor',
   templateUrl: './multi-editor.component.html',
@@ -32,10 +37,18 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
   private readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
+  /** Text of the button that adds a new row, shown as given. Defaults to `Add row`. */
   public readonly addButtonLabel: InputSignal<string> = input('Add row');
+  /**
+   * The form the projected fields are bound to. It is filled from the selected row, disabled while
+   * no row is selected, and must be valid before the user can move to another row. Required.
+   */
   public readonly formGroup: InputSignal<FormGroup<any>> = input.required<FormGroup<any>>();
+  /** Text of the button that removes the selected row, shown as given. Defaults to `Remove row`. */
   public readonly removeButtonLabel: InputSignal<string> = input('Remove row');
+  /** Shows the button that adds a new row. Defaults to `true`. */
   public readonly showAddButton: InputSignal<boolean> = input(true);
+  /** Shows the button that removes the selected row; it appears only while a row is selected. Defaults to `true`. */
   public readonly showDeleteButton: InputSignal<boolean> = input(true);
   //#endregion
 
@@ -196,10 +209,12 @@ export class MultiEditorComponent extends ModalComponent implements OnInit {
   //#endregion
 
   //#region Public methods
+  /** Closes the modal if it is open, without saving. */
   public override closeModal(): void {
     this.modal()?.closeModal();
   }
 
+  /** Opens or closes the modal. Opening reloads the grid and clears and disables the form. */
   public override toggleModal(): void {
     this.modal()?.toggleModal();
 

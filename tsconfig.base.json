@@ -19,7 +19,9 @@
       "@zambon-dev/ui/framework": ["libs/ui/src/framework/index.ts"],
       "@zambon-dev/ui/library": ["libs/ui/src/library/index.ts"],
       "@zambon-dev/ui/shared": ["libs/ui/src/shared/index.ts"],
-      "@zambon-dev/ui/testing": ["libs/ui/src/testing/index.ts"]
+      "@zambon-dev/ui/testing": ["libs/ui/src/testing/index.ts"],
+      "@zambon-dev/ui/i18n/*": ["libs/ui/src/i18n/*"],
+      "@zambon-dev/ui-examples": ["libs/ui-examples/src/index.ts"]
     },
     "strict": false,
     "noUncheckedSideEffectImports": false,

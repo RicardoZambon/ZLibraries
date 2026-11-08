@@ -1,0 +1,87 @@
+name: Pages
+
+# Publishes the documentation site, with Storybook under /storybook/, to GitHub Pages.
+# It runs after each Release on main, so the site documents what was just published, and on
+# demand.
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A queued run waits for the one in flight, so the published site always comes from a complete
+# build.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # The release pushes a commit that stamps the changelog. Build from main's tip to
+          # include it.
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the docs site
+        run: npx nx run docs:site
+
+      - name: Build Storybook
+        run: npm run build-storybook
+
+      - name: Assemble site
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -r dist/apps/docs/browser site
+          cp -r dist/storybook/ui-examples site/storybook
+          # Storybook's source maps are large and help nobody reading the docs.
+          find site/storybook -name '*.map' -delete
+
+      - name: Check the site
+        run: node tools/docs-content/check-site.mjs site
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    name: Deploy to Pages
+    runs-on: ubuntu-latest
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -7,6 +7,10 @@ import { IOperationsHistoryList } from '../../../models';
 import { countChangedFields } from '../operations-history-fields';
 import { OperationsHistoryModalComponent } from '../operations-history-modal/operations-history-modal.component';
 
+/**
+ * Grid of the operations (added, modified or deleted entities) inside one change set. Clicking an
+ * operation opens a modal with its field-by-field changes.
+ */
 @Component({
   selector: 'shared-operations-history-child-list',
   templateUrl: './operations-history-child-list.component.html',
@@ -22,6 +26,7 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
   private readonly operationTemplate: Signal<TemplateRef<any> | undefined> =
     viewChild<TemplateRef<any>>('operationTemplate');
 
+  /** API controller of the audited entity, e.g. `Employees`. The grid loads nothing until it is set. */
   @Input() public set controllerName(value: string) {
     (<OperationsHistoryDataset>this.dataGridDataset).controllerName = value;
   }
@@ -40,6 +45,7 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
     this.dataGridDataset.setFilters(value);
   }
 
+  /** ID of the change set whose operations are listed. With none, the grid stays empty. */
   @Input() public set serviceID(value: number | undefined) {
     (<OperationsHistoryDataset>this.dataGridDataset).serviceId = value;
   }
@@ -48,10 +54,19 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
   //#region Variables
   // Signals: they are bound into the modal and are filled when a row is picked, which the grid
   // reports through a callback rather than a binding on this view.
-  /** @deprecated Read `selectedOperation` instead, which also carries the whole record. */
+  /**
+   * New values of the selected operation, parsed from JSON, or `null` when none is selected.
+   *
+   * @deprecated Read `selectedOperation` instead, which also carries the whole record.
+   */
   public readonly selectedNewValues: WritableSignal<any | null> = signal(null);
-  /** @deprecated Read `selectedOperation` instead, which also carries the whole record. */
+  /**
+   * Old values of the selected operation, parsed from JSON, or `null` when none is selected.
+   *
+   * @deprecated Read `selectedOperation` instead, which also carries the whole record.
+   */
   public readonly selectedOldValues: WritableSignal<any | null> = signal(null);
+  /** The operation selected in the grid, or `null` when none is selected. */
   public readonly selectedOperation: WritableSignal<IOperationsHistoryList | null> = signal(null);
   //#endregion
 
@@ -70,6 +85,7 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
     return countChangedFields(operation);
   }
 
+  /** Opens the change details modal for the selected operation, unless it is already open. */
   public openModal(): void {
     const modal: OperationsHistoryModalComponent | undefined = this.modal();
     if (modal && !modal.isModalShown()) {
@@ -79,6 +95,7 @@ export class OperationsHistoryChildListComponent extends ChildList<any> implemen
   //#endregion
 
   //#region Public methods
+  /** Updates `selectedOperation` from the grid's selection. */
   public override selectedRowChanged(): void {
     super.selectedRowChanged();
 

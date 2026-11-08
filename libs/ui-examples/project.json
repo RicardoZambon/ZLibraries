@@ -1,0 +1,72 @@
+{
+  "name": "ui-examples",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ui-examples/src",
+  "prefix": "example",
+  "projectType": "library",
+  "tags": ["type:examples"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/ui-examples/jest.config.ts",
+        "tsConfig": "libs/ui-examples/tsconfig.spec.json"
+      }
+    },
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "libs/ui-examples/.storybook",
+        "browserTarget": "storybook-host:build",
+        "tsConfig": "libs/ui-examples/.storybook/tsconfig.json",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/ui-examples",
+        "configDir": "libs/ui-examples/.storybook",
+        "browserTarget": "storybook-host:build",
+        "tsConfig": "libs/ui-examples/.storybook/tsconfig.json",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "test-storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test-storybook -c libs/ui-examples/.storybook --url=http://localhost:4400"
+      }
+    },
+    "static-storybook": {
+      "executor": "@nx/web:file-server",
+      "dependsOn": ["build-storybook"],
+      "options": {
+        "buildTarget": "ui-examples:build-storybook",
+        "staticFilePath": "dist/storybook/ui-examples",
+        "spa": true
+      },
+      "configurations": {
+        "ci": {
+          "buildTarget": "ui-examples:build-storybook:ci"
+        }
+      }
+    }
+  }
+}

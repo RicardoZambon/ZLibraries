@@ -1,0 +1,26 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "target": "es2022",
+    "strict": true,
+    "noImplicitOverride": true,
+    "types": ["node"],
+    "moduleResolution": "bundler",
+    "module": "preserve",
+    "resolveJsonModule": true,
+    "lib": ["dom", "es2022"],
+    "ignoreDeprecations": "6.0"
+  },
+  "files": ["src/main.ts", "src/main.server.ts"],
+  "include": ["src/**/*.d.ts", "src/generated/*.json"],
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "extendedDiagnostics": {
+      "checks": {
+        "nullishCoalescingNotNullable": "suppress",
+        "optionalChainNotNullable": "suppress"
+      }
+    }
+  }
+}

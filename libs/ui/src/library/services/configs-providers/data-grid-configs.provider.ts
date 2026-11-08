@@ -20,7 +20,7 @@ export class DataGridConfigsProvider extends GridConfigsProvider<DataGridConfigs
     this._configs = {
       ...this._configs,
       multiSelect: false,
-      multiSelectSize: 'minmax(1.5rem, min-content)',
+      multiSelectSize: 'min-content',
     } as DataGridConfigs;
   }
   //#endregion

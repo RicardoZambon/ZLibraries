@@ -2,6 +2,10 @@ import { Component, forwardRef, input, InputSignal, output, OutputEmitterRef } f
 import { RibbonButtonComponent, RibbonGroupChild } from '@zambon-dev/ui/library';
 import { BaseButton } from '../base-button';
 
+/**
+ * Generic ribbon button with the framework's access check. Set its label, icon and colour, and
+ * handle `action`.
+ */
 @Component({
   selector: 'framework-button',
   templateUrl: './button.component.html',
@@ -10,10 +14,14 @@ import { BaseButton } from '../base-button';
 })
 export class ButtonComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
+  /** Tailwind text-colour class for the icon. Defaults to `text-primary-500`. */
   public readonly color: InputSignal<string> = input('text-primary-500');
+  /** Font Awesome icon class, such as `fa-plus`. No icon when unset. */
   public readonly icon: InputSignal<string | undefined> = input<string>();
+  /** Translation key of the button's label. Defaults to `''`. */
   public readonly label: InputSignal<string> = input('');
 
+  /** Emits when the button is clicked while enabled, visible and its access check has returned. */
   public readonly action: OutputEmitterRef<void> = output<void>();
   //#endregion
 

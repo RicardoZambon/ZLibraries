@@ -1,5 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+/**
+ * The toolbar strip at the top of a view. Project `lib-ribbon-group` elements as content; content
+ * marked with the `right` attribute is placed at the far end.
+ */
 @Component({
   selector: 'lib-ribbon',
   templateUrl: './ribbon.component.html',

@@ -1,21 +1,28 @@
 import { Injectable, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { ReplaySubject, Subject } from 'rxjs';
 
+/**
+ * Shared by a tab's shell and the views inside it. Carries the ribbon template each view publishes
+ * and which sub-view is active. Provided by the tab view components, not at the root.
+ */
 @Injectable()
 export class TabViewService {
   //#region ViewChilds, Inputs, Outputs
   //#endregion
 
   //#region Variables
+  /** Emits the ribbon template a view publishes. Replays the latest one to new subscribers. */
   public onUpdateRibbonTemplate: ReplaySubject<TemplateRef<any> | undefined> = new ReplaySubject<
     TemplateRef<any> | undefined
   >(1);
+  /** Emits the ID of the sub-view that became active. */
   public onViewChanged: Subject<string> = new Subject<string>();
 
   private readonly _activeView: WritableSignal<string | undefined> = signal(undefined);
   //#endregion
 
   //#region Properties
+  /** ID of the active sub-view, or an empty string before one is set. */
   public get activeView(): string {
     return this._activeView() ?? '';
   }
@@ -28,6 +35,7 @@ export class TabViewService {
   //#endregion
 
   //#region Public methods
+  /** Makes a sub-view active and emits `onViewChanged`. Does nothing when it is already active. */
   public setActiveView(viewId: string): void {
     if (viewId === this._activeView()) {
       return;
@@ -37,6 +45,7 @@ export class TabViewService {
     this.onViewChanged.next(viewId);
   }
 
+  /** Publishes a view's ribbon template to the tab's ribbon. */
   public updateRibbonTemplate(template: TemplateRef<any> | undefined): void {
     this.onUpdateRibbonTemplate.next(template);
   }

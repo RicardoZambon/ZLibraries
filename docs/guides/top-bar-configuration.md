@@ -1,31 +1,30 @@
-# Top Bar Configuration Guide (for consuming applications)
+# Top bar configuration
 
-This guide explains how an application that consumes `@zambon-dev/ui/shared` (via `MainLayoutComponent`)
-adopts the application top bar: brand, environment badge, notifications, language selector, and the
-user profile.
+`MainLayoutComponent` from `@zambon-dev/ui/shared` renders a top bar above the tabs. You do not
+add it yourself. It shows, from left to right:
 
-The top bar renders automatically inside `MainLayoutComponent` — you do not add any component. You
-only need to (1) upgrade the packages, (2) provide `AppConfig` values, and (3) — for notifications —
-install `@microsoft/signalr` and expose a SignalR hub.
+- the brand: logo, application name and company name;
+- the environment badge;
+- the notifications bell;
+- the language selector;
+- the theme switch;
+- the user profile;
+- the logout button.
 
-## 1. Upgrade packages
+This guide explains how to configure each part.
 
-```bash
-npm i @zambon-dev/ui@latest
-# Required only if you enable notifications (peer dependency):
-npm i @microsoft/signalr
-```
+## Before you start
 
-> The sidebar (`@zambon-dev/ui/library`) no longer renders a logo or a user profile — branding and user
-> identity now live in the top bar. If you relied on the sidebar's `logoCollapsedPath` /
-> `logoExpandedPath` or `SidebarService.getUserProfile()`, move that presentation to the top bar.
+[Getting started](./getting-started.md) covers installing the package and the providers the main
+layout needs. `@microsoft/signalr` is a required peer dependency of the package, whether or not you
+turn notifications on.
 
-## 2. Configure `AppConfig`
+## Configure `AppConfig`
 
-Provide `AppConfig` with the new options where you bootstrap the app (usually in `app.config.ts`
-or a root `providers` array). All options are optional and backward-compatible.
+The top bar reads its settings from `AppConfig`, provided under `APP_CONFIG`:
 
 ```ts
+import { ApplicationConfig } from '@angular/core';
 import { APP_CONFIG, AppConfig } from '@zambon-dev/ui/framework';
 import { environment } from '../environments/environment';
 
@@ -35,10 +34,10 @@ export const appConfig: ApplicationConfig = {
       provide: APP_CONFIG,
       useValue: new AppConfig(environment.apiBaseUrl, {
         appName: 'Engineering Change',
-        companyName: 'Zambon LTDA',
+        companyName: 'Example Ltd',
         environment: environment.name, // 'DEV' | 'QA' | 'STG' | 'PROD'
-        logoUrl: '/assets/logo.svg', // optional
-        version: '1.4.0', // shown at the bottom of the sidebar
+        logoUrl: '/assets/logo.svg',
+        version: '1.4.0',
         notificationsEnabled: environment.notificationsEnabled,
         notificationsUrl: environment.notificationsHubUrl, // e.g. `${apiBaseUrl}/hubs/notifications`
       }),
@@ -48,51 +47,72 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-| Option                 | Type      | Purpose                                                                                                                              |
-| ---------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `appName`              | `string`  | Brand title in the top bar                                                                                                           |
-| `companyName`          | `string`  | Line under the app name                                                                                                              |
-| `environment`          | `string`  | Environment badge. `DEV`/`QA`/`STG` are colored; any other non-empty value uses a neutral style; **`PROD` or empty hides the badge** |
-| `logoUrl`              | `string?` | Optional brand logo                                                                                                                  |
-| `version`              | `string`  | App version string, shown at the bottom of the sidebar navigation                                                                    |
-| `notificationsEnabled` | `boolean` | Turns the notifications bell on/off (default `false`)                                                                                |
-| `notificationsUrl`     | `string`  | SignalR hub URL; the bell is only shown when enabled **and** this is set                                                             |
+The first argument, `baseUrl`, is required. It is the root URL of your API. The package uses it
+for the sign-in, token refresh and permission endpoints, for the audit history endpoints, and to
+decide which requests the auth interceptor refreshes an expired token for. It is exposed as
+`AppConfig.BASE_URL`.
 
-## 3. Notifications (SignalR)
+Every option in the second argument is optional:
+
+| Option                 | Type      | Default | Purpose                                                                                     |
+| ---------------------- | --------- | ------- | ------------------------------------------------------------------------------------------- |
+| `appName`              | `string`  | `''`    | Application name in the top bar.                                                            |
+| `companyName`          | `string`  | `''`    | Line under the application name. Hidden when empty.                                         |
+| `environment`          | `string`  | `''`    | Environment badge. See [Environment badge](#environment-badge).                             |
+| `logoUrl`              | `string`  | none    | Brand logo in the top bar. Also the sign-in logo when `loginLogoUrl` is not set.            |
+| `loginBackgroundUrl`   | `string`  | none    | Image behind the sign-in screen. Without it, the application backdrop shows.                |
+| `loginLogoUrl`         | `string`  | none    | Logo on the sign-in card. Falls back to `logoUrl`.                                          |
+| `version`              | `string`  | `''`    | Application version, shown at the bottom of the sidebar. Hidden when empty.                 |
+| `notificationsEnabled` | `boolean` | `false` | Turns the notifications bell on.                                                            |
+| `notificationsUrl`     | `string`  | `''`    | SignalR hub URL. The bell shows only when `notificationsEnabled` is `true` and this is set. |
+
+## Environment badge
+
+The badge shows `environment`, trimmed and in upper case.
+
+- `DEV`, `QA` and `STG` each have their own colour.
+- Any other non-empty value uses a neutral style.
+- `PROD` or an empty value hides the badge.
+
+## Notifications
 
 When `notificationsEnabled` is `true` and `notificationsUrl` is set, the top bar opens a SignalR
-connection (authenticated with the current JWT) and renders whatever the hub pushes.
+connection to the hub. It authenticates with the current JWT and reconnects automatically. It
+renders whatever list the hub pushes.
 
-### 3.1 Notification contract
+### Notification contract
 
-The client expects each notification to match `INotification`:
+Each notification must match `INotification`, exported from `@zambon-dev/ui/shared`:
 
 ```ts
 export interface INotification {
   title: string;
   description: string;
-  icon: string; // a Font Awesome class, e.g. 'fa-solid fa-envelope'
+  icon: string; // a CSS class, e.g. 'fa-solid fa-envelope'
   callToActionUrl?: string; // optional; clicking navigates here
   isRead: boolean;
 }
 ```
 
-- `icon` is applied verbatim as a CSS class, so any icon set available in your app works.
-- `callToActionUrl`: an internal route (e.g. `/ecns/123`) is navigated via the Angular router; an
-  absolute URL (`https://…`) opens in a new tab. Omit it for non-actionable notifications.
-- The unread badge counts notifications where `isRead === false`; a count of `0` hides the number.
+- `icon` is applied as a CSS class as it is, so any icon set your application loads works.
+- `callToActionUrl`: a URL that starts with `http://` or `https://` opens in a new browser tab.
+  Anything else is navigated to with the Angular router, for example `/ecns/123`. Omit it for a
+  notification with no action.
+- The badge counts notifications where `isRead` is `false`. A count of `0` hides the badge.
 
-### 3.2 Hub contract
+### Hub contract
 
 The client:
 
-- **Listens** for `ReceiveNotifications` and expects the **full current list** (`INotification[]`).
-  Push it on connect and whenever it changes.
-- **Invokes** `MarkAllAsRead` (no arguments) when the user clicks “mark all as read”. Implement it if
-  you want server-side read state; otherwise it is a harmless no-op. (Single-item read is handled
-  optimistically on the client and reconciled by your next `ReceiveNotifications` push.)
+- **listens** for `ReceiveNotifications` and expects the **full current list**
+  (`INotification[]`). Push it on connect and whenever it changes.
+- **invokes** `MarkAllAsRead` with no arguments when the user clicks "Mark all as read". Implement
+  it to keep the read state on the server.
 
-### 3.3 Backend example (ASP.NET Core)
+Clicking one notification marks it read on the client only. Your next `ReceiveNotifications` push
+replaces the list.
+
+### Backend example (ASP.NET Core)
 
 ```csharp
 public record NotificationDto(
@@ -119,41 +139,90 @@ public class NotificationsHub : Hub
 }
 ```
 
-Register and map the hub:
+Map the hub:
 
 ```csharp
 app.MapHub<NotificationsHub>("/hubs/notifications");
 ```
 
-> **Auth note:** SignalR sends the JWT as an `access_token` query-string parameter for the
-> WebSocket handshake. Configure JWT bearer to read it for the hub path (the standard
-> `OnMessageReceived` → `context.Token = accessToken` pattern when the request path starts with
-> `/hubs/notifications`).
+SignalR sends the JWT as an `access_token` query-string parameter during the WebSocket handshake.
+Configure JWT bearer authentication to read it for the hub path: in `OnMessageReceived`, set
+`context.Token` from `access_token` when the request path starts with `/hubs/notifications`.
 
-To push a new notification later, send the updated list to the user's connection(s):
+To push a new notification, send the updated list to the user's connections:
 
 ```csharp
 await hubContext.Clients.User(userId).SendAsync("ReceiveNotifications", updatedList);
 ```
 
-## 4. User profile fields
+## Language selector
 
-The user profile shows the name (from the existing auth response) plus an avatar and a position.
-To populate the avatar image and the position line, return `pictureUrl` and `position` on the
-authentication response (they are optional fields on `ICurrentUserInfo`). When `pictureUrl` is
-absent the avatar falls back to the user's initials; when `position` is empty that line is hidden.
+The selector lists the languages registered with `TranslateService` when the top bar is created.
+Register them at startup:
 
-## 5. Internationalization
+```ts
+translate.addLangs(['en', 'pt']);
+```
 
-The top bar ships its own `top-bar` i18n bundle (`en`/`pt`) registered in
-`ZAMBON_SHARED_I18N_RESOURCES`, so its labels are covered by the existing shared i18n asset copy —
-no action needed beyond the shared i18n setup you already have.
+Choosing a language calls `translate.use()` and stores the code in `localStorage` under the key
+`language`. The package does not read that key back. Restore it yourself at startup, for example
+with `translate.use(localStorage.getItem('language') ?? 'en')`.
 
-## Summary checklist
+Each entry is labelled with the translation key `Language-<code>`. The package ships labels and
+flags for `en` and `pt` only. See [Internationalization](./internationalization.md) for the full
+setup.
 
-- [ ] Upgrade `@zambon-dev/*` packages; `npm i @microsoft/signalr` if using notifications.
-- [ ] Provide `AppConfig` with `appName`, `companyName`, `environment`, and optionally `logoUrl`.
-- [ ] Move any sidebar logo/profile usage to the top bar (sidebar no longer shows them).
-- [ ] For notifications: set `notificationsEnabled` + `notificationsUrl`, and expose a hub that
-      pushes `ReceiveNotifications(INotification[])` (and optionally handles `MarkAllAsRead`).
-- [ ] Return `pictureUrl` / `position` on the auth response to complete the user profile.
+## Theme switch
+
+The theme switch steps through light, dark and system. It is always shown; no option hides it. See
+[Theming](./design-tokens.md#light-and-dark-themes) for how the theme is stored and how to avoid a
+flash of the wrong theme on load.
+
+## User profile
+
+The profile shows the signed-in user's name, an avatar and a position. They come from the
+`ICurrentUserInfo` that `AuthenticationService` stored at sign-in.
+
+To fill in the avatar and the position, return `pictureUrl` and `position` in the sign-in
+response. Both are optional:
+
+- Without `pictureUrl`, the avatar shows the user's initials.
+- Without `position`, that line is hidden.
+
+## Logout
+
+The logout button opens a confirmation dialog. On confirm, the layout calls
+`AuthenticationService.signOut()` and navigates to `/login`.
+
+`signOut()` clears all of `localStorage` and `sessionStorage`, and closes every tab. That also
+removes the stored theme and language choices.
+
+## Sidebar
+
+The sidebar shows no logo and no user profile; the top bar shows them. `SidebarConfigs.logoCollapsedPath`
+and `logoExpandedPath` are ignored. `SidebarService.getUserProfile()` is still abstract, so a
+subclass must implement it, but nothing calls it: return `undefined`.
+
+## Translations
+
+The top bar uses keys from both translation layers:
+
+- **Shared translations:** the notifications and theme switch labels, the language selector
+  title, and the logout labels (`Main-Logout`, `Main-Logout-Modal-Message`,
+  `Main-Logout-Modal-Message-Cancel`, `Main-Logout-Modal-Message-Confirm`).
+- **Framework translations:** the language names (`Language-en`, `Language-pt`).
+
+Load both layers. [Internationalization](./internationalization.md) shows how.
+
+## Checklist
+
+- [ ] Install `@zambon-dev/ui` and register the providers in [Getting started](./getting-started.md).
+- [ ] Provide `AppConfig` with your API `baseUrl`, plus `appName`, `companyName`, `environment` and
+      optionally `logoUrl` and `version`.
+- [ ] Load the shared and framework translations.
+- [ ] Register your languages with `translate.addLangs()`, and restore the stored `language` at
+      startup.
+- [ ] For notifications: set `notificationsEnabled` and `notificationsUrl`, and expose a hub that
+      pushes `ReceiveNotifications(INotification[])` and optionally handles `MarkAllAsRead`.
+- [ ] Return `pictureUrl` and `position` in the sign-in response to complete the user profile.
+- [ ] Return `undefined` from `SidebarService.getUserProfile()`.

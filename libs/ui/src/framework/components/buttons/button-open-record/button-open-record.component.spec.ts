@@ -25,7 +25,7 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
       navigateCurrentTab: jest.fn(),
     };
     mockRouter = {
-      url: '/contratacoes',
+      url: '/contracts',
     };
     mockDataGridDataset = {
       selectedRowsChanged: new Subject(),
@@ -59,8 +59,8 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
 
       expect(mockTabService.navigateCurrentTab).toHaveBeenCalledTimes(1);
       const tab: Tab = lastNavigatedTab();
-      expect(tab.url).toBe('/contratacoes/325');
-      expect(tab.entityBaseUrl).toBe('/contratacoes/325');
+      expect(tab.url).toBe('/contracts/325');
+      expect(tab.entityBaseUrl).toBe('/contracts/325');
     });
 
     it('should use rootPath when provided instead of router.url', () => {
@@ -85,8 +85,8 @@ describe('ButtonOpenRecordComponent — navigation logic', () => {
       component.onButtonClicked();
 
       const tab: Tab = lastNavigatedTab();
-      expect(tab.url).toBe('/contratacoes/details/42');
-      expect(tab.entityBaseUrl).toBe('/contratacoes/details/42');
+      expect(tab.url).toBe('/contracts/details/42');
+      expect(tab.entityBaseUrl).toBe('/contracts/details/42');
     });
 
     it('should include both rootPath and elementPath', () => {

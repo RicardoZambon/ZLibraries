@@ -6,7 +6,15 @@
   "overrides": [
     {
       "files": "*.md",
-      "options": { "proseWrap": "preserve" }
+      "options": {
+        "proseWrap": "preserve"
+      }
+    },
+    {
+      "files": "apps/docs/src/app/**/*.html",
+      "options": {
+        "parser": "angular"
+      }
     }
   ]
 }

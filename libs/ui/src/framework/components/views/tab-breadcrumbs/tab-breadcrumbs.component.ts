@@ -3,6 +3,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ITab } from '../../../models';
 import { TabService } from '../../../services';
 
+/** Breadcrumb trail of the active tab's history. Clicking an entry goes back to it. */
 @Component({
   selector: 'framework-tab-breadcrumbs',
   templateUrl: './tab-breadcrumbs.component.html',

@@ -9,6 +9,10 @@ import { OperationsHistoryChildListComponent } from '../../operations-history';
 import { ServicesHistoryChildListComponent } from '../services-history-child-list/services-history-child-list.component';
 import { ServicesHistoryFilterComponent } from '../services-history-filter/services-history-filter.component';
 
+/**
+ * Tab view of a record's change history: the services grid beside the operations of the selected
+ * service, with refresh and filter buttons in the ribbon. Unbound inputs are read from route data.
+ */
 @Component({
   selector: 'shared-services-history-view',
   templateUrl: './services-history-view.component.html',
@@ -31,8 +35,10 @@ export class ServicesHistoryViewComponent extends TabViewBase {
   //#region ViewChilds, Inputs, Outputs
   // Models rather than inputs: the constructor fills the first two from route data when a host
   // has not bound them, and the entity id arrives from the data provider's stream.
+  /** API controller of the audited entity, e.g. `Employees`. Falls back to the route's `controllerName` data. */
   public readonly controllerName: ModelSignal<string> = model('');
 
+  /** ID of the audited record. Filled from the data provider's model when one is available. */
   public readonly entityID: ModelSignal<number | undefined> = model<number>();
 
   /**

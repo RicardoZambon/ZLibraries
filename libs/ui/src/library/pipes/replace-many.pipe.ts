@@ -1,5 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+/**
+ * Replaces several placeholders in a string, for example
+ * `'Hello {name}' | replaceMany: { '{name}': user.name }`. Only the first occurrence of each key
+ * is replaced; a `null` or `undefined` value becomes an empty string.
+ */
 @Pipe({
   name: 'replaceMany',
 })

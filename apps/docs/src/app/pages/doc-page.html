@@ -1,0 +1,78 @@
+@if (page.value(); as page) {
+  <div class="doc-layout">
+    <article class="doc" data-pagefind-body>
+      <header class="doc-header">
+        @if (page.entryPoint) {
+          <p class="eyebrow">&#64;zambon-dev/ui/{{ page.entryPoint }}</p>
+        }
+        <h1>{{ page.title }}</h1>
+        @if (page.summary) {
+          <p class="lede">{{ page.summary }}</p>
+        }
+        @if (page.storybook || page.api.length) {
+          <p class="doc-links">
+            @if (page.api.length) {
+              <a [href]="page.route + '#api'" (click)="onContentClick($event)">
+                <i class="fa-solid fa-code" aria-hidden="true"></i> API
+              </a>
+            }
+            @if (page.storybook) {
+              <a [href]="page.storybook" target="_blank" rel="noopener">
+                <i class="fa-solid fa-book-open" aria-hidden="true"></i> Open in Storybook
+              </a>
+            }
+          </p>
+        }
+      </header>
+
+      <!-- Delegated: the click comes from the links inside, which Enter activates too. The prose styles sit on each Markdown block only, so they never reach the live examples. -->
+      <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+      <div class="doc-content" (click)="onContentClick($event)">
+        @for (block of page.blocks; track $index) {
+          @if (block.type === 'html') {
+            <div class="prose" [innerHTML]="block.html | trustedHtml"></div>
+          } @else {
+            @if (page.examples[block.id]; as example) {
+              <docs-example-viewer [example]="example" />
+            }
+          }
+        }
+        @if (page.api.length) {
+          <div class="prose">
+            <h2 id="api"><a class="anchor" [href]="page.route + '#api'" aria-hidden="true" tabindex="-1">#</a>API</h2>
+          </div>
+          <docs-api-tables [names]="page.api" />
+        }
+      </div>
+
+      <footer class="doc-footer">
+        <a [href]="page.editUrl" target="_blank" rel="noopener">
+          <i class="fa-solid fa-pen" aria-hidden="true"></i> Edit this page on GitHub
+        </a>
+      </footer>
+    </article>
+
+    @if (page.toc.length > 1) {
+      <aside class="toc" aria-label="On this page">
+        <h2 class="toc-title">On this page</h2>
+        <ul>
+          @for (entry of page.toc; track entry.id) {
+            <li [class.is-nested]="entry.level === 3">
+              <a [routerLink]="[]" [fragment]="entry.id">{{ entry.text }}</a>
+            </li>
+          }
+          @if (page.api.length) {
+            <li><a [routerLink]="[]" fragment="api">API</a></li>
+          }
+        </ul>
+      </aside>
+    }
+  </div>
+} @else if (page.error()) {
+  <div class="doc-missing">
+    <h1>Page not found</h1>
+    <p>This page does not exist. <a routerLink="/">Go to the home page</a>.</p>
+  </div>
+} @else {
+  <div class="doc-loading" aria-busy="true">Loading…</div>
+}

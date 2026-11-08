@@ -44,6 +44,11 @@ import { BaseComponent } from '../base.component';
 import { FormInputGroupComponent } from '../form-input-group/form-input-group.component';
 import { FormInputComponent } from '../form-input/form-input.component';
 
+/**
+ * A labelled searchable dropdown. It lists entries from a static `entriesList` or from a
+ * `searchEndpoint`, writes the chosen value to `controlName` and its text to `displayControlName`
+ * in the surrounding form group.
+ */
 @Component({
   selector: 'lib-catalog-select',
   templateUrl: './catalog-select.component.html',
@@ -77,10 +82,19 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     read: ElementRef,
   });
 
+  /** Passed to the inner `lib-form-input`, which does not apply it yet. Defaults to `false`. */
   public readonly autofocus: InputSignal<boolean> = input(false);
+  /** Control in the surrounding form group that receives the chosen entry's value. Required. */
   public readonly controlName: InputSignal<string> = input.required<string>();
+  /** Control in the surrounding form group that receives the chosen entry's text, which the input shows. Required. */
   public readonly displayControlName: InputSignal<string> = input.required<string>();
+  /** Property of each `entriesList` item that holds its text. Defaults to `display`. */
   public readonly displayProperty: InputSignal<string> = input('display');
+  /**
+   * Static entries to choose from when there is no `searchEndpoint`. Each item's text and value
+   * are read from `displayProperty` and `valueProperty`; the text may be an observable, such as
+   * a translation. Setting a new list refreshes the dropdown.
+   */
   @Input() public set entriesList(
     value: any[] | { key: number; value: Observable<any> | string }[] | null | undefined,
   ) {
@@ -93,16 +107,31 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       }
     }
   }
+  /**
+   * Extra filters sent to `searchEndpoint` with every search. A changed filter set runs the search
+   * again. Defaults to none.
+   */
   @Input() public set filters(value: { [id: string]: any }) {
     if (this._filters !== value) {
       this._filters = value;
       this.updateFilters();
     }
   }
+  /** Text of the label, as a translation key. Defaults to empty. */
   public readonly label: InputSignal<string> = input('');
+  /** Maximum number of entries requested from `searchEndpoint`. Defaults to `100`. */
   public readonly maxEntries: InputSignal<number> = input(100);
+  /**
+   * Characters the user must type before a search runs, when the endpoint asks for search
+   * criteria. Defaults to `3`.
+   */
   public readonly minimumLengthSearch: InputSignal<number> = input(3);
+  /** Hint shown in small italics under the field, as a translation key. Defaults to empty. */
   public readonly notes: InputSignal<string> = input('');
+  /**
+   * Blocks typing, hides the clear button and stops the dropdown opening on focus; a click still
+   * opens it. Defaults to `false`.
+   */
   public readonly readOnly: InputSignal<boolean> = input(false);
   /**
    * Whether the field accepts typing to narrow the list.
@@ -117,6 +146,10 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
    * until it is given criteria, and there would be no way left to type any.
    */
   public readonly searchable: InputSignal<boolean> = input(true);
+  /**
+   * URL the entries are searched from, with a POST of `{ maxResults, criteria, filters }`. When
+   * empty, `entriesList` is used instead. Changing it starts the search over.
+   */
   @Input() public set searchEndpoint(value: string | undefined) {
     if (this._searchEndpoint === value) {
       return;
@@ -136,7 +169,9 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
       this.refreshSearch(reInitialize);
     }
   }
+  /** Messages per validation error key of `controlName`, as translation keys. Defaults to none. */
   public readonly validations: InputSignal<{ [id: string]: string }> = input<{ [id: string]: string }>({});
+  /** Property of each `entriesList` item that holds its value. Defaults to `value`. */
   public readonly valueProperty: InputSignal<string> = input('value');
   //#endregion
 
@@ -180,14 +215,17 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
   //#endregion
 
   //#region Properties
+  /** The static entries to choose from. */
   public get entriesList(): any[] | { key: number; value: Observable<any> | string }[] | null | undefined {
     return this._entriesList;
   }
 
+  /** The filters sent to `searchEndpoint`. */
   public get filters(): { [id: string]: any } | undefined {
     return this._filters;
   }
 
+  /** The URL the entries are searched from. */
   public get searchEndpoint(): string | undefined {
     return this._searchEndpoint;
   }

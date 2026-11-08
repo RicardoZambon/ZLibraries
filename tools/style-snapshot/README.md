@@ -1,7 +1,10 @@
 # Style snapshot
 
-`docs/guides/dependency-holds.md` says of the Tailwind upgrade that "no test here asserts on
-computed styles, so a broken upgrade would pass CI". This is that assertion.
+No unit test asserts on computed styles, so a change that breaks how things look still passes CI.
+This tool is that assertion.
+
+It is a manual check: CI does not run it. Run it before merging a stylesheet change, or an
+upgrade of Tailwind, Angular or Font Awesome.
 
 It loads every story in a built Storybook, walks the rendered DOM, and writes the computed value of
 around fifty visually meaningful properties for each element to a JSON file. Two snapshots — one
@@ -9,22 +12,32 @@ before a change, one after — diff into a list of exactly what moved.
 
 ## Running it
 
+The tool drives Chromium through Playwright. Playwright is not a direct dependency of the
+workspace; it arrives with `@storybook/test-runner`. Download its browser once:
+
 ```bash
-npx nx build-storybook ui --configuration=ci --skip-nx-cache
-node tools/style-snapshot/capture.mjs dist/storybook/ui before.json
-# ...make the change, rebuild...
-node tools/style-snapshot/capture.mjs dist/storybook/ui after.json
+npx playwright install chromium
+```
+
+Or set `STYLE_SNAPSHOT_CHANNEL=msedge` (or `chrome`) to use an installed browser instead, for a
+machine that cannot reach Playwright's CDN. Either is fine: a snapshot is only ever compared with
+another taken the same way.
+
+Then build Storybook, capture, make the change, rebuild and capture again:
+
+```bash
+npm run build-storybook -- --skip-nx-cache
+node tools/style-snapshot/capture.mjs dist/storybook/ui-examples before.json
+# ...make the change...
+npm run build-storybook -- --skip-nx-cache
+node tools/style-snapshot/capture.mjs dist/storybook/ui-examples after.json
 node tools/style-snapshot/diff.mjs before.json after.json
 ```
 
-`--skip-nx-cache` is not optional when the change is in a stylesheet. Every component stylesheet
-references `libs/ui/src/styles/theme.css` by relative path, which Nx cannot see: editing it leaves
-the project looking unaffected and its Storybook is replayed from cache. The snapshot then
-compares a build that does not contain your change.
+`--skip-nx-cache` makes sure each build contains the current source, not a cached result.
 
-`STYLE_SNAPSHOT_CHANNEL=msedge` (or `chrome`) uses an installed browser instead of the one
-Playwright downloads, for a machine that cannot reach its CDN. Either is fine: a snapshot is only
-ever compared with another taken the same way.
+`diff.mjs` groups the changes by property and caps each list. Add `--full` to list every changed
+element. It exits 1 when any element changed, and 0 when none did.
 
 ## What it is careful about
 
@@ -32,6 +45,12 @@ ever compared with another taken the same way.
 the story root plus its tag name. Keying on class names would mean a utility rename changed the key
 and the diff showed a removal and an addition rather than the change itself — hiding the one thing
 this exists to catch.
+
+**An example host is transparent.** Most stories render an `<example-*>` component from
+`libs/ui-examples`, the same one the docs site shows. Its children are keyed as children of its
+parent and the host is not recorded, so wrapping a story's markup in an example does not shift
+every path below it. Only the outermost `example-*` element is skipped. One nested inside an
+example, such as a helper component, is recorded like any other element.
 
 **Animated transforms are normalised.** A spinner is mid-rotation at an arbitrary angle, so its
 matrix differs between two runs of the same build. Whether an element animates is the signal, the
@@ -41,8 +60,8 @@ angle is noise, so a rotation matrix on an animated element is recorded as `<ani
 but a story keeps working after the network goes quiet: the data grid debounces a ResizeObserver
 for 150ms and then recalculates its viewport, a ribbon button's access check resolves and drops it
 to 60% opacity, a web font arrives and reflows everything by a fraction of a pixel. This used to
-wait a flat 350ms, which landed in the middle of that -- two runs against one build of the shared
-Storybook disagreed on 122 of its 1331 elements, enough noise to bury a real change. It now polls
+wait a flat 350ms, which landed in the middle of that -- two runs against one Storybook build
+disagreed on 122 of 1331 elements, enough noise to bury a real change. It now polls
 box sizes and opacity until they hold still for three rounds. The floor that measured 122 is now 0.
 
 With that, two runs against one build are byte-identical. A story that never settles is captured

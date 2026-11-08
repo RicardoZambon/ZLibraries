@@ -1,5 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+/**
+ * Turns a numeric enum value into the name of its member, e.g. `{{ status | enumLabel: Status }}`.
+ * Returns an empty string when the value or the enum is missing, or the value is not in the enum.
+ */
 @Pipe({
   name: 'enumLabel',
 })

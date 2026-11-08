@@ -26,21 +26,37 @@ interface IAccessState {
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base class for the framework's ribbon buttons. It hides the button when the user has none of
+ * its `allowedActions`, checks access for each dropdown option, and drives the inner
+ * `lib-ribbon-button`'s loading state.
+ */
 @Component({ template: '' })
 export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#region ViewChilds, Inputs, Outputs
   protected readonly button: Signal<RibbonButtonComponent | undefined> = viewChild(RibbonButtonComponent);
 
+  /**
+   * Actions the user needs for the button to show; one allowed action is enough. Defaults to `[]`,
+   * which skips the check and always shows the button.
+   */
   public readonly allowedActions: InputSignal<string[]> = input<string[]>([]);
 
   // Models rather than inputs: a subclass writes all three from a constructor, a lifecycle hook
   // or a subscription -- the filters button disables itself until its grid has loaded, the
   // refresh button drives its own spinner, and the export, save and views buttons build their own
   // option lists. A plain field told Angular nothing.
+  /** Whether the button is disabled. Defaults to `false`. */
   public readonly disabled: ModelSignal<boolean> = model(false);
+  /** Whether the button shows its loading spinner. Defaults to `false`. */
   public readonly loading: ModelSignal<boolean> = model(false);
+  /**
+   * Entries of the button's dropdown. An option with `allowedActions` stays disabled until its
+   * access check returns and is hidden when none is allowed. Defaults to `[]`.
+   */
   public readonly options: ModelSignal<IRibbonButtonOption[]> = model<IRibbonButtonOption[]>([]);
 
+  /** Size of the button's icon: `small` or `large`. Defaults to `large`. */
   public readonly iconSize: InputSignal<'small' | 'large'> = input<'small' | 'large'>('large');
   //#endregion
 
@@ -74,8 +90,10 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#endregion
 
   //#region Properties
+  /** Whether the access check for `allowedActions` has returned. */
   public readonly isAccessLoaded: Signal<boolean> = computed(() => this.access().isLoaded);
 
+  /** Whether the button is shown, from the access check for `allowedActions`. */
   public override readonly isVisible: Signal<boolean> = computed(() => this.access().isVisible);
 
   protected get isButtonDisabled(): boolean {
@@ -123,10 +141,12 @@ export class BaseButton extends RibbonGroupChild implements OnDestroy {
   //#endregion
 
   //#region Public methods
+  /** Shows the loading spinner on the button. */
   public startLoading(): void {
     this.button()?.startLoading();
   }
 
+  /** Stops the spinner and briefly shows the outcome: `success`, `warning` or `failure`. */
   public finishLoading(status: 'failure' | 'warning' | 'success'): void {
     this.button()?.finishLoading(status);
   }

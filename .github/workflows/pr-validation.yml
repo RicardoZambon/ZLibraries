@@ -74,6 +74,28 @@ jobs:
       - name: Build affected Storybooks
         run: npx nx affected --target=build-storybook --base=$NX_BASE --head=$NX_HEAD --configuration=ci
 
+      - name: Check translation parity
+        run: node tools/check-i18n-parity.mjs
+
+      - name: Check breaking changes are marked
+        run: node tools/check-breaking-changelog.mjs $NX_BASE
+
+      # Always built, not only when affected: a guide-only PR changes no project, yet it can break
+      # a link or name an example that does not exist. The content step fails on both, and on any
+      # public input, output or model without a description.
+      - name: Build the docs site
+        run: npx nx run docs:site
+
+      - name: Check the assembled site
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run build-storybook
+          rm -rf site
+          cp -r dist/apps/docs/browser site
+          cp -r dist/storybook/ui-examples site/storybook
+          node tools/docs-content/check-site.mjs site
+
       - name: Semantic release dry run
         working-directory: libs/ui
         env:
@@ -104,7 +126,7 @@ jobs:
 
           changed="$(git diff --name-only "$base"...HEAD)"
 
-          if echo "$changed" | grep -q "^libs/ui/src/" && ! echo "$changed" | grep -q "^libs/ui/CHANGELOG.md$"; then
+          if echo "$changed" | grep -qE "^libs/ui/(src/|package.json$|ng-package.json$)" && ! echo "$changed" | grep -q "^libs/ui/CHANGELOG.md$"; then
             echo "::error::The package changed but its CHANGELOG.md was not updated."
             echo "Add an entry under '## [Unreleased]' in libs/ui/CHANGELOG.md."
             echo "If this PR genuinely needs no changelog (tooling/CI only), add the 'no-changelog' label."

@@ -5,6 +5,10 @@
   "TopBar-Theme-Light": "Light theme",
   "TopBar-Theme-Dark": "Dark theme",
   "TopBar-Theme-System": "Theme follows the system",
+  "Main-Logout": "Logout",
+  "Main-Logout-Modal-Message": "Are you sure you want to log out?",
+  "Main-Logout-Modal-Message-Cancel": "Cancel",
+  "Main-Logout-Modal-Message-Confirm": "Logout",
 
   "": ""
 }

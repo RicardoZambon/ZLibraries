@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { APP_CONFIG, AppConfig } from '@zambon-dev/ui/framework';
 
+/** Logo, application name and company name from the app configuration, shown in the top bar. */
 @Component({
   selector: 'shared-brand',
   templateUrl: './brand.component.html',

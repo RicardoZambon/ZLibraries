@@ -1,7 +1,7 @@
 # Library-wide layout review
 
 - **Date:** 2026-10-24
-- **Status:** Approved (design) → implementation
+- **Status:** Implemented in @zambon-dev/ui 1.1.0.
 - **Libraries affected:** `@library`, `@framework`, `@shared`, plus `tools/`
 - **Predecessor:** [sidebar rework, phase 1](2026-07-27-sidebar-rework-phase1-design.md)
 
@@ -110,7 +110,7 @@ Phases, each a commit: instrumentation and baseline; the core; derivation (empty
 the theme mechanism; the glass family; the surfaces inside the glass; the overlays; the forms and
 focus; the button; the frame and the remaining globals; the login; documentation.
 
-Ordering rationale, verification routine and risks are in the implementation plan.
+The implementation plan was not kept.
 
 ## 8. Public API and consumer impact
 

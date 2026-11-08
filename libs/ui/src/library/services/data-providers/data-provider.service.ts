@@ -3,6 +3,11 @@ import { inject, Injectable, OnDestroy, signal, WritableSignal } from '@angular/
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Observable, ReplaySubject, Subject, take } from 'rxjs';
 
+/**
+ * Base for a service that loads, caches and saves one entity for a details view. It reads the
+ * record id from the route's `id` parameter; extend it and implement `loadModel`, `saveModel`
+ * and `getTitle`.
+ */
 @Injectable()
 export abstract class DataProviderService<TEntityModel> implements OnDestroy {
   //#region ViewChilds, Inputs, Outputs

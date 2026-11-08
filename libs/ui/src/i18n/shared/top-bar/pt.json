@@ -5,6 +5,10 @@
   "TopBar-Theme-Light": "Tema claro",
   "TopBar-Theme-Dark": "Tema escuro",
   "TopBar-Theme-System": "Tema acompanha o sistema",
+  "Main-Logout": "Sair",
+  "Main-Logout-Modal-Message": "Tem certeza de que deseja sair?",
+  "Main-Logout-Modal-Message-Cancel": "Cancelar",
+  "Main-Logout-Modal-Message-Confirm": "Sair",
 
   "": ""
 }

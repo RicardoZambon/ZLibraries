@@ -1,6 +1,10 @@
 import { NgStyle } from '@angular/common';
 import { Component, ElementRef, input, InputSignal, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 
+/**
+ * A titled section whose content the user can collapse and expand by clicking the title or
+ * pressing Enter or Space on it. Starts expanded.
+ */
 @Component({
   selector: 'lib-group-accordion',
   templateUrl: './group-accordion.component.html',
@@ -13,6 +17,7 @@ export class GroupAccordionComponent {
   private readonly containerElementRef: Signal<ElementRef<HTMLDivElement> | undefined> =
     viewChild<ElementRef<HTMLDivElement>>('container');
 
+  /** Title of the section, shown as given. Required. */
   public readonly label: InputSignal<string> = input.required<string>();
   //#endregion
 
@@ -22,6 +27,7 @@ export class GroupAccordionComponent {
   //#endregion
 
   //#region Properties
+  /** Height in pixels pinned on the content during the collapse animation, or `-1` when none is set. */
   public readonly maxHeight: Signal<number> = this._maxHeight.asReadonly();
   //#endregion
 

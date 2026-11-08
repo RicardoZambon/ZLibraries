@@ -34,7 +34,7 @@
 
     /* A CSS triangle rather than content-['\f054'] in 'Font Awesome 6 Free'. The glyph
        codepoint is tied to a specific FontAwesome major, and that package is held back
-       deliberately (docs/guides/dependency-holds.md) precisely because its names and
+       deliberately (docs/maintainers/dependency-holds.md) precisely because its names and
        codepoints move -- a bumped major would have turned this separator into tofu. */
     &:not(:first-of-type):before {
       @apply content-[''] shrink-0 mr-1;

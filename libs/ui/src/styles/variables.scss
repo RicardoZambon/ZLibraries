@@ -3,7 +3,7 @@
  *
  * These names are API: applications override them, and the CHANGELOG documents them. So they stay.
  * What changed is where their values come from. Each one now names a role in the semantic core
- * (see shared/styles/theme.css) instead of repeating a literal, which is what lets a theme move
+ * (see theme.css) instead of repeating a literal, which is what lets a theme move
  * them all at once. The component token is the contract; the core is the implementation.
  *
  * Wrapped in a cascade layer on purpose. Until now an application's override only won if its
@@ -13,8 +13,8 @@
  *
  * A consequence worth knowing: a static override pins that token in both themes. To vary by theme,
  * write `:root[data-theme='dark'] { --sidebar-bg: ... }` -- same specificity as ours, declared
- * later, so it wins. Note that the dark block in theme.css touches core tokens only and never
- * these, so a brand override stays yours in both themes without any work.
+ * later, so it wins. The dark block in theme.css touches core tokens, plus one of these:
+ * `--app-backdrop`. Override that one per theme. Every other override stays yours in both themes.
  */
 @layer tokens {
   :root {

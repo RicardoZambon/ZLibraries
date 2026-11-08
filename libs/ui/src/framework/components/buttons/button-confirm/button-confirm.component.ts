@@ -12,6 +12,10 @@ import { Observable, take } from 'rxjs';
 import { ConfirmModalComponent } from '../../modals';
 import { BaseButton } from '../base-button';
 
+/**
+ * Ribbon button that asks for confirmation in a modal, then runs `action`. On success it closes the
+ * modal and refreshes the surrounding data grid; on failure the modal shows the error.
+ */
 @Component({
   selector: 'framework-button-confirm',
   templateUrl: './button-confirm.component.html',
@@ -22,20 +26,25 @@ export class ButtonConfirmComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   private readonly confirmModal: Signal<ConfirmModalComponent | undefined> = viewChild(ConfirmModalComponent);
 
+  /** Request to run once the user confirms. Required. Subscribed to once per confirmation. */
   public readonly action: InputSignal<Observable<any>> = input.required<Observable<any>>();
+  /** Tailwind text-colour class for the ribbon button's icon. Defaults to `text-primary-500`. */
   public readonly color: InputSignal<string> = input('text-primary-500');
+  /** Font Awesome icon class of the ribbon button. Defaults to `''` (no icon). */
   public readonly icon: InputSignal<string> = input('');
+  /** Translation key of the ribbon button's label. Defaults to `''`. */
   public readonly label: InputSignal<string> = input('');
-  /**
-   * What the confirm button is for. Replaces `modalConfirmButtonColor`, which took a Tailwind
-   * palette name -- `green-500` -- and so could neither follow a theme nor say what the button
-   * meant.
-   */
+  /** What the modal's confirm button is for. Sets its fill and text colour. Defaults to `danger`. */
   public readonly modalConfirmButtonIntent: InputSignal<ButtonIntent> = input<ButtonIntent>('danger');
+  /** Translation key of the modal's confirm button. Defaults to `''`. */
   public readonly modalConfirmButtonLabel: InputSignal<string> = input('');
+  /** Translation key of the message in the modal. May contain HTML. Defaults to `''` (no message). */
   public readonly modalMessage: InputSignal<string> = input('');
+  /** Font Awesome classes of the icon beside the message. Defaults to `fa-solid fa-circle-question`. */
   public readonly modalMessageIcon: InputSignal<string> = input('fa-solid fa-circle-question');
+  /** Tailwind text-colour class of the message icon. Defaults to `''` (no colour class). */
   public readonly modalMessageIconColor: InputSignal<string> = input('');
+  /** Translation key of the modal's title. Defaults to `''`. */
   public readonly modalTitle: InputSignal<string> = input('');
   //#endregion
 

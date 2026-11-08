@@ -61,7 +61,7 @@ describe('DataGridDataset', () => {
     it('should include multiSelect column when enabled', () => {
       dataset.configs.multiSelect = true;
 
-      expect(dataset.columnsSize).toContain('minmax(1.5rem,min-content)');
+      expect(dataset.columnsSize).toContain('min-content');
     });
   });
 

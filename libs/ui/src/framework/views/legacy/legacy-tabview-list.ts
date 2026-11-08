@@ -5,14 +5,17 @@ import { takeUntil } from 'rxjs';
 import { TabService } from '../../services';
 import { LegacyTabViewBase } from './legacy-tabview-base';
 
-/**
- * @deprecated Use standalone {@link TabViewList} instead. Migrate by extending TabViewList
- * and using standalone component imports with inject() for dependency injection.
- */
 // No strategy on purpose: Angular never inherits `changeDetection`, so one declared here would
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base for a legacy list screen inside a tab. Follows the grid's loading and tracks the selected rows
+ * and, when exactly one is selected, that row's data.
+ *
+ * @deprecated Use {@link TabViewList} instead. Migrate by extending TabViewList
+ * and using standalone component imports with inject() for dependency injection.
+ */
 @Component({ template: '' })
 export abstract class LegacyTabViewList<TListModel> extends LegacyTabViewBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs

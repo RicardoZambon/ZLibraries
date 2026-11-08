@@ -5,6 +5,10 @@ import { CatalogSelectComponent, FormGroupComponent, FormInputGroupComponent } f
 import { takeUntil } from 'rxjs';
 import { FiltersBase } from '../../../components';
 
+/**
+ * Ribbon filter for the services history grid: change name, author, date range and whether to show
+ * only changes made to the current record. A date range picked backwards is corrected automatically.
+ */
 @Component({
   selector: 'shared-services-history-filter',
   templateUrl: './services-history-filter.component.html',

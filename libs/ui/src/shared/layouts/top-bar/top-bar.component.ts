@@ -8,6 +8,10 @@ import { NotificationsComponent } from './notifications/notifications.component'
 import { ThemeSwitchComponent } from '../../theme/theme-switch.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 
+/**
+ * Bar across the top of the app with the brand, environment badge, notifications, theme and
+ * language switches, user profile and a logout button.
+ */
 @Component({
   selector: 'shared-top-bar',
   templateUrl: './top-bar.component.html',
@@ -30,6 +34,7 @@ export class TopBarComponent {
   //#endregion
 
   //#region Event handlers
+  /** Emits `logout`. */
   public onLogoutClick(): void {
     this.logout.emit();
   }

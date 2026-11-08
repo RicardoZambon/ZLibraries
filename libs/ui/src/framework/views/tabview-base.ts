@@ -6,6 +6,10 @@ import { ViewBase } from './view-base';
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base for a view routed inside a tab. Publishes the template marked `#ribbon` to the tab's ribbon,
+ * and starts in the loading state so the ribbon buttons stay disabled until data arrives.
+ */
 @Component({ template: '' })
 export abstract class TabViewBase extends ViewBase implements AfterViewInit {
   //#region ViewChilds, Inputs, Outputs

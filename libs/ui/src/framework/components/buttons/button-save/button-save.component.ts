@@ -9,6 +9,11 @@ import { TabService } from '../../../services';
 import { ErrorModalComponent } from '../../modals/error-modal/error-modal.component';
 import { BaseButton } from '../base-button';
 
+/**
+ * Ribbon button that validates and saves the current form. Its dropdown offers Save, Save and close,
+ * and Save and new. Validation errors from the server go to the form fields; other errors open an
+ * error modal.
+ */
 @Component({
   selector: 'framework-button-save',
   templateUrl: './button-save.component.html',
@@ -19,6 +24,7 @@ export class ButtonSaveComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   private readonly errorModal: Signal<ErrorModalComponent | undefined> = viewChild(ErrorModalComponent);
 
+  /** Index of the option in `options` that the main button runs. Defaults to `0` (Save). */
   public readonly defaultOption: InputSignal<number> = input(0);
   //#endregion
 
@@ -151,6 +157,7 @@ export class ButtonSaveComponent extends BaseButton {
   //#endregion
 
   //#region Public methods
+  /** Stops the spinner and briefly shows the outcome: `success`, `warning` or `failure`. */
   public override finishLoading(status: 'failure' | 'warning' | 'success'): void {
     super.finishLoading(status);
   }

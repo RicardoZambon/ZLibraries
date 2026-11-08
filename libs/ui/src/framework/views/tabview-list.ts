@@ -13,6 +13,10 @@ import { TabViewBase } from './tabview-base';
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base for a list screen inside a tab. Follows the injected `DataGridDataset`: the view is busy while
+ * rows load, and it tracks the selected rows and, when exactly one is selected, that row's data.
+ */
 @Component({ host: { class: 'framework-view-list' }, template: '' })
 export abstract class TabViewList<TListModel> extends TabViewBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs

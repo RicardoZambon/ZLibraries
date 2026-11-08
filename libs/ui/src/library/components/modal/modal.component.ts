@@ -18,6 +18,11 @@ import { IModal, ModalSize } from '../../models';
 import { BaseComponent } from '../base.component';
 import { ButtonComponent } from '../button/button.component';
 
+/**
+ * A modal dialog with a header, a body and a footer. Project content with the `body` and `footer`
+ * attributes, and open or close it through `toggleModal()` from a template reference or a view
+ * query. The dialog is moved to `<body>` so it always renders above the rest of the app.
+ */
 @Component({
   selector: 'lib-modal',
   templateUrl: './modal.component.html',
@@ -30,15 +35,28 @@ import { ButtonComponent } from '../button/button.component';
 })
 export class ModalComponent extends BaseComponent implements IModal, OnInit {
   //#region ViewChilds, Inputs, Outputs
+  /** Text of the footer's close button, shown as given. Defaults to `Close`. */
   public readonly closeButtonText: ModelSignal<string> = model('Close');
+  /**
+   * When `true`, a click on the backdrop outside the dialog closes it. Escape and the close
+   * buttons work either way. Defaults to `true`.
+   */
   public readonly dialog: InputSignal<boolean> = input(true);
+  /**
+   * Marks the dialog as busy. While `true` the close button is disabled and Escape and backdrop
+   * clicks are ignored. Defaults to `false`.
+   */
   public readonly modalProcessing: ModelSignal<boolean> = model(false);
+  /** Where the dialog sits on screen: `top`, `left`, `right`, `bottom` or `center`. Defaults to `center`. */
   public readonly position: InputSignal<'top' | 'left' | 'right' | 'bottom' | 'center'> = input<
     'top' | 'left' | 'right' | 'bottom' | 'center'
   >('center');
+  /** Width of the dialog. Defaults to `auto`, which fits the content. */
   public readonly size: InputSignal<ModalSize> = input<ModalSize>('auto');
+  /** Heading of the dialog, shown as given. Without a title the header and its close icon are not shown. */
   public readonly title: InputSignal<string | undefined> = input<string>();
 
+  /** Emits after the dialog closes, however it was closed. */
   public readonly closed: OutputEmitterRef<void> = output<void>();
   //#endregion
 
@@ -49,7 +67,7 @@ export class ModalComponent extends BaseComponent implements IModal, OnInit {
   //#endregion
 
   //#region Properties
-  /** Renamed from `isShown`, and a signal now -- IModal says why. */
+  /** Whether the dialog is open. */
   public readonly isOpen: Signal<boolean> = this._isOpen.asReadonly();
   //#endregion
 
@@ -119,12 +137,17 @@ export class ModalComponent extends BaseComponent implements IModal, OnInit {
   //#endregion
 
   //#region Public methods
+  /** Closes the dialog if it is open. Does nothing otherwise. */
   public closeModal(): void {
     if (this.isOpen()) {
       this.toggleModal();
     }
   }
 
+  /**
+   * Opens the dialog when closed and closes it when open. Opening focuses the first element with
+   * `autofocus`; closing emits `closed`.
+   */
   public toggleModal(): void {
     const wasOpen: boolean = this._isOpen();
 

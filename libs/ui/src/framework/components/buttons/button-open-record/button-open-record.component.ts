@@ -6,6 +6,10 @@ import { Tab } from '../../../models';
 import { TabService } from '../../../services';
 import { BaseButton } from '../base-button';
 
+/**
+ * Ribbon button that opens the record selected in the surrounding data grid in the current tab.
+ * Enabled only when exactly one row is selected.
+ */
 @Component({
   selector: 'framework-button-open-record',
   templateUrl: './button-open-record.component.html',
@@ -14,7 +18,9 @@ import { BaseButton } from '../base-button';
 })
 export class ButtonOpenRecordComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
+  /** Segment added between `rootPath` and the record's ID. Unset by default. */
   public readonly elementPath: InputSignal<string | undefined> = input<string>();
+  /** Base URL of the record page. Defaults to the current router URL. */
   public readonly rootPath: InputSignal<string | undefined> = input<string>();
   //#endregion
 

@@ -2,24 +2,49 @@
 
 All notable changes to `@zambon-dev/ui` are documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions
+follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). One exception: 1.1.0 and 1.2.0
+were minor releases that carried breaking changes. From now on, a breaking change ships as a major.
 
 > **Upgrading?** Each release lists what changed and, under
 > **⚠ Breaking Changes / Migration**, the concrete steps required to move to that version.
 > When no migration is needed, that subsection is omitted.
 
+Releases of the retired `@zambon-dev/library`, `@zambon-dev/framework` and `@zambon-dev/shared`
+packages are listed under [Package history](#package-history) at the end.
+
 ## [Unreleased]
 
 ### Added
 
+- **`LoginComponent` is exported from `@zambon-dev/ui/shared`.** `SharedAuthModule` still routes
+  to it. Import it directly to place the sign-in card in a layout of your own.
+- **The package ships its license.** The npm tarball now contains the MIT `LICENSE` file.
+- **The logout labels ship with the shared translations.** `Main-Logout`,
+  `Main-Logout-Modal-Message`, `Main-Logout-Modal-Message-Cancel` and
+  `Main-Logout-Modal-Message-Confirm` are in the shared top-bar translations, in English and
+  Portuguese. An application no longer has to define them.
+
 ### Changed
+
+- **The confirm and error modals' message block is styled as `.error`.** It was `.erro`. Only a
+  stylesheet that reached into these modals with `::ng-deep .erro` is affected.
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- **A multi-select grid shows its checkboxes again.** In a grid narrower than its columns, as the
+  multi-select modal's search pane usually is, the selection column stayed at its 1.5rem minimum
+  and the row's padding left the checkbox no room, so it was cut off entirely. The column is now
+  sized to its content. A `multiSelectSize` you set yourself is unchanged.
+- **Tailwind utilities used in the package's templates are generated in your build.** Tailwind's
+  automatic source detection skips `node_modules`, so an application's build could miss utilities
+  that only the package's templates use. `theme.css` now declares the package as a source.
+- **The comments in the published stylesheets name the current import path,**
+  `@zambon-dev/ui/styles/theme.css`, instead of the retired `@zambon-dev/shared` one.
 
 ### ⚠ Breaking Changes / Migration
 
@@ -50,8 +75,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   needs ZWebAPI 1.17 or later, which rebuilds the whole record; against an older backend the
   changed fields still show and the option is off.
 - **Each operation in the list says how many fields it changed.**
-- **`OPERATIONS_HISTORY_FIELD_LABEL` labels the audited fields.** The default turns `NomeCompleto`
-  into "Nome completo". Provide a function to use the application's own field labels or
+- **`OPERATIONS_HISTORY_FIELD_LABEL` labels the audited fields.** The default turns `FullName`
+  into "Full name". Provide a function to use the application's own field labels or
   translation keys.
 
 ### Deprecated
@@ -125,10 +150,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   rows the virtual scroll had rendered. That window moves, so whenever it moved by an odd number of
   rows every stripe swapped -- on a long list, constantly. It now follows each row's index in the
   data.
-
-### ⚠ Breaking Changes / Migration
-
-- None.
 
 ## [1.2.0] - 2026-10-27
 
@@ -230,10 +251,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   z-index under a host that painted the backdrop and had no stacking context of its own, so it was
   always hidden behind the backdrop. When a photograph is set, the footer under the card now gets a
   glass surface, so its text stays readable over the picture.
-
-### ⚠ Breaking Changes / Migration
-
-- None.
 
 ## [1.1.0] - 2026-10-25
 
@@ -716,7 +733,7 @@ UI components, directives, pipes and the data-grid services. Published as `@zamb
 
 - **A menu with children no longer runs its label under the expand chevron.** The chevron and the
   external-link glyph sit in an absolute slot at the row's right edge, outside the anchor's flow,
-  so nothing reserved room for them: "Fluxo de delegação" overlapped the chevron by 11px. The row
+  so nothing reserved room for them: "Delegation workflow" overlapped the chevron by 11px. The row
   reserves the slot now and the anchor fills what is left, so a long label ellipsises before it.
 
   Rows with one of those glyphs give up the fixed anchor width to do this, so their label reflows
@@ -1537,8 +1554,8 @@ Tabbed navigation, view scaffolding, ribbon buttons and modals. Published as `@z
 
 - **A record’s non-form views can render their edit button again.** `framework-button-edit` asks
   for `FormService` and `DataProviderService` together, and the details shell provided only the
-  second — so a child list routed as its own view (Aplicações → Visões → Business Places, Centros
-  de Custo) threw `NG0201: No provider found for FormService` before it rendered at all. The shell
+  second — so a child list routed as its own view (Applications → Views → Business Places, Cost
+  Centers) threw `NG0201: No provider found for FormService` before it rendered at all. The shell
   provides one now; a form view’s own provider still shadows it, so forms are unchanged.
 
 - **The breadcrumbs no longer sit further from the ribbon than the ribbon does from its content.**
@@ -2712,3 +2729,14 @@ URL) in `AppConfig`, and implement a hub that pushes the notification list to cl
 - Baseline release: the changelog starts being tracked from this version. Earlier history is
   available via [GitHub Releases](https://github.com/RicardoZambon/ZLibraries/releases) and the
   `shared-v*` tags.
+
+[Unreleased]: https://github.com/RicardoZambon/ZLibraries/compare/ui-v1.4.1...HEAD
+[1.4.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.4.1
+[1.4.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.4.0
+[1.3.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.3.0
+[1.2.2]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.2.2
+[1.2.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.2.1
+[1.2.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.2.0
+[1.1.1]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.1.1
+[1.1.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.1.0
+[1.0.0]: https://github.com/RicardoZambon/ZLibraries/releases/tag/ui-v1.0.0

@@ -11,6 +11,11 @@ import { FRAMEWORK_VIEW_TYPE, FrameworkViewType, ITab, Tab } from '../../../mode
 import { TabService } from '../../../services';
 import { BaseButton } from '../base-button';
 
+/**
+ * Ribbon button that opens the "new record" page in the current tab. Inside a details view it shows
+ * only once the parent record is saved. Each option in `options` can add its own path and query
+ * parameters.
+ */
 @Component({
   selector: 'framework-button-new',
   templateUrl: './button-new.component.html',
@@ -19,8 +24,11 @@ import { BaseButton } from '../base-button';
 })
 export class ButtonNewComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
+  /** Last URL segment of the new-record page. Defaults to `new`. */
   public readonly endpoint: InputSignal<string> = input('new');
+  /** Query parameters added to the new-record URL. An option's own parameters are merged over these. */
   public readonly parameters: InputSignal<{ [key: string]: string } | undefined> = input<{ [key: string]: string }>();
+  /** Segment inserted before `endpoint`, such as a child entity's route. An option's `path` replaces it. */
   public readonly path: InputSignal<string | undefined> = input<string>();
   //#endregion
 

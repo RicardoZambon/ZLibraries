@@ -25,6 +25,11 @@ import { takeUntil } from 'rxjs';
 import { BaseButton } from '../base-button';
 import { ButtonComponent } from '@zambon-dev/ui/library';
 
+/**
+ * Ribbon button that opens a filter form in a modal and applies the submitted values to the
+ * surrounding data grid. Project the filter fields as content. A Clear button appears while filters
+ * are applied.
+ */
 @Component({
   selector: 'framework-button-filters',
   templateUrl: './button-filters.component.html',
@@ -34,10 +39,14 @@ import { ButtonComponent } from '@zambon-dev/ui/library';
 })
 export class ButtonFiltersComponent extends BaseButton implements OnInit {
   //#region ViewChilds, Inputs, Outputs
+  /** The filter modal. */
   public readonly modal: Signal<ModalComponent | undefined> = viewChild(ModalComponent);
 
+  /** Width of the filter modal. Defaults to `xl`. */
   public readonly modalSize: InputSignal<ModalSize> = input<ModalSize>('xl');
+  /** Translation key of the filter modal's title. Defaults to `''`. */
   public readonly modalTitle: InputSignal<string> = input('');
+  /** Called before the filters are applied, to run extra validation on the form. The filters apply only when the form is valid. */
   public readonly validateFormFunction: InputSignal<(() => void) | undefined> = input<() => void>();
   //#endregion
 
@@ -126,6 +135,10 @@ export class ButtonFiltersComponent extends BaseButton implements OnInit {
   //#endregion
 
   //#region Public methods
+  /**
+   * Applies `filters` to the grid and keeps them for the next time the modal opens. Empty values must
+   * already be removed; an empty object clears the filters.
+   */
   public setFilters(filters: { [key: string]: any }): void {
     // Kept whole, because reopening the modal patches this straight back into the form and a
     // catalog select backed by a search endpoint cannot recover its label from the identifier --

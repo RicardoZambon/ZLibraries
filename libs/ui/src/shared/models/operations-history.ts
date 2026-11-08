@@ -9,7 +9,7 @@ export interface IOperationsHistoryField {
   isChanged: boolean;
   /** Bookkeeping rather than data: the key, the audit columns, the concurrency token. */
   isSystem: boolean;
-  /** The property name, as the backend declares it (`NomeCompleto`). */
+  /** The property name, as the backend declares it (`FullName`). */
   name: string;
   /** The value after the operation; `null` for a deletion, or when the backend could not rebuild it. */
   newValue?: unknown;
@@ -65,8 +65,8 @@ export function humanizeFieldName(fieldName: string): string {
 /**
  * Labels the fields of the audit's change details.
  *
- * The default splits the property name into words: `NomeCompleto` reads "Nome completo" and
- * `CadastroID` reads "Cadastro ID". Provide a function to use the application's own field labels:
+ * The default splits the property name into words: `FullName` reads "Full name" and
+ * `RecordID` reads "Record ID". Provide a function to use the application's own field labels:
  *
  * ```ts
  * { provide: OPERATIONS_HISTORY_FIELD_LABEL, useValue: (field, entity) => `${entity}-Field-${field}` }

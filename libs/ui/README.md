@@ -1,81 +1,82 @@
 # @zambon-dev/ui
 
-Angular UI components, an application shell and a shared application layer for Zambon
-applications, in one package on one version.
+[![npm version](https://img.shields.io/npm/v/@zambon-dev/ui)](https://www.npmjs.com/package/@zambon-dev/ui)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/RicardoZambon/ZLibraries/blob/main/libs/ui/LICENSE)
+[![docs](https://img.shields.io/badge/docs-ricardozambon.github.io-blue)](https://ricardozambon.github.io/ZLibraries/)
 
-The three layers are separate entry points, and they stack one way: `shared` builds on
-`framework`, `framework` builds on `library`, and `library` builds on neither.
+Angular 22 components and a complete application shell, in one package. Use the form controls, data grid, modals and ribbon on their own, or take the whole shell: sidebar, top bar, tabbed navigation, sign-in and audit history. Everything is themed with Tailwind CSS 4 design tokens, has a dark theme, and renders under OnPush and zoneless change detection.
 
-| Import                     | What is in it                                                 |
-| -------------------------- | ------------------------------------------------------------- |
-| `@zambon-dev/ui`           | all three layers                                              |
-| `@zambon-dev/ui/library`   | form controls, data grids, modals, the ribbon and the sidebar |
-| `@zambon-dev/ui/framework` | tabbed navigation, view base classes, ribbon buttons          |
-| `@zambon-dev/ui/shared`    | authentication, layouts, audit-history features               |
-| `@zambon-dev/ui/testing`   | a test harness for rendering under an OnPush ancestor         |
+## Entry points
 
-Importing a layer directly keeps the dependency honest and the bundle smaller; importing the root
-is fine where the layer does not matter.
+| Import                     | What is in it                                                                            |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `@zambon-dev/ui/library`   | Form controls, data grid, modal, multi-select and multi-editor, ribbon, sidebar, button. |
+| `@zambon-dev/ui/framework` | Tabbed navigation, view base classes, ribbon action buttons, confirm and error modals.   |
+| `@zambon-dev/ui/shared`    | Authentication, main and login layouts, top bar, theme, audit history.                   |
+| `@zambon-dev/ui/testing`   | A harness that renders a component under an OnPush ancestor, for your tests.             |
+| `@zambon-dev/ui`           | All of `library`, `framework` and `shared`.                                              |
 
-## Install
+Selectors keep their layer's prefix: `lib-` for library, `framework-` for framework, `shared-` for shared.
+
+The library and the framework both export a `ButtonComponent`. From the root import, `ButtonComponent` is the framework button, and the library button is `LibButtonComponent`. Import from `@zambon-dev/ui/library` to get the library button under its own name.
+
+## Quick start
+
+Install the package. npm 7 and later install the peer dependencies too.
 
 ```bash
 npm i @zambon-dev/ui
+npm i -D tailwindcss @tailwindcss/postcss @tailwindcss/forms
+npm i @fortawesome/fontawesome-free
 ```
 
-Peer dependencies are the union of what the three layers need, and all are required:
-`@angular/cdk`, `@angular/common`, `@angular/core`, `@angular/forms`, `@angular/platform-browser`,
-`@angular/router`, `@auth0/angular-jwt`, `@microsoft/signalr`, `@ngx-translate/core`,
-`ngx-resize-observer`, `ngx-translate-multi-http-loader` and `rxjs`. Angular 22 or later.
+Add a `.postcssrc.json` at the workspace root:
 
-**Coming from the three separate packages?** See
-[the migration guide](../../docs/guides/migrating-to-ui.md).
-
-## Styles
-
-Each stylesheet is named by its own subpath:
-
-```scss
-@use '@zambon-dev/ui/styles/variables.scss';
-@use '@zambon-dev/ui/styles/common.scss';
+```json
+{ "plugins": { "@tailwindcss/postcss": {} } }
 ```
 
-`@zambon-dev/ui/styles/theme.css` is the Tailwind entry point and carries the design tokens. An
-application that uses the components' Tailwind utilities needs it in its own build.
+Add the global styles to `angular.json`, in this order:
 
-## Translations
-
-The shipped translation files live under `i18n/framework` and `i18n/shared`. Spread the exported
-asset patterns into your build rather than writing the paths out:
-
-```typescript
-import { ZAMBON_FRAMEWORK_I18N_ASSET, provideZambonFrameworkTranslateService } from '@zambon-dev/ui/framework';
-import { ZAMBON_SHARED_I18N_ASSET } from '@zambon-dev/ui/shared';
+```json
+"styles": [
+  "@fortawesome/fontawesome-free/css/all.css",
+  "@zambon-dev/ui/styles/theme.css",
+  "@zambon-dev/ui/styles/common.scss",
+  "src/styles.css"
+]
 ```
 
-## Selectors
+Render a component:
 
-Each layer kept the prefix it published under, so a selector still says which layer it came from:
-`<lib-*>` for library, `<framework-*>` for framework, `<shared-*>` for shared.
+```ts
+import { Component } from '@angular/core';
+import { ButtonComponent } from '@zambon-dev/ui/library';
 
-## Development
-
-```bash
-npx nx build ui          # production package into dist/libs/ui
-npx nx test ui           # Jest
-npx nx lint ui           # ESLint
-npx nx storybook ui      # Storybook on :4400
+@Component({
+  selector: 'app-root',
+  imports: [ButtonComponent],
+  template: `<lib-button intent="primary" icon="fa-solid fa-floppy-disk">Save</lib-button>`,
+})
+export class App {}
 ```
 
-Every change under `src/` needs an entry under `## [Unreleased]` in `CHANGELOG.md`; CI enforces
-it. The release pipeline stamps the version — do not write it yourself.
+The [getting started guide](https://github.com/RicardoZambon/ZLibraries/blob/main/docs/guides/getting-started.md) covers the providers for the data grid and forms, and the full application shell.
 
-## Layering
+## Documentation
 
-The one-way rule is enforced by `no-restricted-imports` overrides in `eslint.config.mjs`, which
-reject both the published subpath and the equivalent relative path. As three packages the rule
-held because npm cannot express a cycle; inside one package only the lint rule holds it.
+- [Documentation site](https://ricardozambon.github.io/ZLibraries/)
+- [Getting started](https://github.com/RicardoZambon/ZLibraries/blob/main/docs/guides/getting-started.md)
+- [Theming and design tokens](https://github.com/RicardoZambon/ZLibraries/blob/main/docs/guides/design-tokens.md)
+- [Internationalization](https://github.com/RicardoZambon/ZLibraries/blob/main/docs/guides/internationalization.md)
+- [Changelog](https://github.com/RicardoZambon/ZLibraries/blob/main/libs/ui/CHANGELOG.md)
+- [Migrating from the separate packages](https://github.com/RicardoZambon/ZLibraries/blob/main/docs/guides/migrating-to-ui.md)
+- [Issues](https://github.com/RicardoZambon/ZLibraries/issues)
+
+## Compatibility
+
+Angular 22. The Angular peer range is `^22.0.0`.
 
 ## License
 
-MIT © Ricardo Zambon
+[MIT](https://github.com/RicardoZambon/ZLibraries/blob/main/libs/ui/LICENSE) © Ricardo Zambon

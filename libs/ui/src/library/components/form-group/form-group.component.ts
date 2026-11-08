@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
+/**
+ * Groups related form fields under an optional heading. Project the fields as content.
+ */
 @Component({
   selector: 'lib-form-group',
   templateUrl: './form-group.component.html',
@@ -13,7 +16,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class FormGroupComponent {
   //#region ViewChilds, Inputs, Outputs
+  /** Adds the `expand` class to the host so the group grows to fill the available space. Defaults to `false`. */
   @Input() public shouldExpand = false;
+  /** Heading shown above the fields, as a translation key. No heading is shown when empty. */
   @Input() public label!: string;
   //#endregion
 

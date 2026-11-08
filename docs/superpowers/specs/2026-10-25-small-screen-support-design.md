@@ -1,7 +1,7 @@
 # Small-screen support: the ribbon and the two-pane modals
 
 - **Date:** 2026-10-25
-- **Status:** Proposed
+- **Status:** Implemented in @zambon-dev/ui 1.2.0.
 - **Entry points affected:** `@zambon-dev/ui/library`, `@zambon-dev/ui/framework`
 - **Predecessor:** [library-wide layout review](2026-10-24-library-wide-layout-review-design.md)
 

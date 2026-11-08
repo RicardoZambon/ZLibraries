@@ -81,7 +81,7 @@ describe('ButtonNewComponent — navigation logic', () => {
     };
     mockRouter = {
       routerState: { root: { snapshot: { url: [], data: {}, firstChild: null, parent: null } } },
-      url: '/contratacoes',
+      url: '/contracts',
     };
     mockDataProviderService = null;
 
@@ -108,51 +108,51 @@ describe('ButtonNewComponent — navigation logic', () => {
   });
 
   it('should call navigateCurrentTab with /new URL and entityBaseUrl from list view', () => {
-    setupRouterWithoutDetailsRoute('/contratacoes');
+    setupRouterWithoutDetailsRoute('/contracts');
 
     component.onButtonClicked();
 
     expect(mockTabService.navigateCurrentTab).toHaveBeenCalledTimes(1);
     const tab: Tab = lastNavigatedTab();
-    expect(tab.url).toBe('/contratacoes/new');
-    expect(tab.entityBaseUrl).toBe('/contratacoes/new');
+    expect(tab.url).toBe('/contracts/new');
+    expect(tab.entityBaseUrl).toBe('/contracts/new');
   });
 
   it('should call navigateCurrentTab with /new URL from detail view (uses parent route)', () => {
-    setupRouterWithDetailsRoute('/contratacoes');
+    setupRouterWithDetailsRoute('/contracts');
 
     component.onButtonClicked();
 
     expect(mockTabService.navigateCurrentTab).toHaveBeenCalledTimes(1);
     const tab: Tab = lastNavigatedTab();
-    expect(tab.url).toBe('/contratacoes/new');
-    expect(tab.entityBaseUrl).toBe('/contratacoes/new');
+    expect(tab.url).toBe('/contracts/new');
+    expect(tab.entityBaseUrl).toBe('/contracts/new');
   });
 
   it('should use custom path when provided', () => {
-    setupRouterWithoutDetailsRoute('/contratacoes');
+    setupRouterWithoutDetailsRoute('/contracts');
     component.path = signal('items');
 
     component.onButtonClicked();
 
     const tab: Tab = lastNavigatedTab();
-    expect(tab.url).toBe('/contratacoes/items/new');
-    expect(tab.entityBaseUrl).toBe('/contratacoes/items/new');
+    expect(tab.url).toBe('/contracts/items/new');
+    expect(tab.entityBaseUrl).toBe('/contracts/items/new');
   });
 
   it('should use custom endpoint when provided', () => {
-    setupRouterWithoutDetailsRoute('/contratacoes');
+    setupRouterWithoutDetailsRoute('/contracts');
     component.endpoint = signal('create');
 
     component.onButtonClicked();
 
     const tab: Tab = lastNavigatedTab();
-    expect(tab.url).toBe('/contratacoes/create');
-    expect(tab.entityBaseUrl).toBe('/contratacoes/create');
+    expect(tab.url).toBe('/contracts/create');
+    expect(tab.entityBaseUrl).toBe('/contracts/create');
   });
 
   it('should pass query parameters to the tab', () => {
-    setupRouterWithoutDetailsRoute('/contratacoes');
+    setupRouterWithoutDetailsRoute('/contracts');
     component.parameters = signal({ type: 'admin' });
 
     component.onButtonClicked();
@@ -162,18 +162,18 @@ describe('ButtonNewComponent — navigation logic', () => {
   });
 
   it('should use option path and parameters when optionId is provided', () => {
-    setupRouterWithoutDetailsRoute('/contratacoes');
+    setupRouterWithoutDetailsRoute('/contracts');
     component.options = signal([{ id: 'custom', path: 'special', parameters: { mode: 'fast' } }]);
 
     component.onButtonClicked('custom');
 
     const tab: Tab = lastNavigatedTab();
-    expect(tab.url).toBe('/contratacoes/special/new');
+    expect(tab.url).toBe('/contracts/special/new');
     expect(tab.queryParams).toEqual({ mode: 'fast' });
   });
 
   it('should merge option parameters with component parameters', () => {
-    setupRouterWithoutDetailsRoute('/contratacoes');
+    setupRouterWithoutDetailsRoute('/contracts');
     component.parameters = signal({ type: 'admin' });
     component.options = signal([{ id: 'custom', path: '', parameters: { mode: 'fast' } }]);
 

@@ -5,6 +5,10 @@ import { RibbonComponent } from '@zambon-dev/ui/library';
 import { Subject, takeUntil } from 'rxjs';
 import { TabViewService } from '../../../services';
 
+/**
+ * Route shell for a list screen in a tab. Shows the ribbon published by the routed view above its
+ * router outlet, and keeps one ribbon per sub-view.
+ */
 @Component({
   selector: 'framework-default-tab-view',
   templateUrl: './default-tab-view.component.html',

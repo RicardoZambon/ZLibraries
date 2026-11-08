@@ -25,6 +25,11 @@ import { DataGridDataset } from '../../services';
 import { BaseComponent } from '../base.component';
 import { DataGridRowComponent } from '../data-grid-row/data-grid-row.component';
 
+/**
+ * A virtual-scrolling grid driven by the `DataGridDataset` provided around it. The dataset holds
+ * the columns, rows, paging and selection; the grid renders them, loads the next page as the user
+ * scrolls, and shows loading, empty and error messages.
+ */
 @Component({
   selector: 'lib-data-grid',
   templateUrl: './data-grid.component.html',
@@ -40,8 +45,17 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
     viewChild<ElementRef<HTMLDivElement>>('body');
   private readonly viewport: Signal<CdkVirtualScrollViewport | undefined> = viewChild(CdkVirtualScrollViewport);
 
+  /** Disables the rows, so they cannot be focused or selected. Defaults to `false`. */
   public readonly disabled: InputSignal<boolean> = input(false);
+  /**
+   * When `true`, the grid does not load rows on init and shows a prompt until something else
+   * loads the dataset, such as a search. Defaults to `false`.
+   */
   public readonly lazyLoadRows: InputSignal<boolean> = input(false);
+  /**
+   * Shows a bar above the header for content projected with the `buttons` attribute, and drops
+   * the grid's borders. Defaults to `false`.
+   */
   public readonly showButtons: InputSignal<boolean> = input(false);
   //#endregion
 
@@ -125,7 +139,7 @@ export class DataGridComponent extends BaseComponent implements OnInit, AfterVie
   protected get selectionColWidth(): string {
     return this.selectionColRealSize
       ? `${this.selectionColRealSize}px`
-      : (this.configs.multiSelectSize ?? 'minmax(1.5rem,min-content)');
+      : (this.configs.multiSelectSize ?? 'min-content');
   }
 
   protected get shouldDisplayMessageWhenEmpty(): boolean {

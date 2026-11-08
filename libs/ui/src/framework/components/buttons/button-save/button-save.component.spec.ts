@@ -153,7 +153,7 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
 
   describe('Save (default option)', () => {
     it('should save model and redirect current tab URL (e.g., /new to /:id) with router sync', () => {
-      setupDetailsRoute('/contratacoes');
+      setupDetailsRoute('/contracts');
       mockTabService.isUrlActive.mockReturnValue(false);
 
       component.onButtonClicked();
@@ -161,35 +161,35 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
       expect(mockFormService.disableForm).toHaveBeenCalled();
       expect(mockDataProviderService.saveModel).toHaveBeenCalled();
       expect(mockDataProviderService.updateModel).toHaveBeenCalledWith({ id: 42, name: 'Test' });
-      expect(mockTabService.redirectCurrentTab).toHaveBeenCalledWith('/contratacoes/42');
-      // Route URL (/contratacoes/new) differs from saved URL (/contratacoes/42),
+      expect(mockTabService.redirectCurrentTab).toHaveBeenCalledWith('/contracts/42');
+      // Route URL (/contracts/new) differs from saved URL (/contracts/42),
       // so the router must be synced invisibly via setRouteRedirect + navigateByUrl
-      expect(mockTabService.setRouteRedirect).toHaveBeenCalledWith('/contratacoes/new', '/contratacoes/42');
-      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/contratacoes/42');
+      expect(mockTabService.setRouteRedirect).toHaveBeenCalledWith('/contracts/new', '/contracts/42');
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/contracts/42');
     });
 
     it('should redirect tab but skip router sync when route URL already matches saved URL', () => {
-      setupDetailsRoute('/contratacoes');
+      setupDetailsRoute('/contracts');
       mockTabService.isUrlActive.mockReturnValue(false);
       // Override so detailsRoute URL matches saved URL (e.g., re-saving an existing entity)
       jest.spyOn(RouteHelper, 'getRouteURL').mockImplementation((route: any) => {
         if (route && route.data && route.data[FRAMEWORK_VIEW_TYPE]) {
-          return '/contratacoes/42';
+          return '/contracts/42';
         }
-        return '/contratacoes';
+        return '/contracts';
       });
 
       component.onButtonClicked();
 
       expect(mockDataProviderService.updateModel).toHaveBeenCalledWith({ id: 42, name: 'Test' });
-      expect(mockTabService.redirectCurrentTab).toHaveBeenCalledWith('/contratacoes/42');
+      expect(mockTabService.redirectCurrentTab).toHaveBeenCalledWith('/contracts/42');
       // Route URL already matches saved URL, so no router sync needed
       expect(mockTabService.setRouteRedirect).not.toHaveBeenCalled();
       expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
     });
 
     it('should NOT redirect when URL is already active (already saved)', () => {
-      setupDetailsRoute('/contratacoes');
+      setupDetailsRoute('/contracts');
       mockTabService.isUrlActive.mockReturnValue(true);
 
       component.onButtonClicked();
@@ -200,7 +200,7 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
     });
 
     it('should call finishLoading with success on successful save', () => {
-      setupDetailsRoute('/contratacoes');
+      setupDetailsRoute('/contracts');
 
       component.onButtonClicked();
 
@@ -208,7 +208,7 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
     });
 
     it('should enable form and cancel edit after successful save', () => {
-      setupDetailsRoute('/contratacoes');
+      setupDetailsRoute('/contracts');
 
       component.onButtonClicked();
 
@@ -219,7 +219,7 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
 
   describe('Save & Close', () => {
     it('should call navigateBackOrCloseActiveTab after saving', () => {
-      setupDetailsRoute('/contratacoes');
+      setupDetailsRoute('/contracts');
 
       component.onButtonClicked('save-and-close');
 
@@ -228,7 +228,7 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
     });
 
     it('should NOT call redirectCurrentTab', () => {
-      setupDetailsRoute('/contratacoes');
+      setupDetailsRoute('/contracts');
 
       component.onButtonClicked('save-and-close');
 
@@ -239,14 +239,14 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
   describe('Save & New', () => {
     describe('from new entity (router URL differs from saved URL)', () => {
       it('should sync router via redirect, then navigate to /new (real navigation for caching)', async () => {
-        setupDetailsRoute('/contratacoes');
+        setupDetailsRoute('/contracts');
 
         component.onButtonClicked('save-and-new');
 
         expect(mockDataProviderService.updateModel).toHaveBeenCalledWith({ id: 42, name: 'Test' });
-        expect(mockTabService.redirectCurrentTab).toHaveBeenCalledWith('/contratacoes/42');
-        expect(mockTabService.setRouteRedirect).toHaveBeenCalledWith('/contratacoes/new', '/contratacoes/42');
-        expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/contratacoes/42');
+        expect(mockTabService.redirectCurrentTab).toHaveBeenCalledWith('/contracts/42');
+        expect(mockTabService.setRouteRedirect).toHaveBeenCalledWith('/contracts/new', '/contracts/42');
+        expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/contracts/42');
 
         await mockRouter.navigateByUrl.mock.results[0].value;
 
@@ -255,20 +255,20 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
         expect(mockTabService.setRouteRedirect).toHaveBeenCalledTimes(1);
         expect(mockTabService.navigateCurrentTab).toHaveBeenCalledTimes(1);
         const tab: Tab = lastNavigatedTab();
-        expect(tab.url).toBe('/contratacoes/new');
-        expect(tab.entityBaseUrl).toBe('/contratacoes/new');
+        expect(tab.url).toBe('/contracts/new');
+        expect(tab.entityBaseUrl).toBe('/contracts/new');
       });
     });
 
     describe('from existing entity (router URL matches saved URL)', () => {
       it('should navigate directly to /new (real navigation for caching)', () => {
-        setupDetailsRoute('/contratacoes');
+        setupDetailsRoute('/contracts');
         // Override so detailsRoute URL matches saved URL
         jest.spyOn(RouteHelper, 'getRouteURL').mockImplementation((route: any) => {
           if (route && route.data && route.data[FRAMEWORK_VIEW_TYPE]) {
-            return '/contratacoes/42';
+            return '/contracts/42';
           }
-          return '/contratacoes';
+          return '/contracts';
         });
 
         component.onButtonClicked('save-and-new');
@@ -279,13 +279,13 @@ describe('ButtonSaveComponent \u2014 navigation logic', () => {
 
         expect(mockTabService.navigateCurrentTab).toHaveBeenCalledTimes(1);
         const tab: Tab = lastNavigatedTab();
-        expect(tab.url).toBe('/contratacoes/new');
-        expect(tab.entityBaseUrl).toBe('/contratacoes/new');
+        expect(tab.url).toBe('/contracts/new');
+        expect(tab.entityBaseUrl).toBe('/contracts/new');
       });
     });
 
     it('should NOT call navigateBackOrCloseActiveTab', () => {
-      setupDetailsRoute('/contratacoes');
+      setupDetailsRoute('/contracts');
 
       component.onButtonClicked('save-and-new');
 

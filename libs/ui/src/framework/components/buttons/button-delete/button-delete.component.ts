@@ -6,6 +6,10 @@ import { Observable, take } from 'rxjs';
 import { ConfirmModalComponent } from '../../modals';
 import { BaseButton } from '../base-button';
 
+/**
+ * Red ribbon button that asks for confirmation in a modal, then runs the delete `action`. On
+ * success it closes the modal and refreshes the surrounding data grid. Starts disabled.
+ */
 @Component({
   selector: 'framework-button-delete',
   templateUrl: './button-delete.component.html',
@@ -16,10 +20,15 @@ export class ButtonDeleteComponent extends BaseButton {
   //#region ViewChilds, Inputs, Outputs
   private readonly confirmModal: Signal<ConfirmModalComponent | undefined> = viewChild(ConfirmModalComponent);
 
+  /** Delete request to run once the user confirms. Required. */
   public readonly action: InputSignal<Observable<any>> = input.required<Observable<any>>();
+  /** Translation key of the ribbon button's label. Defaults to `Button-Delete`. */
   public readonly label: InputSignal<string> = input('Button-Delete');
+  /** Translation key of the modal's confirm button. Defaults to `Modal-Delete-Confirm`. */
   public readonly modalConfirmButtonLabel: InputSignal<string> = input('Modal-Delete-Confirm');
+  /** Translation key of the message in the modal. May contain HTML. Defaults to `Modal-Delete-Message`. */
   public readonly modalMessage: InputSignal<string> = input('Modal-Delete-Message');
+  /** Translation key of the modal's title. Defaults to `Modal-Delete-Title`. */
   public readonly modalTitle: InputSignal<string> = input('Modal-Delete-Title');
   //#endregion
 

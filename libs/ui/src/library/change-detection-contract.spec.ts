@@ -2,19 +2,17 @@ import { Type, ɵgetComponentDef as getComponentDef } from '@angular/core';
 import * as publicApi from './index';
 
 /**
- * The migration ratchet for `@zambon-dev/ui/library`.
+ * Keeps every exported component of `@zambon-dev/ui/library` off `Eager`.
  *
- * Angular 22 compiles a component that declares no strategy to OnPush, so `Eager` here is an
- * explicit opt-out: the component still depends on being walked on every pass and has not been
- * moved onto signals yet. The list below is the work that remains.
+ * Angular 22 compiles a component that declares no strategy to OnPush, so `Eager` is an explicit
+ * opt-out: the component depends on being walked on every pass. No exported component may declare
+ * it, so the list below stays empty. It fails in both directions: a component that declares
+ * `Eager` fails because it is not listed, and a listed component that no longer declares it fails
+ * until its line is removed.
  *
- * This fails in both directions on purpose. A new component declaring `Eager` fails because it is
- * not on the list; a component that has been migrated fails until its line is deleted. Neither
- * can drift quietly, which is exactly what happened the last time -- the build, the tests and
- * four validators were green while the consuming application was visibly broken.
- *
- * When this list is empty, turn `@angular-eslint/prefer-on-push-component-change-detection` from
- * 'warn' to 'error' in eslint.config.mjs and delete the allowance.
+ * This covers the public surface, which is what a consumer can be broken by. Components the layer
+ * does not export are covered by `@angular-eslint/prefer-on-push-component-change-detection`, an
+ * error in eslint.config.mjs.
  */
 const STILL_EAGER: readonly string[] = [];
 

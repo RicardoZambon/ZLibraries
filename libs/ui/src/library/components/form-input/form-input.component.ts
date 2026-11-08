@@ -27,6 +27,11 @@ import { takeUntil } from 'rxjs';
 import { FormService } from '../../services';
 import { BaseComponent } from '../base.component';
 
+/**
+ * A single form field without a label. It edits a control of the surrounding `[formGroup]` named by
+ * `controlName`, or shows `fixedValue` when there is no control. While the form is disabled and
+ * the `FormService` is not in edit mode, it shows the value as text instead of an input.
+ */
 @Component({
   selector: 'lib-form-input',
   templateUrl: './form-input.component.html',
@@ -42,33 +47,59 @@ import { BaseComponent } from '../base.component';
 })
 export class FormInputComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
+  /** Accepted for parity with `lib-form-input-group`, but this component's template does not apply it. Defaults to `false`. */
   public readonly autofocus: InputSignal<boolean> = input(false);
+  /** Name of the control in the surrounding form group to edit. Leave empty to show `fixedValue` instead. */
   public readonly controlName: InputSignal<string> = input('');
+  /** Control whose value is shown in read-only mode instead of `controlName`'s, for example a display name next to an ID. */
   public readonly disabledControlName: InputSignal<string | undefined> = input<string>();
+  /** Styles a read-only input like a disabled one. Defaults to `true`. */
   public readonly displayReadOnlyAsDisabled: InputSignal<boolean> = input(true);
+  /** Shows the field in its error style. Defaults to `false`. */
   public readonly invalid: InputSignal<boolean> = input(false);
+  /** Disables the input when it shows `fixedValue` (no `controlName`). Has no effect on a form control. Defaults to `true`. */
   public readonly isDisabled: InputSignal<boolean> = input(true);
+  /** Lets the field grow to the full height of its container, for example a tall textarea. Defaults to `false`. */
   public readonly isFullHeight: InputSignal<boolean> = input(false);
+  /** Maximum number of characters for text inputs and textareas. No limit by default. */
   public readonly maxLength: InputSignal<number | undefined> = input<number>();
+  /** Minimum value for a `number` field. No minimum by default. */
   public readonly min: InputSignal<number | undefined> = input<number>();
+  /** Makes a control-bound text-like input read-only while it stays focusable. Defaults to `false`. */
   public readonly readOnly: InputSignal<boolean> = input(false);
+  /** Visible number of lines for a `textarea` field. */
   public readonly rows: InputSignal<number | undefined> = input<number>();
+  /** Increment for a `number` field. Defaults to `1`. */
   public readonly step: InputSignal<number> = input(1);
+  /**
+   * Kind of field: `textarea`, `checkbox` (shown as a switch), or any native input type such as
+   * `text`, `number`, `date` or `datetime-local`. Defaults to `text`.
+   */
   public readonly type: InputSignal<string> = input('text');
 
   // Both are written by this component as well as bound by a parent, so they are models rather
   // than inputs: `fixedValue` is two-way bound through ngModel, and `format` gets a default for
   // date types when the consumer supplies none.
+  /** Value shown and edited when there is no `controlName`. Supports two-way binding. */
   public readonly fixedValue: ModelSignal<any> = model<any>();
+  /**
+   * Display format for the read-only value: a `DatePipe` pattern for date types, or a
+   * `DecimalPipe` digits string for `number`. A `date` field defaults to `yyyy-MM-dd`.
+   */
   public readonly format: ModelSignal<string | undefined> = model<string>();
 
   // Deliberately NOT named blur/change/input/focus. <lib-form-input> is a real DOM
   // element, so an output sharing a native event name fires the consumer's handler
   // twice for the bubbling events and shadows the native one for the rest.
+  /** Emits when the input loses focus. */
   public readonly blurred: OutputEmitterRef<void> = output<void>();
+  /** Emits the native `change` event of a checkbox that shows `fixedValue`. */
   public readonly changed: OutputEmitterRef<any> = output<any>();
+  /** Emits the new value when the user edits `fixedValue`. */
   public readonly fixedValueChanged: OutputEmitterRef<string> = output<string>();
+  /** Emits when the input gains focus. */
   public readonly focused: OutputEmitterRef<void> = output<void>();
+  /** Emits on every native `input` event, that is, each time the user types or toggles. */
   public readonly inputChanged: OutputEmitterRef<void> = output<void>();
   //#endregion
 

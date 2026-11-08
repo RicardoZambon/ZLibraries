@@ -90,16 +90,16 @@ describe('TabService', () => {
     });
 
     it('should NOT match list URL against detail tab via child route (Bug #1 fix)', () => {
-      // Tab 1: list /contratacoes → open record 325 → navigate to audit
-      service.openTab(createTab('/contratacoes', 'Contratacoes'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', undefined, '/contratacoes/325'));
-      service.replaceCurrentTabSubView('/contratacoes/325', createTab('/contratacoes/325/audit', 'History'));
+      // Tab 1: list /contracts → open record 325 → navigate to audit
+      service.openTab(createTab('/contracts', 'Contratacoes'));
+      service.navigateCurrentTab(createTab('/contracts/325', undefined, '/contracts/325'));
+      service.replaceCurrentTabSubView('/contracts/325', createTab('/contracts/325/audit', 'History'));
 
       // Open the list again from menu — should open a NEW tab, not navigate within Tab 1
-      service.openTab(createTab('/contratacoes', 'Contratacoes'));
+      service.openTab(createTab('/contracts', 'Contratacoes'));
 
       expect(service.activeTabs.length).toBe(2);
-      expect(service.activeTabs[1].url).toBe('/contratacoes');
+      expect(service.activeTabs[1].url).toBe('/contracts');
     });
 
     it('should focus existing tab via entity match on openTab', () => {
@@ -128,11 +128,11 @@ describe('TabService', () => {
     });
 
     it('should NOT entity-match when entityBaseUrl is not set (menu items)', () => {
-      // Tab 1 has entity /contratacoes/325
-      service.openTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
+      // Tab 1 has entity /contracts/325
+      service.openTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
 
-      // Menu navigation to /contratacoes (no entityBaseUrl) — should open new tab
-      service.openTab(createTab('/contratacoes', 'List'));
+      // Menu navigation to /contracts (no entityBaseUrl) — should open new tab
+      service.openTab(createTab('/contracts', 'List'));
 
       expect(service.activeTabs.length).toBe(2);
     });
@@ -421,42 +421,42 @@ describe('TabService', () => {
     });
 
     it('should focus another tab via entity match instead of pushing', () => {
-      // Tab 1: /contratacoes/325 at audit view
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
-      service.replaceCurrentTabSubView('/contratacoes/325', createTab('/contratacoes/325/audit', 'History'));
+      // Tab 1: /contracts/325 at audit view
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
+      service.replaceCurrentTabSubView('/contracts/325', createTab('/contracts/325/audit', 'History'));
 
-      // Tab 2: /contratacoes list
-      service.openTab(createTab('/contratacoes', 'List'));
+      // Tab 2: /contracts list
+      service.openTab(createTab('/contracts', 'List'));
       expect(service.activeTabs.length).toBe(2);
 
-      // From Tab 2, try to open /contratacoes/325 — should focus Tab 1
+      // From Tab 2, try to open /contracts/325 — should focus Tab 1
       mockRouter.navigate.mockClear();
-      service.navigateCurrentTab(createTab('/contratacoes/325', undefined, '/contratacoes/325'));
+      service.navigateCurrentTab(createTab('/contracts/325', undefined, '/contracts/325'));
 
       // Should still be 2 tabs, focus moved to Tab 1
       expect(service.activeTabs.length).toBe(2);
       expect(service.isTabActive(service.activeTabs[0])).toBe(true);
       // Should navigate to Tab 1's current view (audit), keeping the user's context
-      expect(getNavigatedUrl()).toBe('/contratacoes/325/audit');
+      expect(getNavigatedUrl()).toBe('/contracts/325/audit');
     });
 
     it('should NOT entity-match against a tab where entity is buried in history', () => {
-      // Tab 1: list → /contratacoes/325 → /cobrancas/13620 (navigated away)
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
-      service.navigateCurrentTab(createTab('/cobrancas/13620', 'Cobranca', '/cobrancas/13620'));
+      // Tab 1: list → /contracts/325 → /invoices/13620 (navigated away)
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
+      service.navigateCurrentTab(createTab('/invoices/13620', 'Cobranca', '/invoices/13620'));
 
-      // Tab 2: /contratacoes list
-      service.openTab(createTab('/contratacoes', 'List'));
+      // Tab 2: /contracts list
+      service.openTab(createTab('/contracts', 'List'));
 
-      // From Tab 2, open /contratacoes/325 — should push to Tab 2 (not focus Tab 1)
+      // From Tab 2, open /contracts/325 — should push to Tab 2 (not focus Tab 1)
       mockRouter.navigate.mockClear();
-      service.navigateCurrentTab(createTab('/contratacoes/325', undefined, '/contratacoes/325'));
+      service.navigateCurrentTab(createTab('/contracts/325', undefined, '/contracts/325'));
 
       // Tab 2 should now have 2 entries (list + record)
       expect(service.activeTabHistory.length).toBe(2);
-      expect(service.activeTabHistory[1].url).toBe('/contratacoes/325');
+      expect(service.activeTabHistory[1].url).toBe('/contracts/325');
       // Tab 1 is NOT active
       expect(service.isTabActive(service.activeTabs[1])).toBe(true);
     });
@@ -540,8 +540,8 @@ describe('TabService', () => {
   // =========================================================================
   describe('navigateBackOrCloseActiveTab', () => {
     it('should navigate back one step when history has multiple entries', () => {
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
 
       expect(service.activeTabHistory.length).toBe(2);
 
@@ -549,7 +549,7 @@ describe('TabService', () => {
       service.navigateBackOrCloseActiveTab();
 
       expect(service.activeTabHistory.length).toBe(1);
-      expect(service.activeTabHistory[0].url).toBe('/contratacoes');
+      expect(service.activeTabHistory[0].url).toBe('/contracts');
       expect(service.activeTabs.length).toBe(1);
     });
 
@@ -573,21 +573,21 @@ describe('TabService', () => {
     });
 
     it('should navigate through multiple levels of history', () => {
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
-      service.replaceCurrentTabSubView('/contratacoes/325', createTab('/contratacoes/325/audit', 'History'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
+      service.replaceCurrentTabSubView('/contracts/325', createTab('/contracts/325/audit', 'History'));
 
       expect(service.activeTabHistory.length).toBe(3);
 
       // First back: audit → entity
       service.navigateBackOrCloseActiveTab();
       expect(service.activeTabHistory.length).toBe(2);
-      expect(service.activeTabHistory[1].url).toBe('/contratacoes/325');
+      expect(service.activeTabHistory[1].url).toBe('/contracts/325');
 
       // Second back: entity → list
       service.navigateBackOrCloseActiveTab();
       expect(service.activeTabHistory.length).toBe(1);
-      expect(service.activeTabHistory[0].url).toBe('/contratacoes');
+      expect(service.activeTabHistory[0].url).toBe('/contracts');
 
       // Third back: list is the last entry → close tab
       service.navigateBackOrCloseActiveTab();
@@ -714,40 +714,40 @@ describe('TabService', () => {
   describe('entity matching', () => {
     it('should focus existing tab when entity is open at a sub-view (entity match via propagated entityBaseUrl)', () => {
       // Tab 1: list → entity → audit
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
-      service.replaceCurrentTabSubView('/contratacoes/325', createTab('/contratacoes/325/audit', 'History'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
+      service.replaceCurrentTabSubView('/contracts/325', createTab('/contracts/325/audit', 'History'));
 
       // Tab 2: list
-      service.openTab(createTab('/contratacoes', 'List'));
+      service.openTab(createTab('/contracts', 'List'));
       expect(service.activeTabs.length).toBe(2);
 
       // From Tab 2, click Open for record 325
       mockRouter.navigate.mockClear();
-      service.navigateCurrentTab(createTab('/contratacoes/325', undefined, '/contratacoes/325'));
+      service.navigateCurrentTab(createTab('/contracts/325', undefined, '/contracts/325'));
 
       // Should focus Tab 1 at its current view (/audit)
       expect(service.isTabActive(service.activeTabs[0])).toBe(true);
-      expect(getNavigatedUrl()).toBe('/contratacoes/325/audit');
+      expect(getNavigatedUrl()).toBe('/contracts/325/audit');
       // Tab 2 history should still be just the list
       expect(service.activeTabs.length).toBe(2);
     });
 
     it('should NOT match when entity is buried in history (different entity is current)', () => {
-      // Tab 1: list → entity 325 → cobranca 13620 (navigated to different entity)
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
-      service.navigateCurrentTab(createTab('/cobrancas/13620', 'Cobranca 13620', '/cobrancas/13620'));
+      // Tab 1: list → entity 325 → invoice 13620 (navigated to different entity)
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
+      service.navigateCurrentTab(createTab('/invoices/13620', 'Cobranca 13620', '/invoices/13620'));
 
       // Tab 2: list
-      service.openTab(createTab('/contratacoes', 'List'));
+      service.openTab(createTab('/contracts', 'List'));
 
       // From Tab 2, click Open for record 325 — should push to Tab 2 (NOT focus Tab 1)
-      service.navigateCurrentTab(createTab('/contratacoes/325', undefined, '/contratacoes/325'));
+      service.navigateCurrentTab(createTab('/contracts/325', undefined, '/contracts/325'));
 
       expect(service.isTabActive(service.activeTabs[1])).toBe(true);
       expect(service.activeTabHistory.length).toBe(2);
-      expect(service.activeTabHistory[1].url).toBe('/contratacoes/325');
+      expect(service.activeTabHistory[1].url).toBe('/contracts/325');
     });
 
     it('should entity match via openTab for direct URL navigation to detail view', () => {
@@ -765,8 +765,8 @@ describe('TabService', () => {
 
     it('should exclude current tab from entity match in navigateCurrentTab', () => {
       // Single tab: list → entity 325
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
 
       expect(service.activeTabHistory.length).toBe(2);
 
@@ -778,10 +778,10 @@ describe('TabService', () => {
       // Entity match excludes current tab (excludeIndex), so no match found in other tabs
       // URL is not in current stack anymore (navigateCurrentTabBack removed it), so it pushes
       mockRouter.navigate.mockClear();
-      service.navigateCurrentTab(createTab('/contratacoes/325', undefined, '/contratacoes/325'));
+      service.navigateCurrentTab(createTab('/contracts/325', undefined, '/contracts/325'));
 
       expect(service.activeTabHistory.length).toBe(2);
-      expect(service.activeTabHistory[1].url).toBe('/contratacoes/325');
+      expect(service.activeTabHistory[1].url).toBe('/contracts/325');
     });
   });
 
@@ -791,17 +791,17 @@ describe('TabService', () => {
   describe('title inheritance', () => {
     it('should inherit title from existing entry with same URL in navigateCurrentTab', () => {
       // Tab 1: list → entity with resolved title
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
 
       // Tab 1 navigates away to a different entity
-      service.navigateCurrentTab(createTab('/cobrancas/13620', 'Cobranca', '/cobrancas/13620'));
+      service.navigateCurrentTab(createTab('/invoices/13620', 'Cobranca', '/invoices/13620'));
 
       // Tab 2: list
-      service.openTab(createTab('/contratacoes', 'List'));
+      service.openTab(createTab('/contracts', 'List'));
 
       // From Tab 2, open record 325 (no entity match since it's buried in Tab 1)
-      const newTab: ITab = createTab('/contratacoes/325', undefined, '/contratacoes/325');
+      const newTab: ITab = createTab('/contracts/325', undefined, '/contracts/325');
       expect(newTab.isTitleLoading).toBe(true);
       expect(newTab.title).toBeUndefined();
 
@@ -955,25 +955,25 @@ describe('TabService', () => {
     describe('Scenario: Open list, open record, navigate to child entity, reopen list, open same record', () => {
       it('should open in current tab when entity is buried in other tab history', () => {
         // Step 1: Open list
-        service.openTab(createTab('/contratacoes', 'Contratacoes'));
+        service.openTab(createTab('/contracts', 'Contratacoes'));
 
         // Step 2: Open record 325
-        service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
+        service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
 
-        // Step 3: Open a child entity (cobranca)
-        service.navigateCurrentTab(createTab('/cobrancas/13620', 'Cobranca 13620', '/cobrancas/13620'));
+        // Step 3: Open a child entity (invoice)
+        service.navigateCurrentTab(createTab('/invoices/13620', 'Cobranca 13620', '/invoices/13620'));
 
         // Step 4: Open list in a new tab
-        service.openTab(createTab('/contratacoes', 'Contratacoes'));
+        service.openTab(createTab('/contracts', 'Contratacoes'));
         expect(service.activeTabs.length).toBe(2);
 
         // Step 5: Open record 325 from Tab 2
-        service.navigateCurrentTab(createTab('/contratacoes/325', undefined, '/contratacoes/325'));
+        service.navigateCurrentTab(createTab('/contracts/325', undefined, '/contracts/325'));
 
         // Should push to Tab 2 (not focus Tab 1 where entity is buried)
         expect(service.isTabActive(service.activeTabs[1])).toBe(true);
         expect(service.activeTabHistory.length).toBe(2);
-        expect(service.activeTabHistory[1].url).toBe('/contratacoes/325');
+        expect(service.activeTabHistory[1].url).toBe('/contracts/325');
         // Title should be inherited from Tab 1's history
         expect(service.activeTabHistory[1].title).toBe('Record 325');
         expect(service.activeTabHistory[1].isTitleLoading).toBe(false);
@@ -982,13 +982,13 @@ describe('TabService', () => {
 
     describe('Scenario: Save & Close navigates back through history', () => {
       it('should navigate back to list then close tab', () => {
-        service.openTab(createTab('/contratacoes', 'Contratacoes'));
-        service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
+        service.openTab(createTab('/contracts', 'Contratacoes'));
+        service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
 
         // Save & Close from detail view → back to list
         service.navigateBackOrCloseActiveTab();
         expect(service.activeTabHistory.length).toBe(1);
-        expect(service.activeTabHistory[0].url).toBe('/contratacoes');
+        expect(service.activeTabHistory[0].url).toBe('/contracts');
 
         // Save & Close from list view → close tab
         service.navigateBackOrCloseActiveTab();
@@ -1284,18 +1284,18 @@ describe('TabService', () => {
     });
 
     it('should match existing tab without entityBaseUrl using includeChildRoutes', () => {
-      // Tab 1: /contratacoes with a detail currently showing
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
+      // Tab 1: /contracts with a detail currently showing
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
 
       // Tab 2
       service.openTab(createTab('/roles', 'Roles'));
 
-      // Navigate to /contratacoes without entityBaseUrl — should find Tab 1 via child route match
+      // Navigate to /contracts without entityBaseUrl — should find Tab 1 via child route match
       mockRouter.navigate.mockClear();
-      service.navigateCurrentTab(createTab('/contratacoes'));
+      service.navigateCurrentTab(createTab('/contracts'));
 
-      // Should focus Tab 1 since /contratacoes/325 starts with /contratacoes/
+      // Should focus Tab 1 since /contracts/325 starts with /contracts/
       expect(service.isTabActive(service.activeTabs[0])).toBe(true);
     });
   });
@@ -1367,52 +1367,52 @@ describe('TabService', () => {
   // =========================================================================
   describe('full scenarios — save flows', () => {
     it('Scenario: Save redirects URL from /new to /:id', () => {
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/new', undefined, '/contratacoes/new'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/new', undefined, '/contracts/new'));
 
       // Save → redirect URL
-      service.redirectCurrentTab('/contratacoes/42');
+      service.redirectCurrentTab('/contracts/42');
 
-      expect(service.activeTabHistory[1].url).toBe('/contratacoes/42');
-      expect(service.activeTabHistory[1].entityBaseUrl).toBe('/contratacoes/42');
+      expect(service.activeTabHistory[1].url).toBe('/contracts/42');
+      expect(service.activeTabHistory[1].entityBaseUrl).toBe('/contracts/42');
       expect(service.activeTabHistory[1].queryParams).toEqual({});
     });
 
     it('Scenario: Save & New navigates to /new in current tab', () => {
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/42', 'Record 42', '/contratacoes/42'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/42', 'Record 42', '/contracts/42'));
 
       // Save & New → navigate to /new
-      service.navigateCurrentTab(createTab('/contratacoes/new', undefined, '/contratacoes/new'));
+      service.navigateCurrentTab(createTab('/contracts/new', undefined, '/contracts/new'));
 
       expect(service.activeTabHistory.length).toBe(3);
-      expect(service.activeTabHistory[2].url).toBe('/contratacoes/new');
+      expect(service.activeTabHistory[2].url).toBe('/contracts/new');
     });
 
     it('Scenario: Save & New focuses existing tab if /new entity is already open', () => {
-      // Tab 1: already at /contratacoes/new
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/new', undefined, '/contratacoes/new'));
+      // Tab 1: already at /contracts/new
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/new', undefined, '/contracts/new'));
 
       // Tab 2: some other entity
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/42', 'Record 42', '/contratacoes/42'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/42', 'Record 42', '/contracts/42'));
 
-      // Save & New from Tab 2 → should focus Tab 1 (entity match on /contratacoes/new)
+      // Save & New from Tab 2 → should focus Tab 1 (entity match on /contracts/new)
       mockRouter.navigate.mockClear();
-      service.navigateCurrentTab(createTab('/contratacoes/new', undefined, '/contratacoes/new'));
+      service.navigateCurrentTab(createTab('/contracts/new', undefined, '/contracts/new'));
 
       expect(service.isTabActive(service.activeTabs[0])).toBe(true);
     });
 
     it('Scenario: Save & Close from detail back to list, then close tab', () => {
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/42', 'Record 42', '/contratacoes/42'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/42', 'Record 42', '/contracts/42'));
 
       // Save & Close
       service.navigateBackOrCloseActiveTab();
       expect(service.activeTabHistory.length).toBe(1);
-      expect(service.activeTabHistory[0].url).toBe('/contratacoes');
+      expect(service.activeTabHistory[0].url).toBe('/contracts');
 
       // Another Save & Close on list → closes tab
       service.navigateBackOrCloseActiveTab();
@@ -1446,27 +1446,27 @@ describe('TabService', () => {
   // =========================================================================
   describe('full scenarios — button new', () => {
     it('Scenario: Button New navigates current tab to /new with entityBaseUrl', () => {
-      service.openTab(createTab('/contratacoes', 'List'));
+      service.openTab(createTab('/contracts', 'List'));
 
-      const newTab: ITab = createTab('/contratacoes/new', undefined, '/contratacoes/new');
+      const newTab: ITab = createTab('/contracts/new', undefined, '/contracts/new');
       service.navigateCurrentTab(newTab);
 
       expect(service.activeTabHistory.length).toBe(2);
-      expect(service.activeTabHistory[1].url).toBe('/contratacoes/new');
-      expect(service.activeTabHistory[1].entityBaseUrl).toBe('/contratacoes/new');
+      expect(service.activeTabHistory[1].url).toBe('/contracts/new');
+      expect(service.activeTabHistory[1].entityBaseUrl).toBe('/contracts/new');
     });
 
     it('Scenario: Button New focuses existing /new tab if already open', () => {
       // Tab 1 already has /new
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/new', undefined, '/contratacoes/new'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/new', undefined, '/contracts/new'));
 
       // Tab 2
-      service.openTab(createTab('/contratacoes', 'List'));
+      service.openTab(createTab('/contracts', 'List'));
 
       // Button New from Tab 2
       mockRouter.navigate.mockClear();
-      service.navigateCurrentTab(createTab('/contratacoes/new', undefined, '/contratacoes/new'));
+      service.navigateCurrentTab(createTab('/contracts/new', undefined, '/contracts/new'));
 
       // Should focus Tab 1
       expect(service.isTabActive(service.activeTabs[0])).toBe(true);
@@ -1478,32 +1478,32 @@ describe('TabService', () => {
   // =========================================================================
   describe('full scenarios — button open', () => {
     it('Scenario: Button Open navigates current tab with entityBaseUrl', () => {
-      service.openTab(createTab('/contratacoes', 'List'));
+      service.openTab(createTab('/contracts', 'List'));
 
-      const openTab: ITab = createTab('/contratacoes/325', undefined, '/contratacoes/325');
+      const openTab: ITab = createTab('/contracts/325', undefined, '/contracts/325');
       service.navigateCurrentTab(openTab);
 
       expect(service.activeTabHistory.length).toBe(2);
-      expect(service.activeTabHistory[1].entityBaseUrl).toBe('/contratacoes/325');
+      expect(service.activeTabHistory[1].entityBaseUrl).toBe('/contracts/325');
       expect(service.activeTabHistory[1].isTitleLoading).toBe(true);
     });
 
     it('Scenario: Button Open focuses existing tab keeping current sub-view', () => {
       // Tab 1: entity at audit view
-      service.openTab(createTab('/contratacoes', 'List'));
-      service.navigateCurrentTab(createTab('/contratacoes/325', 'Record 325', '/contratacoes/325'));
-      service.replaceCurrentTabSubView('/contratacoes/325', createTab('/contratacoes/325/audit', 'History'));
+      service.openTab(createTab('/contracts', 'List'));
+      service.navigateCurrentTab(createTab('/contracts/325', 'Record 325', '/contracts/325'));
+      service.replaceCurrentTabSubView('/contracts/325', createTab('/contracts/325/audit', 'History'));
 
       // Tab 2: list
-      service.openTab(createTab('/contratacoes', 'List'));
+      service.openTab(createTab('/contracts', 'List'));
 
       // Button Open for 325 from Tab 2
       mockRouter.navigate.mockClear();
-      service.navigateCurrentTab(createTab('/contratacoes/325', undefined, '/contratacoes/325'));
+      service.navigateCurrentTab(createTab('/contracts/325', undefined, '/contracts/325'));
 
       // Focuses Tab 1 at its current view (audit)
       expect(service.isTabActive(service.activeTabs[0])).toBe(true);
-      expect(getNavigatedUrl()).toBe('/contratacoes/325/audit');
+      expect(getNavigatedUrl()).toBe('/contracts/325/audit');
     });
   });
 

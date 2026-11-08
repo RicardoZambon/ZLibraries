@@ -4,6 +4,10 @@ import { Observable } from 'rxjs';
 
 import { ICatalogResult } from '../models/catalog-result';
 
+/**
+ * Searches a catalog endpoint for `lib-catalog-select`. Sends a POST of
+ * `{ maxResults, criteria, filters }` and returns the matching entries.
+ */
 @Injectable({
   providedIn: 'root',
 })

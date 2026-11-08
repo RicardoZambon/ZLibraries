@@ -5,6 +5,10 @@ import { APP_CONFIG, AppConfig, AuthService, TabService } from '@zambon-dev/ui/f
 import { Observable, catchError, interval, map, mergeMap, tap } from 'rxjs';
 import { IAuthResponse, ICurrentUserInfo } from '../models';
 
+/**
+ * Signs users in against the API's `Authentication` endpoints and keeps their token, refresh token
+ * and user info in browser storage. The shared login, layouts, guard and interceptor rely on it.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -13,6 +17,7 @@ export class AuthenticationService extends AuthService {
   //#endregion
 
   //#region Variables
+  /** Name of the action that grants administrator rights. */
   public adminAction = 'AdministrativeMaster';
 
   private config: AppConfig = inject(APP_CONFIG);
@@ -34,6 +39,10 @@ export class AuthenticationService extends AuthService {
   //#endregion
 
   //#region Public methods
+  /**
+   * Signs in and stores the session; `rememberMe` keeps it after the browser closes. Fails with
+   * `InvalidUsernamePassword` or `InternalServerError`, which are translation keys.
+   */
   public authenticate(model: { username: string; password: string; rememberMe: boolean }): Observable<void> {
     return this.http.post<IAuthResponse>(`${this.BASE_URL}/SignIn`, model).pipe(
       map((res: IAuthResponse) => {
@@ -57,10 +66,12 @@ export class AuthenticationService extends AuthService {
     );
   }
 
+  /** Loads the actions the signed-in user is allowed to perform. */
   public getActions(): Observable<string[]> {
     return this.http.post<string[]>(`${this.BASE_URL}/GetActions`, {});
   }
 
+  /** Returns the stored information about the signed-in user, or `null` when signed out. */
   public getUserInfo(): ICurrentUserInfo | null {
     const userInfo: string | null = this.userInfo;
     if (userInfo) {
@@ -69,6 +80,7 @@ export class AuthenticationService extends AuthService {
     return null;
   }
 
+  /** Exchanges the refresh token for a new token, stores it and emits it. */
   public tryRefreshToken(): Observable<string> {
     return this.http
       .post<IAuthResponse>(`${this.BASE_URL}/RefreshToken`, {

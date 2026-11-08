@@ -16,6 +16,10 @@ import { AuthenticationService, ExternalContentService, ExternalUrlResolverServi
 import { TopBarComponent } from '../top-bar';
 import { ButtonComponent } from '@zambon-dev/ui/library';
 
+/**
+ * Application shell after sign-in: top bar, sidebar menu and tabs. Menu items open as tabs,
+ * embedded pages or new browser windows, and logging out asks for confirmation first.
+ */
 @Component({
   selector: 'shared-main-layout',
   templateUrl: './main-layout.component.html',
@@ -96,10 +100,12 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   //#endregion
 
   //#region Public methods
+  /** Opens the logout confirmation modal. */
   public onLogoutClick(): void {
     this.logoutModal()?.toggleModal();
   }
 
+  /** Signs out, clearing the stored session and closing every tab, then navigates to `/login`. */
   public onLogoutConfirm(): void {
     this.authenticationService.signOut();
     this.router.navigate(['/login']);

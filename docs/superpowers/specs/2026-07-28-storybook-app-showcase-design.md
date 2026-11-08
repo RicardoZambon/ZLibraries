@@ -1,7 +1,7 @@
 # Storybook "App Showcase" — navigable, backend-mocked layout story
 
 - **Date:** 2026-07-28
-- **Status:** Approved (design) — pending implementation plan
+- **Status:** Implemented as the Shared/App Showcase story.
 - **Library affected:** `@shared` (story-only; `@library` / `@framework` shipped code untouched)
 - **Branch:** `feat/sidebar-rework`
 

@@ -1,0 +1,91 @@
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<header class="site-header">
+  @if (hasSidebar()) {
+    <button
+      type="button"
+      class="icon-button menu-button"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="site-sidebar"
+      aria-label="Toggle navigation"
+      (click)="toggleMenu()"
+    >
+      <i class="fa-solid fa-bars" aria-hidden="true"></i>
+    </button>
+  }
+
+  <a class="brand" routerLink="/">
+    <span class="brand-mark" aria-hidden="true">Z</span>
+    <span class="brand-name">ZLibraries</span>
+  </a>
+
+  <nav class="primary-nav" aria-label="Main">
+    <a routerLink="/guides/getting-started" routerLinkActive="is-active" [class.is-active]="section() === 'guides'"
+      >Guides</a
+    >
+    <a routerLink="/components" routerLinkActive="is-active">Components</a>
+    <a routerLink="/api" routerLinkActive="is-active">API</a>
+    <a routerLink="/changelog" routerLinkActive="is-active">Changelog</a>
+  </nav>
+
+  <div class="header-actions">
+    <docs-search-dialog />
+    <a
+      class="icon-button"
+      [href]="storybookUrl"
+      target="_blank"
+      rel="noopener"
+      aria-label="Storybook"
+      title="Storybook"
+    >
+      <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+    </a>
+    <a
+      class="icon-button"
+      [href]="repoUrl"
+      target="_blank"
+      rel="noopener"
+      aria-label="GitHub repository"
+      title="GitHub"
+    >
+      <i class="fa-brands fa-github" aria-hidden="true"></i>
+    </a>
+    <shared-theme-switch />
+  </div>
+</header>
+
+<div class="site-body" [class.has-sidebar]="hasSidebar()">
+  @if (hasSidebar()) {
+    <nav id="site-sidebar" class="sidebar" [class.is-open]="menuOpen()" aria-label="Section">
+      @for (group of groups(); track group.title) {
+        <div class="sidebar-group">
+          <h2 class="sidebar-title">{{ group.title }}</h2>
+          <ul>
+            @for (item of group.items; track item.path) {
+              <li>
+                <a
+                  [routerLink]="'/' + item.path"
+                  routerLinkActive="is-active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                >
+                  {{ item.title }}
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </nav>
+  }
+
+  <main id="main-content" class="main" tabindex="-1">
+    <router-outlet />
+  </main>
+</div>
+
+<footer class="site-footer">
+  <p>
+    MIT licensed. Built with <code>&#64;zambon-dev/ui</code> itself.
+    <a [href]="repoUrl" target="_blank" rel="noopener">Source on GitHub</a>.
+  </p>
+</footer>

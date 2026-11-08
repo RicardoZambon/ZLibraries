@@ -496,7 +496,7 @@ describe('DataGridComponent', () => {
     });
 
     it('should return default selection column width when no real size', () => {
-      expect(component.selectionColWidth).toBe('minmax(1.5rem,min-content)');
+      expect(component.selectionColWidth).toBe('min-content');
     });
   });
   //#endregion

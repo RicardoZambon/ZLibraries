@@ -6,6 +6,10 @@ import { BaseButton } from './base-button';
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base class for ribbon buttons that act on the current form view. It gives them the form's data
+ * provider and form service, and disables the button while the form is loading.
+ */
 @Component({ template: '' })
 export abstract class BaseFormViewButton extends BaseButton {
   //#region ViewChilds, Inputs, Outputs

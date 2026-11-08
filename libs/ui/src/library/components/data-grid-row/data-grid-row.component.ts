@@ -21,6 +21,10 @@ import { IGridColumn } from '../../models';
 import { DataGridDataset } from '../../services/datasets/data-grid.dataset';
 import { BaseComponent } from '../base.component';
 
+/**
+ * One row of `lib-data-grid`. Renders a cell per dataset column, using the column's template when
+ * it has one, plus a selection checkbox when the grid allows multiple selection.
+ */
 @Component({
   selector: 'lib-data-grid-row',
   templateUrl: './data-grid-row.component.html',
@@ -35,8 +39,11 @@ import { BaseComponent } from '../base.component';
 })
 export class DataGridRowComponent extends BaseComponent implements OnInit {
   //#region ViewChilds, Inputs, Outputs
+  /** Disables the row, so clicking it neither focuses nor selects it. Defaults to `false`. */
   @Input() public disabled = false;
+  /** Marks the first rendered row, which measures the column widths for the header. Defaults to `false`. */
   @Input() public isFirstRow = false;
+  /** The record this row shows. Setting it refreshes the row's selected state. */
   @Input() public set rowData(value: any) {
     this._rowData = value;
     this.refreshSelection();
@@ -49,10 +56,15 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
    */
   public readonly rowIndex: InputSignal<number> = input(0);
 
+  /** Emits the width in pixels of the selection checkbox cell whenever it changes. */
   @Output() public selectionResized: EventEmitter<number> = new EventEmitter<number>();
   //#endregion
 
   //#region Host listeners
+  /**
+   * Makes this row the dataset's focused row. In a multi-select grid that selects on click, it
+   * also syncs the checkbox. Runs on a click on the row; does nothing while disabled.
+   */
   @HostListener('click')
   public setFocus(): void {
     if (!this.disabled) {
@@ -79,6 +91,7 @@ export class DataGridRowComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Properties
+  /** The record this row shows. */
   public get rowData(): any {
     return this._rowData;
   }

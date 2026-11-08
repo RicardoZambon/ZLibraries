@@ -19,6 +19,10 @@ import { takeUntil } from 'rxjs';
 import { ServicesHistoryDataset } from '../../../datasets';
 import { UtcDatePipe } from '../../../pipes';
 
+/**
+ * Grid of the change sets (services) recorded for the current record, with who made each one and
+ * when. Needs a `ServicesHistoryDataset` provided above it, as `ServicesHistoryViewComponent` does.
+ */
 @Component({
   selector: 'shared-services-history-child-list',
   templateUrl: './services-history-child-list.component.html',
@@ -33,6 +37,7 @@ export class ServicesHistoryChildListComponent extends ChildList<any> implements
   private readonly serviceTemplate: Signal<TemplateRef<any> | undefined> =
     viewChild<TemplateRef<any>>('serviceTemplate');
 
+  /** API controller of the audited entity, e.g. `Employees`. The grid loads nothing until it is set. */
   @Input() public set controllerName(value: string) {
     (<ServicesHistoryDataset>this.dataGridDataset).controllerName = value;
   }
@@ -44,6 +49,7 @@ export class ServicesHistoryChildListComponent extends ChildList<any> implements
   //#endregion
 
   //#region Variables
+  /** ID of the service selected in the grid, or `undefined` when none is selected. */
   // A signal: it is bound into the operations list beside this one, and both the row callback
   // and the grid's load event write it from outside any binding on this view.
   public readonly selectedServiceID: WritableSignal<number | undefined> = signal(undefined);
@@ -77,6 +83,7 @@ export class ServicesHistoryChildListComponent extends ChildList<any> implements
   //#endregion
 
   //#region Public methods
+  /** Updates `selectedServiceID` from the grid's selection. */
   public override selectedRowChanged(): void {
     super.selectedRowChanged();
 

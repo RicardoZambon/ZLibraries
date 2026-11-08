@@ -1,5 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+/**
+ * Reads a date the API sent in UTC without a timezone marker and returns it as the right instant.
+ * Values that already carry `Z` or an offset are kept as they are; empty or invalid values give
+ * `null`. Chain it before `date`, e.g. `{{ value | utcDate | date }}`.
+ */
 @Pipe({
   name: 'utcDate',
 })

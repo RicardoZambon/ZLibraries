@@ -7,6 +7,11 @@ import { ViewBase } from './view-base';
 // describe a class that is never instantiated, while every subclass compiles to whatever it
 // declares -- which in v22 means OnPush. Correctness comes from the state below notifying
 // Angular, never from this decorator. See docs/guides/reactivity.md.
+/**
+ * Base for a grid of child records shown inside a parent record's view. Scopes the grid to the
+ * parent entity, follows its loading and selection, and reloads it when the parent record or the
+ * multi-select result changes.
+ */
 @Component({ template: '' })
 export abstract class ChildList<TEntityModel> extends ViewBase implements OnInit {
   //#region ViewChilds, Inputs, Outputs

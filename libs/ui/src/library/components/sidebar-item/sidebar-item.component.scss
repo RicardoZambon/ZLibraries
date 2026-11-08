@@ -130,7 +130,7 @@ li {
     }
 
     // Both trailing glyphs sit in an absolute slot at the right edge, outside the anchor's flow,
-    // so nothing reserves room for them and a long label runs underneath: "Fluxo de delegação"
+    // so nothing reserves room for them and a long label runs underneath: "Delegation workflow"
     // overlapped the chevron by 11px.
     //
     // The reservation goes on the row and the anchor is told to follow it. Padding the anchor

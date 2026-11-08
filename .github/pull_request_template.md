@@ -1,12 +1,13 @@
 <!--
-  Thanks for the contribution! Every change that affects a published package must be
-  documented in that package's CHANGELOG.md under the `## [Unreleased]` section.
-  Do not bump the version or set a date — the release pipeline does that on publish.
+  Thanks for the contribution. Please read CONTRIBUTING.md first.
+  Write everything in English: code, comments, docs and this description.
 -->
 
 ## Summary
 
 <!-- What changed and why. -->
+
+Closes #
 
 ## Affected layers
 
@@ -15,17 +16,22 @@
 - [ ] `@zambon-dev/ui/library`
 - [ ] `@zambon-dev/ui/framework`
 - [ ] `@zambon-dev/ui/shared`
-- [ ] None (tooling / docs / CI only)
+- [ ] Styles or theming
+- [ ] None (tooling, docs or CI only)
 
-## Changelog
+## How this was tested
 
-- [ ] I updated the `## [Unreleased]` section of `libs/ui/CHANGELOG.md`.
-- [ ] Entries are written for the **consumer** (what changed / what's new).
-- [ ] Breaking changes, if any, include concrete **migration steps** under `⚠ Breaking Changes / Migration`.
+<!-- Unit specs, build-storybook, the overflow probe at 375px when layout changed, a consumer app. -->
 
-> If this PR genuinely needs no changelog entry (e.g. CI/tooling only), use the commit
-> `scope: no-release` or add the `no-changelog` label so the changelog check is skipped.
+## Screenshots or story
 
-## Owner sign-off
+<!-- For visual changes: before and after, or the Storybook story to look at. -->
 
-- [ ] @RicardoZambon confirmed the changelog is complete and nothing is missing.
+## Checklist
+
+- [ ] I added an entry under `## [Unreleased]` in `libs/ui/CHANGELOG.md`, written for the consumer.
+- [ ] Breaking changes, if any, list concrete migration steps, and a commit is marked breaking.
+- [ ] New or changed public API has JSDoc, an example and updated docs.
+
+> A PR that does not touch `libs/ui/src` needs no changelog entry. For one that does but changes
+> nothing a consumer sees, add the `no-changelog` label.
