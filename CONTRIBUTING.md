@@ -198,6 +198,35 @@ node tools/overflow-probe/probe.mjs dist/storybook/ui-examples
 - When you change the layer rule in `libs/ui/eslint.config.mjs`, prove it: add a forbidden import,
   watch lint fail, then remove it. It blocks an upward import both by subpath and by relative path.
 
+## Docs site
+
+The site in `apps/docs` renders the Markdown in `docs/guides` and `docs/components`, the API from
+the package's JSDoc, and the examples in `libs/ui-examples`.
+
+- **Add a page:** write the Markdown file and list it in `docs/site.yml`. The build fails for a page
+  that is not listed.
+- **Place a live example:** put `<!-- example: <id> -->` on its own line. The id comes from
+  `libs/ui-examples/src/registry.ts`, where every example is registered with its source files.
+- **Link** between pages with relative Markdown links (`../guides/getting-started.md`), so they work
+  on GitHub too. The build turns them into site links and fails on any that point nowhere.
+- **Component API tables:** list the classes in the page's `api:` front matter. Write
+  `framework:ButtonComponent` when two entry points export the same name.
+
+To preview the built site, build it and serve it under `/ZLibraries/`, the path GitHub Pages uses:
+
+```bash
+npx nx run docs:site
+```
+
+```bash
+node tools/docs-content/serve.mjs
+```
+
+The site is then at http://localhost:4300/ZLibraries/.
+
+Add `?examples=eager` to a page URL to start every example at once instead of when it scrolls into
+view. Automated checks need it, because a page the browser treats as hidden never scrolls.
+
 ## Changelog
 
 Every change under `libs/ui/src` needs an entry under `## [Unreleased]` in

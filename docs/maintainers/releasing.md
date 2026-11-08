@@ -102,7 +102,11 @@ environment. Without it, Nx uses the local cache and everything still works.
 ## The docs site
 
 The **Pages** workflow builds the docs app and Storybook and deploys both to GitHub Pages. It runs
-after Release.
+after each successful Release on `main`, so the site documents what was just published. To redeploy
+without a release, run it by hand from the Actions tab.
+
+Pages is set to build from GitHub Actions, and the `github-pages` environment only accepts
+deployments from `main`.
 
 | Site      | URL                                                   |
 | --------- | ----------------------------------------------------- |
