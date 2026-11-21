@@ -181,6 +181,22 @@ node tools/overflow-probe/probe.mjs dist/storybook/ui-examples
   scoped CSS. Inside the workspace, imports resolve to source. For changes in that area, run
   `npm pack` on `dist/libs/ui` and install the tarball in a scratch app.
 
+### Coverage floor
+
+`libs/ui` has a coverage floor: `coverageThreshold` in `libs/ui/jest.config.ts`. The CI test run
+collects coverage and fails when any of statements, branches, functions or lines falls below it,
+even if every test passes.
+
+- Coverage counts every source file, including files no spec imports. Barrels, the
+  `src/testing` helpers and the test setup are left out, because they hold no shipped logic.
+- Each floor is the highest whole percent at least half a point below the measured value. That
+  leaves room for small refactors and still catches a lost spec.
+- **Raise it** when your change lifts coverage by a point or more. Run
+  `npx nx test ui --configuration=ci --skip-nx-cache`, read the summary and update the numbers.
+- **Never lower it to get a run green.** Add the missing tests instead. If code without tests
+  must land, say so in the PR and let the reviewer decide.
+- `libs/ui-examples` has no floor. It holds examples and stories, not shipped code.
+
 ### Stories and examples
 
 - Story titles start with the layer: `Library/…`, `Framework/…` or `Shared/…`.
