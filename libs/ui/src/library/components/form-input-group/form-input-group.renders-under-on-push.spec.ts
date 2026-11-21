@@ -101,6 +101,17 @@ describe(`${FormInputGroupComponent.name} under an OnPush ancestor`, () => {
     });
   });
 
+  it('names its input with its label', async () => {
+    for (const type of [FormInputGroupHostComponent, CatalogSelectHostComponent]) {
+      const render: OnPushRender<FormInputGroupHostComponent> = await renderHost(type);
+      const label: HTMLLabelElement = render.element.querySelector('label')!;
+      const input: HTMLInputElement = render.element.querySelector('input')!;
+
+      expect(label.htmlFor).toBeTruthy();
+      expect(input.id).toBe(label.htmlFor);
+    }
+  });
+
   it('shows the message the server sends back for a field', async () => {
     const render: OnPushRender<FormInputGroupHostComponent> = await renderHost(FormInputGroupHostComponent);
     expect(messages(render)).toEqual([]);

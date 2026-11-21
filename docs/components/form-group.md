@@ -43,7 +43,8 @@ the jobs do not.
 
 ## Accessibility
 
-The heading is an `<h3>`. Check that this level fits the outline of your page. The group adds no
+The heading is an `<h6>`, one level below the [group accordion](./group-accordion.md) it usually
+sits in. Check that this level fits the outline of your page. The group adds no
 `fieldset` or `role="group"`. If assistive technology must announce the fields as a set, wrap them in
 your own `<fieldset>` with a `<legend>`.
 

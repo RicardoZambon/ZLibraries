@@ -1,14 +1,12 @@
 <div class="title">
-  <h6
-    role="button"
-    tabindex="0"
-    [attr.aria-expanded]="!collapsed()"
-    (click)="onToggle()"
-    (keydown.enter)="onToggle()"
-    (keydown.space)="onToggle(); $event.preventDefault()"
-  >
-    <i class="fas fa-chevron-down fa-sm"></i>{{ label() }}
-  </h6>
+  <!-- The heading keeps its level in the outline and the button inside it does the toggling. A
+       role="button" on the heading itself replaced the heading: a screen reader's list of headings lost
+       every section. A native button also brings Enter and Space with it. -->
+  <h5>
+    <button type="button" [attr.aria-expanded]="!collapsed()" (click)="onToggle()">
+      <i class="fas fa-chevron-down fa-sm"></i>{{ label() }}
+    </button>
+  </h5>
 </div>
 
 <div

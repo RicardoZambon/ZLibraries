@@ -96,6 +96,18 @@ jobs:
           cp -r dist/storybook/ui-examples site/storybook
           node tools/docs-content/check-site.mjs site
 
+      # Renders every story in Chromium, runs its play function, and fails on any axe violation
+      # (`a11y.test: 'error'` in the Storybook preview). It runs in the default light theme. The
+      # Storybook it serves is the full build the step above made, not only the affected one.
+      - name: Check accessibility of every story
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx playwright install --with-deps chromium
+          python3 -m http.server 6006 --bind 127.0.0.1 --directory dist/storybook/ui-examples > /dev/null 2>&1 &
+          for _ in $(seq 1 30); do curl -sf http://127.0.0.1:6006/index.json > /dev/null && break; sleep 1; done
+          npx test-storybook -c libs/ui-examples/.storybook --url http://127.0.0.1:6006 --maxWorkers=2
+
       - name: Semantic release dry run
         working-directory: libs/ui
         env:

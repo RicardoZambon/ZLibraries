@@ -17,13 +17,37 @@ packages are listed under [Package history](#package-history) at the end.
 
 ### Added
 
+- **`inputId` on `lib-form-input` and `lib-form-input-group`.** It sets the `id` of the native
+  input. The group generates one when you leave it out, and its label points at it.
+
 ### Changed
+
+- **The group accordion title is an `<h5>` with a button inside it.** It was an `<h6>` with
+  `role="button"`, which removed it from the page's list of headings. The new level follows the
+  `<h4>` of `lib-group-container`. If your styles target `lib-group-accordion h6`, change them to
+  `h5`.
+- **The form group title is an `<h6>`.** It was an `<h3>`, which jumped above the accordion it sits
+  in, so the outline skipped a level at the next section. If your styles target
+  `lib-form-group h3`, change them to `h6` or use the `.title` class.
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- **Form labels name their field.** The label of `lib-form-input-group` and `lib-catalog-select`
+  pointed at an `id` no input had. A click on the label now focuses the field, and screen readers
+  announce it.
+- **The data grid's row checkbox has a name.** The row's first cell names it, so a screen reader
+  says "Alice, checkbox" instead of an unnamed checkbox.
+- **The tab strip contains only tabs.** The close buttons are hidden from assistive technology, and
+  each tab announces Delete as its shortcut. Before, screen readers found buttons inside the
+  tablist, which the tabs pattern does not allow.
+- **The sidebar is a valid list.** Each menu entry is now a list item of its menu, so a screen
+  reader announces how many entries a level holds. The loading error is a list item too.
+- **The catalog select's clear button no longer shows up as an unnamed button.** It is a pointer
+  shortcut, outside the Tab order, and is now hidden from assistive technology.
 
 ### ⚠ Breaking Changes / Migration
 

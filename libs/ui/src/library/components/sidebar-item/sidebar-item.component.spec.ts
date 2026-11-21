@@ -50,6 +50,13 @@ describe(SidebarItemComponent.name, () => {
     expect(createComponent(leafMenu()).componentInstance).toBeTruthy();
   });
 
+  it('is the list item itself, so the parent list holds only items', () => {
+    const fixture = createComponent(leafMenu());
+
+    expect(fixture.nativeElement.getAttribute('role')).toBe('listitem');
+    expect(fixture.nativeElement.querySelector('li').getAttribute('role')).toBe('none');
+  });
+
   it('marks an item that opens in a new browser tab, so the label carries an outbound affordance', () => {
     const fixture = createComponent(externalLeafMenu(SidebarMenuOpenMode.ExternalNewTab));
 

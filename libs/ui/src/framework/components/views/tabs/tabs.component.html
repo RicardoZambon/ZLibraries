@@ -26,6 +26,7 @@
           <a
             class="tab-item"
             role="tab"
+            aria-keyshortcuts="Delete"
             [id]="tabId(i)"
             [attr.aria-controls]="panelId"
             [attr.aria-selected]="isTabActive(tab)"
@@ -58,11 +59,14 @@
           </a>
 
           <!-- tabindex -1: the tablist is one tab stop, and the close control is reachable
-               from the tab itself with Delete rather than by tabbing through every one. -->
+               from the tab itself with Delete rather than by tabbing through every one.
+               aria-hidden: a tablist may contain only tabs, so assistive technology reaches
+               closing through the tab, which announces the Delete shortcut. -->
           <button
             class="tab-close"
             type="button"
             tabindex="-1"
+            aria-hidden="true"
             [attr.aria-label]="'Tabs-CloseTab' | translate: { title: tabDisplayTitles[i] ?? tab.title ?? '' }"
             (click)="onCloseTab(i)"
           >

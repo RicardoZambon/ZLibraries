@@ -62,9 +62,9 @@ The strip follows the tabs pattern:
 | Enter, Space            | Opens the focused tab.                          |
 | Delete                  | Closes the focused tab.                         |
 
-The close buttons are left out of the Tab order; Delete on the tab does the same job. Close and
-scroll buttons have translated names, such as "Close Customers". The close button inserts the tab
-title as stored, so a title given as a translation key appears untranslated in that name.
+The close buttons are left out of the Tab order and hidden from assistive technology, because a
+tablist may contain only tabs. Each tab announces Delete as its shortcut (`aria-keyshortcuts`), and
+Delete on the tab does the same job. Scroll buttons have translated names.
 
 Each breadcrumb has `role="button"`, is in the Tab order and works with Enter and Space. The trail is
 not marked up as a breadcrumb navigation landmark.

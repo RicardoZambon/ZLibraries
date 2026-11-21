@@ -261,6 +261,11 @@ export class CatalogSelectComponent extends BaseComponent implements OnInit, Aft
     return this.formControl.touched;
   }
 
+  /** Shared by the field's label and its input, which this component renders in its own template. */
+  protected get inputId(): string {
+    return `catalog-select-${this.instanceId}-input`;
+  }
+
   protected get listboxId(): string {
     return `catalog-select-${this.instanceId}-listbox`;
   }

@@ -13,6 +13,9 @@ const preview: Preview = {
   globalTypes: themeGlobalTypes,
   initialGlobals: themeInitialGlobals,
   parameters: {
+    a11y: {
+      test: 'error',
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

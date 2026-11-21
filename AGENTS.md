@@ -11,7 +11,8 @@ This repository publishes one Angular package, `@zambon-dev/ui`, from `libs/ui`.
 - **Package rules live next to the package.** Before you change `libs/ui`, read
   [libs/ui/CLAUDE.md](libs/ui/CLAUDE.md). It lists the rules that are easy to break.
 - **CI really gates.** PR validation runs format check, lint, tests, the package build, the
-  packaged-styles check, the Storybook build and the docs build. A red check on your branch is your
+  packaged-styles check, the Storybook build, the accessibility check of every story and the docs
+  build. A red check on your branch is your
   change, not a flaky baseline.
 - **Changelog.** Every change under `libs/ui/src` adds an entry under `## [Unreleased]` in
   `libs/ui/CHANGELOG.md`, written for the consumer.
