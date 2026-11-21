@@ -63,6 +63,17 @@ jobs:
       - name: Test affected projects
         run: npx nx affected --target=test --base=$NX_BASE --head=$NX_HEAD --configuration=ci
 
+      # Kept even when the coverage floor fails the step above, so the report shows what dropped.
+      # Absent when libs/ui was not affected; that is not an error.
+      - name: Upload coverage report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-ui
+          path: coverage/libs/ui
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Build affected packages
         run: npx nx affected --target=build --base=$NX_BASE --head=$NX_HEAD --configuration=production
 
