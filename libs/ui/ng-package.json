@@ -33,6 +33,7 @@
       "output": "i18n"
     }
   ],
+  "allowedNonPeerDependencies": ["@angular-devkit/schematics", "@schematics/angular"],
   "lib": {
     "entryFile": "src/index.ts"
   }
