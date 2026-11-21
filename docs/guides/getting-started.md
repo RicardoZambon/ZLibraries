@@ -4,7 +4,35 @@ This guide takes an empty Angular 22 application to one rendered `lib-button`, a
 
 The package works under any change-detection strategy. Zone-based and zoneless applications both render it correctly, so you do not need `zone.js` for it.
 
-## Install the package
+## Set up with `ng add`
+
+In a standalone application (one that starts with `bootstrapApplication`), one command does the whole setup:
+
+```bash
+ng add @zambon-dev/ui
+```
+
+It makes these changes:
+
+| Where                  | What it adds                                                                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `package.json`         | The package, its peer dependencies, Tailwind CSS 4 and Font Awesome.                                                                 |
+| `.postcssrc.json`      | The Tailwind PostCSS plugin. An existing `.postcssrc.json` or `postcss.config.json` gets the plugin added.                           |
+| `angular.json`         | The three global stylesheets, in order, and the translation assets.                                                                  |
+| `index.html`           | The script that sets the theme before the first paint.                                                                               |
+| The application config | The HTTP client with `withInterceptorsFromDi()`, the translation provider, the startup language and the grid configuration provider. |
+
+Running it again changes nothing. A step that is already done is skipped. For example, an existing `provideHttpClient` is kept, with a warning if it lacks `withInterceptorsFromDi()`.
+
+It does not add what needs your own values: the API URL, the JWT options, your sidebar service and the routes. It prints them as next steps. [The full application shell](#the-full-application-shell) below explains each one.
+
+An application that bootstraps an `NgModule` is refused, and nothing is changed. Use the manual setup below.
+
+## Manual setup
+
+This section does by hand what `ng add` does. Follow it when you cannot use `ng add`, or to see what it changed.
+
+### Install the package
 
 ```bash
 npm i @zambon-dev/ui
@@ -27,7 +55,7 @@ npm 7 and later install the peer dependencies for you. They are:
 | `ngx-translate-multi-http-loader` | `^19.0.2` |
 | `rxjs`                            | `^7.8.0`  |
 
-## Add the build requirements
+### Add the build requirements
 
 The styles need Tailwind CSS 4 and Font Awesome. These are not peer dependencies, so install them yourself:
 
@@ -55,7 +83,7 @@ Tell the Angular build to run Tailwind. Create `.postcssrc.json` at the workspac
 
 The theme stylesheet tells Tailwind to scan the package's own templates. You do not configure any source paths for the package.
 
-## Load the global styles
+### Load the global styles
 
 Three stylesheets, in this order:
 
@@ -90,7 +118,7 @@ Then keep `common.scss` as its own entry, after that file:
 
 `common.scss` must stay a separate entry. It finds the theme by a path relative to itself, so pulling it into your own Sass file with `@use` fails the build.
 
-### Optional: dark theme without a flash
+#### Optional: dark theme without a flash
 
 The theme is light unless the `data-theme` attribute on `<html>` says otherwise. The main layout's theme switch sets it, so the dark theme is always available there. A short script in `index.html` sets the attribute before the first paint, so a user who chose dark never sees a flash of light. See [Theming](./design-tokens.md) for the snippet and the other theming options.
 

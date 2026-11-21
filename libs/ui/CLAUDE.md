@@ -43,6 +43,13 @@ subpath to avoid the ambiguity.
 **Templates use built-in control flow.** `@if`, `@for`, `@switch`. No template uses `*ngIf`,
 `*ngFor` or `ngSwitch`; do not add one. `*ngTemplateOutlet` is still used and fine.
 
+**The `ng add` schematic lives in `schematics/`, outside `src/`.** ng-packagr does not build it.
+`nx build ui` runs ng-packagr (`build-package`) and then `schematics/build.mjs`, which compiles it to
+CommonJS in `dist/libs/ui/schematics`. Its root providers are listed once, in
+`schematics/ng-add/providers.ts`. Every package it imports at run time must be in this
+`package.json`'s `dependencies` and in `allowedNonPeerDependencies`. The workspace root resolves a
+missing one in-repo, so only a consumer's install shows the break.
+
 ## Reactivity
 
 The contract lives in [docs/guides/reactivity.md](../../docs/guides/reactivity.md). Do not restate

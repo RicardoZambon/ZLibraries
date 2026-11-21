@@ -17,6 +17,14 @@ packages are listed under [Package history](#package-history) at the end.
 
 ### Added
 
+- `ng add @zambon-dev/ui` sets the package up in a standalone application. It installs the peer
+  dependencies, Tailwind CSS 4 and Font Awesome, and creates `.postcssrc.json`. It adds the global
+  stylesheets and the translation assets to `angular.json`, and the dark-theme script to
+  `index.html`. It also adds the HTTP client, translations, startup language and grid providers to
+  the application config. Running it twice changes nothing. An NgModule application is refused, and
+  nothing is changed. The shell providers that need your own values (API URL, JWT options, sidebar
+  service, routes) are printed as next steps.
+
 ### Changed
 
 ### Deprecated

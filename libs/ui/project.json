@@ -7,6 +7,18 @@
   "tags": [],
   "targets": {
     "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build-package"],
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "command": "node libs/ui/schematics/build.mjs"
+      },
+      "configurations": {
+        "production": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "build-package": {
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
