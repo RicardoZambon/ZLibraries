@@ -56,8 +56,9 @@ Nx Cloud remote caching is optional. Set `NX_CLOUD_ACCESS_TOKEN` in your environ
 without it, Nx uses the local cache.
 
 The [style snapshot](tools/style-snapshot/README.md) and the
-[overflow probe](tools/overflow-probe/README.md) are manual checks. Their READMEs explain how to
-run them.
+[overflow probe](tools/overflow-probe/README.md) run on every PR in the "Visual regression" job.
+For now they only report: read the job summary, or download the `visual-regression` artifact.
+Their READMEs explain how to run them locally and how to make them blocking.
 
 ## Package rules
 
@@ -164,8 +165,9 @@ The [change detection guide](docs/guides/reactivity.md) explains the guarantee c
 - A clean Storybook console proves nothing about stale views. A Jest spec is the oracle.
 - Changes to stories or examples must pass `npx nx build-storybook ui-examples`. Unit tests and the
   package build do not compile stories.
-- For a visual change, compare the style snapshot before and after. For a layout change, run the
-  overflow probe. Both run against a built Storybook:
+- CI compares the style snapshot with the base branch and runs the overflow probe on every PR. Read
+  the "Visual regression" summary before you merge. To check before you push, run them against a
+  built Storybook:
 
 ```bash
 node tools/style-snapshot/capture.mjs dist/storybook/ui-examples before.json

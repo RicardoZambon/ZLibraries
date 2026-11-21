@@ -3,8 +3,9 @@
 No unit test asserts on computed styles, so a change that breaks how things look still passes CI.
 This tool is that assertion.
 
-It is a manual check: CI does not run it. Run it before merging a stylesheet change, or an
-upgrade of Tailwind, Angular or Font Awesome.
+CI runs it on every PR, in the "Visual regression" job of PR validation. You can also run it by
+hand, which is quicker while you work on a stylesheet change or an upgrade of Tailwind, Angular or
+Font Awesome.
 
 It loads every story in a built Storybook, walks the rendered DOM, and writes the computed value of
 around fifty visually meaningful properties for each element to a JSON file. Two snapshots — one
@@ -38,6 +39,27 @@ node tools/style-snapshot/diff.mjs before.json after.json
 
 `diff.mjs` groups the changes by property and caps each list. Add `--full` to list every changed
 element. It exits 1 when any element changed, and 0 when none did.
+
+## In CI
+
+The job builds Storybook twice: once for the PR as it would merge, once for the commit it merges
+into. It captures both in the light and the dark theme and diffs each pair. Both captures use the
+PR's copy of this tool and the same Chromium.
+
+There are no committed baselines. The baseline is the base branch, rebuilt in the same run. A
+committed baseline would go stale with every merged style change, and it would only compare
+cleanly on the exact browser build that produced it. Rebuilding the base costs a second Storybook
+build. In return the diff only ever shows what the PR changes, and there is nothing to update when
+you change a style on purpose: once the PR merges, main is the new baseline.
+
+The job writes the capped diff for each theme to its summary. The `visual-regression` artifact
+holds the full diffs (`--full`) and all four snapshots, so you can rerun `diff.mjs` on them
+locally.
+
+For now the job only reports. A difference adds a warning and the job stays green. To make the diff
+fail the job, set `STYLE_DIFF_BLOCKING` to `'true'` in the workflow and make the job a required
+check on main. Do that only together with a way to accept an intended change, such as a PR label
+the gate step checks. Otherwise every restyle would fail its own PR.
 
 ## What it is careful about
 

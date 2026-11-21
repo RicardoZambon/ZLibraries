@@ -3,7 +3,8 @@
 The acceptance check for small-screen support: at 375px, nothing may sit past the right edge of
 the viewport unless some ancestor can scroll it into view.
 
-It is a manual check: CI does not run it. Run it before merging a layout or stylesheet change.
+CI runs it on every PR, in the "Visual regression" job of PR validation. You can also run it by
+hand before you push a layout or stylesheet change.
 
 The distinction is the whole point. An element that overflows a scroll container is reachable —
 you scroll to it. An element that overflows a container which _clips_ is gone, and nothing on
@@ -37,6 +38,16 @@ node tools/overflow-probe/probe.mjs dist/storybook/ui-examples
 
 It prints one line per offending element, then a total. It exits 0 when the total is 0, 1
 otherwise, and 2 when the probe itself could not run.
+
+## In CI
+
+The job runs the probe against the PR's Storybook. Its output goes to the job summary and to the
+`visual-regression` artifact. It has no baseline: the rule is absolute, so main must pass it on
+its own.
+
+For now the job only reports. Findings add a warning and the job stays green. To make the probe
+fail the job, set `OVERFLOW_PROBE_BLOCKING` to `'true'` in the workflow and make the job a
+required check on main. Make this one blocking first: it has no intended findings to accept.
 
 ## The one exclusion: the data grid's header
 
