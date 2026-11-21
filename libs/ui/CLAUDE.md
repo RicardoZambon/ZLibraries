@@ -130,6 +130,9 @@ PR validation runs, on affected projects: `format:check`, lint, test, production
 `CHANGELOG.md` did not. A green local run of tests and build does not cover
 the stories: a public API rename passes them and then fails `build-storybook`.
 
+A separate "Visual regression" job diffs the style snapshot against the base branch and runs the
+overflow probe. It reports in its summary and does not fail the PR yet.
+
 - **On Windows, `nx format:write` rewrites files to LF.** Review with `git diff --ignore-cr-at-eol`.
 - **After a style or Storybook config change, add `--skip-nx-cache`.** The cache replays results
   from before the change. The [style snapshot](../../tools/style-snapshot/README.md) and the

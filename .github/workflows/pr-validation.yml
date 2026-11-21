@@ -102,6 +102,204 @@ jobs:
           SEMANTIC_RELEASE_VALIDATION: 'true'
         run: npx --no-install semantic-release --dry-run --no-ci -e semantic-release-monorepo
 
+  # Runs the two visual tools from tools/ on every PR. Report only for now: findings land in the job
+  # summary and in the "visual-regression" artifact, and the job stays green.
+  #
+  # The style snapshot needs a baseline. It is captured here, from the PR's base commit, rather
+  # than committed: a committed baseline goes stale with every merged style change and has to be
+  # regenerated on the same browser build to stay comparable. Building the base in the same run, on
+  # the same runner and Chromium, compares like with like and only ever shows what this PR changes.
+  # Both captures use the PR's copy of the tool, so a change to the tool itself cannot fake a diff.
+  #
+  # To make a tool blocking, set its *_BLOCKING variable below to 'true', then make this job a
+  # required status check on main. Start with the overflow probe: its rule is absolute and main
+  # passes it. The style diff also reports intentional changes, so it needs a way to accept one
+  # before it can block. tools/style-snapshot/README.md has the details.
+  visual-regression:
+    name: Visual regression (report only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+      OVERFLOW_PROBE_BLOCKING: 'false'
+      STYLE_DIFF_BLOCKING: 'false'
+      REPORT_DIR: ${{ github.workspace }}/visual-report
+
+    steps:
+      # The PR as it would merge, and the commit it would merge into. Two separate folders, so each
+      # builds with its own dependencies and Nx never sees one inside the other.
+      - name: Checkout the PR
+        uses: actions/checkout@v4
+        with:
+          path: head
+
+      - name: Checkout the base
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            head/package-lock.json
+            base/package-lock.json
+
+      - name: Install dependencies (PR)
+        working-directory: head
+        run: npm ci
+
+      - name: Install dependencies (base)
+        working-directory: base
+        run: npm ci
+
+      - name: Build Storybook (PR)
+        working-directory: head
+        run: npx nx build-storybook ui-examples --configuration=ci
+
+      # A base that does not build leaves nothing to compare with. The diff is skipped and says so;
+      # the overflow probe still runs.
+      - name: Build Storybook (base)
+        id: base-storybook
+        continue-on-error: true
+        working-directory: base
+        run: npx nx build-storybook ui-examples --configuration=ci
+
+      # The PR's Playwright drives every capture, so both sides render in the same browser build.
+      - name: Install Playwright Chromium
+        working-directory: head
+        run: npx playwright install --with-deps chromium
+
+      - name: Compare computed styles with the base
+        id: style-diff
+        shell: bash
+        env:
+          BASE_BUILT: ${{ steps.base-storybook.outcome == 'success' }}
+        run: |
+          set -uo pipefail
+          mkdir -p "$REPORT_DIR"
+          # 0: no differences, 1: differences, 2: could not compare.
+          result=0
+          if [ "$BASE_BUILT" != "true" ]; then
+            echo "::warning title=Style snapshot::The base Storybook did not build, so there is nothing to compare with."
+            echo "result=2" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          for theme in light dark; do
+            for side in base head; do
+              if ! STYLE_SNAPSHOT_THEME=$theme node head/tools/style-snapshot/capture.mjs \
+                  "$side/dist/storybook/ui-examples" "$REPORT_DIR/style-$side-$theme.json"; then
+                echo "::error title=Style snapshot::Capturing the $side Storybook in $theme failed."
+                result=2
+                continue 2
+              fi
+            done
+            node head/tools/style-snapshot/diff.mjs \
+              "$REPORT_DIR/style-base-$theme.json" "$REPORT_DIR/style-head-$theme.json" \
+              > "$REPORT_DIR/style-diff-$theme.txt"
+            rc=$?
+            node head/tools/style-snapshot/diff.mjs \
+              "$REPORT_DIR/style-base-$theme.json" "$REPORT_DIR/style-head-$theme.json" --full \
+              > "$REPORT_DIR/style-diff-$theme-full.txt"
+            cat "$REPORT_DIR/style-diff-$theme.txt"
+            if [ "$rc" -eq 1 ]; then
+              echo "::warning title=Style snapshot::Computed styles changed in the $theme theme. See the job summary."
+              if [ "$result" -eq 0 ]; then result=1; fi
+            elif [ "$rc" -ne 0 ]; then
+              result=2
+            fi
+          done
+          echo "result=$result" >> "$GITHUB_OUTPUT"
+
+      - name: Probe for unreachable elements at 375px
+        id: overflow-probe
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p "$REPORT_DIR"
+          node head/tools/overflow-probe/probe.mjs head/dist/storybook/ui-examples \
+            > "$REPORT_DIR/overflow-probe.txt" 2>&1
+          rc=$?
+          cat "$REPORT_DIR/overflow-probe.txt"
+          # 0: nothing unreachable, 1: findings, 2: the probe could not run.
+          case "$rc" in
+            0) ;;
+            1) echo "::warning title=Overflow probe::Something is unreachable at 375px. See the job summary." ;;
+            *) echo "::error title=Overflow probe::The probe could not run. See the job summary." ;;
+          esac
+          echo "result=$rc" >> "$GITHUB_OUTPUT"
+
+      - name: Write the summary
+        if: always()
+        shell: bash
+        env:
+          STYLE_RESULT: ${{ steps.style-diff.outputs.result }}
+          PROBE_RESULT: ${{ steps.overflow-probe.outputs.result }}
+        run: |
+          set -uo pipefail
+          verdict() {
+            case "$1" in
+              0) echo "clean" ;;
+              1) echo "findings" ;;
+              2) echo "could not run" ;;
+              *) echo "did not run" ;;
+            esac
+          }
+          section() {
+            echo "<details><summary>$1</summary>"
+            echo
+            echo '```'
+            if [ -f "$2" ]; then head -c 60000 "$2"; else echo "(no output)"; fi
+            echo '```'
+            echo "</details>"
+            echo
+          }
+          {
+            echo "## Visual regression (report only)"
+            echo
+            echo "| Check | Result |"
+            echo "| --- | --- |"
+            echo "| Style snapshot against the base | $(verdict "$STYLE_RESULT") |"
+            echo "| Overflow probe at 375px | $(verdict "$PROBE_RESULT") |"
+            echo
+            section "Style diff, light theme" "$REPORT_DIR/style-diff-light.txt"
+            section "Style diff, dark theme" "$REPORT_DIR/style-diff-dark.txt"
+            section "Overflow probe" "$REPORT_DIR/overflow-probe.txt"
+            echo "The full listings and both snapshots are in the \`visual-regression\` artifact."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression
+          path: visual-report
+          if-no-files-found: warn
+          retention-days: 14
+
+      # The only step that can fail this job, and only once a *_BLOCKING variable above is 'true'.
+      - name: Gate
+        shell: bash
+        env:
+          STYLE_RESULT: ${{ steps.style-diff.outputs.result }}
+          PROBE_RESULT: ${{ steps.overflow-probe.outputs.result }}
+        run: |
+          set -uo pipefail
+          failed=0
+          if [ "$OVERFLOW_PROBE_BLOCKING" = "true" ] && [ "$PROBE_RESULT" != "0" ]; then
+            echo "::error::The overflow probe is blocking and did not pass."
+            failed=1
+          fi
+          if [ "$STYLE_DIFF_BLOCKING" = "true" ] && [ "$STYLE_RESULT" != "0" ]; then
+            echo "::error::The style diff is blocking and found changes, or could not compare."
+            failed=1
+          fi
+          exit $failed
+
   changelog-check:
     name: Changelog check
     runs-on: ubuntu-latest
