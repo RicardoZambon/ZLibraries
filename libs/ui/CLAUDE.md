@@ -126,7 +126,7 @@ npx jest --config libs/ui/jest.config.ts --testPathPatterns="my-component"   # o
 ```
 
 PR validation runs, on affected projects: `format:check`, lint, test, production build,
-`check-packaged-styles`, and `build-storybook`. It also fails when `src/` changed and
+`check-packaged-styles`, and `build-storybook`, then an axe check of every story (see CONTRIBUTING). It also fails when `src/` changed and
 `CHANGELOG.md` did not. A green local run of tests and build does not cover
 the stories: a public API rename passes them and then fails `build-storybook`.
 

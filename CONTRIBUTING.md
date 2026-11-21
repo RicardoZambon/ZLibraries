@@ -173,6 +173,18 @@ node tools/style-snapshot/diff.mjs before.json after.json
 node tools/overflow-probe/probe.mjs dist/storybook/ui-examples
 ```
 
+- Every story must pass axe. PR validation renders each story in Chromium, runs its play function
+  and fails on any violation. To run it locally, start Storybook, then run the test runner against
+  it:
+
+```bash
+npx nx storybook ui-examples
+npx nx test-storybook ui-examples
+```
+
+- The Accessibility panel in Storybook shows the same findings for one story. A story that cannot
+  meet a rule, for example a deliberately broken state, sets `parameters.a11y` to disable that rule
+  and says why in a comment. Do not turn the check off for a whole story.
 - Nx caches results. After changing styles or Storybook config, rerun with `--skip-nx-cache`.
 - Jest runs in jsdom, which cannot evaluate container queries or layout. Unit-test template and
   ARIA logic; check layout in Storybook and with the overflow probe.
@@ -267,7 +279,7 @@ Two things to know:
 3. Open a PR and fill in the template.
 
 PR validation checks formatting, lint, tests, the package build, the packaged styles, the Storybook
-build, the docs build and a dry run of the release. All of them must pass.
+build, the accessibility of every story, the docs build and a dry run of the release. All of them must pass.
 
 ## Releasing
 
