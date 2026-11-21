@@ -117,10 +117,10 @@ a `listbox` of `option` elements with `aria-selected`.
 | Escape, Tab | Closes the list.                              |
 
 Status rows (loading, no results, type more) are announced through `aria-live`. The retry row after
-a failed search is a real button. The clear button is left out of the Tab order.
+a failed search is a real button. The clear button is a pointer shortcut: it is left out of the Tab
+order and hidden from assistive technology.
 
-The label has the same limit as in [form input group](./form-input-group.md#accessibility): it is
-not linked to the input.
+The label is linked to the input, as in [form input group](./form-input-group.md#accessibility).
 
 ## Theming
 

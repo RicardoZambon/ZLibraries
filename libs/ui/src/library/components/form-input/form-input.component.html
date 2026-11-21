@@ -2,6 +2,7 @@
   @switch (type()) {
     @case ('textarea') {
       <textarea
+        [attr.id]="inputId() ?? null"
         [attr.maxLength]="maxLength() ?? null"
         [attr.rows]="rows()"
         [class.invalid]="invalid()"
@@ -14,6 +15,7 @@
     @case ('checkbox') {
       @if (isFormControl) {
         <input
+          [attr.id]="inputId() ?? null"
           class="switch"
           type="checkbox"
           [class.invalid]="invalid()"
@@ -24,6 +26,7 @@
         />
       } @else {
         <input
+          [attr.id]="inputId() ?? null"
           class="switch"
           type="checkbox"
           [(ngModel)]="fixedValue"
@@ -43,6 +46,7 @@
     @default {
       @if (isFormControl) {
         <input
+          [attr.id]="inputId() ?? null"
           [attr.maxLength]="maxLength() ?? null"
           [attr.min]="minAttributeValue"
           [attr.readonly]="readOnly() ? true : null"
@@ -57,6 +61,7 @@
         />
       } @else {
         <input
+          [attr.id]="inputId() ?? null"
           type="text"
           [attr.maxLength]="maxLength() ?? null"
           [attr.min]="minAttributeValue"

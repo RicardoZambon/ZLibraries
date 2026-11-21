@@ -28,8 +28,15 @@
     color: var(--color-content-secondary);
   }
 
-  h6 {
+  h5 {
     @apply h-12 leading-[3rem] pl-1 mb-0 cursor-pointer uppercase whitespace-nowrap text-ellipsis inline pr-2 text-lg;
+  }
+
+  button {
+    @apply uppercase;
+    font: inherit;
+    color: inherit;
+    line-height: inherit;
   }
 }
 

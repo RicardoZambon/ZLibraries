@@ -18,12 +18,12 @@
         }
       }
       @if (hasFailed()) {
-        <div class="error">
+        <li class="error">
           <div>
             <i class="fa-solid fa-fw fa-triangle-exclamation"></i>
             <span>{{ configErrorText }}</span>
           </div>
-        </div>
+        </li>
       }
     </ul>
   } @else {

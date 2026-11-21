@@ -38,6 +38,14 @@ import { BaseComponent } from '../base.component';
   imports: [FormsModule, NgClass, NgTemplateOutlet, NgxResizeObserverModule],
 })
 export class DataGridRowComponent extends BaseComponent implements OnInit {
+  private static instances = 0;
+
+  /**
+   * The first cell names the row's selection checkbox, so a screen reader announces "Alice,
+   * checkbox" rather than an unnamed checkbox. A library component ships no label text of its own.
+   */
+  protected readonly firstCellId: string = `lib-data-grid-row-${DataGridRowComponent.instances++}-cell-0`;
+
   //#region ViewChilds, Inputs, Outputs
   /** Disables the row, so clicking it neither focuses nor selects it. Defaults to `false`. */
   @Input() public disabled = false;

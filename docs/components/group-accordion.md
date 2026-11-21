@@ -35,9 +35,11 @@ links.
 
 ## Accessibility
 
-- The title has `role="button"`, is in the Tab order and toggles on Enter and Space.
-- `aria-expanded` reports whether the section is open.
-- The title is an `<h6>` element. Check that this level fits the outline of your page.
+- The title is an `<h5>` heading with a native button inside it. The button is in the Tab order and
+  toggles on Enter and Space.
+- `aria-expanded` on the button reports whether the section is open.
+- The `<h5>` follows the `<h4>` of [group container](./group-container.md). Check that this level
+  fits the outline of your page.
 - The title does not point at its content with `aria-controls`.
 
 ## Theming

@@ -107,7 +107,8 @@ in that case. A failed submenu load marks only that menu.
 
 ## Accessibility
 
-- The sidebar's content is inside a `<nav>` element.
+- The sidebar's content is inside a `<nav>` element, as a list. Each menu entry is a list item,
+  so a screen reader announces how many entries a level holds.
 - Each menu row has `role="button"`, is in the Tab order and works with Enter and Space. The
   selected row carries `aria-current`.
 - Escape closes a sidebar held open on a small screen.

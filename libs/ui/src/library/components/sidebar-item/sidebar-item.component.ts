@@ -22,6 +22,10 @@ import { BaseComponent } from '../base.component';
   styleUrls: ['./sidebar-item.component.scss'],
   imports: [NgStyle, TranslatePipe],
   host: {
+    // The host sits between the parent <ul> and this template's <li>, which left a list holding
+    // something other than items and an item with no list. The host takes the listitem role and
+    // the inner <li> steps out of the tree, keeping the styles that select it.
+    role: 'listitem',
     '[class.active]': 'isActive',
     '[class.expanded]': '!isCollapsed',
     '[class.first-level]': 'level === 0',

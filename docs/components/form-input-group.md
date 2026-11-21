@@ -67,11 +67,12 @@ Set `showLabel` to `false` to drop the label column and let the field span both 
 
 ## Accessibility
 
-The label is a `<label>` element with `for` set to the control name. The inner input carries no
-matching `id`, so the label is **not** linked to the input, and screen readers do not announce it.
-The validation messages are not linked to the input either. Until the package fixes this, put an
-`id` equal to the control name on your own template's input, and add `aria-describedby` where the
-message matters.
+The label is a `<label>` element linked to the input: a click on it focuses the field, and screen
+readers announce it. The group generates the shared id. Set `inputId` to choose it. A custom
+`template` must put that id on its own input, or the label names nothing.
+
+The validation messages are not linked to the input. Add `aria-describedby` where the message
+matters.
 
 ## Theming
 

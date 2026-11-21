@@ -7,11 +7,23 @@ Space on its own. -->
   <label class="cell selection" (click)="onToggleSelection()" (onResize)="onResizeSelection($event)">
     <!-- Null, not false: an attribute binding writes disabled="false" for false, and any value at
     all disables a control, so every checkbox rendered disabled and faded. -->
-    <input class="form-input" type="checkbox" [attr.disabled]="disabled ? true : null" [(ngModel)]="selected" />
+    <input
+      class="form-input"
+      type="checkbox"
+      [attr.aria-labelledby]="columns.length ? firstCellId : null"
+      [attr.disabled]="disabled ? true : null"
+      [(ngModel)]="selected"
+    />
   </label>
 }
 @for (column of columns; track column; let i = $index) {
-  <div #cell class="cell" [class.disabled]="disabled" [ngClass]="column.customClass">
+  <div
+    #cell
+    class="cell"
+    [attr.id]="i === 0 ? firstCellId : null"
+    [class.disabled]="disabled"
+    [ngClass]="column.customClass"
+  >
     @if (isFirstRow) {
       <div class="spacer" (onResize)="onResize(i, $event)"></div>
     }

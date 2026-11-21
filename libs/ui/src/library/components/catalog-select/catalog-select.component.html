@@ -1,5 +1,6 @@
 <lib-form-input-group
   [controlName]="controlName()"
+  [inputId]="inputId"
   [label]="label()"
   [notes]="notes()"
   [template]="template"
@@ -15,6 +16,7 @@
       [autofocus]="autofocus()"
       [controlName]="displayControlName()"
       [displayReadOnlyAsDisabled]="readOnly()"
+      [inputId]="inputId"
       [invalid]="isInvalid && isTouched"
       [readOnly]="readOnly() || !searchable()"
       (blurred)="onContainerBlur()"
@@ -24,7 +26,9 @@
     >
     </lib-form-input>
     @if (showClearButton) {
-      <button class="clear-button" type="button" tabindex="-1" (click)="onClearClick($event)">
+      <!-- A pointer shortcut, hidden from assistive technology like the tab close button: it is
+           out of the tab order, and a library component ships no label text to name it with. -->
+      <button class="clear-button" type="button" tabindex="-1" aria-hidden="true" (click)="onClearClick($event)">
         <i class="fa-solid fa-xmark"></i>
       </button>
     }

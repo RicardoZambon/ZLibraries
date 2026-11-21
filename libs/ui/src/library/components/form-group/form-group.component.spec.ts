@@ -23,7 +23,7 @@ describe(FormGroupComponent.name, () => {
   it('should render no title when no label is set', () => {
     fixture.detectChanges();
 
-    expect(fixture.debugElement.query(By.css('h3.title'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('h6.title'))).toBeNull();
   });
 
   // The component is OnPush: an input set through setInput must still reach the
@@ -32,7 +32,7 @@ describe(FormGroupComponent.name, () => {
     fixture.componentRef.setInput('label', 'Group label');
     fixture.detectChanges();
 
-    const title: HTMLElement = fixture.debugElement.query(By.css('h3.title')).nativeElement;
+    const title: HTMLElement = fixture.debugElement.query(By.css('h6.title')).nativeElement;
     expect(title.textContent?.trim()).toBe('Group label');
   });
 
@@ -43,7 +43,7 @@ describe(FormGroupComponent.name, () => {
     fixture.componentRef.setInput('label', 'Second');
     fixture.detectChanges();
 
-    const title: HTMLElement = fixture.debugElement.query(By.css('h3.title')).nativeElement;
+    const title: HTMLElement = fixture.debugElement.query(By.css('h6.title')).nativeElement;
     expect(title.textContent?.trim()).toBe('Second');
   });
 

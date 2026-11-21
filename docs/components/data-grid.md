@@ -124,7 +124,8 @@ The grid does not expose ARIA grid or table roles yet. Assistive technology read
 in a scrolling region.
 
 - In a multi-select grid, each row's checkbox is a native, focusable checkbox and toggles with
-  Space. It has no accessible name.
+  Space. It is named by the row's first cell, so a screen reader announces, for example, "Alice,
+  checkbox".
 - Focusing or selecting a row by clicking it works only with a pointer.
 - Rows outside the scrolled view are not in the page, because of virtual scrolling.
 

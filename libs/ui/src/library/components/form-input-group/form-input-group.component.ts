@@ -49,6 +49,11 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   public readonly fixedValue: InputSignal<any> = input<any>();
   /** Display format passed to the inner `lib-form-input`: a date pattern or a number digits string. */
   public readonly format: InputSignal<string | undefined> = input<string>();
+  /**
+   * `id` of the native input, which the label names with `for`. Defaults to a generated id. A
+   * custom `template` must put this id on its own input for the label to name it.
+   */
+  public readonly inputId: InputSignal<string | undefined> = input<string>();
   /** Text of the label, as a translation key. Defaults to empty. */
   public readonly label: InputSignal<string> = input('');
   /** Passed to the inner `lib-form-input`; disables it only when it shows a fixed value. Defaults to `true`. */
@@ -84,6 +89,16 @@ export class FormInputGroupComponent extends BaseComponent implements OnInit {
   //#endregion
 
   //#region Variables
+  private static instances = 0;
+
+  /**
+   * What the label's `for` and the input's `id` share. It used to be the control name, which no
+   * input carried, so the label named nothing: a click on it did not focus the field and a screen
+   * reader announced the field without its label.
+   */
+  protected readonly resolvedInputId: Signal<string> = computed(() => this.inputId() ?? this.generatedInputId);
+  private readonly generatedInputId: string = `lib-form-input-${FormInputGroupComponent.instances++}`;
+
   protected readonly formGroupDirective: FormGroupDirective = inject(FormGroupDirective);
   protected readonly formGroupName: FormGroupName = inject(FormGroupName, { optional: true })!;
   protected formService: FormService = inject(FormService);

@@ -343,6 +343,15 @@ describe('TabsComponent — tab strip interaction', () => {
     expect(tabServiceStub.closeTab).not.toHaveBeenCalled();
   });
 
+  it('should keep the close buttons out of the tablist and announce closing on the tab', () => {
+    // A tablist may contain only tabs. The close button stays a pointer affordance, and the tab
+    // tells assistive technology that Delete closes it.
+    const closeButtons: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.tab-close'));
+    expect(closeButtons.length).toBeGreaterThan(0);
+    expect(closeButtons.every((button: HTMLElement) => button.getAttribute('aria-hidden') === 'true')).toBe(true);
+    expect(tabElements().every((tab: HTMLElement) => tab.getAttribute('aria-keyshortcuts') === 'Delete')).toBe(true);
+  });
+
   it('should name each close button after its tab', () => {
     const labels: (string | null)[] = Array.from(fixture.nativeElement.querySelectorAll<HTMLElement>('.tab-close')).map(
       (button: HTMLElement) => button.getAttribute('aria-label'),

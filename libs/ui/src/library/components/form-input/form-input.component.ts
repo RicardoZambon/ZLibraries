@@ -55,6 +55,11 @@ export class FormInputComponent extends BaseComponent implements OnInit {
   public readonly disabledControlName: InputSignal<string | undefined> = input<string>();
   /** Styles a read-only input like a disabled one. Defaults to `true`. */
   public readonly displayReadOnlyAsDisabled: InputSignal<boolean> = input(true);
+  /**
+   * `id` of the native input or textarea, so a `<label for>` can name it. `lib-form-input-group`
+   * sets it for its own label. No `id` by default.
+   */
+  public readonly inputId: InputSignal<string | undefined> = input<string>();
   /** Shows the field in its error style. Defaults to `false`. */
   public readonly invalid: InputSignal<boolean> = input(false);
   /** Disables the input when it shows `fixedValue` (no `controlName`). Has no effect on a form control. Defaults to `true`. */

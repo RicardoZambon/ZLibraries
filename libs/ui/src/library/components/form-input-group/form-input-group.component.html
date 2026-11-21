@@ -1,5 +1,5 @@
 @if (showLabel()) {
-  <label [attr.for]="controlName()"> {{ label() | translate }}: </label>
+  <label [attr.for]="resolvedInputId()"> {{ label() | translate }}: </label>
 }
 
 <div class="field" [class.col-span-2]="!showLabel()" [ngStyle]="{ 'align-content': alignContent() }">
@@ -26,6 +26,7 @@
         [controlName]="controlName()"
         [fixedValue]="fixedValue()"
         [format]="format()"
+        [inputId]="resolvedInputId()"
         [isDisabled]="isDisabled()"
         [isFullHeight]="isFullHeight()"
         [min]="min()"
